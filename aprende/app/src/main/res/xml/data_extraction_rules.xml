@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Android 12+ Auto Backup rules (SPEC §11, the C3 "safety net").
+
+  Frame to users as automatic recovery on reinstall, NOT multi-device sync (it is best-effort:
+  ~nightly, idle + Wi-Fi + charging, single most-recent snapshot, ~25 MB cap). The reliable
+  cross-device path is the user-driven SAF export/import (BackupScreen).
+
+  We back up only the never-overwritten learner state: progress.db (Room) + the Preferences
+  DataStore file. We do NOT back up the read-only content.db (it rides app updates — D2) or any
+  caches. content.db is deliberately excluded so a restored snapshot never resurrects a stale
+  curriculum over a newer bundled asset.
+-->
+<data-extraction-rules>
+    <cloud-backup>
+        <include domain="database" path="progress.db" />
+        <include domain="database" path="progress.db-wal" />
+        <include domain="database" path="progress.db-shm" />
+        <!-- Preferences DataStore (settings) lives under files/datastore/. -->
+        <include domain="file" path="datastore/" />
+
+        <!-- Never back up the replaceable content DB or caches. -->
+        <exclude domain="database" path="content.db" />
+        <exclude domain="database" path="content.db-wal" />
+        <exclude domain="database" path="content.db-shm" />
+    </cloud-backup>
+    <device-transfer>
+        <include domain="database" path="progress.db" />
+        <include domain="database" path="progress.db-wal" />
+        <include domain="database" path="progress.db-shm" />
+        <include domain="file" path="datastore/" />
+        <exclude domain="database" path="content.db" />
+        <exclude domain="database" path="content.db-wal" />
+        <exclude domain="database" path="content.db-shm" />
+    </device-transfer>
+</data-extraction-rules>

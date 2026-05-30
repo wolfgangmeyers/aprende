@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Legacy Auto Backup rules for Android 11 and below (SPEC §11). Mirrors
+  data_extraction_rules.xml: back up only the never-overwritten learner state (progress.db +
+  the Preferences DataStore), never the replaceable content.db or caches (D2). Best-effort
+  recovery-on-reinstall, NOT multi-device sync — the SAF export/import is the reliable path.
+-->
+<full-backup-content>
+    <include domain="database" path="progress.db" />
+    <include domain="database" path="progress.db-wal" />
+    <include domain="database" path="progress.db-shm" />
+    <include domain="file" path="datastore/" />
+
+    <exclude domain="database" path="content.db" />
+    <exclude domain="database" path="content.db-wal" />
+    <exclude domain="database" path="content.db-shm" />
+</full-backup-content>

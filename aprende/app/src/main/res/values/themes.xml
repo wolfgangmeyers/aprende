@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Base application/launch theme. Compose drives the real UI via AprendeTheme;
+         this Material3 base only needs to exist so the manifest android:theme is
+         valid and the app shows a sensible window background before first frame. -->
+    <style name="Theme.Aprende" parent="android:Theme.Material.Light.NoActionBar" />
+</resources>

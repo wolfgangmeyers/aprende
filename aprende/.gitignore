@@ -1,0 +1,24 @@
+# Gradle
+.gradle/
+build/
+**/build/
+
+# Local config (never committed)
+local.properties
+keystore.properties
+*.keystore
+*.jks
+
+# IDE
+.idea/
+*.iml
+.DS_Store
+
+# Captures
+captures/
+
+# Generated content artifacts — reproducible build outputs from the content pipeline
+# (tools/content-pipeline/build_content_db.py). Not committed; regenerated before assembly,
+# like the gradle wrapper jar. See aprende/README.md and tools/content-pipeline/README.md.
+app/src/main/assets/database/content.db
+app/src/main/assets/database/content_manifest.json

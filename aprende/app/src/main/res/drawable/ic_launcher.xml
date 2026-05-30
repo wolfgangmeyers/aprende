@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Pre-API-26 launcher icon fallback (API 24/25 ignore mipmap-anydpi-v26 adaptive
+     icons). A solid background layer plus the shared vector foreground — fully XML,
+     no binary PNG densities required. -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@color/ic_launcher_background" />
+    <item android:drawable="@drawable/ic_launcher_foreground" />
+</layer-list>
