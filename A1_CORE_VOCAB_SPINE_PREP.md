@@ -129,12 +129,12 @@ Source rows used:
 
 ## Next Worker Task
 
-Implement `A1-004 Wants: querer` in the content pipeline sample.
+Implement `A1-005 Ability: poder` in the content pipeline sample.
 
 Concrete steps:
 
-1. Add the next smallest priority-1 verb, `querer`, from Wiktionary using the FrequencyWords rank.
-2. Find reviewed Tatoeba contexts for the verb.
+1. Add the next smallest clean priority-1 modal verb, `poder`, from Wiktionary using the FrequencyWords rank.
+2. Find four reviewed Tatoeba contexts for the verb.
 3. Add the missing `sentence_lexeme` joins and derived exercises.
 4. Run the normal pipeline and inspect `content_coverage.json`.
 5. Update `coverage_baseline_snapshot.json`.
@@ -262,5 +262,45 @@ Acceptance result:
 - `learnerReadyLexemes` increases from 6 to 7.
 - `querer` has no readiness blockers in `content_coverage.json`.
 - `missingA1A2GapCount` decreases from 25 to 24.
+- `--fail-on-coverage-gaps` exits 0.
+- The publish gate still rejects unreviewed rows.
+
+## A1-005 Ability: Poder
+
+**Status:** implemented locally after A1-004.
+
+**Goal:** add the next clean priority-1 verb slice, `poder`, without schema or UI changes.
+
+**Target lemma:**
+
+| Lemma | FrequencyWords rank | Source basis | Required to ship |
+|---|---:|---|---|
+| `poder` | 362 | `SPEC.md` §5.2 irregular verb table | 4 reviewed contexts, production + recognition exercises |
+
+Source rows used:
+
+| Lemma | Spanish sentence | Tatoeba Spanish ID | Accepted English answer | English source ID |
+|---|---|---:|---|---:|
+| `poder` | `Puedo ir.` | 4521968 | `i can go` | 3092548 |
+| `poder` | `Puedo hacerlo.` | 1686297 | `i can do it` | 254742 |
+| `poder` | `Puedo venir.` | 10128973 | `i can come` | 2245638 |
+| `poder` | `Podemos ir.` | 6811033 | `we can go` | 2241036 |
+
+Implemented content delta:
+
+- 1 reviewed Wiktionary lexeme row.
+- 4 reviewed Tatoeba sentence rows.
+- 4 reviewed Tatoeba accepted-answer rows.
+- 6 `sentence_lexeme` joins (`poder` plus existing `ir` on two rows).
+- 2 derived exercises:
+  - `poder` production exercise
+  - `poder` recognition exercise
+- Updated `coverage_baseline_snapshot.json`.
+
+Acceptance result:
+
+- `learnerReadyLexemes` increases from 7 to 8.
+- `poder` has no readiness blockers in `content_coverage.json`.
+- `missingA1A2GapCount` decreases from 24 to 23.
 - `--fail-on-coverage-gaps` exits 0.
 - The publish gate still rejects unreviewed rows.

@@ -253,6 +253,9 @@ def vetted_sample():
         Row({"lexemeId": 7, "lemma": "querer", "pos": "verb", "gender": None,
              "englishGloss": "to want", "frequencyRank": 1557, "cefrBand": "A1", "difficultyPrior": 0.6},
             source="wiktionary", sourceId="querer", license="CC-BY-SA-3.0"),
+        Row({"lexemeId": 8, "lemma": "poder", "pos": "verb", "gender": None,
+             "englishGloss": "to be able to", "frequencyRank": 362, "cefrBand": "A1", "difficultyPrior": 0.4},
+            source="wiktionary", sourceId="poder", license="CC-BY-SA-3.0"),
     ]
     sentences = [
         Row({"sentenceId": 1, "spanishText": "Tengo un perro.", "englishText": "I have a dog."},
@@ -293,6 +296,14 @@ def vetted_sample():
             sourceId="tatoeba:584596"),
         Row({"sentenceId": 19, "spanishText": "¿Quieres agua?", "englishText": "Do you want water?"},
             sourceId="tatoeba:12291005"),
+        Row({"sentenceId": 20, "spanishText": "Puedo ir.", "englishText": "I can go."},
+            sourceId="tatoeba:4521968"),
+        Row({"sentenceId": 21, "spanishText": "Puedo hacerlo.", "englishText": "I can do it."},
+            sourceId="tatoeba:1686297"),
+        Row({"sentenceId": 22, "spanishText": "Puedo venir.", "englishText": "I can come."},
+            sourceId="tatoeba:10128973"),
+        Row({"sentenceId": 23, "spanishText": "Podemos ir.", "englishText": "We can go."},
+            sourceId="tatoeba:6811033"),
     ]
     accepted = [
         Row({"acceptedAnswerId": 1, "sentenceId": 1, "direction": "ES_TO_EN", "answerText": "i have a dog"},
@@ -340,6 +351,14 @@ def vetted_sample():
             sourceId="tatoeba:5085314"),
         Row({"acceptedAnswerId": 22, "sentenceId": 19, "direction": "ES_TO_EN", "answerText": "do you want water"},
             sourceId="tatoeba:13225760"),
+        Row({"acceptedAnswerId": 23, "sentenceId": 20, "direction": "ES_TO_EN", "answerText": "i can go"},
+            sourceId="tatoeba:3092548"),
+        Row({"acceptedAnswerId": 24, "sentenceId": 21, "direction": "ES_TO_EN", "answerText": "i can do it"},
+            sourceId="tatoeba:254742"),
+        Row({"acceptedAnswerId": 25, "sentenceId": 22, "direction": "ES_TO_EN", "answerText": "i can come"},
+            sourceId="tatoeba:2245638"),
+        Row({"acceptedAnswerId": 26, "sentenceId": 23, "direction": "ES_TO_EN", "answerText": "we can go"},
+            sourceId="tatoeba:2241036"),
     ]
     # non-vetted-audited tables (derived/structural) still carry source where meaningful
     sentence_lexeme = [
@@ -362,6 +381,10 @@ def vetted_sample():
         (17, 6),
         (18, 7), (18, 2),
         (19, 7), (19, 2),
+        (20, 8), (20, 6),
+        (21, 8),
+        (22, 8),
+        (23, 8), (23, 6),
     ]
     conj = [("tengo", 1, "wiktionary", "CC-BY-SA-3.0"), ("tienes", 1, "wiktionary", "CC-BY-SA-3.0")]
     # Path nodes (structural). v1 sample ships one node; exercises above belong to nodeId=1.
@@ -395,6 +418,10 @@ def vetted_sample():
          "targetItemId": 7, "targetItemType": "LEXEME", "promptHint": None},
         {"exerciseId": 14, "nodeId": 1, "sentenceId": 19, "type": "WORD_BANK", "direction": "ES_TO_EN",
          "targetItemId": 7, "targetItemType": "LEXEME", "promptHint": None},
+        {"exerciseId": 15, "nodeId": 1, "sentenceId": 20, "type": "TYPED_TRANSLATION", "direction": "ES_TO_EN",
+         "targetItemId": 8, "targetItemType": "LEXEME", "promptHint": None},
+        {"exerciseId": 16, "nodeId": 1, "sentenceId": 23, "type": "WORD_BANK", "direction": "ES_TO_EN",
+         "targetItemId": 8, "targetItemType": "LEXEME", "promptHint": None},
     ]
     return lexemes, sentences, accepted, sentence_lexeme, conj, exercises, nodes
 

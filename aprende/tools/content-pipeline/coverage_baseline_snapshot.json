@@ -37,45 +37,45 @@
     "reviewPolicy": "This list is a local source-checked audit target, not shipped learning content. A target lemma only becomes shipped content after the normal lexeme/sentence/accepted-answer provenance and REVIEWED gate pass."
   },
   "summary": {
-    "rawLexemes": 7,
-    "learnerReadyLexemes": 7,
-    "reviewedSentences": 19,
-    "reviewedAcceptedAnswers": 22,
-    "exerciseCount": 14,
-    "missingA1A2GapCount": 24
+    "rawLexemes": 8,
+    "learnerReadyLexemes": 8,
+    "reviewedSentences": 23,
+    "reviewedAcceptedAnswers": 26,
+    "exerciseCount": 16,
+    "missingA1A2GapCount": 23
   },
   "counts": {
     "lexemesByPos": {
       "noun": 2,
-      "verb": 5
+      "verb": 6
     },
     "lexemesByCefrBand": {
-      "A1": 7
+      "A1": 8
     },
     "lexemesByFrequencyBucket": {
-      "0001-0500": 5,
+      "0001-0500": 6,
       "0501-1000": 1,
       "1001-2000": 1
     },
     "contentRowsBySource": {
       "authored": 2,
-      "tatoeba": 39,
-      "wiktionary": 7
+      "tatoeba": 47,
+      "wiktionary": 8
     },
     "contentRowsByLicense": {
-      "CC-BY-2.0-FR": 39,
-      "CC-BY-SA-3.0": 7,
+      "CC-BY-2.0-FR": 47,
+      "CC-BY-SA-3.0": 8,
       "proprietary": 2
     },
     "contentRowsByVettingStatus": {
-      "REVIEWED": 48
+      "REVIEWED": 57
     },
     "exerciseTargetsByType": {
-      "LEXEME": 14
+      "LEXEME": 16
     },
     "exerciseTypes": {
-      "TYPED_TRANSLATION": 7,
-      "WORD_BANK": 7
+      "TYPED_TRANSLATION": 8,
+      "WORD_BANK": 8
     }
   },
   "topMissingA1A2Gaps": [
@@ -100,21 +100,6 @@
       "pos": "verb",
       "priority": 1,
       "reason": "daily actions and weather",
-      "sourceBasis": "SPEC.md \u00a75.2 irregular verb table",
-      "status": "missing_lexeme",
-      "blockers": [
-        "add_reviewed_lexeme",
-        "add_reviewed_contexts",
-        "add_exercises"
-      ],
-      "currentLexemeId": null
-    },
-    {
-      "lemma": "poder",
-      "cefrBand": "A1",
-      "pos": "verb",
-      "priority": 1,
-      "reason": "ability and permission",
       "sourceBasis": "SPEC.md \u00a75.2 irregular verb table",
       "status": "missing_lexeme",
       "blockers": [
@@ -371,6 +356,21 @@
       "priority": 3,
       "reason": "travel and time",
       "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 3 travel/time topics",
+      "status": "missing_lexeme",
+      "blockers": [
+        "add_reviewed_lexeme",
+        "add_reviewed_contexts",
+        "add_exercises"
+      ],
+      "currentLexemeId": null
+    },
+    {
+      "lemma": "necesitar",
+      "cefrBand": "A2",
+      "pos": "verb",
+      "priority": 3,
+      "reason": "needs",
+      "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 3 wants/needs topic",
       "status": "missing_lexeme",
       "blockers": [
         "add_reviewed_lexeme",
