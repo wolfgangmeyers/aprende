@@ -256,6 +256,9 @@ def vetted_sample():
         Row({"lexemeId": 8, "lemma": "poder", "pos": "verb", "gender": None,
              "englishGloss": "to be able to", "frequencyRank": 362, "cefrBand": "A1", "difficultyPrior": 0.4},
             source="wiktionary", sourceId="poder", license="CC-BY-SA-3.0"),
+        Row({"lexemeId": 9, "lemma": "saber", "pos": "verb", "gender": None,
+             "englishGloss": "to know", "frequencyRank": 236, "cefrBand": "A1", "difficultyPrior": 0.4},
+            source="wiktionary", sourceId="saber", license="CC-BY-SA-3.0"),
     ]
     sentences = [
         Row({"sentenceId": 1, "spanishText": "Tengo un perro.", "englishText": "I have a dog."},
@@ -304,6 +307,14 @@ def vetted_sample():
             sourceId="tatoeba:10128973"),
         Row({"sentenceId": 23, "spanishText": "Podemos ir.", "englishText": "We can go."},
             sourceId="tatoeba:6811033"),
+        Row({"sentenceId": 24, "spanishText": "Lo sé.", "englishText": "I know."},
+            sourceId="tatoeba:435153"),
+        Row({"sentenceId": 25, "spanishText": "No sé.", "englishText": "I don't know."},
+            sourceId="tatoeba:376608"),
+        Row({"sentenceId": 26, "spanishText": "Quiero saberlo.", "englishText": "I want to know."},
+            sourceId="tatoeba:961279"),
+        Row({"sentenceId": 27, "spanishText": "Sabemos.", "englishText": "We know."},
+            sourceId="tatoeba:5265434"),
     ]
     accepted = [
         Row({"acceptedAnswerId": 1, "sentenceId": 1, "direction": "ES_TO_EN", "answerText": "i have a dog"},
@@ -359,6 +370,14 @@ def vetted_sample():
             sourceId="tatoeba:2245638"),
         Row({"acceptedAnswerId": 26, "sentenceId": 23, "direction": "ES_TO_EN", "answerText": "we can go"},
             sourceId="tatoeba:2241036"),
+        Row({"acceptedAnswerId": 27, "sentenceId": 24, "direction": "ES_TO_EN", "answerText": "i know"},
+            sourceId="tatoeba:319990"),
+        Row({"acceptedAnswerId": 28, "sentenceId": 25, "direction": "ES_TO_EN", "answerText": "i don't know"},
+            sourceId="tatoeba:349064"),
+        Row({"acceptedAnswerId": 29, "sentenceId": 26, "direction": "ES_TO_EN", "answerText": "i want to know"},
+            sourceId="tatoeba:961147"),
+        Row({"acceptedAnswerId": 30, "sentenceId": 27, "direction": "ES_TO_EN", "answerText": "we know"},
+            sourceId="tatoeba:1556167"),
     ]
     # non-vetted-audited tables (derived/structural) still carry source where meaningful
     sentence_lexeme = [
@@ -385,6 +404,10 @@ def vetted_sample():
         (21, 8),
         (22, 8),
         (23, 8), (23, 6),
+        (24, 9),
+        (25, 9),
+        (26, 9), (26, 7),
+        (27, 9),
     ]
     conj = [("tengo", 1, "wiktionary", "CC-BY-SA-3.0"), ("tienes", 1, "wiktionary", "CC-BY-SA-3.0")]
     # Path nodes (structural). v1 sample ships one node; exercises above belong to nodeId=1.
@@ -422,6 +445,10 @@ def vetted_sample():
          "targetItemId": 8, "targetItemType": "LEXEME", "promptHint": None},
         {"exerciseId": 16, "nodeId": 1, "sentenceId": 23, "type": "WORD_BANK", "direction": "ES_TO_EN",
          "targetItemId": 8, "targetItemType": "LEXEME", "promptHint": None},
+        {"exerciseId": 17, "nodeId": 1, "sentenceId": 24, "type": "TYPED_TRANSLATION", "direction": "ES_TO_EN",
+         "targetItemId": 9, "targetItemType": "LEXEME", "promptHint": None},
+        {"exerciseId": 18, "nodeId": 1, "sentenceId": 27, "type": "WORD_BANK", "direction": "ES_TO_EN",
+         "targetItemId": 9, "targetItemType": "LEXEME", "promptHint": None},
     ]
     return lexemes, sentences, accepted, sentence_lexeme, conj, exercises, nodes
 

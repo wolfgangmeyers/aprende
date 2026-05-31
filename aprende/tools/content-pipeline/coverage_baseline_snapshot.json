@@ -37,45 +37,45 @@
     "reviewPolicy": "This list is a local source-checked audit target, not shipped learning content. A target lemma only becomes shipped content after the normal lexeme/sentence/accepted-answer provenance and REVIEWED gate pass."
   },
   "summary": {
-    "rawLexemes": 8,
-    "learnerReadyLexemes": 8,
-    "reviewedSentences": 23,
-    "reviewedAcceptedAnswers": 26,
-    "exerciseCount": 16,
-    "missingA1A2GapCount": 23
+    "rawLexemes": 9,
+    "learnerReadyLexemes": 9,
+    "reviewedSentences": 27,
+    "reviewedAcceptedAnswers": 30,
+    "exerciseCount": 18,
+    "missingA1A2GapCount": 22
   },
   "counts": {
     "lexemesByPos": {
       "noun": 2,
-      "verb": 6
+      "verb": 7
     },
     "lexemesByCefrBand": {
-      "A1": 8
+      "A1": 9
     },
     "lexemesByFrequencyBucket": {
-      "0001-0500": 6,
+      "0001-0500": 7,
       "0501-1000": 1,
       "1001-2000": 1
     },
     "contentRowsBySource": {
       "authored": 2,
-      "tatoeba": 47,
-      "wiktionary": 8
+      "tatoeba": 55,
+      "wiktionary": 9
     },
     "contentRowsByLicense": {
-      "CC-BY-2.0-FR": 47,
-      "CC-BY-SA-3.0": 8,
+      "CC-BY-2.0-FR": 55,
+      "CC-BY-SA-3.0": 9,
       "proprietary": 2
     },
     "contentRowsByVettingStatus": {
-      "REVIEWED": 57
+      "REVIEWED": 66
     },
     "exerciseTargetsByType": {
-      "LEXEME": 16
+      "LEXEME": 18
     },
     "exerciseTypes": {
-      "TYPED_TRANSLATION": 8,
-      "WORD_BANK": 8
+      "TYPED_TRANSLATION": 9,
+      "WORD_BANK": 9
     }
   },
   "topMissingA1A2Gaps": [
@@ -100,21 +100,6 @@
       "pos": "verb",
       "priority": 1,
       "reason": "daily actions and weather",
-      "sourceBasis": "SPEC.md \u00a75.2 irregular verb table",
-      "status": "missing_lexeme",
-      "blockers": [
-        "add_reviewed_lexeme",
-        "add_reviewed_contexts",
-        "add_exercises"
-      ],
-      "currentLexemeId": null
-    },
-    {
-      "lemma": "saber",
-      "cefrBand": "A1",
-      "pos": "verb",
-      "priority": 1,
-      "reason": "knowledge",
       "sourceBasis": "SPEC.md \u00a75.2 irregular verb table",
       "status": "missing_lexeme",
       "blockers": [
@@ -371,6 +356,21 @@
       "priority": 3,
       "reason": "needs",
       "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 3 wants/needs topic",
+      "status": "missing_lexeme",
+      "blockers": [
+        "add_reviewed_lexeme",
+        "add_reviewed_contexts",
+        "add_exercises"
+      ],
+      "currentLexemeId": null
+    },
+    {
+      "lemma": "salir",
+      "cefrBand": "A2",
+      "pos": "verb",
+      "priority": 3,
+      "reason": "movement and plans",
+      "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 3 travel/plans topics",
       "status": "missing_lexeme",
       "blockers": [
         "add_reviewed_lexeme",
