@@ -259,6 +259,9 @@ def vetted_sample():
         Row({"lexemeId": 9, "lemma": "saber", "pos": "verb", "gender": None,
              "englishGloss": "to know", "frequencyRank": 236, "cefrBand": "A1", "difficultyPrior": 0.4},
             source="wiktionary", sourceId="saber", license="CC-BY-SA-3.0"),
+        Row({"lexemeId": 10, "lemma": "venir", "pos": "verb", "gender": None,
+             "englishGloss": "to come", "frequencyRank": 339, "cefrBand": "A1", "difficultyPrior": 0.4},
+            source="wiktionary", sourceId="venir", license="CC-BY-SA-3.0"),
     ]
     sentences = [
         Row({"sentenceId": 1, "spanishText": "Tengo un perro.", "englishText": "I have a dog."},
@@ -315,6 +318,14 @@ def vetted_sample():
             sourceId="tatoeba:961279"),
         Row({"sentenceId": 27, "spanishText": "Sabemos.", "englishText": "We know."},
             sourceId="tatoeba:5265434"),
+        Row({"sentenceId": 28, "spanishText": "Ven aquí.", "englishText": "Come here."},
+            sourceId="tatoeba:374136"),
+        Row({"sentenceId": 29, "spanishText": "¿Vienes?", "englishText": "Are you coming?"},
+            sourceId="tatoeba:2194085"),
+        Row({"sentenceId": 30, "spanishText": "Vienen.", "englishText": "They're coming."},
+            sourceId="tatoeba:2008142"),
+        Row({"sentenceId": 31, "spanishText": "Ven a casa.", "englishText": "Come home."},
+            sourceId="tatoeba:3873833"),
     ]
     accepted = [
         Row({"acceptedAnswerId": 1, "sentenceId": 1, "direction": "ES_TO_EN", "answerText": "i have a dog"},
@@ -378,6 +389,14 @@ def vetted_sample():
             sourceId="tatoeba:961147"),
         Row({"acceptedAnswerId": 30, "sentenceId": 27, "direction": "ES_TO_EN", "answerText": "we know"},
             sourceId="tatoeba:1556167"),
+        Row({"acceptedAnswerId": 31, "sentenceId": 28, "direction": "ES_TO_EN", "answerText": "come here"},
+            sourceId="tatoeba:39944"),
+        Row({"acceptedAnswerId": 32, "sentenceId": 29, "direction": "ES_TO_EN", "answerText": "are you coming"},
+            sourceId="tatoeba:1417464"),
+        Row({"acceptedAnswerId": 33, "sentenceId": 30, "direction": "ES_TO_EN", "answerText": "they're coming"},
+            sourceId="tatoeba:1898128"),
+        Row({"acceptedAnswerId": 34, "sentenceId": 31, "direction": "ES_TO_EN", "answerText": "come home"},
+            sourceId="tatoeba:413767"),
     ]
     # non-vetted-audited tables (derived/structural) still carry source where meaningful
     sentence_lexeme = [
@@ -408,6 +427,10 @@ def vetted_sample():
         (25, 9),
         (26, 9), (26, 7),
         (27, 9),
+        (28, 10),
+        (29, 10),
+        (30, 10),
+        (31, 10),
     ]
     conj = [("tengo", 1, "wiktionary", "CC-BY-SA-3.0"), ("tienes", 1, "wiktionary", "CC-BY-SA-3.0")]
     # Path nodes (structural). v1 sample ships one node; exercises above belong to nodeId=1.
@@ -449,6 +472,10 @@ def vetted_sample():
          "targetItemId": 9, "targetItemType": "LEXEME", "promptHint": None},
         {"exerciseId": 18, "nodeId": 1, "sentenceId": 27, "type": "WORD_BANK", "direction": "ES_TO_EN",
          "targetItemId": 9, "targetItemType": "LEXEME", "promptHint": None},
+        {"exerciseId": 19, "nodeId": 1, "sentenceId": 28, "type": "TYPED_TRANSLATION", "direction": "ES_TO_EN",
+         "targetItemId": 10, "targetItemType": "LEXEME", "promptHint": None},
+        {"exerciseId": 20, "nodeId": 1, "sentenceId": 30, "type": "WORD_BANK", "direction": "ES_TO_EN",
+         "targetItemId": 10, "targetItemType": "LEXEME", "promptHint": None},
     ]
     return lexemes, sentences, accepted, sentence_lexeme, conj, exercises, nodes
 

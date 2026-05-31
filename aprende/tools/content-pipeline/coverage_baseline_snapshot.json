@@ -37,45 +37,45 @@
     "reviewPolicy": "This list is a local source-checked audit target, not shipped learning content. A target lemma only becomes shipped content after the normal lexeme/sentence/accepted-answer provenance and REVIEWED gate pass."
   },
   "summary": {
-    "rawLexemes": 9,
-    "learnerReadyLexemes": 9,
-    "reviewedSentences": 27,
-    "reviewedAcceptedAnswers": 30,
-    "exerciseCount": 18,
-    "missingA1A2GapCount": 22
+    "rawLexemes": 10,
+    "learnerReadyLexemes": 10,
+    "reviewedSentences": 31,
+    "reviewedAcceptedAnswers": 34,
+    "exerciseCount": 20,
+    "missingA1A2GapCount": 21
   },
   "counts": {
     "lexemesByPos": {
       "noun": 2,
-      "verb": 7
+      "verb": 8
     },
     "lexemesByCefrBand": {
-      "A1": 9
+      "A1": 10
     },
     "lexemesByFrequencyBucket": {
-      "0001-0500": 7,
+      "0001-0500": 8,
       "0501-1000": 1,
       "1001-2000": 1
     },
     "contentRowsBySource": {
       "authored": 2,
-      "tatoeba": 55,
-      "wiktionary": 9
+      "tatoeba": 63,
+      "wiktionary": 10
     },
     "contentRowsByLicense": {
-      "CC-BY-2.0-FR": 55,
-      "CC-BY-SA-3.0": 9,
+      "CC-BY-2.0-FR": 63,
+      "CC-BY-SA-3.0": 10,
       "proprietary": 2
     },
     "contentRowsByVettingStatus": {
-      "REVIEWED": 66
+      "REVIEWED": 75
     },
     "exerciseTargetsByType": {
-      "LEXEME": 18
+      "LEXEME": 20
     },
     "exerciseTypes": {
-      "TYPED_TRANSLATION": 9,
-      "WORD_BANK": 9
+      "TYPED_TRANSLATION": 10,
+      "WORD_BANK": 10
     }
   },
   "topMissingA1A2Gaps": [
@@ -100,21 +100,6 @@
       "pos": "verb",
       "priority": 1,
       "reason": "daily actions and weather",
-      "sourceBasis": "SPEC.md \u00a75.2 irregular verb table",
-      "status": "missing_lexeme",
-      "blockers": [
-        "add_reviewed_lexeme",
-        "add_reviewed_contexts",
-        "add_exercises"
-      ],
-      "currentLexemeId": null
-    },
-    {
-      "lemma": "venir",
-      "cefrBand": "A1",
-      "pos": "verb",
-      "priority": 1,
-      "reason": "movement",
       "sourceBasis": "SPEC.md \u00a75.2 irregular verb table",
       "status": "missing_lexeme",
       "blockers": [
@@ -371,6 +356,21 @@
       "priority": 3,
       "reason": "movement and plans",
       "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 3 travel/plans topics",
+      "status": "missing_lexeme",
+      "blockers": [
+        "add_reviewed_lexeme",
+        "add_reviewed_contexts",
+        "add_exercises"
+      ],
+      "currentLexemeId": null
+    },
+    {
+      "lemma": "trabajo",
+      "cefrBand": "A2",
+      "pos": "noun",
+      "priority": 3,
+      "reason": "work",
+      "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 3 work/school topic",
       "status": "missing_lexeme",
       "blockers": [
         "add_reviewed_lexeme",

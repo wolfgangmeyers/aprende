@@ -129,11 +129,11 @@ Source rows used:
 
 ## Next Worker Task
 
-Implement `A1-006 Knowledge: saber` in the content pipeline sample.
+Implement `A1-007 Movement: venir` in the content pipeline sample.
 
 Concrete steps:
 
-1. Add the next clean priority-1 knowledge verb, `saber`, from Wiktionary using the FrequencyWords rank.
+1. Add the next clean priority-1 movement verb, `venir`, from Wiktionary using the FrequencyWords rank.
 2. Find four reviewed Tatoeba contexts for the verb.
 3. Add the missing `sentence_lexeme` joins and derived exercises.
 4. Run the normal pipeline and inspect `content_coverage.json`.
@@ -342,5 +342,45 @@ Acceptance result:
 - `learnerReadyLexemes` increases from 8 to 9.
 - `saber` has no readiness blockers in `content_coverage.json`.
 - `missingA1A2GapCount` decreases from 23 to 22.
+- `--fail-on-coverage-gaps` exits 0.
+- The publish gate still rejects unreviewed rows.
+
+## A1-007 Movement: Venir
+
+**Status:** implemented locally after A1-006.
+
+**Goal:** add the next clean priority-1 movement verb slice, `venir`, without schema or UI changes.
+
+**Target lemma:**
+
+| Lemma | FrequencyWords rank | Source basis | Required to ship |
+|---|---:|---|---|
+| `venir` | 339 | `SPEC.md` §5.2 irregular verb table | 4 reviewed contexts, production + recognition exercises |
+
+Source rows used:
+
+| Lemma | Spanish sentence | Tatoeba Spanish ID | Accepted English answer | English source ID |
+|---|---|---:|---|---:|
+| `venir` | `Ven aquí.` | 374136 | `come here` | 39944 |
+| `venir` | `¿Vienes?` | 2194085 | `are you coming` | 1417464 |
+| `venir` | `Vienen.` | 2008142 | `they're coming` | 1898128 |
+| `venir` | `Ven a casa.` | 3873833 | `come home` | 413767 |
+
+Implemented content delta:
+
+- 1 reviewed Wiktionary lexeme row.
+- 4 reviewed Tatoeba sentence rows.
+- 4 reviewed Tatoeba accepted-answer rows.
+- 4 `sentence_lexeme` joins.
+- 2 derived exercises:
+  - `venir` production exercise
+  - `venir` recognition exercise
+- Updated `coverage_baseline_snapshot.json`.
+
+Acceptance result:
+
+- `learnerReadyLexemes` increases from 9 to 10.
+- `venir` has no readiness blockers in `content_coverage.json`.
+- `missingA1A2GapCount` decreases from 22 to 21.
 - `--fail-on-coverage-gaps` exits 0.
 - The publish gate still rejects unreviewed rows.
