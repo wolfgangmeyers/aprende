@@ -16,6 +16,11 @@ python3 build_content_db.py --out /tmp/content.db --inject-unvetted
 # Demo the breadth gate surfacing current A1/A2 readiness gaps (non-zero until
 # current A1/A2 lexemes meet the learner-ready budget):
 python3 build_content_db.py --out /tmp/content.db --fail-on-coverage-gaps
+
+# Regression fixture: malformed LEXEME exercises must not count as readiness coverage.
+# Uses a throwaway baseline path so the committed snapshot is not overwritten by the failing run.
+python3 build_content_db.py --out /tmp/content.db --inject-malformed-exercise \
+  --fail-on-coverage-gaps --baseline-snapshot /tmp/coverage-malformed.json
 ```
 
 ## 5-stage vetting workflow
@@ -67,6 +72,9 @@ It also updates the committed, stable review baseline:
 The report is vocabulary-first and distinguishes raw rows from learner-ready content.
 A lexeme is learner-ready only when it has reviewed source/license metadata, enough reviewed
 sentence contexts, and both production and recognition exercise coverage.
+Exercise coverage only counts when the `LEXEME` exercise points to an existing reviewed
+sentence that is linked to the target lexeme; dangling or unrelated exercises are reported
+but cannot satisfy readiness.
 
 Current readiness budgets:
 

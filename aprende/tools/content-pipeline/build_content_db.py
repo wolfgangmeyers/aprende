@@ -18,6 +18,8 @@ Kotlin Room entities mirror) is the real contract, not the build language.
 Usage:
     python3 build_content_db.py --out <path/to/content.db>          # build db + reports
     python3 build_content_db.py --out <...> --inject-unvetted       # demo: gate must REJECT
+    python3 build_content_db.py --out <...> --inject-malformed-exercise --fail-on-coverage-gaps
+                                                                  # demo: coverage must REJECT
     python3 build_content_db.py --out <...> --fail-on-coverage-gaps # enforce readiness budgets
 """
 from __future__ import annotations
@@ -1127,6 +1129,20 @@ def reviewed(row: Row) -> bool:
     return row.vettingStatus == REVIEWED and bool(row.source) and bool(row.license)
 
 
+def valid_lexeme_exercise(e: dict, lexeme_id: int, sentence_by_id: dict[int, Row],
+                          sentence_ids_by_lexeme: dict[int, set[int]]) -> bool:
+    """Only count exercises whose prompt sentence is reviewed and actually contains the target lexeme."""
+    if e["targetItemType"] != "LEXEME" or e["targetItemId"] != lexeme_id:
+        return False
+    sentence_id = e["sentenceId"]
+    sentence = sentence_by_id.get(sentence_id)
+    return (
+        sentence is not None
+        and reviewed(sentence)
+        and sentence_id in sentence_ids_by_lexeme.get(lexeme_id, set())
+    )
+
+
 def build_coverage_report(lexemes, sentences, accepted, sentence_lexeme, exercises):
     sentence_by_id = {r.data["sentenceId"]: r for r in sentences}
     accepted_by_sentence: dict[int, list[Row]] = {}
@@ -1155,7 +1171,11 @@ def build_coverage_report(lexemes, sentences, accepted, sentence_lexeme, exercis
             and any(reviewed(a) for a in accepted_by_sentence.get(sid, []))
         ]
         target_exercises = exercise_targets_by_lexeme.get(lexeme_id, [])
-        exercise_kinds = sorted({exercise_kind(e["type"]) for e in target_exercises})
+        valid_target_exercises = [
+            e for e in target_exercises
+            if valid_lexeme_exercise(e, lexeme_id, sentence_by_id, sentence_ids_by_lexeme)
+        ]
+        exercise_kinds = sorted({exercise_kind(e["type"]) for e in valid_target_exercises})
         required_contexts = 4 if d["pos"] == "verb" and d["frequencyRank"] <= 500 else 2
         missing = []
         if not reviewed(r):
@@ -1181,6 +1201,8 @@ def build_coverage_report(lexemes, sentences, accepted, sentence_lexeme, exercis
             "reviewedSentenceContexts": len(reviewed_sentence_ids),
             "requiredSentenceContexts": required_contexts,
             "targetExerciseCount": len(target_exercises),
+            "validTargetExerciseCount": len(valid_target_exercises),
+            "invalidTargetExerciseCount": len(target_exercises) - len(valid_target_exercises),
             "exerciseKinds": exercise_kinds,
             "learnerReady": learner_ready,
             "missing": missing,
@@ -1238,6 +1260,10 @@ def build_coverage_report(lexemes, sentences, accepted, sentence_lexeme, exercis
                 "default": 2,
             },
             "minimumExerciseKinds": ["production", "recognition"],
+            "exerciseContextRequired": (
+                "LEXEME exercises count only when their sentenceId exists, is REVIEWED, "
+                "and is linked to the target lexeme."
+            ),
         },
         "lexemeReadiness": lexeme_readiness,
         "missingA1A2Gaps": missing_gaps,
@@ -1299,11 +1325,15 @@ def main():
     ap.add_argument("--out", required=True, help="output content.db path")
     ap.add_argument("--inject-unvetted", action="store_true",
                     help="inject an UNVETTED row to demonstrate the publish gate rejecting it (AC17)")
+    ap.add_argument("--inject-malformed-exercise", action="store_true",
+                    help="corrupt one critical LEXEME exercise to prove coverage readiness ignores malformed exercises")
     ap.add_argument("--fail-on-coverage-gaps", action="store_true",
                     help="exit non-zero if reviewed A1/A2 rows are not learner-ready")
     ap.add_argument("--baseline-snapshot", default=DEFAULT_BASELINE_SNAPSHOT_PATH,
                     help="reviewable compact coverage snapshot path")
     args = ap.parse_args()
+    if args.inject_malformed_exercise and not args.fail_on_coverage_gaps:
+        ap.error("--inject-malformed-exercise requires --fail-on-coverage-gaps")
 
     lexemes, sentences, accepted, sentence_lexeme, conj, exercises, nodes = vetted_sample()
 
@@ -1322,6 +1352,15 @@ def main():
                              "direction": "ES_TO_EN", "answerText": "i own a dog"},
                             source="authored", sourceId="llm:draft", license="proprietary",
                             vettingStatus=UNVETTED))
+    if args.inject_malformed_exercise:
+        # Regression fixture: these used to count as valid coverage for viajar solely because
+        # the exercise target was lexeme 31. They must not count when the sentence is unlinked
+        # to the target lexeme or dangling.
+        exercises = [
+            {**e, "sentenceId": 1} if e["exerciseId"] == 61 else
+            {**e, "sentenceId": 999999} if e["exerciseId"] == 62 else e
+            for e in exercises
+        ]
 
     # Stage 5: publish gate (AC17) — raises SystemExit(2) if anything is unvetted/sourceless
     stage_publish_gate(lexemes, sentences, accepted)
