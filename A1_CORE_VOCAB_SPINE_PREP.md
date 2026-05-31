@@ -129,13 +129,13 @@ Source rows used:
 
 ## Next Worker Task
 
-Implement `A1-007 Movement: venir` in the content pipeline sample.
+After the `A1-008 Priority-1 Verb Closeout` batch is reviewed and committed, start a larger vetted A1 topic pack from the remaining priority-2 gaps.
 
 Concrete steps:
 
-1. Add the next clean priority-1 movement verb, `venir`, from Wiktionary using the FrequencyWords rank.
-2. Find four reviewed Tatoeba contexts for the verb.
-3. Add the missing `sentence_lexeme` joins and derived exercises.
+1. Prefer a 5-10 lexeme source-checked A1 topic pack from the current top gaps: `beber`, `casa`, `comer`, `comida`, `día`, `familia`, `hablar`, `persona`, `tiempo`, `ver`.
+2. Use Tatoeba/Wiktionary rows where source material is straightforward; keep AI-drafted rows out of learner-ready content unless the AI draft lane is wired and reviewed.
+3. Add enough reviewed sentence coverage, accepted answers, `sentence_lexeme` joins, and derived exercises for each included lexeme.
 4. Run the normal pipeline and inspect `content_coverage.json`.
 5. Update `coverage_baseline_snapshot.json`.
 6. Keep `--inject-unvetted` and `--fail-on-coverage-gaps` behavior intact.
@@ -382,5 +382,52 @@ Acceptance result:
 - `learnerReadyLexemes` increases from 9 to 10.
 - `venir` has no readiness blockers in `content_coverage.json`.
 - `missingA1A2GapCount` decreases from 22 to 21.
+- `--fail-on-coverage-gaps` exits 0.
+- The publish gate still rejects unreviewed rows.
+
+## A1-008 Priority-1 Verb Closeout: Hacer And Decir
+
+**Status:** implemented locally after A1-007.
+
+**Goal:** add the remaining clean priority-1 verb slice, `hacer` and `decir`, without schema or UI changes.
+
+**Target lemmas:**
+
+| Lemma | FrequencyWords rank | Source basis | Required to ship |
+|---|---:|---|---|
+| `hacer` | 68 | `SPEC.md` §5.2 irregular verb table | 4 reviewed contexts, production + recognition exercises |
+| `decir` | 111 | `SPEC.md` §5.2 irregular verb table | 4 reviewed contexts, production + recognition exercises |
+
+Source rows used:
+
+| Lemma | Spanish sentence | Tatoeba Spanish ID | Accepted English answer | English source ID |
+|---|---|---:|---|---:|
+| `hacer` | `¿Qué haces?` | 4052592 | `what are you doing` | 16492 |
+| `hacer` | `Puedo hacerlo.` | 1686297 | `i can do it` | 254742 |
+| `hacer` | `Hace frío.` | 2926 | `it's cold` | 1813 |
+| `hacer` | `Hace calor.` | 456142 | `it's hot` | 423405 |
+| `decir` | `Dime.` | 5044120 | `tell me` | 1913090 |
+| `decir` | `Dime todo.` | 1216387 | `tell me everything` | 1216330 |
+| `decir` | `¿Qué dices?` | 941802 | `what do you say` | 1174872 |
+| `decir` | `Dígame la verdad.` | 571886 | `tell me the truth` | 321441 |
+
+Implemented content delta:
+
+- 2 reviewed Wiktionary lexeme rows.
+- 8 reviewed Tatoeba sentence rows.
+- 8 reviewed Tatoeba accepted-answer rows.
+- 9 `sentence_lexeme` joins (`hacer` plus existing `poder` on one row).
+- 4 derived exercises:
+  - `hacer` production exercise
+  - `hacer` recognition exercise
+  - `decir` production exercise
+  - `decir` recognition exercise
+- Updated `coverage_baseline_snapshot.json`.
+
+Acceptance result:
+
+- `learnerReadyLexemes` increases from 10 to 12.
+- `hacer` and `decir` have no readiness blockers in `content_coverage.json`.
+- `missingA1A2GapCount` decreases from 21 to 19.
 - `--fail-on-coverage-gaps` exits 0.
 - The publish gate still rejects unreviewed rows.
