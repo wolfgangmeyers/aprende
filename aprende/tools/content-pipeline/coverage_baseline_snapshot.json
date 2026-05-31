@@ -37,108 +37,48 @@
     "reviewPolicy": "This list is a local source-checked audit target, not shipped learning content. A target lemma only becomes shipped content after the normal lexeme/sentence/accepted-answer provenance and REVIEWED gate pass."
   },
   "summary": {
-    "rawLexemes": 12,
-    "learnerReadyLexemes": 12,
-    "reviewedSentences": 39,
-    "reviewedAcceptedAnswers": 42,
-    "exerciseCount": 24,
-    "missingA1A2GapCount": 19
+    "rawLexemes": 17,
+    "learnerReadyLexemes": 17,
+    "reviewedSentences": 51,
+    "reviewedAcceptedAnswers": 54,
+    "exerciseCount": 34,
+    "missingA1A2GapCount": 14
   },
   "counts": {
     "lexemesByPos": {
-      "noun": 2,
-      "verb": 10
+      "noun": 5,
+      "verb": 12
     },
     "lexemesByCefrBand": {
-      "A1": 12
+      "A1": 17
     },
     "lexemesByFrequencyBucket": {
-      "0001-0500": 10,
+      "0001-0500": 14,
       "0501-1000": 1,
-      "1001-2000": 1
+      "1001-2000": 2
     },
     "contentRowsBySource": {
       "authored": 2,
-      "tatoeba": 79,
-      "wiktionary": 12
+      "tatoeba": 103,
+      "wiktionary": 17
     },
     "contentRowsByLicense": {
-      "CC-BY-2.0-FR": 79,
-      "CC-BY-SA-3.0": 12,
+      "CC-BY-2.0-FR": 103,
+      "CC-BY-SA-3.0": 17,
       "proprietary": 2
     },
     "contentRowsByVettingStatus": {
-      "REVIEWED": 93
+      "REVIEWED": 122
     },
     "exerciseTargetsByType": {
-      "LEXEME": 24
+      "LEXEME": 34
     },
     "exerciseTypes": {
-      "TYPED_TRANSLATION": 12,
-      "WORD_BANK": 12
+      "TYPED_TRANSLATION": 17,
+      "WORD_BANK": 17
     }
   },
   "topMissingA1A2Gaps": [
-    {
-      "lemma": "beber",
-      "cefrBand": "A1",
-      "pos": "verb",
-      "priority": 2,
-      "reason": "food routines",
-      "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 1 food topic",
-      "status": "missing_lexeme",
-      "blockers": [
-        "add_reviewed_lexeme",
-        "add_reviewed_contexts",
-        "add_exercises"
-      ],
-      "currentLexemeId": null
-    },
-    {
-      "lemma": "casa",
-      "cefrBand": "A1",
-      "pos": "noun",
-      "priority": 2,
-      "reason": "home",
-      "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 1 home topic",
-      "status": "missing_lexeme",
-      "blockers": [
-        "add_reviewed_lexeme",
-        "add_reviewed_contexts",
-        "add_exercises"
-      ],
-      "currentLexemeId": null
-    },
-    {
-      "lemma": "comer",
-      "cefrBand": "A1",
-      "pos": "verb",
-      "priority": 2,
-      "reason": "food routines",
-      "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 1 food topic",
-      "status": "missing_lexeme",
-      "blockers": [
-        "add_reviewed_lexeme",
-        "add_reviewed_contexts",
-        "add_exercises"
-      ],
-      "currentLexemeId": null
-    },
-    {
-      "lemma": "comida",
-      "cefrBand": "A1",
-      "pos": "noun",
-      "priority": 2,
-      "reason": "food",
-      "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 1 food topic",
-      "status": "missing_lexeme",
-      "blockers": [
-        "add_reviewed_lexeme",
-        "add_reviewed_contexts",
-        "add_exercises"
-      ],
-      "currentLexemeId": null
-    },
     {
       "lemma": "d\u00eda",
       "cefrBand": "A1",
@@ -146,21 +86,6 @@
       "priority": 2,
       "reason": "time",
       "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 1 time/routines topic",
-      "status": "missing_lexeme",
-      "blockers": [
-        "add_reviewed_lexeme",
-        "add_reviewed_contexts",
-        "add_exercises"
-      ],
-      "currentLexemeId": null
-    },
-    {
-      "lemma": "familia",
-      "cefrBand": "A1",
-      "pos": "noun",
-      "priority": 2,
-      "reason": "relationships",
-      "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 1 people topic",
       "status": "missing_lexeme",
       "blockers": [
         "add_reviewed_lexeme",

@@ -129,11 +129,11 @@ Source rows used:
 
 ## Next Worker Task
 
-After the `A1-008 Priority-1 Verb Closeout` batch is reviewed and committed, start a larger vetted A1 topic pack from the remaining priority-2 gaps.
+After the `A1-009 Home Food And Family` batch is reviewed and committed, continue with the remaining priority-2 gaps.
 
 Concrete steps:
 
-1. Prefer a 5-10 lexeme source-checked A1 topic pack from the current top gaps: `beber`, `casa`, `comer`, `comida`, `día`, `familia`, `hablar`, `persona`, `tiempo`, `ver`.
+1. Prefer a 5-10 lexeme source-checked A1 topic pack from the current top gaps: `día`, `hablar`, `persona`, `tiempo`, `ver`, `vivir`.
 2. Use Tatoeba/Wiktionary rows where source material is straightforward; keep AI-drafted rows out of learner-ready content unless the AI draft lane is wired and reviewed.
 3. Add enough reviewed sentence coverage, accepted answers, `sentence_lexeme` joins, and derived exercises for each included lexeme.
 4. Run the normal pipeline and inspect `content_coverage.json`.
@@ -431,3 +431,59 @@ Acceptance result:
 - `missingA1A2GapCount` decreases from 21 to 19.
 - `--fail-on-coverage-gaps` exits 0.
 - The publish gate still rejects unreviewed rows.
+
+## A1-009 Home Food And Family
+
+**Status:** implemented locally after A1-008.
+
+**Goal:** add the first larger source-checked A1 topic pack from priority-2 gaps, without AI-drafted shipping rows.
+
+**Target lemmas:**
+
+| Lemma | FrequencyWords rank | Source basis | Required to ship |
+|---|---:|---|---|
+| `casa` | 91 | `SPANISH_BREADTH_PLAN.md` Phase 1 home topic | 2+ reviewed contexts, production + recognition exercises |
+| `comida` | 483 | `SPANISH_BREADTH_PLAN.md` Phase 1 food topic | 2+ reviewed contexts, production + recognition exercises |
+| `comer` | 488 | `SPANISH_BREADTH_PLAN.md` Phase 1 food topic | 4 reviewed contexts, production + recognition exercises |
+| `beber` | 1053 | `SPANISH_BREADTH_PLAN.md` Phase 1 food topic | 4 reviewed contexts, production + recognition exercises |
+| `familia` | 254 | `SPANISH_BREADTH_PLAN.md` Phase 1 people topic | 2+ reviewed contexts, production + recognition exercises |
+
+Source rows used:
+
+| Lemma | Spanish sentence | Tatoeba Spanish ID | Accepted English answer | English source ID |
+|---|---|---:|---|---:|
+| `casa` | `Esta es mi casa.` | 955676 | `this is my house` | 955157 |
+| `casa` | `Estoy en casa.` | 1013884 | `i'm at home` | 404046 |
+| `casa` | `Vamos a casa.` | 748478 | `we're going home` | 430024 |
+| `casa` | `Ven a casa.` | 3873833 | `come home` | 413767 |
+| `comida` | `La comida está buena.` | 2002676 | `the food is good` | 2002528 |
+| `comida` | `No tengo comida.` | 3600572 | `i have no food` | 2549665 |
+| `comer` | `Come.` | 6702001 | `he eats` | 6702018 |
+| `comer` | `Comemos.` | 6702002 | `we eat` | 3845194 |
+| `comer` | `Comen.` | 6702004 | `they eat` | 3845203 |
+| `comer` | `¿Quieres comer?` | 1493376 | `do you want to eat` | 773323 |
+| `beber` | `Bebo agua.` | 5745781 | `i drink water` | 7932256 |
+| `beber` | `Bebemos agua.` | 4386719 | `we drink water` | 4385215 |
+| `beber` | `Bebes agua.` | 10496384 | `you drink water` | 7189457 |
+| `beber` | `Bebe agua.` | 7562545 | `he drinks water` | 4870686 |
+| `familia` | `Son familia.` | 6600079 | `they're family` | 2242977 |
+| `familia` | `¿Tienes familia?` | 730296 | `do you have a family` | 54499 |
+
+Implemented content delta:
+
+- 5 reviewed Wiktionary lexeme rows.
+- 12 reviewed Tatoeba sentence rows, plus 4 reused reviewed Tatoeba `casa` contexts.
+- 12 reviewed Tatoeba accepted-answer rows.
+- 25 `sentence_lexeme` joins, including existing-word joins for `estar`, `tener`, `querer`, and `agua`.
+- 10 derived exercises:
+  - production and recognition exercises for `casa`, `comida`, `comer`, `beber`, and `familia`
+- Updated `coverage_baseline_snapshot.json`.
+
+Acceptance result:
+
+- `learnerReadyLexemes` increases from 12 to 17.
+- `casa`, `comida`, `comer`, `beber`, and `familia` have no readiness blockers in `content_coverage.json`.
+- `missingA1A2GapCount` decreases from 19 to 14.
+- `--fail-on-coverage-gaps` exits 0.
+- The publish gate still rejects unreviewed rows.
+- No `AI_DRAFT` rows are included in shipped content.
