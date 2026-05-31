@@ -16,8 +16,9 @@ content processing. Can be ported to a Gradle/Kotlin module later — the schema
 Kotlin Room entities mirror) is the real contract, not the build language.
 
 Usage:
-    python3 build_content_db.py --out <path/to/content.db>          # build from the vetted sample
+    python3 build_content_db.py --out <path/to/content.db>          # build db + reports
     python3 build_content_db.py --out <...> --inject-unvetted       # demo: gate must REJECT
+    python3 build_content_db.py --out <...> --fail-on-coverage-gaps # enforce readiness budgets
 """
 from __future__ import annotations
 
@@ -26,7 +27,10 @@ import json
 import os
 import sqlite3
 import sys
-from dataclasses import dataclass, field, asdict
+from dataclasses import dataclass
+
+PIPELINE_DIR = os.path.dirname(os.path.abspath(__file__))
+DEFAULT_BASELINE_SNAPSHOT_PATH = os.path.join(PIPELINE_DIR, "coverage_baseline_snapshot.json")
 
 # --- vetting status lifecycle (SPEC §4.6) ---
 UNVETTED = "UNVETTED"
@@ -121,6 +125,91 @@ SCHEMA_DDL = [
 
 # content-bearing tables that the publish gate audits (must be REVIEWED + have a source)
 VETTED_TABLES = ["lexeme", "sentence", "accepted_answer"]
+
+
+FREQUENCY_SOURCE_DECISION = {
+    "status": "selected-for-phase-0",
+    "canonicalFrequencySource": "hermitdave/FrequencyWords Spanish OpenSubtitles frequency list",
+    "sourceUrl": "https://github.com/hermitdave/FrequencyWords",
+    "license": "CC-BY-SA-4.0 for generated content outputs",
+    "upstreamCorpus": "OpenSubtitles",
+    "decision": (
+        "Use this source as the canonical ordering spine for Spanish frequency ranks. "
+        "Store rank provenance separately from authored curriculum text, expose attribution "
+        "in the in-app credits screen, and treat any redistributed rank data as CC-BY-SA-4.0."
+    ),
+    "rationale": [
+        "The repo publishes generated outputs and identifies CC-BY-SA-4.0 for content.",
+        "The list is broad enough for the A1/A2/B1 frequency spine and already matches SPEC O1 candidates.",
+        "The ShareAlike obligation is manageable if frequency-derived metadata is explicitly attributed and segregated.",
+    ],
+    "licenseNotes": [
+        {
+            "source": "Tatoeba textual sentences",
+            "url": "https://tatoeba.org/en/downloads",
+            "license": "CC-BY-2.0-FR or CC0 depending on download/subset",
+            "use": "Spanish-English sentence pairs and accepted-answer source pairs",
+        },
+        {
+            "source": "Wiktionary",
+            "url": "https://en.wiktionary.org/wiki/Wiktionary:Copyrights",
+            "license": "CC-BY-SA / GFDL for entry text",
+            "use": "Glosses, part-of-speech data, and conjugation source checks",
+        },
+    ],
+}
+
+
+TARGET_LIST_SOURCE = {
+    "status": "phase-0-audit-list",
+    "sourceBasis": [
+        "SPEC.md §4.1 vocabulary spine and §5.6 CEFR sequencing",
+        "SPANISH_BREADTH_PLAN.md Phase 0/Phase 1 A1-A2 priorities",
+        "hermitdave/FrequencyWords selected ordering spine",
+    ],
+    "reviewPolicy": (
+        "This list is a local source-checked audit target, not shipped learning content. "
+        "A target lemma only becomes shipped content after the normal lexeme/sentence/"
+        "accepted-answer provenance and REVIEWED gate pass."
+    ),
+}
+
+
+# A deliberately small, source-checked A1/A2 target spine for Phase 0 reporting. This is
+# not shipped learning content; it is the local audit list used to surface missing gaps from
+# the current reviewed corpus. It should grow after the canonical frequency list is ingested.
+A1_A2_TARGET_LEMMAS = [
+    {"lemma": "ser", "cefrBand": "A1", "pos": "verb", "priority": 1, "reason": "identity and description", "sourceBasis": "SPEC.md §5.6 A1 ser/estar"},
+    {"lemma": "estar", "cefrBand": "A1", "pos": "verb", "priority": 1, "reason": "state and location", "sourceBasis": "SPEC.md §5.6 A1 ser/estar"},
+    {"lemma": "tener", "cefrBand": "A1", "pos": "verb", "priority": 1, "reason": "possession and needs", "sourceBasis": "SPEC.md §5.2 irregular verb table"},
+    {"lemma": "ir", "cefrBand": "A1", "pos": "verb", "priority": 1, "reason": "movement and near future", "sourceBasis": "SPEC.md §5.2 irregular verb table"},
+    {"lemma": "hacer", "cefrBand": "A1", "pos": "verb", "priority": 1, "reason": "daily actions and weather", "sourceBasis": "SPEC.md §5.2 irregular verb table"},
+    {"lemma": "querer", "cefrBand": "A1", "pos": "verb", "priority": 1, "reason": "wants", "sourceBasis": "SPEC.md §5.2 irregular verb table"},
+    {"lemma": "poder", "cefrBand": "A1", "pos": "verb", "priority": 1, "reason": "ability and permission", "sourceBasis": "SPEC.md §5.2 irregular verb table"},
+    {"lemma": "decir", "cefrBand": "A1", "pos": "verb", "priority": 1, "reason": "reported speech basics", "sourceBasis": "SPEC.md §5.2 irregular verb table"},
+    {"lemma": "saber", "cefrBand": "A1", "pos": "verb", "priority": 1, "reason": "knowledge", "sourceBasis": "SPEC.md §5.2 irregular verb table"},
+    {"lemma": "venir", "cefrBand": "A1", "pos": "verb", "priority": 1, "reason": "movement", "sourceBasis": "SPEC.md §5.2 irregular verb table"},
+    {"lemma": "comer", "cefrBand": "A1", "pos": "verb", "priority": 2, "reason": "food routines", "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 1 food topic"},
+    {"lemma": "beber", "cefrBand": "A1", "pos": "verb", "priority": 2, "reason": "food routines", "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 1 food topic"},
+    {"lemma": "vivir", "cefrBand": "A1", "pos": "verb", "priority": 2, "reason": "home and biography", "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 1 home/routines topics"},
+    {"lemma": "hablar", "cefrBand": "A1", "pos": "verb", "priority": 2, "reason": "communication", "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 1 questions topic"},
+    {"lemma": "ver", "cefrBand": "A1", "pos": "verb", "priority": 2, "reason": "perception", "sourceBasis": "hermitdave/FrequencyWords high-frequency spine"},
+    {"lemma": "persona", "cefrBand": "A1", "pos": "noun", "priority": 2, "reason": "people", "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 1 people topic"},
+    {"lemma": "casa", "cefrBand": "A1", "pos": "noun", "priority": 2, "reason": "home", "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 1 home topic"},
+    {"lemma": "día", "cefrBand": "A1", "pos": "noun", "priority": 2, "reason": "time", "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 1 time/routines topic"},
+    {"lemma": "tiempo", "cefrBand": "A1", "pos": "noun", "priority": 2, "reason": "time and weather", "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 1 time/routines topic"},
+    {"lemma": "agua", "cefrBand": "A1", "pos": "noun", "priority": 2, "reason": "food and drink", "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 1 food/drink topic"},
+    {"lemma": "comida", "cefrBand": "A1", "pos": "noun", "priority": 2, "reason": "food", "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 1 food topic"},
+    {"lemma": "familia", "cefrBand": "A1", "pos": "noun", "priority": 2, "reason": "relationships", "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 1 people topic"},
+    {"lemma": "trabajo", "cefrBand": "A2", "pos": "noun", "priority": 3, "reason": "work", "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 3 work/school topic"},
+    {"lemma": "escuela", "cefrBand": "A2", "pos": "noun", "priority": 3, "reason": "school", "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 3 work/school topic"},
+    {"lemma": "dinero", "cefrBand": "A2", "pos": "noun", "priority": 3, "reason": "shopping", "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 3 shopping/money topic"},
+    {"lemma": "comprar", "cefrBand": "A2", "pos": "verb", "priority": 3, "reason": "shopping", "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 3 shopping/money topic"},
+    {"lemma": "viajar", "cefrBand": "A2", "pos": "verb", "priority": 3, "reason": "travel", "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 3 travel topic"},
+    {"lemma": "llegar", "cefrBand": "A2", "pos": "verb", "priority": 3, "reason": "travel and time", "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 3 travel/time topics"},
+    {"lemma": "salir", "cefrBand": "A2", "pos": "verb", "priority": 3, "reason": "movement and plans", "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 3 travel/plans topics"},
+    {"lemma": "necesitar", "cefrBand": "A2", "pos": "verb", "priority": 3, "reason": "needs", "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 3 wants/needs topic"},
+]
 
 
 # --------------------------------------------------------------------------------------
@@ -306,11 +395,209 @@ def write_manifest(out_dir, lexemes, sentences, accepted):
     return manifest
 
 
+def frequency_bucket(rank: int) -> str:
+    if rank <= 500:
+        return "0001-0500"
+    if rank <= 1000:
+        return "0501-1000"
+    if rank <= 2000:
+        return "1001-2000"
+    return "2001+"
+
+
+def count_by(values) -> dict[str, int]:
+    counts: dict[str, int] = {}
+    for value in values:
+        key = str(value)
+        counts[key] = counts.get(key, 0) + 1
+    return dict(sorted(counts.items()))
+
+
+def exercise_kind(exercise_type: str) -> str:
+    production_types = {"TYPED_TRANSLATION", "FILL_BLANK", "LISTEN_TYPE"}
+    return "production" if exercise_type in production_types else "recognition"
+
+
+def reviewed(row: Row) -> bool:
+    return row.vettingStatus == REVIEWED and bool(row.source) and bool(row.license)
+
+
+def build_coverage_report(lexemes, sentences, accepted, sentence_lexeme, exercises):
+    sentence_by_id = {r.data["sentenceId"]: r for r in sentences}
+    accepted_by_sentence: dict[int, list[Row]] = {}
+    for r in accepted:
+        accepted_by_sentence.setdefault(r.data["sentenceId"], []).append(r)
+
+    sentence_ids_by_lexeme: dict[int, set[int]] = {}
+    for sentence_id, lexeme_id in sentence_lexeme:
+        sentence_ids_by_lexeme.setdefault(lexeme_id, set()).add(sentence_id)
+
+    exercise_targets_by_lexeme: dict[int, list[dict]] = {}
+    for e in exercises:
+        if e["targetItemType"] == "LEXEME":
+            exercise_targets_by_lexeme.setdefault(e["targetItemId"], []).append(e)
+
+    lexeme_readiness = []
+    learner_ready_count = 0
+    for r in sorted(lexemes, key=lambda row: row.data["frequencyRank"]):
+        d = r.data
+        lexeme_id = d["lexemeId"]
+        sentence_ids = sorted(sentence_ids_by_lexeme.get(lexeme_id, set()))
+        reviewed_sentence_ids = [
+            sid for sid in sentence_ids
+            if sid in sentence_by_id
+            and reviewed(sentence_by_id[sid])
+            and any(reviewed(a) for a in accepted_by_sentence.get(sid, []))
+        ]
+        target_exercises = exercise_targets_by_lexeme.get(lexeme_id, [])
+        exercise_kinds = sorted({exercise_kind(e["type"]) for e in target_exercises})
+        required_contexts = 4 if d["pos"] == "verb" and d["frequencyRank"] <= 500 else 2
+        missing = []
+        if not reviewed(r):
+            missing.append("lexeme_not_reviewed")
+        if len(reviewed_sentence_ids) < required_contexts:
+            missing.append(f"needs_{required_contexts}_reviewed_contexts")
+        if "production" not in exercise_kinds:
+            missing.append("needs_production_exercise")
+        if "recognition" not in exercise_kinds:
+            missing.append("needs_recognition_exercise")
+
+        learner_ready = not missing
+        if learner_ready:
+            learner_ready_count += 1
+
+        lexeme_readiness.append({
+            "lexemeId": lexeme_id,
+            "lemma": d["lemma"],
+            "pos": d["pos"],
+            "cefrBand": d["cefrBand"],
+            "frequencyRank": d["frequencyRank"],
+            "frequencyBucket": frequency_bucket(d["frequencyRank"]),
+            "reviewedSentenceContexts": len(reviewed_sentence_ids),
+            "requiredSentenceContexts": required_contexts,
+            "targetExerciseCount": len(target_exercises),
+            "exerciseKinds": exercise_kinds,
+            "learnerReady": learner_ready,
+            "missing": missing,
+        })
+
+    present_by_lemma = {r.data["lemma"]: r for r in lexemes}
+    readiness_by_lemma = {entry["lemma"]: entry for entry in lexeme_readiness}
+    missing_gaps = []
+    for target in sorted(A1_A2_TARGET_LEMMAS, key=lambda row: (row["priority"], row["cefrBand"], row["lemma"])):
+        lemma = target["lemma"]
+        entry = readiness_by_lemma.get(lemma)
+        if not entry:
+            status = "missing_lexeme"
+            blockers = ["add_reviewed_lexeme", "add_reviewed_contexts", "add_exercises"]
+        elif not entry["learnerReady"]:
+            status = "not_learner_ready"
+            blockers = entry["missing"]
+        else:
+            continue
+        missing_gaps.append({
+            **target,
+            "status": status,
+            "blockers": blockers,
+            "currentLexemeId": present_by_lemma[lemma].data["lexemeId"] if lemma in present_by_lemma else None,
+        })
+
+    raw_rows = [*lexemes, *sentences, *accepted]
+    report = {
+        "schemaVersion": SCHEMA_VERSION,
+        "frequencySourceDecision": FREQUENCY_SOURCE_DECISION,
+        "targetListSource": TARGET_LIST_SOURCE,
+        "summary": {
+            "rawLexemes": len(lexemes),
+            "learnerReadyLexemes": learner_ready_count,
+            "reviewedSentences": sum(1 for r in sentences if reviewed(r)),
+            "reviewedAcceptedAnswers": sum(1 for r in accepted if reviewed(r)),
+            "exerciseCount": len(exercises),
+            "missingA1A2GapCount": len(missing_gaps),
+        },
+        "counts": {
+            "lexemesByPos": count_by(r.data["pos"] for r in lexemes),
+            "lexemesByCefrBand": count_by(r.data["cefrBand"] for r in lexemes),
+            "lexemesByFrequencyBucket": count_by(frequency_bucket(r.data["frequencyRank"]) for r in lexemes),
+            "contentRowsBySource": count_by(r.source for r in raw_rows),
+            "contentRowsByLicense": count_by(r.license for r in raw_rows),
+            "contentRowsByVettingStatus": count_by(r.vettingStatus for r in raw_rows),
+            "exerciseTargetsByType": count_by(e["targetItemType"] for e in exercises),
+            "exerciseTypes": count_by(e["type"] for e in exercises),
+        },
+        "learnerReadyDefinition": {
+            "reviewedLexeme": True,
+            "reviewedSourceAndLicense": True,
+            "minimumReviewedSentenceContexts": {
+                "highValueVerb": 4,
+                "default": 2,
+            },
+            "minimumExerciseKinds": ["production", "recognition"],
+        },
+        "lexemeReadiness": lexeme_readiness,
+        "missingA1A2Gaps": missing_gaps,
+    }
+    return report
+
+
+def write_coverage_report(out_dir, lexemes, sentences, accepted, sentence_lexeme, exercises):
+    report = build_coverage_report(lexemes, sentences, accepted, sentence_lexeme, exercises)
+    path = os.path.join(out_dir, "content_coverage.json")
+    with open(path, "w") as f:
+        json.dump(report, f, indent=2)
+    snapshot_path = os.path.join(out_dir, "coverage_snapshot.json")
+    snapshot = {
+        "schemaVersion": report["schemaVersion"],
+        "frequencySourceDecision": report["frequencySourceDecision"],
+        "targetListSource": report["targetListSource"],
+        "summary": report["summary"],
+        "counts": report["counts"],
+        "topMissingA1A2Gaps": report["missingA1A2Gaps"][:20],
+    }
+    with open(snapshot_path, "w") as f:
+        json.dump(snapshot, f, indent=2)
+    return report
+
+
+def write_baseline_snapshot(path, report):
+    baseline = {
+        "schemaVersion": report["schemaVersion"],
+        "frequencySourceDecision": report["frequencySourceDecision"],
+        "targetListSource": report["targetListSource"],
+        "summary": report["summary"],
+        "counts": report["counts"],
+        "topMissingA1A2Gaps": report["missingA1A2Gaps"][:20],
+    }
+    os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
+    with open(path, "w") as f:
+        json.dump(baseline, f, indent=2)
+        f.write("\n")
+    return baseline
+
+
+def enforce_coverage_budgets(report) -> None:
+    failures = []
+    if report["summary"]["learnerReadyLexemes"] == 0:
+        failures.append("no learner-ready lexemes")
+    for entry in report["lexemeReadiness"]:
+        if entry["learnerReady"]:
+            continue
+        if entry["cefrBand"] in {"A1", "A2"}:
+            failures.append(f"{entry['lemma']} is not learner-ready: {', '.join(entry['missing'])}")
+    if failures:
+        sys.stderr.write("COVERAGE BUDGET FAILED:\n  " + "\n  ".join(failures) + "\n")
+        raise SystemExit(4)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", required=True, help="output content.db path")
     ap.add_argument("--inject-unvetted", action="store_true",
                     help="inject an UNVETTED row to demonstrate the publish gate rejecting it (AC17)")
+    ap.add_argument("--fail-on-coverage-gaps", action="store_true",
+                    help="exit non-zero if reviewed A1/A2 rows are not learner-ready")
+    ap.add_argument("--baseline-snapshot", default=DEFAULT_BASELINE_SNAPSHOT_PATH,
+                    help="reviewable compact coverage snapshot path")
     args = ap.parse_args()
 
     lexemes, sentences, accepted, sentence_lexeme, conj, exercises, nodes = vetted_sample()
@@ -334,10 +621,21 @@ def main():
     # Stage 5: publish gate (AC17) — raises SystemExit(2) if anything is unvetted/sourceless
     stage_publish_gate(lexemes, sentences, accepted)
 
+    out_dir = os.path.dirname(args.out) or "."
+    os.makedirs(out_dir, exist_ok=True)
+    manifest = write_manifest(out_dir, lexemes, sentences, accepted)
+    coverage = write_coverage_report(out_dir, lexemes, sentences, accepted, sentence_lexeme, exercises)
+    write_baseline_snapshot(args.baseline_snapshot, coverage)
+    if args.fail_on_coverage_gaps:
+        if os.path.exists(args.out):
+            os.remove(args.out)
+        enforce_coverage_budgets(coverage)
     write_db(args.out, lexemes, sentences, accepted, sentence_lexeme, conj, exercises, nodes)
-    manifest = write_manifest(os.path.dirname(args.out), lexemes, sentences, accepted)
     print(f"OK: wrote {args.out} (schema v{SCHEMA_VERSION})")
     print("manifest:", json.dumps(manifest))
+    print("coverage:", json.dumps(coverage["summary"]))
+    if coverage["missingA1A2Gaps"]:
+        print("topMissingA1A2Gaps:", json.dumps(coverage["missingA1A2Gaps"][:10]))
 
 
 if __name__ == "__main__":

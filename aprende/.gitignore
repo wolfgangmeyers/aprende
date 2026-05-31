@@ -22,3 +22,5 @@ captures/
 # like the gradle wrapper jar. See aprende/README.md and tools/content-pipeline/README.md.
 app/src/main/assets/database/content.db
 app/src/main/assets/database/content_manifest.json
+app/src/main/assets/database/content_coverage.json
+app/src/main/assets/database/coverage_snapshot.json

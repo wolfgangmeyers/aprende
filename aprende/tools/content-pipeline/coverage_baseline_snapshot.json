@@ -1,0 +1,380 @@
+{
+  "schemaVersion": 1,
+  "frequencySourceDecision": {
+    "status": "selected-for-phase-0",
+    "canonicalFrequencySource": "hermitdave/FrequencyWords Spanish OpenSubtitles frequency list",
+    "sourceUrl": "https://github.com/hermitdave/FrequencyWords",
+    "license": "CC-BY-SA-4.0 for generated content outputs",
+    "upstreamCorpus": "OpenSubtitles",
+    "decision": "Use this source as the canonical ordering spine for Spanish frequency ranks. Store rank provenance separately from authored curriculum text, expose attribution in the in-app credits screen, and treat any redistributed rank data as CC-BY-SA-4.0.",
+    "rationale": [
+      "The repo publishes generated outputs and identifies CC-BY-SA-4.0 for content.",
+      "The list is broad enough for the A1/A2/B1 frequency spine and already matches SPEC O1 candidates.",
+      "The ShareAlike obligation is manageable if frequency-derived metadata is explicitly attributed and segregated."
+    ],
+    "licenseNotes": [
+      {
+        "source": "Tatoeba textual sentences",
+        "url": "https://tatoeba.org/en/downloads",
+        "license": "CC-BY-2.0-FR or CC0 depending on download/subset",
+        "use": "Spanish-English sentence pairs and accepted-answer source pairs"
+      },
+      {
+        "source": "Wiktionary",
+        "url": "https://en.wiktionary.org/wiki/Wiktionary:Copyrights",
+        "license": "CC-BY-SA / GFDL for entry text",
+        "use": "Glosses, part-of-speech data, and conjugation source checks"
+      }
+    ]
+  },
+  "targetListSource": {
+    "status": "phase-0-audit-list",
+    "sourceBasis": [
+      "SPEC.md \u00a74.1 vocabulary spine and \u00a75.6 CEFR sequencing",
+      "SPANISH_BREADTH_PLAN.md Phase 0/Phase 1 A1-A2 priorities",
+      "hermitdave/FrequencyWords selected ordering spine"
+    ],
+    "reviewPolicy": "This list is a local source-checked audit target, not shipped learning content. A target lemma only becomes shipped content after the normal lexeme/sentence/accepted-answer provenance and REVIEWED gate pass."
+  },
+  "summary": {
+    "rawLexemes": 3,
+    "learnerReadyLexemes": 0,
+    "reviewedSentences": 2,
+    "reviewedAcceptedAnswers": 3,
+    "exerciseCount": 2,
+    "missingA1A2GapCount": 30
+  },
+  "counts": {
+    "lexemesByPos": {
+      "noun": 2,
+      "verb": 1
+    },
+    "lexemesByCefrBand": {
+      "A1": 3
+    },
+    "lexemesByFrequencyBucket": {
+      "0001-0500": 2,
+      "0501-1000": 1
+    },
+    "contentRowsBySource": {
+      "authored": 1,
+      "tatoeba": 4,
+      "wiktionary": 3
+    },
+    "contentRowsByLicense": {
+      "CC-BY-2.0-FR": 4,
+      "CC-BY-SA-3.0": 3,
+      "proprietary": 1
+    },
+    "contentRowsByVettingStatus": {
+      "REVIEWED": 8
+    },
+    "exerciseTargetsByType": {
+      "LEXEME": 2
+    },
+    "exerciseTypes": {
+      "TYPED_TRANSLATION": 1,
+      "WORD_BANK": 1
+    }
+  },
+  "topMissingA1A2Gaps": [
+    {
+      "lemma": "decir",
+      "cefrBand": "A1",
+      "pos": "verb",
+      "priority": 1,
+      "reason": "reported speech basics",
+      "sourceBasis": "SPEC.md \u00a75.2 irregular verb table",
+      "status": "missing_lexeme",
+      "blockers": [
+        "add_reviewed_lexeme",
+        "add_reviewed_contexts",
+        "add_exercises"
+      ],
+      "currentLexemeId": null
+    },
+    {
+      "lemma": "estar",
+      "cefrBand": "A1",
+      "pos": "verb",
+      "priority": 1,
+      "reason": "state and location",
+      "sourceBasis": "SPEC.md \u00a75.6 A1 ser/estar",
+      "status": "missing_lexeme",
+      "blockers": [
+        "add_reviewed_lexeme",
+        "add_reviewed_contexts",
+        "add_exercises"
+      ],
+      "currentLexemeId": null
+    },
+    {
+      "lemma": "hacer",
+      "cefrBand": "A1",
+      "pos": "verb",
+      "priority": 1,
+      "reason": "daily actions and weather",
+      "sourceBasis": "SPEC.md \u00a75.2 irregular verb table",
+      "status": "missing_lexeme",
+      "blockers": [
+        "add_reviewed_lexeme",
+        "add_reviewed_contexts",
+        "add_exercises"
+      ],
+      "currentLexemeId": null
+    },
+    {
+      "lemma": "ir",
+      "cefrBand": "A1",
+      "pos": "verb",
+      "priority": 1,
+      "reason": "movement and near future",
+      "sourceBasis": "SPEC.md \u00a75.2 irregular verb table",
+      "status": "missing_lexeme",
+      "blockers": [
+        "add_reviewed_lexeme",
+        "add_reviewed_contexts",
+        "add_exercises"
+      ],
+      "currentLexemeId": null
+    },
+    {
+      "lemma": "poder",
+      "cefrBand": "A1",
+      "pos": "verb",
+      "priority": 1,
+      "reason": "ability and permission",
+      "sourceBasis": "SPEC.md \u00a75.2 irregular verb table",
+      "status": "missing_lexeme",
+      "blockers": [
+        "add_reviewed_lexeme",
+        "add_reviewed_contexts",
+        "add_exercises"
+      ],
+      "currentLexemeId": null
+    },
+    {
+      "lemma": "querer",
+      "cefrBand": "A1",
+      "pos": "verb",
+      "priority": 1,
+      "reason": "wants",
+      "sourceBasis": "SPEC.md \u00a75.2 irregular verb table",
+      "status": "missing_lexeme",
+      "blockers": [
+        "add_reviewed_lexeme",
+        "add_reviewed_contexts",
+        "add_exercises"
+      ],
+      "currentLexemeId": null
+    },
+    {
+      "lemma": "saber",
+      "cefrBand": "A1",
+      "pos": "verb",
+      "priority": 1,
+      "reason": "knowledge",
+      "sourceBasis": "SPEC.md \u00a75.2 irregular verb table",
+      "status": "missing_lexeme",
+      "blockers": [
+        "add_reviewed_lexeme",
+        "add_reviewed_contexts",
+        "add_exercises"
+      ],
+      "currentLexemeId": null
+    },
+    {
+      "lemma": "ser",
+      "cefrBand": "A1",
+      "pos": "verb",
+      "priority": 1,
+      "reason": "identity and description",
+      "sourceBasis": "SPEC.md \u00a75.6 A1 ser/estar",
+      "status": "missing_lexeme",
+      "blockers": [
+        "add_reviewed_lexeme",
+        "add_reviewed_contexts",
+        "add_exercises"
+      ],
+      "currentLexemeId": null
+    },
+    {
+      "lemma": "tener",
+      "cefrBand": "A1",
+      "pos": "verb",
+      "priority": 1,
+      "reason": "possession and needs",
+      "sourceBasis": "SPEC.md \u00a75.2 irregular verb table",
+      "status": "not_learner_ready",
+      "blockers": [
+        "needs_4_reviewed_contexts",
+        "needs_recognition_exercise"
+      ],
+      "currentLexemeId": 1
+    },
+    {
+      "lemma": "venir",
+      "cefrBand": "A1",
+      "pos": "verb",
+      "priority": 1,
+      "reason": "movement",
+      "sourceBasis": "SPEC.md \u00a75.2 irregular verb table",
+      "status": "missing_lexeme",
+      "blockers": [
+        "add_reviewed_lexeme",
+        "add_reviewed_contexts",
+        "add_exercises"
+      ],
+      "currentLexemeId": null
+    },
+    {
+      "lemma": "agua",
+      "cefrBand": "A1",
+      "pos": "noun",
+      "priority": 2,
+      "reason": "food and drink",
+      "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 1 food/drink topic",
+      "status": "not_learner_ready",
+      "blockers": [
+        "needs_2_reviewed_contexts",
+        "needs_production_exercise"
+      ],
+      "currentLexemeId": 2
+    },
+    {
+      "lemma": "beber",
+      "cefrBand": "A1",
+      "pos": "verb",
+      "priority": 2,
+      "reason": "food routines",
+      "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 1 food topic",
+      "status": "missing_lexeme",
+      "blockers": [
+        "add_reviewed_lexeme",
+        "add_reviewed_contexts",
+        "add_exercises"
+      ],
+      "currentLexemeId": null
+    },
+    {
+      "lemma": "casa",
+      "cefrBand": "A1",
+      "pos": "noun",
+      "priority": 2,
+      "reason": "home",
+      "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 1 home topic",
+      "status": "missing_lexeme",
+      "blockers": [
+        "add_reviewed_lexeme",
+        "add_reviewed_contexts",
+        "add_exercises"
+      ],
+      "currentLexemeId": null
+    },
+    {
+      "lemma": "comer",
+      "cefrBand": "A1",
+      "pos": "verb",
+      "priority": 2,
+      "reason": "food routines",
+      "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 1 food topic",
+      "status": "missing_lexeme",
+      "blockers": [
+        "add_reviewed_lexeme",
+        "add_reviewed_contexts",
+        "add_exercises"
+      ],
+      "currentLexemeId": null
+    },
+    {
+      "lemma": "comida",
+      "cefrBand": "A1",
+      "pos": "noun",
+      "priority": 2,
+      "reason": "food",
+      "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 1 food topic",
+      "status": "missing_lexeme",
+      "blockers": [
+        "add_reviewed_lexeme",
+        "add_reviewed_contexts",
+        "add_exercises"
+      ],
+      "currentLexemeId": null
+    },
+    {
+      "lemma": "d\u00eda",
+      "cefrBand": "A1",
+      "pos": "noun",
+      "priority": 2,
+      "reason": "time",
+      "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 1 time/routines topic",
+      "status": "missing_lexeme",
+      "blockers": [
+        "add_reviewed_lexeme",
+        "add_reviewed_contexts",
+        "add_exercises"
+      ],
+      "currentLexemeId": null
+    },
+    {
+      "lemma": "familia",
+      "cefrBand": "A1",
+      "pos": "noun",
+      "priority": 2,
+      "reason": "relationships",
+      "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 1 people topic",
+      "status": "missing_lexeme",
+      "blockers": [
+        "add_reviewed_lexeme",
+        "add_reviewed_contexts",
+        "add_exercises"
+      ],
+      "currentLexemeId": null
+    },
+    {
+      "lemma": "hablar",
+      "cefrBand": "A1",
+      "pos": "verb",
+      "priority": 2,
+      "reason": "communication",
+      "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 1 questions topic",
+      "status": "missing_lexeme",
+      "blockers": [
+        "add_reviewed_lexeme",
+        "add_reviewed_contexts",
+        "add_exercises"
+      ],
+      "currentLexemeId": null
+    },
+    {
+      "lemma": "persona",
+      "cefrBand": "A1",
+      "pos": "noun",
+      "priority": 2,
+      "reason": "people",
+      "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 1 people topic",
+      "status": "missing_lexeme",
+      "blockers": [
+        "add_reviewed_lexeme",
+        "add_reviewed_contexts",
+        "add_exercises"
+      ],
+      "currentLexemeId": null
+    },
+    {
+      "lemma": "tiempo",
+      "cefrBand": "A1",
+      "pos": "noun",
+      "priority": 2,
+      "reason": "time and weather",
+      "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 1 time/routines topic",
+      "status": "missing_lexeme",
+      "blockers": [
+        "add_reviewed_lexeme",
+        "add_reviewed_contexts",
+        "add_exercises"
+      ],
+      "currentLexemeId": null
+    }
+  ]
+}

@@ -71,12 +71,15 @@ Requires **JDK 17** and the Android SDK (`compileSdk 35` / build-tools).
 ./gradlew connectedDebugAndroidTest   # instrumented tests (needs a device/emulator)
 ```
 
-## ⚠️ Content DB asset is generated, not committed
+## ⚠️ Content DB and coverage reports are generated, not committed
 
-The read-only `content.db` Room asset (and `content_manifest.json`) are reproducible
-outputs of the content pipeline and are **gitignored** — like the gradle wrapper jar,
-regenerate them once before assembling the app (Room's `createFromAsset` validates the
-bundled asset against the exported schema and fails the build if it's missing/mismatched):
+The read-only `content.db` Room asset plus generated `content_manifest.json`,
+`content_coverage.json`, and `coverage_snapshot.json` are reproducible outputs of the content
+pipeline and are **gitignored** — like the gradle wrapper jar, regenerate them once before
+assembling the app. The same command also updates
+`tools/content-pipeline/coverage_baseline_snapshot.json`, which is committed so breadth
+changes have a compact reviewable diff. Room's `createFromAsset` validates the bundled asset
+against the exported schema and fails the build if it's missing/mismatched.
 
 ```bash
 cd aprende

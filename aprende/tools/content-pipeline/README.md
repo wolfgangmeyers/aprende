@@ -6,11 +6,16 @@ mechanically enforces the C5 / SPEC §4.6 content-vetting requirement: nothing f
 sourceless, or un-reviewed ships.
 
 ```bash
-# Build from the vetted sample (writes content.db + content_manifest.json next to it):
+# Build from the vetted sample (writes generated content.db + reports next to
+# the DB, and updates the committed review baseline snapshot):
 python3 build_content_db.py --out ../../app/src/main/assets/database/content.db
 
 # Demo the publish gate REJECTING un-reviewed content (non-zero exit — proves AC17):
 python3 build_content_db.py --out /tmp/content.db --inject-unvetted
+
+# Demo the breadth gate surfacing current A1/A2 readiness gaps (non-zero until
+# current A1/A2 lexemes meet the learner-ready budget):
+python3 build_content_db.py --out /tmp/content.db --fail-on-coverage-gaps
 ```
 
 ## 5-stage vetting workflow
@@ -47,6 +52,67 @@ publish gate inspects, and they are mirrored 1:1 by the Kotlin Room entities in
 
 The build also emits `content_manifest.json`: counts by `vettingStatus` and by `source`, plus
 the review trail for every `authored` row — an auditable summary of what shipped.
+
+## Coverage report (Phase 0 breadth baseline)
+
+The build emits generated artifacts next to `content.db`:
+
+- `content_coverage.json` — full breadth report.
+- `coverage_snapshot.json` — compact summary intended for review diffs.
+
+It also updates the committed, stable review baseline:
+
+- `tools/content-pipeline/coverage_baseline_snapshot.json`
+
+The report is vocabulary-first and distinguishes raw rows from learner-ready content.
+A lexeme is learner-ready only when it has reviewed source/license metadata, enough reviewed
+sentence contexts, and both production and recognition exercise coverage.
+
+Current readiness budgets:
+
+| Lexeme type | Reviewed sentence contexts | Exercise coverage |
+|---|---:|---|
+| High-value verb (`pos=verb`, `frequencyRank <= 500`) | 4 | production + recognition |
+| Default lexeme | 2 | production + recognition |
+
+The report includes counts by POS, CEFR band, frequency bucket, source, license, vetting
+status, exercise type, per-lexeme readiness blockers, and the current missing A1/A2 gaps.
+Those gaps are checked against a small local A1/A2 target spine in `build_content_db.py`.
+That target spine is an audit list, not shipped learning content; every listed word still
+needs source, license, sentence, accepted-answer, and reviewer provenance before it can ship.
+Each target carries a `sourceBasis` pointing back to the spec, roadmap, or selected frequency
+spine so the gap list stays source-checked rather than freehand.
+
+Use `--baseline-snapshot <path>` to write the review baseline somewhere else. The default
+path is intentionally not gitignored, so content breadth changes produce a small reviewable
+diff without committing the generated `content.db` or full report artifacts.
+
+Use `--fail-on-coverage-gaps` to turn the report into a gate. It exits with code 4 when
+current A1/A2 rows are not learner-ready, while still writing the JSON reports and baseline
+snapshot so the blocker list is inspectable.
+
+## Frequency source and license decision
+
+Phase 0 selects `hermitdave/FrequencyWords` as the canonical ordering spine for Spanish
+frequency ranks. The repository documents OpenSubtitles-derived generated outputs and states:
+code is MIT, content is `CC-by-sa-4.0`.
+
+Policy for Aprende:
+
+- Use FrequencyWords only for rank/order metadata.
+- Treat redistributed rank data as `CC-BY-SA-4.0`.
+- Keep frequency-derived metadata explicitly attributed and separate from authored curriculum
+  text in provenance/reporting.
+- Continue using Tatoeba textual sentences under `CC-BY-2.0-FR` or CC0 subset terms, depending
+  on the source row.
+- Continue using Wiktionary-derived gloss/conjugation checks under Wiktionary's CC-BY-SA terms.
+- Render these obligations through the same in-app attribution surface used for content rows.
+
+Source checks:
+
+- FrequencyWords: https://github.com/hermitdave/FrequencyWords
+- Tatoeba downloads/license: https://tatoeba.org/en/downloads
+- Wiktionary copyrights: https://en.wiktionary.org/wiki/Wiktionary:Copyrights
 
 ## Schema contract
 
