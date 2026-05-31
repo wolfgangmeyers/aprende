@@ -37,167 +37,48 @@
     "reviewPolicy": "This list is a local source-checked audit target, not shipped learning content. A target lemma only becomes shipped content after the normal lexeme/sentence/accepted-answer provenance and REVIEWED gate pass."
   },
   "summary": {
-    "rawLexemes": 23,
-    "learnerReadyLexemes": 23,
-    "reviewedSentences": 71,
-    "reviewedAcceptedAnswers": 74,
-    "exerciseCount": 46,
-    "missingA1A2GapCount": 8
+    "rawLexemes": 31,
+    "learnerReadyLexemes": 31,
+    "reviewedSentences": 100,
+    "reviewedAcceptedAnswers": 103,
+    "exerciseCount": 62,
+    "missingA1A2GapCount": 0
   },
   "counts": {
     "lexemesByPos": {
-      "noun": 8,
-      "verb": 15
+      "noun": 11,
+      "verb": 20
     },
     "lexemesByCefrBand": {
-      "A1": 23
+      "A1": 23,
+      "A2": 8
     },
     "lexemesByFrequencyBucket": {
-      "0001-0500": 20,
-      "0501-1000": 1,
-      "1001-2000": 2
+      "0001-0500": 25,
+      "0501-1000": 2,
+      "1001-2000": 3,
+      "2001+": 1
     },
     "contentRowsBySource": {
       "authored": 2,
-      "tatoeba": 143,
-      "wiktionary": 23
+      "tatoeba": 201,
+      "wiktionary": 31
     },
     "contentRowsByLicense": {
-      "CC-BY-2.0-FR": 143,
-      "CC-BY-SA-3.0": 23,
+      "CC-BY-2.0-FR": 201,
+      "CC-BY-SA-3.0": 31,
       "proprietary": 2
     },
     "contentRowsByVettingStatus": {
-      "REVIEWED": 168
+      "REVIEWED": 234
     },
     "exerciseTargetsByType": {
-      "LEXEME": 46
+      "LEXEME": 62
     },
     "exerciseTypes": {
-      "TYPED_TRANSLATION": 23,
-      "WORD_BANK": 23
+      "TYPED_TRANSLATION": 31,
+      "WORD_BANK": 31
     }
   },
-  "topMissingA1A2Gaps": [
-    {
-      "lemma": "comprar",
-      "cefrBand": "A2",
-      "pos": "verb",
-      "priority": 3,
-      "reason": "shopping",
-      "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 3 shopping/money topic",
-      "status": "missing_lexeme",
-      "blockers": [
-        "add_reviewed_lexeme",
-        "add_reviewed_contexts",
-        "add_exercises"
-      ],
-      "currentLexemeId": null
-    },
-    {
-      "lemma": "dinero",
-      "cefrBand": "A2",
-      "pos": "noun",
-      "priority": 3,
-      "reason": "shopping",
-      "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 3 shopping/money topic",
-      "status": "missing_lexeme",
-      "blockers": [
-        "add_reviewed_lexeme",
-        "add_reviewed_contexts",
-        "add_exercises"
-      ],
-      "currentLexemeId": null
-    },
-    {
-      "lemma": "escuela",
-      "cefrBand": "A2",
-      "pos": "noun",
-      "priority": 3,
-      "reason": "school",
-      "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 3 work/school topic",
-      "status": "missing_lexeme",
-      "blockers": [
-        "add_reviewed_lexeme",
-        "add_reviewed_contexts",
-        "add_exercises"
-      ],
-      "currentLexemeId": null
-    },
-    {
-      "lemma": "llegar",
-      "cefrBand": "A2",
-      "pos": "verb",
-      "priority": 3,
-      "reason": "travel and time",
-      "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 3 travel/time topics",
-      "status": "missing_lexeme",
-      "blockers": [
-        "add_reviewed_lexeme",
-        "add_reviewed_contexts",
-        "add_exercises"
-      ],
-      "currentLexemeId": null
-    },
-    {
-      "lemma": "necesitar",
-      "cefrBand": "A2",
-      "pos": "verb",
-      "priority": 3,
-      "reason": "needs",
-      "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 3 wants/needs topic",
-      "status": "missing_lexeme",
-      "blockers": [
-        "add_reviewed_lexeme",
-        "add_reviewed_contexts",
-        "add_exercises"
-      ],
-      "currentLexemeId": null
-    },
-    {
-      "lemma": "salir",
-      "cefrBand": "A2",
-      "pos": "verb",
-      "priority": 3,
-      "reason": "movement and plans",
-      "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 3 travel/plans topics",
-      "status": "missing_lexeme",
-      "blockers": [
-        "add_reviewed_lexeme",
-        "add_reviewed_contexts",
-        "add_exercises"
-      ],
-      "currentLexemeId": null
-    },
-    {
-      "lemma": "trabajo",
-      "cefrBand": "A2",
-      "pos": "noun",
-      "priority": 3,
-      "reason": "work",
-      "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 3 work/school topic",
-      "status": "missing_lexeme",
-      "blockers": [
-        "add_reviewed_lexeme",
-        "add_reviewed_contexts",
-        "add_exercises"
-      ],
-      "currentLexemeId": null
-    },
-    {
-      "lemma": "viajar",
-      "cefrBand": "A2",
-      "pos": "verb",
-      "priority": 3,
-      "reason": "travel",
-      "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 3 travel topic",
-      "status": "missing_lexeme",
-      "blockers": [
-        "add_reviewed_lexeme",
-        "add_reviewed_contexts",
-        "add_exercises"
-      ],
-      "currentLexemeId": null
-    }
-  ]
+  "topMissingA1A2Gaps": []
 }

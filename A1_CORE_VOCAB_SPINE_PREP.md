@@ -129,13 +129,13 @@ Source rows used:
 
 ## Next Worker Task
 
-After the `A1-010 Time People Communication And Living` batch is reviewed and committed, continue with the remaining A2 priority-3 gaps.
+After the `A2-001 Shopping School Work And Travel` batch is reviewed and committed, expand the audited target list before the next content pack.
 
 Concrete steps:
 
-1. Prefer a 5-10 lexeme source-checked A2 topic pack from the current top gaps: `comprar`, `dinero`, `escuela`, `llegar`, `necesitar`, `salir`, `trabajo`, `viajar`.
-2. Use Tatoeba/Wiktionary rows where source material is straightforward; keep AI-drafted rows out of learner-ready content unless the AI draft lane is wired and reviewed.
-3. Add enough reviewed sentence coverage, accepted answers, `sentence_lexeme` joins, and derived exercises for each included lexeme.
+1. Add the next reviewed target lemmas to `A1_A2_TARGET_LEMMAS` from the canonical frequency spine and Phase 1/3 topics.
+2. Prefer a 5-10 lexeme source-checked pack where Tatoeba/Wiktionary material is straightforward.
+3. Keep AI-drafted rows out of learner-ready content unless the AI draft lane is wired and reviewed.
 4. Run the normal pipeline and inspect `content_coverage.json`.
 5. Update `coverage_baseline_snapshot.json`.
 6. Keep `--inject-unvetted` and `--fail-on-coverage-gaps` behavior intact.
@@ -545,6 +545,78 @@ Acceptance result:
 - `learnerReadyLexemes` increases from 17 to 23.
 - `día`, `hablar`, `persona`, `tiempo`, `ver`, and `vivir` have no readiness blockers in `content_coverage.json`.
 - `missingA1A2GapCount` decreases from 14 to 8.
+- `--fail-on-coverage-gaps` exits 0.
+- The publish gate still rejects unreviewed rows.
+- No `AI_DRAFT` rows are included in shipped content.
+
+## A2-001 Shopping School Work And Travel
+
+**Status:** implemented locally after A1-010.
+
+**Goal:** close the current A2 priority-3 gaps with a source-checked pack, without AI-drafted shipping rows.
+
+**Target lemmas:**
+
+| Lemma | FrequencyWords rank | Source basis | Required to ship |
+|---|---:|---|---|
+| `comprar` | 818 | `SPANISH_BREADTH_PLAN.md` Phase 3 shopping topic | 4 reviewed contexts, production + recognition exercises |
+| `dinero` | 164 | `SPANISH_BREADTH_PLAN.md` Phase 3 shopping/money topic | 2+ reviewed contexts, production + recognition exercises |
+| `escuela` | 463 | `SPANISH_BREADTH_PLAN.md` Phase 3 work/school topic | 2+ reviewed contexts, production + recognition exercises |
+| `llegar` | 400 | `SPANISH_BREADTH_PLAN.md` Phase 3 travel/time topic | 4 reviewed contexts, production + recognition exercises |
+| `necesitar` | 1692 | `SPANISH_BREADTH_PLAN.md` Phase 3 wants/needs topic | 4 reviewed contexts, production + recognition exercises |
+| `salir` | 265 | `SPANISH_BREADTH_PLAN.md` Phase 3 travel/plans topic | 4 reviewed contexts, production + recognition exercises |
+| `trabajo` | 142 | `SPANISH_BREADTH_PLAN.md` Phase 3 work/school topic | 2+ reviewed contexts, production + recognition exercises |
+| `viajar` | 2530 | `SPANISH_BREADTH_PLAN.md` Phase 3 travel topic | 4 reviewed contexts, production + recognition exercises |
+
+Source rows used:
+
+| Lemma | Spanish sentence | Tatoeba Spanish ID | Accepted English answer | English source ID |
+|---|---|---:|---|---:|
+| `comprar` | `Compramos.` | 7947364 | `we buy` | 5617573 |
+| `comprar` | `¡Compra!` | 7936806 | `buy` | 6046859 |
+| `comprar` | `Compraré comida.` | 13917468 | `i'll buy food` | 8918033 |
+| `comprar` | `Quiero comprar comida.` | 2707615 | `i want to buy food` | 2669111 |
+| `dinero` | `Tenemos dinero.` | 9943356 | `we have money` | 9943118 |
+| `dinero` | `Tienes dinero.` | 7931127 | `you have money` | 9311597 |
+| `dinero` | `Quiero dinero.` | 4456338 | `i want money` | 64620 |
+| `escuela` | `Esta es mi escuela.` | 1258453 | `this is my school` | 1255406 |
+| `escuela` | `Odio la escuela.` | 9443867 | `i hate school` | 4747564 |
+| `escuela` | `Voy a la escuela.` | 473450 | `i go to school` | 472089 |
+| `llegar` | `Llegaré.` | 9763982 | `i will arrive` | 12556195 |
+| `llegar` | `Llegué.` | 6161281 | `i've arrived` | 4008734 |
+| `llegar` | `Llegamos.` | 6063763 | `we've arrived` | 410594 |
+| `llegar` | `Llegó.` | 6063762 | `she arrived` | 6917619 |
+| `necesitar` | `Necesito miel.` | 13665656 | `i need honey` | 11900237 |
+| `necesitar` | `Necesita practicar.` | 13660778 | `he needs to practice` | 9182157 |
+| `necesitar` | `¿Necesitas descansar?` | 13711743 | `do you need to rest` | 13711740 |
+| `necesitar` | `Necesitamos expertos.` | 13789665 | `we need experts` | 2241414 |
+| `salir` | `Salgo.` | 10262252 | `i'm leaving` | 350133 |
+| `salir` | `Salgamos.` | 2008990 | `let's go out` | 2007927 |
+| `salir` | `Nunca salgo.` | 7160137 | `i never go out` | 3728879 |
+| `salir` | `Salí.` | 630772 | `i left` | 2307509 |
+| `trabajo` | `Odio mi trabajo.` | 858287 | `i hate my job` | 874052 |
+| `trabajo` | `Es mi trabajo.` | 1306030 | `it's my job` | 433521 |
+| `trabajo` | `Mi trabajo es seguro.` | 11405515 | `my job is safe` | 3238932 |
+| `viajar` | `Viajé.` | 5028966 | `i traveled` | 10954562 |
+| `viajar` | `¿Viajas mucho?` | 10459407 | `do you travel a lot` | 29911 |
+| `viajar` | `Viajé a Boston.` | 5752610 | `i traveled to boston` | 2280316 |
+| `viajar` | `Viajo a menudo.` | 995130 | `i travel often` | 465459 |
+
+Implemented content delta:
+
+- 8 reviewed Wiktionary lexeme rows.
+- 29 reviewed Tatoeba sentence rows.
+- 29 reviewed Tatoeba accepted-answer rows.
+- 38 `sentence_lexeme` joins, including existing-word joins for `comida`, `querer`, `tener`, `ser`, and `ir`.
+- 16 derived exercises:
+  - production and recognition exercises for `comprar`, `dinero`, `escuela`, `llegar`, `necesitar`, `salir`, `trabajo`, and `viajar`
+- Updated `coverage_baseline_snapshot.json`.
+
+Acceptance result:
+
+- `learnerReadyLexemes` increases from 23 to 31.
+- All current `A1_A2_TARGET_LEMMAS` have no readiness blockers in `content_coverage.json`.
+- `missingA1A2GapCount` decreases from 8 to 0.
 - `--fail-on-coverage-gaps` exits 0.
 - The publish gate still rejects unreviewed rows.
 - No `AI_DRAFT` rows are included in shipped content.
