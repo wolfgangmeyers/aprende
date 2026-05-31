@@ -241,6 +241,12 @@ def vetted_sample():
         Row({"lexemeId": 3, "lemma": "perro", "pos": "noun", "gender": "M",
              "englishGloss": "dog", "frequencyRank": 900, "cefrBand": "A1", "difficultyPrior": 0.5},
             source="wiktionary", sourceId="perro", license="CC-BY-SA-3.0"),
+        Row({"lexemeId": 4, "lemma": "ser", "pos": "verb", "gender": None,
+             "englishGloss": "to be", "frequencyRank": 63, "cefrBand": "A1", "difficultyPrior": 0.3},
+            source="wiktionary", sourceId="ser", license="CC-BY-SA-3.0"),
+        Row({"lexemeId": 5, "lemma": "estar", "pos": "verb", "gender": None,
+             "englishGloss": "to be", "frequencyRank": 131, "cefrBand": "A1", "difficultyPrior": 0.3},
+            source="wiktionary", sourceId="estar", license="CC-BY-SA-3.0"),
     ]
     sentences = [
         Row({"sentenceId": 1, "spanishText": "Tengo un perro.", "englishText": "I have a dog."},
@@ -253,6 +259,22 @@ def vetted_sample():
             sourceId="tatoeba:5051233"),
         Row({"sentenceId": 5, "spanishText": "Tengo el agua.", "englishText": "I have the water."},
             sourceId="tatoeba:3515639"),
+        Row({"sentenceId": 6, "spanishText": "Soy estudiante.", "englishText": "I'm a student."},
+            sourceId="tatoeba:574254"),
+        Row({"sentenceId": 7, "spanishText": "Eres mi amigo.", "englishText": "You are my friend."},
+            sourceId="tatoeba:585066"),
+        Row({"sentenceId": 8, "spanishText": "Esta es mi casa.", "englishText": "This is my house."},
+            sourceId="tatoeba:955676"),
+        Row({"sentenceId": 9, "spanishText": "Soy feliz.", "englishText": "I'm happy."},
+            sourceId="tatoeba:627075"),
+        Row({"sentenceId": 10, "spanishText": "Estoy en casa.", "englishText": "I'm at home."},
+            sourceId="tatoeba:1013884"),
+        Row({"sentenceId": 11, "spanishText": "Ella está en casa.", "englishText": "She is at home."},
+            sourceId="tatoeba:4848556"),
+        Row({"sentenceId": 12, "spanishText": "Estoy bien.", "englishText": "I'm fine."},
+            sourceId="tatoeba:455952"),
+        Row({"sentenceId": 13, "spanishText": "Está aquí.", "englishText": "It's here."},
+            sourceId="tatoeba:2532719"),
     ]
     accepted = [
         Row({"acceptedAnswerId": 1, "sentenceId": 1, "direction": "ES_TO_EN", "answerText": "i have a dog"},
@@ -272,6 +294,22 @@ def vetted_sample():
             sourceId="tatoeba:7425744"),
         Row({"acceptedAnswerId": 7, "sentenceId": 5, "direction": "ES_TO_EN", "answerText": "i have the water"},
             sourceId="tatoeba:12068868"),
+        Row({"acceptedAnswerId": 9, "sentenceId": 6, "direction": "ES_TO_EN", "answerText": "i'm a student"},
+            sourceId="tatoeba:567368"),
+        Row({"acceptedAnswerId": 10, "sentenceId": 7, "direction": "ES_TO_EN", "answerText": "you are my friend"},
+            sourceId="tatoeba:370562"),
+        Row({"acceptedAnswerId": 11, "sentenceId": 8, "direction": "ES_TO_EN", "answerText": "this is my house"},
+            sourceId="tatoeba:955157"),
+        Row({"acceptedAnswerId": 12, "sentenceId": 9, "direction": "ES_TO_EN", "answerText": "i'm happy"},
+            sourceId="tatoeba:1872056"),
+        Row({"acceptedAnswerId": 13, "sentenceId": 10, "direction": "ES_TO_EN", "answerText": "i'm at home"},
+            sourceId="tatoeba:404046"),
+        Row({"acceptedAnswerId": 14, "sentenceId": 11, "direction": "ES_TO_EN", "answerText": "she is at home"},
+            sourceId="tatoeba:4848413"),
+        Row({"acceptedAnswerId": 15, "sentenceId": 12, "direction": "ES_TO_EN", "answerText": "i'm fine"},
+            sourceId="tatoeba:257272"),
+        Row({"acceptedAnswerId": 16, "sentenceId": 13, "direction": "ES_TO_EN", "answerText": "it's here"},
+            sourceId="tatoeba:2123598"),
     ]
     # non-vetted-audited tables (derived/structural) still carry source where meaningful
     sentence_lexeme = [
@@ -280,6 +318,14 @@ def vetted_sample():
         (3, 1), (3, 3),
         (4, 1), (4, 3),
         (5, 1), (5, 2),
+        (6, 4),
+        (7, 4),
+        (8, 4),
+        (9, 4),
+        (10, 5),
+        (11, 5),
+        (12, 5),
+        (13, 5),
     ]
     conj = [("tengo", 1, "wiktionary", "CC-BY-SA-3.0"), ("tienes", 1, "wiktionary", "CC-BY-SA-3.0")]
     # Path nodes (structural). v1 sample ships one node; exercises above belong to nodeId=1.
@@ -297,6 +343,14 @@ def vetted_sample():
          "targetItemId": 3, "targetItemType": "LEXEME", "promptHint": None},
         {"exerciseId": 6, "nodeId": 1, "sentenceId": 4, "type": "WORD_BANK", "direction": "ES_TO_EN",
          "targetItemId": 3, "targetItemType": "LEXEME", "promptHint": None},
+        {"exerciseId": 7, "nodeId": 1, "sentenceId": 6, "type": "TYPED_TRANSLATION", "direction": "ES_TO_EN",
+         "targetItemId": 4, "targetItemType": "LEXEME", "promptHint": None},
+        {"exerciseId": 8, "nodeId": 1, "sentenceId": 8, "type": "WORD_BANK", "direction": "ES_TO_EN",
+         "targetItemId": 4, "targetItemType": "LEXEME", "promptHint": None},
+        {"exerciseId": 9, "nodeId": 1, "sentenceId": 10, "type": "TYPED_TRANSLATION", "direction": "ES_TO_EN",
+         "targetItemId": 5, "targetItemType": "LEXEME", "promptHint": None},
+        {"exerciseId": 10, "nodeId": 1, "sentenceId": 13, "type": "WORD_BANK", "direction": "ES_TO_EN",
+         "targetItemId": 5, "targetItemType": "LEXEME", "promptHint": None},
     ]
     return lexemes, sentences, accepted, sentence_lexeme, conj, exercises, nodes
 

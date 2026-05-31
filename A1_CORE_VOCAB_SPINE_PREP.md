@@ -129,15 +129,60 @@ Source rows used:
 
 ## Next Worker Task
 
-Implement `A1-001 Existing Basics readiness` in the content pipeline sample.
+Implement `A1-002 Identity and location` in the content pipeline sample.
 
 Concrete steps:
 
-1. Find source rows for the minimum new Tatoeba sentence contexts.
-2. Add lexeme/sentence/accepted-answer provenance for the new rows.
+1. Add `ser` and `estar` lexemes from Wiktionary, using FrequencyWords ranks.
+2. Find four reviewed Tatoeba contexts for each verb.
 3. Add the missing `sentence_lexeme` joins and derived exercises.
 4. Run the normal pipeline and inspect `content_coverage.json`.
 5. Update `coverage_baseline_snapshot.json`.
 6. Keep `--inject-unvetted` and `--fail-on-coverage-gaps` behavior intact.
 
-Do not add `ser`/`estar` until this first slice proves the readiness loop can turn partial content into learner-ready content without schema or UI churn.
+## A1-002 Identity And Location
+
+**Status:** implemented locally after A1-001.
+
+**Goal:** add the two highest-value A1 `to be` verbs, `ser` and `estar`, without schema or UI changes.
+
+**Target lemmas:**
+
+| Lemma | FrequencyWords rank | Source basis | Required to ship |
+|---|---:|---|---|
+| `ser` | 63 | `SPEC.md` §5.6 A1 `ser`/`estar` | 4 reviewed contexts, production + recognition exercises |
+| `estar` | 131 | `SPEC.md` §5.6 A1 `ser`/`estar` | 4 reviewed contexts, production + recognition exercises |
+
+Source rows used:
+
+| Lemma | Spanish sentence | Tatoeba Spanish ID | Accepted English answer | English source ID |
+|---|---|---:|---|---:|
+| `ser` | `Soy estudiante.` | 574254 | `i'm a student` | 567368 |
+| `ser` | `Eres mi amigo.` | 585066 | `you are my friend` | 370562 |
+| `ser` | `Esta es mi casa.` | 955676 | `this is my house` | 955157 |
+| `ser` | `Soy feliz.` | 627075 | `i'm happy` | 1872056 |
+| `estar` | `Estoy en casa.` | 1013884 | `i'm at home` | 404046 |
+| `estar` | `Ella está en casa.` | 4848556 | `she is at home` | 4848413 |
+| `estar` | `Estoy bien.` | 455952 | `i'm fine` | 257272 |
+| `estar` | `Está aquí.` | 2532719 | `it's here` | 2123598 |
+
+Implemented content delta:
+
+- 2 reviewed Wiktionary lexeme rows.
+- 8 reviewed Tatoeba sentence rows.
+- 8 reviewed Tatoeba accepted-answer rows.
+- 8 `sentence_lexeme` joins.
+- 4 derived exercises:
+  - `ser` production exercise
+  - `ser` recognition exercise
+  - `estar` production exercise
+  - `estar` recognition exercise
+- Updated `coverage_baseline_snapshot.json`.
+
+Acceptance result:
+
+- `learnerReadyLexemes` increases from 3 to 5.
+- `ser` and `estar` have no readiness blockers in `content_coverage.json`.
+- `missingA1A2GapCount` decreases from 28 to 26.
+- `--fail-on-coverage-gaps` exits 0.
+- The publish gate still rejects unreviewed rows.

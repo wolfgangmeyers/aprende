@@ -37,44 +37,44 @@
     "reviewPolicy": "This list is a local source-checked audit target, not shipped learning content. A target lemma only becomes shipped content after the normal lexeme/sentence/accepted-answer provenance and REVIEWED gate pass."
   },
   "summary": {
-    "rawLexemes": 3,
-    "learnerReadyLexemes": 3,
-    "reviewedSentences": 5,
-    "reviewedAcceptedAnswers": 8,
-    "exerciseCount": 6,
-    "missingA1A2GapCount": 28
+    "rawLexemes": 5,
+    "learnerReadyLexemes": 5,
+    "reviewedSentences": 13,
+    "reviewedAcceptedAnswers": 16,
+    "exerciseCount": 10,
+    "missingA1A2GapCount": 26
   },
   "counts": {
     "lexemesByPos": {
       "noun": 2,
-      "verb": 1
+      "verb": 3
     },
     "lexemesByCefrBand": {
-      "A1": 3
+      "A1": 5
     },
     "lexemesByFrequencyBucket": {
-      "0001-0500": 2,
+      "0001-0500": 4,
       "0501-1000": 1
     },
     "contentRowsBySource": {
       "authored": 2,
-      "tatoeba": 11,
-      "wiktionary": 3
+      "tatoeba": 27,
+      "wiktionary": 5
     },
     "contentRowsByLicense": {
-      "CC-BY-2.0-FR": 11,
-      "CC-BY-SA-3.0": 3,
+      "CC-BY-2.0-FR": 27,
+      "CC-BY-SA-3.0": 5,
       "proprietary": 2
     },
     "contentRowsByVettingStatus": {
-      "REVIEWED": 16
+      "REVIEWED": 34
     },
     "exerciseTargetsByType": {
-      "LEXEME": 6
+      "LEXEME": 10
     },
     "exerciseTypes": {
-      "TYPED_TRANSLATION": 3,
-      "WORD_BANK": 3
+      "TYPED_TRANSLATION": 5,
+      "WORD_BANK": 5
     }
   },
   "topMissingA1A2Gaps": [
@@ -85,21 +85,6 @@
       "priority": 1,
       "reason": "reported speech basics",
       "sourceBasis": "SPEC.md \u00a75.2 irregular verb table",
-      "status": "missing_lexeme",
-      "blockers": [
-        "add_reviewed_lexeme",
-        "add_reviewed_contexts",
-        "add_exercises"
-      ],
-      "currentLexemeId": null
-    },
-    {
-      "lemma": "estar",
-      "cefrBand": "A1",
-      "pos": "verb",
-      "priority": 1,
-      "reason": "state and location",
-      "sourceBasis": "SPEC.md \u00a75.6 A1 ser/estar",
       "status": "missing_lexeme",
       "blockers": [
         "add_reviewed_lexeme",
@@ -175,21 +160,6 @@
       "priority": 1,
       "reason": "knowledge",
       "sourceBasis": "SPEC.md \u00a75.2 irregular verb table",
-      "status": "missing_lexeme",
-      "blockers": [
-        "add_reviewed_lexeme",
-        "add_reviewed_contexts",
-        "add_exercises"
-      ],
-      "currentLexemeId": null
-    },
-    {
-      "lemma": "ser",
-      "cefrBand": "A1",
-      "pos": "verb",
-      "priority": 1,
-      "reason": "identity and description",
-      "sourceBasis": "SPEC.md \u00a75.6 A1 ser/estar",
       "status": "missing_lexeme",
       "blockers": [
         "add_reviewed_lexeme",
@@ -370,6 +340,36 @@
       "priority": 2,
       "reason": "home and biography",
       "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 1 home/routines topics",
+      "status": "missing_lexeme",
+      "blockers": [
+        "add_reviewed_lexeme",
+        "add_reviewed_contexts",
+        "add_exercises"
+      ],
+      "currentLexemeId": null
+    },
+    {
+      "lemma": "comprar",
+      "cefrBand": "A2",
+      "pos": "verb",
+      "priority": 3,
+      "reason": "shopping",
+      "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 3 shopping/money topic",
+      "status": "missing_lexeme",
+      "blockers": [
+        "add_reviewed_lexeme",
+        "add_reviewed_contexts",
+        "add_exercises"
+      ],
+      "currentLexemeId": null
+    },
+    {
+      "lemma": "dinero",
+      "cefrBand": "A2",
+      "pos": "noun",
+      "priority": 3,
+      "reason": "shopping",
+      "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 3 shopping/money topic",
       "status": "missing_lexeme",
       "blockers": [
         "add_reviewed_lexeme",
