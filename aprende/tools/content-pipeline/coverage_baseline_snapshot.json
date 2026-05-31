@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "frequencySourceDecision": {
     "status": "selected-for-phase-0",
     "canonicalFrequencySource": "hermitdave/FrequencyWords Spanish OpenSubtitles frequency list",
@@ -37,50 +37,51 @@
     "reviewPolicy": "This list is a local source-checked audit target, not shipped learning content. A target lemma only becomes shipped content after the normal lexeme/sentence/accepted-answer provenance and REVIEWED gate pass."
   },
   "summary": {
-    "rawLexemes": 41,
-    "learnerReadyLexemes": 41,
-    "reviewedSentences": 119,
-    "reviewedAcceptedAnswers": 122,
-    "exerciseCount": 82,
+    "rawLexemes": 61,
+    "learnerReadyLexemes": 61,
+    "reviewedSentences": 159,
+    "reviewedAcceptedAnswers": 162,
+    "exerciseCount": 122,
     "missingA1A2GapCount": 0
   },
   "counts": {
     "lexemesByPos": {
-      "adjective": 3,
+      "adjective": 5,
       "adjective/adverb": 1,
-      "noun": 17,
-      "verb": 20
+      "adverb": 6,
+      "noun": 22,
+      "verb": 27
     },
     "lexemesByCefrBand": {
       "A1": 23,
-      "A2": 18
+      "A2": 38
     },
     "lexemesByFrequencyBucket": {
-      "0001-0500": 32,
-      "0501-1000": 3,
-      "1001-2000": 5,
+      "0001-0500": 36,
+      "0501-1000": 11,
+      "1001-2000": 13,
       "2001+": 1
     },
     "contentRowsBySource": {
-      "ai_draft": 38,
+      "ai_draft": 118,
       "authored": 2,
       "tatoeba": 201,
-      "wiktionary": 41
+      "wiktionary": 61
     },
     "contentRowsByLicense": {
       "CC-BY-2.0-FR": 201,
-      "CC-BY-SA-3.0": 41,
-      "proprietary": 40
+      "CC-BY-SA-3.0": 61,
+      "proprietary": 120
     },
     "contentRowsByVettingStatus": {
-      "REVIEWED": 282
+      "REVIEWED": 382
     },
     "exerciseTargetsByType": {
-      "LEXEME": 82
+      "LEXEME": 122
     },
     "exerciseTypes": {
-      "TYPED_TRANSLATION": 41,
-      "WORD_BANK": 41
+      "TYPED_TRANSLATION": 61,
+      "WORD_BANK": 61
     }
   },
   "topMissingA1A2Gaps": []

@@ -16,9 +16,10 @@ import org.robolectric.annotation.Config
 /**
  * **AC14** — every bundled content row resolves to a source visible in the attribution screen.
  * This covers the data half: seed `lexeme`/`sentence`/`accepted_answer` rows with provenance
- * (the same columns the §4.6 vetting gate populates) into an in-memory `content.db`, then assert
- * [ContentRepositoryImpl.attributions] returns the DISTINCT `(source, license)` credits. The UI
- * half is covered by AttributionScreenTest (Robolectric Compose).
+ * (the same columns the §4.6 vetting gate populates), plus one corpus-level attribution row,
+ * into an in-memory `content.db`, then assert [ContentRepositoryImpl.attributions] returns the
+ * DISTINCT `(source, license)` credits. The UI half is covered by AttributionScreenTest
+ * (Robolectric Compose).
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [34])
@@ -54,6 +55,12 @@ class AttributionAc14Test {
             "INSERT INTO accepted_answer (acceptedAnswerId, sentenceId, direction, answerText, source, sourceId, license, vettingStatus, reviewedBy, reviewedAt) " +
                 "VALUES (100,10,'ES_TO_EN','I have a dog','authored','authored:aa1','proprietary','REVIEWED','r','100')",
         )
+        // Frequency ranks are metadata, not text rows, so the pipeline exposes their license
+        // through content_attribution for the same credits screen query.
+        w.execSQL(
+            "INSERT INTO content_attribution (source, license) " +
+                "VALUES ('frequencywords','CC-BY-SA-4.0')",
+        )
 
         repo = ContentRepositoryImpl(
             lexemeDao = db.lexemeDao(),
@@ -76,6 +83,7 @@ class AttributionAc14Test {
         assertEquals(
             listOf(
                 Attribution(source = "authored", license = "proprietary"),
+                Attribution(source = "frequencywords", license = "CC-BY-SA-4.0"),
                 Attribution(source = "tatoeba", license = "CC-BY-2.0-FR"),
                 Attribution(source = "wiktionary", license = "CC-BY-SA-3.0"),
             ),
@@ -86,6 +94,6 @@ class AttributionAc14Test {
     @Test
     fun `every seeded source is represented`() = runTest {
         val sources = repo.attributions().map { it.source }.toSet()
-        assertTrue(sources.containsAll(setOf("tatoeba", "wiktionary", "authored")))
+        assertTrue(sources.containsAll(setOf("tatoeba", "wiktionary", "authored", "frequencywords")))
     }
 }

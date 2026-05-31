@@ -135,6 +135,15 @@ data class NodeEntity(
 )
 
 // ---------------------------------------------------------------------------------------
+// content_attribution — content-level credits not owned by a single text row.
+// ---------------------------------------------------------------------------------------
+@Entity(tableName = "content_attribution", primaryKeys = ["source", "license"])
+data class ContentAttributionEntity(
+    val source: String,
+    val license: String,
+)
+
+// ---------------------------------------------------------------------------------------
 // exercise
 // ---------------------------------------------------------------------------------------
 @Entity(tableName = "exercise")

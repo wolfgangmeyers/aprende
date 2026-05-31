@@ -44,7 +44,11 @@ AUTO_REVIEWED = "AUTO_REVIEWED"
 REVIEWED = "REVIEWED"  # the only status allowed to ship
 
 # Room schema version this asset must match (content.db @Database version, SPEC D2).
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
+FREQUENCY_ATTRIBUTION = {
+    "source": "frequencywords",
+    "license": "CC-BY-SA-4.0",
+}
 
 
 # --------------------------------------------------------------------------------------
@@ -122,6 +126,11 @@ SCHEMA_DDL = [
         targetItemType TEXT NOT NULL,
         promptHint TEXT
     )""",
+    """CREATE TABLE content_attribution (
+        source TEXT NOT NULL,
+        license TEXT NOT NULL,
+        PRIMARY KEY(source, license)
+    )""",
     # FTS over sentences for word/sentence search (SPEC §10.1). Room declares this as an
     # @Fts4(contentEntity = Sentence) entity; the asset mirrors that external-content layout.
     """CREATE VIRTUAL TABLE sentence_fts USING fts4(
@@ -160,6 +169,195 @@ AI_REVIEWED_SENTENCE_PAIRS = {
     "¿Son grandes?": "Are they big?",
     "Necesito ayuda.": "I need help.",
 }
+
+AI_ACCELERATED_PACK_A2_003 = [
+    {
+        "lexemeId": 42, "lemma": "ayudar", "pos": "verb", "gender": None,
+        "englishGloss": "to help", "frequencyRank": 1088, "cefrBand": "A2", "difficultyPrior": 0.5,
+        "reason": "help and requests", "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 3 practical needs topic",
+        "sentences": [
+            (119, 122, "Quiero ayudar.", "I want to help."),
+            (120, 123, "¿Puedes ayudarme?", "Can you help me?"),
+        ],
+    },
+    {
+        "lexemeId": 43, "lemma": "trabajar", "pos": "verb", "gender": None,
+        "englishGloss": "to work", "frequencyRank": 846, "cefrBand": "A2", "difficultyPrior": 0.5,
+        "reason": "work routines", "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 3 work/school topic",
+        "sentences": [
+            (121, 124, "Trabajo hoy.", "I work today."),
+            (122, 125, "Ella trabaja aquí.", "She works here."),
+        ],
+    },
+    {
+        "lexemeId": 44, "lemma": "aprender", "pos": "verb", "gender": None,
+        "englishGloss": "to learn", "frequencyRank": 1788, "cefrBand": "A2", "difficultyPrior": 0.5,
+        "reason": "learning", "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 3 school/self-study topic",
+        "sentences": [
+            (123, 126, "Aprendo español.", "I learn Spanish."),
+            (124, 127, "Quiero aprender más.", "I want to learn more."),
+        ],
+    },
+    {
+        "lexemeId": 45, "lemma": "escuchar", "pos": "verb", "gender": None,
+        "englishGloss": "to listen", "frequencyRank": 1037, "cefrBand": "A2", "difficultyPrior": 0.5,
+        "reason": "communication", "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 3 communication topic",
+        "sentences": [
+            (125, 128, "Escucho música.", "I listen to music."),
+            (126, 129, "¿Puedes escuchar?", "Can you listen?"),
+        ],
+    },
+    {
+        "lexemeId": 46, "lemma": "pagar", "pos": "verb", "gender": None,
+        "englishGloss": "to pay", "frequencyRank": 1007, "cefrBand": "A2", "difficultyPrior": 0.5,
+        "reason": "shopping and errands", "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 3 shopping/money topic",
+        "sentences": [
+            (127, 130, "Pago ahora.", "I pay now."),
+            (128, 131, "Quiero pagar.", "I want to pay."),
+        ],
+    },
+    {
+        "lexemeId": 47, "lemma": "abrir", "pos": "verb", "gender": None,
+        "englishGloss": "to open", "frequencyRank": 664, "cefrBand": "A2", "difficultyPrior": 0.5,
+        "reason": "daily actions", "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 3 errands/home topic",
+        "sentences": [
+            (129, 132, "Abre la puerta.", "Open the door."),
+            (130, 133, "Quiero abrir la puerta.", "I want to open the door."),
+        ],
+    },
+    {
+        "lexemeId": 48, "lemma": "cerrar", "pos": "verb", "gender": None,
+        "englishGloss": "to close", "frequencyRank": 1105, "cefrBand": "A2", "difficultyPrior": 0.5,
+        "reason": "daily actions", "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 3 errands/home topic",
+        "sentences": [
+            (131, 134, "Cierra la puerta.", "Close the door."),
+            (132, 135, "Necesito cerrar la tienda.", "I need to close the store."),
+        ],
+    },
+    {
+        "lexemeId": 49, "lemma": "fácil", "pos": "adjective", "gender": None,
+        "englishGloss": "easy", "frequencyRank": 814, "cefrBand": "A2", "difficultyPrior": 0.4,
+        "reason": "common description", "sourceBasis": "hermitdave/FrequencyWords high-frequency spine",
+        "sentences": [
+            (133, 136, "Es fácil.", "It is easy."),
+            (134, 137, "La pregunta es fácil.", "The question is easy."),
+        ],
+    },
+    {
+        "lexemeId": 50, "lemma": "difícil", "pos": "adjective", "gender": None,
+        "englishGloss": "difficult", "frequencyRank": 938, "cefrBand": "A2", "difficultyPrior": 0.5,
+        "reason": "common description", "sourceBasis": "hermitdave/FrequencyWords high-frequency spine",
+        "sentences": [
+            (135, 138, "Es difícil.", "It is difficult."),
+            (136, 139, "El trabajo es difícil.", "The job is difficult."),
+        ],
+    },
+    {
+        "lexemeId": 51, "lemma": "cerca", "pos": "adverb", "gender": None,
+        "englishGloss": "nearby; close", "frequencyRank": 433, "cefrBand": "A2", "difficultyPrior": 0.4,
+        "reason": "location", "sourceBasis": "hermitdave/FrequencyWords high-frequency spine",
+        "sentences": [
+            (137, 140, "La tienda está cerca.", "The store is nearby."),
+            (138, 141, "Estoy cerca.", "I am nearby."),
+        ],
+    },
+    {
+        "lexemeId": 52, "lemma": "lejos", "pos": "adverb", "gender": None,
+        "englishGloss": "far; far away", "frequencyRank": 1565, "cefrBand": "A2", "difficultyPrior": 0.5,
+        "reason": "location", "sourceBasis": "hermitdave/FrequencyWords high-frequency spine",
+        "sentences": [
+            (139, 142, "Vivo lejos.", "I live far away."),
+            (140, 143, "La escuela está lejos.", "The school is far away."),
+        ],
+    },
+    {
+        "lexemeId": 53, "lemma": "siempre", "pos": "adverb", "gender": None,
+        "englishGloss": "always", "frequencyRank": 171, "cefrBand": "A2", "difficultyPrior": 0.4,
+        "reason": "frequency and routines", "sourceBasis": "hermitdave/FrequencyWords high-frequency spine",
+        "sentences": [
+            (141, 144, "Siempre trabajo.", "I always work."),
+            (142, 145, "Siempre quiero agua.", "I always want water."),
+        ],
+    },
+    {
+        "lexemeId": 54, "lemma": "nunca", "pos": "adverb", "gender": None,
+        "englishGloss": "never", "frequencyRank": 446, "cefrBand": "A2", "difficultyPrior": 0.4,
+        "reason": "frequency and routines", "sourceBasis": "hermitdave/FrequencyWords high-frequency spine",
+        "sentences": [
+            (143, 146, "Nunca pago tarde.", "I never pay late."),
+            (144, 147, "Nunca trabajo aquí.", "I never work here."),
+        ],
+    },
+    {
+        "lexemeId": 55, "lemma": "ahora", "pos": "adverb", "gender": None,
+        "englishGloss": "now", "frequencyRank": 92, "cefrBand": "A2", "difficultyPrior": 0.3,
+        "reason": "time and immediacy", "sourceBasis": "hermitdave/FrequencyWords high-frequency spine",
+        "sentences": [
+            (145, 148, "Necesito agua ahora.", "I need water now."),
+            (146, 149, "Estoy aquí ahora.", "I am here now."),
+        ],
+    },
+    {
+        "lexemeId": 56, "lemma": "luego", "pos": "adverb", "gender": None,
+        "englishGloss": "later; then", "frequencyRank": 505, "cefrBand": "A2", "difficultyPrior": 0.4,
+        "reason": "time sequencing", "sourceBasis": "hermitdave/FrequencyWords high-frequency spine",
+        "sentences": [
+            (147, 150, "Te veo luego.", "I will see you later."),
+            (148, 151, "Trabajo luego.", "I work later."),
+        ],
+    },
+    {
+        "lexemeId": 57, "lemma": "calle", "pos": "noun", "gender": "F",
+        "englishGloss": "street", "frequencyRank": 590, "cefrBand": "A2", "difficultyPrior": 0.4,
+        "reason": "directions and errands", "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 3 travel/errands topic",
+        "sentences": [
+            (149, 152, "Vivo en esta calle.", "I live on this street."),
+            (150, 153, "La tienda está en esta calle.", "The store is on this street."),
+        ],
+    },
+    {
+        "lexemeId": 58, "lemma": "puerta", "pos": "noun", "gender": "F",
+        "englishGloss": "door", "frequencyRank": 852, "cefrBand": "A2", "difficultyPrior": 0.4,
+        "reason": "home and errands", "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 3 home/errands topic",
+        "sentences": [
+            (151, 154, "La puerta está abierta.", "The door is open."),
+            (152, 155, "La puerta está cerrada.", "The door is closed."),
+        ],
+    },
+    {
+        "lexemeId": 59, "lemma": "mesa", "pos": "noun", "gender": "F",
+        "englishGloss": "table", "frequencyRank": 1443, "cefrBand": "A2", "difficultyPrior": 0.5,
+        "reason": "home and food", "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 3 home/food topic",
+        "sentences": [
+            (153, 156, "La comida está en la mesa.", "The food is on the table."),
+            (154, 157, "La mesa es grande.", "The table is big."),
+        ],
+    },
+    {
+        "lexemeId": 60, "lemma": "teléfono", "pos": "noun", "gender": "M",
+        "englishGloss": "phone", "frequencyRank": 1856, "cefrBand": "A2", "difficultyPrior": 0.5,
+        "reason": "daily communication", "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 3 communication topic",
+        "sentences": [
+            (155, 158, "Necesito mi teléfono.", "I need my phone."),
+            (156, 159, "El teléfono está en la mesa.", "The phone is on the table."),
+        ],
+    },
+    {
+        "lexemeId": 61, "lemma": "pregunta", "pos": "noun", "gender": "F",
+        "englishGloss": "question", "frequencyRank": 760, "cefrBand": "A2", "difficultyPrior": 0.4,
+        "reason": "learning and clarification", "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 3 questions topic",
+        "sentences": [
+            (157, 160, "Tengo una pregunta.", "I have a question."),
+            (158, 161, "La pregunta es importante.", "The question is important."),
+        ],
+    },
+]
+
+AI_REVIEWED_SENTENCE_PAIRS.update({
+    spanish: english
+    for item in AI_ACCELERATED_PACK_A2_003
+    for _, _, spanish, english in item["sentences"]
+})
 
 
 FREQUENCY_SOURCE_DECISION = {
@@ -255,6 +453,17 @@ A1_A2_TARGET_LEMMAS = [
     {"lemma": "rápido", "cefrBand": "A2", "pos": "adjective/adverb", "priority": 4, "reason": "common manner and speed", "sourceBasis": "hermitdave/FrequencyWords high-frequency spine"},
     {"lemma": "grande", "cefrBand": "A2", "pos": "adjective", "priority": 4, "reason": "common size description", "sourceBasis": "hermitdave/FrequencyWords high-frequency spine"},
 ]
+A1_A2_TARGET_LEMMAS.extend([
+    {
+        "lemma": item["lemma"],
+        "cefrBand": item["cefrBand"],
+        "pos": item["pos"],
+        "priority": 5,
+        "reason": item["reason"],
+        "sourceBasis": item["sourceBasis"],
+    }
+    for item in AI_ACCELERATED_PACK_A2_003
+])
 
 
 # --------------------------------------------------------------------------------------
@@ -273,6 +482,51 @@ class Row:
     reviewedBy: str | None = None
     reviewedAt: int | None = None
     reviewEvidence: list[dict] = field(default_factory=list)
+
+
+def append_ai_accelerated_pack(lexemes, sentences, accepted, sentence_lexeme, exercises) -> None:
+    exercise_id = 83
+    for item in AI_ACCELERATED_PACK_A2_003:
+        lexeme_id = item["lexemeId"]
+        lexemes.append(Row({
+            "lexemeId": lexeme_id,
+            "lemma": item["lemma"],
+            "pos": item["pos"],
+            "gender": item["gender"],
+            "englishGloss": item["englishGloss"],
+            "frequencyRank": item["frequencyRank"],
+            "cefrBand": item["cefrBand"],
+            "difficultyPrior": item["difficultyPrior"],
+        }, source="wiktionary", sourceId=item["lemma"], license="CC-BY-SA-3.0"))
+
+        sentence_ids = []
+        for sentence_id, accepted_id, spanish, english in item["sentences"]:
+            sentence_ids.append(sentence_id)
+            sentences.append(Row({
+                "sentenceId": sentence_id,
+                "spanishText": spanish,
+                "englishText": english,
+            }, source=AI_DRAFT_SOURCE,
+                sourceId=f"ai_draft:a2-003-{item['lemma']}-{len(sentence_ids)}",
+                license="proprietary", vettingStatus=AI_DRAFT))
+            accepted.append(Row({
+                "acceptedAnswerId": accepted_id,
+                "sentenceId": sentence_id,
+                "direction": "ES_TO_EN",
+                "answerText": normalize_answer(english),
+            }, source=AI_DRAFT_SOURCE,
+                sourceId=f"ai_draft:a2-003-{item['lemma']}-{len(sentence_ids)}-answer",
+                license="proprietary", vettingStatus=AI_DRAFT))
+            sentence_lexeme.append((sentence_id, lexeme_id))
+
+        exercises.append({"exerciseId": exercise_id, "nodeId": 1, "sentenceId": sentence_ids[0],
+                          "type": "TYPED_TRANSLATION", "direction": "ES_TO_EN",
+                          "targetItemId": lexeme_id, "targetItemType": "LEXEME", "promptHint": None})
+        exercise_id += 1
+        exercises.append({"exerciseId": exercise_id, "nodeId": 1, "sentenceId": sentence_ids[1],
+                          "type": "WORD_BANK", "direction": "ES_TO_EN",
+                          "targetItemId": lexeme_id, "targetItemType": "LEXEME", "promptHint": None})
+        exercise_id += 1
 
 
 def vetted_sample():
@@ -1218,6 +1472,7 @@ def vetted_sample():
         {"exerciseId": 82, "nodeId": 1, "sentenceId": 118, "type": "WORD_BANK", "direction": "ES_TO_EN",
          "targetItemId": 41, "targetItemType": "LEXEME", "promptHint": None},
     ]
+    append_ai_accelerated_pack(lexemes, sentences, accepted, sentence_lexeme, exercises)
     return lexemes, sentences, accepted, sentence_lexeme, conj, exercises, nodes
 
 
@@ -1388,6 +1643,23 @@ def stage_publish_gate(lexemes, sentences, accepted) -> None:
         raise SystemExit(2)
 
 
+def attribution_rows(lexemes):
+    rows = set()
+    if any(r.data.get("frequencyRank") for r in lexemes):
+        rows.add((FREQUENCY_ATTRIBUTION["source"], FREQUENCY_ATTRIBUTION["license"]))
+    return sorted(rows)
+
+
+def enforce_attribution_requirements(lexemes) -> None:
+    required = {(FREQUENCY_ATTRIBUTION["source"], FREQUENCY_ATTRIBUTION["license"])}
+    present = set(attribution_rows(lexemes))
+    missing = sorted(required - present)
+    if missing:
+        failures = [f"{source} {license}" for source, license in missing]
+        sys.stderr.write("ATTRIBUTION GATE FAILED:\n  missing " + "\n  missing ".join(failures) + "\n")
+        raise SystemExit(5)
+
+
 def write_db(out_path, lexemes, sentences, accepted, sentence_lexeme, conj, exercises, nodes):
     if os.path.exists(out_path):
         os.remove(out_path)
@@ -1417,6 +1689,7 @@ def write_db(out_path, lexemes, sentences, accepted, sentence_lexeme, conj, exer
     cur.executemany("INSERT INTO sentence_lexeme VALUES (?,?)", sentence_lexeme)
     cur.executemany("INSERT INTO conjugation_lemma_map VALUES (?,?,?,?)", conj)
     cur.executemany("INSERT INTO node VALUES (?,?,?)", nodes)
+    cur.executemany("INSERT INTO content_attribution VALUES (?,?)", attribution_rows(lexemes))
     for e in exercises:
         cur.execute("INSERT INTO exercise VALUES (?,?,?,?,?,?,?,?)",
                     (e["exerciseId"], e["nodeId"], e["sentenceId"], e["type"], e["direction"],
@@ -1453,7 +1726,11 @@ def write_manifest(out_dir, lexemes, sentences, accepted):
             })
     manifest = {"schemaVersion": SCHEMA_VERSION, "totalContentRows": len(rows),
                 "byVettingStatus": by_status, "bySource": by_source,
-                "authoredRows": authored, "autoReviewLedger": review_ledger}
+                "authoredRows": authored, "autoReviewLedger": review_ledger,
+                "additionalAttributions": [
+                    {"source": source, "license": license}
+                    for source, license in attribution_rows(lexemes)
+                ]}
     path = os.path.join(out_dir, "content_manifest.json")
     with open(path, "w") as f:
         json.dump(manifest, f, indent=2)
@@ -1752,6 +2029,7 @@ def main():
 
     # Stage 5: publish gate (AC17) — raises SystemExit(2) if anything is unvetted/sourceless
     stage_publish_gate(lexemes, sentences, accepted)
+    enforce_attribution_requirements(lexemes)
 
     out_dir = os.path.dirname(args.out) or "."
     os.makedirs(out_dir, exist_ok=True)

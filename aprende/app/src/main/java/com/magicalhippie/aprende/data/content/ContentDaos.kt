@@ -98,15 +98,17 @@ data class AttributionRow(
 interface AttributionDao {
     /**
      * Distinct `(source, license)` across the content-bearing tables `lexeme`, `sentence`,
-     * and `accepted_answer` (the vetted provenance columns, C5 / §4.6). UNION dedupes; the
-     * outer ORDER BY makes the credits screen deterministic (AC14). This READS the vetting
-     * trail — it does not bypass the build-time gate that populated it.
+     * and `accepted_answer` (the vetted provenance columns, C5 / §4.6), plus
+     * `content_attribution` for corpus-level metadata credits such as the frequency spine.
+     * UNION dedupes; the outer ORDER BY makes the credits screen deterministic (AC14).
+     * This READS the vetting trail — it does not bypass the build-time gate that populated it.
      */
     @Query(
         "SELECT source, license FROM (" +
             "SELECT source, license FROM lexeme " +
             "UNION SELECT source, license FROM sentence " +
-            "UNION SELECT source, license FROM accepted_answer" +
+            "UNION SELECT source, license FROM accepted_answer " +
+            "UNION SELECT source, license FROM content_attribution" +
             ") ORDER BY source ASC, license ASC"
     )
     suspend fun distinctAttributions(): List<AttributionRow>

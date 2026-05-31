@@ -9,7 +9,7 @@ import androidx.room.RoomDatabase
  * [ContentDataModule] for the builder and the (intentional) destructive-fallback policy.
  *
  * `version` must match `PRAGMA user_version` of the bundled asset (the pipeline writes
- * `SCHEMA_VERSION = 1`). `exportSchema = true` writes the schema JSON to `app/schemas/`
+ * `SCHEMA_VERSION = 2`). `exportSchema = true` writes the schema JSON to `app/schemas/`
  * (configured via `room.schemaLocation` in build.gradle.kts) so the content build can be
  * validated against it.
  *
@@ -27,8 +27,9 @@ import androidx.room.RoomDatabase
         ConjugationLemmaMapEntity::class,
         ExerciseEntity::class,
         NodeEntity::class,
+        ContentAttributionEntity::class,
     ],
-    version = 1,
+    version = 2,
     exportSchema = true,
 )
 abstract class ContentDatabase : RoomDatabase() {

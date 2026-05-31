@@ -687,3 +687,81 @@ Acceptance result:
 - `--fail-on-coverage-gaps` exits 0.
 - The publish gate still rejects unreviewed rows.
 - No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 36 generated content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s `autoReviewLedger`.
+
+## A2-003 Accelerated Practical Fluency Pack
+
+**Status:** implemented locally after A2-002.
+
+**Goal:** use the `AI_DRAFT -> AUTO_CHECKED -> AUTO_REVIEWED -> REVIEWED` lane for a larger
+high-frequency practical batch, emphasizing verbs, adjectives/adverbs, and daily-life nouns.
+
+**Target lemmas:**
+
+| Lemma | FrequencyWords rank | POS | Domain |
+|---|---:|---|---|
+| `ayudar` | 1088 | verb | help and requests |
+| `trabajar` | 846 | verb | work routines |
+| `aprender` | 1788 | verb | learning |
+| `escuchar` | 1037 | verb | communication |
+| `pagar` | 1007 | verb | shopping and errands |
+| `abrir` | 664 | verb | daily actions |
+| `cerrar` | 1105 | verb | daily actions |
+| `fácil` | 814 | adjective | common description |
+| `difícil` | 938 | adjective | common description |
+| `cerca` | 433 | adverb | location |
+| `lejos` | 1565 | adverb | location |
+| `siempre` | 171 | adverb | frequency and routines |
+| `nunca` | 446 | adverb | frequency and routines |
+| `ahora` | 92 | adverb | time and immediacy |
+| `luego` | 505 | adverb | time sequencing |
+| `calle` | 590 | noun | directions and errands |
+| `puerta` | 852 | noun | home and errands |
+| `mesa` | 1443 | noun | home and food |
+| `teléfono` | 1856 | noun | daily communication |
+| `pregunta` | 760 | noun | learning and clarification |
+
+Generated rows and automatic review evidence:
+
+| Lemma | Spanish sentence 1 | Spanish sentence 2 |
+|---|---|---|
+| `ayudar` | `Quiero ayudar.` | `¿Puedes ayudarme?` |
+| `trabajar` | `Trabajo hoy.` | `Ella trabaja aquí.` |
+| `aprender` | `Aprendo español.` | `Quiero aprender más.` |
+| `escuchar` | `Escucho música.` | `¿Puedes escuchar?` |
+| `pagar` | `Pago ahora.` | `Quiero pagar.` |
+| `abrir` | `Abre la puerta.` | `Quiero abrir la puerta.` |
+| `cerrar` | `Cierra la puerta.` | `Necesito cerrar la tienda.` |
+| `fácil` | `Es fácil.` | `La pregunta es fácil.` |
+| `difícil` | `Es difícil.` | `El trabajo es difícil.` |
+| `cerca` | `La tienda está cerca.` | `Estoy cerca.` |
+| `lejos` | `Vivo lejos.` | `La escuela está lejos.` |
+| `siempre` | `Siempre trabajo.` | `Siempre quiero agua.` |
+| `nunca` | `Nunca pago tarde.` | `Nunca trabajo aquí.` |
+| `ahora` | `Necesito agua ahora.` | `Estoy aquí ahora.` |
+| `luego` | `Te veo luego.` | `Trabajo luego.` |
+| `calle` | `Vivo en esta calle.` | `La tienda está en esta calle.` |
+| `puerta` | `La puerta está abierta.` | `La puerta está cerrada.` |
+| `mesa` | `La comida está en la mesa.` | `La mesa es grande.` |
+| `teléfono` | `Necesito mi teléfono.` | `El teléfono está en la mesa.` |
+| `pregunta` | `Tengo una pregunta.` | `La pregunta es importante.` |
+
+Implemented content delta:
+
+- 20 reviewed Wiktionary lexeme rows.
+- 40 `AI_DRAFT` sentence rows promoted to `REVIEWED` by two independent automatic reviewers.
+- 40 `AI_DRAFT` accepted-answer rows promoted to `REVIEWED` by the same two-reviewer gate.
+- 40 `sentence_lexeme` joins.
+- 40 derived exercises:
+  - production and recognition exercises for all 20 target lemmas.
+
+Acceptance result:
+
+- `learnerReadyLexemes` increases from 41 to 61.
+- `reviewedSentences` increases from 118 to 158.
+- `reviewedAcceptedAnswers` increases from 121 to 161.
+- `exerciseCount` increases from 82 to 122.
+- `missingA1A2GapCount` remains 0.
+- No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 80 generated content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s `autoReviewLedger`.
+- FrequencyWords rank metadata is exposed in the shipped `content.db` attribution path via
+  `content_attribution` as `frequencywords` / `CC-BY-SA-4.0`, so the app credits screen can
+  render the frequency-spine license alongside row-level content sources.
