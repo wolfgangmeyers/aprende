@@ -244,21 +244,43 @@ def vetted_sample():
     ]
     sentences = [
         Row({"sentenceId": 1, "spanishText": "Tengo un perro.", "englishText": "I have a dog."},
-            sourceId="tatoeba:12345"),
+            sourceId="tatoeba:755342"),
         Row({"sentenceId": 2, "spanishText": "El agua está fría.", "englishText": "The water is cold."},
-            sourceId="tatoeba:67890"),
+            sourceId="tatoeba:1987699"),
+        Row({"sentenceId": 3, "spanishText": "¿Tienes un perro?", "englishText": "Do you have a dog?"},
+            sourceId="tatoeba:1195274"),
+        Row({"sentenceId": 4, "spanishText": "Tiene un perro.", "englishText": "He has a dog."},
+            sourceId="tatoeba:5051233"),
+        Row({"sentenceId": 5, "spanishText": "Tengo el agua.", "englishText": "I have the water."},
+            sourceId="tatoeba:3515639"),
     ]
     accepted = [
         Row({"acceptedAnswerId": 1, "sentenceId": 1, "direction": "ES_TO_EN", "answerText": "i have a dog"},
-            sourceId="tatoeba:12345"),
+            sourceId="tatoeba:378502"),
         # an `authored` accepted-variant — must be human-reviewed before it can ship
         Row({"acceptedAnswerId": 2, "sentenceId": 1, "direction": "ES_TO_EN", "answerText": "i've got a dog"},
             source="authored", sourceId="authored:aa2", license="proprietary"),
-        Row({"acceptedAnswerId": 3, "sentenceId": 2, "direction": "ES_TO_EN", "answerText": "the water is cold"},
-            sourceId="tatoeba:67890"),
+        Row({"acceptedAnswerId": 3, "sentenceId": 2, "direction": "ES_TO_EN", "answerText": "the water's cold"},
+            sourceId="tatoeba:3422364"),
+        Row({"acceptedAnswerId": 8, "sentenceId": 2, "direction": "ES_TO_EN", "answerText": "the water is cold"},
+            source="authored", sourceId="authored:aa8", license="proprietary"),
+        Row({"acceptedAnswerId": 4, "sentenceId": 3, "direction": "ES_TO_EN", "answerText": "do you have a dog"},
+            sourceId="tatoeba:1195261"),
+        Row({"acceptedAnswerId": 5, "sentenceId": 4, "direction": "ES_TO_EN", "answerText": "he has a dog"},
+            sourceId="tatoeba:288121"),
+        Row({"acceptedAnswerId": 6, "sentenceId": 4, "direction": "ES_TO_EN", "answerText": "she has a dog"},
+            sourceId="tatoeba:7425744"),
+        Row({"acceptedAnswerId": 7, "sentenceId": 5, "direction": "ES_TO_EN", "answerText": "i have the water"},
+            sourceId="tatoeba:12068868"),
     ]
     # non-vetted-audited tables (derived/structural) still carry source where meaningful
-    sentence_lexeme = [(1, 1), (1, 3), (2, 2)]
+    sentence_lexeme = [
+        (1, 1), (1, 3),
+        (2, 2),
+        (3, 1), (3, 3),
+        (4, 1), (4, 3),
+        (5, 1), (5, 2),
+    ]
     conj = [("tengo", 1, "wiktionary", "CC-BY-SA-3.0"), ("tienes", 1, "wiktionary", "CC-BY-SA-3.0")]
     # Path nodes (structural). v1 sample ships one node; exercises above belong to nodeId=1.
     nodes = [(1, "Basics 1", 0)]
@@ -267,6 +289,14 @@ def vetted_sample():
          "targetItemId": 1, "targetItemType": "LEXEME", "promptHint": None},
         {"exerciseId": 2, "nodeId": 1, "sentenceId": 2, "type": "WORD_BANK", "direction": "ES_TO_EN",
          "targetItemId": 2, "targetItemType": "LEXEME", "promptHint": None},
+        {"exerciseId": 3, "nodeId": 1, "sentenceId": 4, "type": "WORD_BANK", "direction": "ES_TO_EN",
+         "targetItemId": 1, "targetItemType": "LEXEME", "promptHint": None},
+        {"exerciseId": 4, "nodeId": 1, "sentenceId": 5, "type": "TYPED_TRANSLATION", "direction": "ES_TO_EN",
+         "targetItemId": 2, "targetItemType": "LEXEME", "promptHint": None},
+        {"exerciseId": 5, "nodeId": 1, "sentenceId": 3, "type": "TYPED_TRANSLATION", "direction": "ES_TO_EN",
+         "targetItemId": 3, "targetItemType": "LEXEME", "promptHint": None},
+        {"exerciseId": 6, "nodeId": 1, "sentenceId": 4, "type": "WORD_BANK", "direction": "ES_TO_EN",
+         "targetItemId": 3, "targetItemType": "LEXEME", "promptHint": None},
     ]
     return lexemes, sentences, accepted, sentence_lexeme, conj, exercises, nodes
 
