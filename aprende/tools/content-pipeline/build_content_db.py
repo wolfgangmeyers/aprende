@@ -250,6 +250,9 @@ def vetted_sample():
         Row({"lexemeId": 6, "lemma": "ir", "pos": "verb", "gender": None,
              "englishGloss": "to go", "frequencyRank": 128, "cefrBand": "A1", "difficultyPrior": 0.3},
             source="wiktionary", sourceId="ir", license="CC-BY-SA-3.0"),
+        Row({"lexemeId": 7, "lemma": "querer", "pos": "verb", "gender": None,
+             "englishGloss": "to want", "frequencyRank": 1557, "cefrBand": "A1", "difficultyPrior": 0.6},
+            source="wiktionary", sourceId="querer", license="CC-BY-SA-3.0"),
     ]
     sentences = [
         Row({"sentenceId": 1, "spanishText": "Tengo un perro.", "englishText": "I have a dog."},
@@ -286,6 +289,10 @@ def vetted_sample():
             sourceId="tatoeba:450251"),
         Row({"sentenceId": 17, "spanishText": "Voy a la escuela.", "englishText": "I go to school."},
             sourceId="tatoeba:473450"),
+        Row({"sentenceId": 18, "spanishText": "Quiero agua.", "englishText": "I want water."},
+            sourceId="tatoeba:584596"),
+        Row({"sentenceId": 19, "spanishText": "¿Quieres agua?", "englishText": "Do you want water?"},
+            sourceId="tatoeba:12291005"),
     ]
     accepted = [
         Row({"acceptedAnswerId": 1, "sentenceId": 1, "direction": "ES_TO_EN", "answerText": "i have a dog"},
@@ -329,6 +336,10 @@ def vetted_sample():
             sourceId="tatoeba:257353"),
         Row({"acceptedAnswerId": 20, "sentenceId": 17, "direction": "ES_TO_EN", "answerText": "i go to school"},
             sourceId="tatoeba:472089"),
+        Row({"acceptedAnswerId": 21, "sentenceId": 18, "direction": "ES_TO_EN", "answerText": "i want water"},
+            sourceId="tatoeba:5085314"),
+        Row({"acceptedAnswerId": 22, "sentenceId": 19, "direction": "ES_TO_EN", "answerText": "do you want water"},
+            sourceId="tatoeba:13225760"),
     ]
     # non-vetted-audited tables (derived/structural) still carry source where meaningful
     sentence_lexeme = [
@@ -349,6 +360,8 @@ def vetted_sample():
         (15, 6),
         (16, 6),
         (17, 6),
+        (18, 7), (18, 2),
+        (19, 7), (19, 2),
     ]
     conj = [("tengo", 1, "wiktionary", "CC-BY-SA-3.0"), ("tienes", 1, "wiktionary", "CC-BY-SA-3.0")]
     # Path nodes (structural). v1 sample ships one node; exercises above belong to nodeId=1.
@@ -378,6 +391,10 @@ def vetted_sample():
          "targetItemId": 6, "targetItemType": "LEXEME", "promptHint": None},
         {"exerciseId": 12, "nodeId": 1, "sentenceId": 16, "type": "WORD_BANK", "direction": "ES_TO_EN",
          "targetItemId": 6, "targetItemType": "LEXEME", "promptHint": None},
+        {"exerciseId": 13, "nodeId": 1, "sentenceId": 18, "type": "TYPED_TRANSLATION", "direction": "ES_TO_EN",
+         "targetItemId": 7, "targetItemType": "LEXEME", "promptHint": None},
+        {"exerciseId": 14, "nodeId": 1, "sentenceId": 19, "type": "WORD_BANK", "direction": "ES_TO_EN",
+         "targetItemId": 7, "targetItemType": "LEXEME", "promptHint": None},
     ]
     return lexemes, sentences, accepted, sentence_lexeme, conj, exercises, nodes
 

@@ -129,12 +129,12 @@ Source rows used:
 
 ## Next Worker Task
 
-Implement `A1-003 Movement: ir` in the content pipeline sample.
+Implement `A1-004 Wants: querer` in the content pipeline sample.
 
 Concrete steps:
 
-1. Add the next high-value movement verb, `ir`, from Wiktionary using the FrequencyWords rank.
-2. Find four reviewed Tatoeba contexts for the verb.
+1. Add the next smallest priority-1 verb, `querer`, from Wiktionary using the FrequencyWords rank.
+2. Find reviewed Tatoeba contexts for the verb.
 3. Add the missing `sentence_lexeme` joins and derived exercises.
 4. Run the normal pipeline and inspect `content_coverage.json`.
 5. Update `coverage_baseline_snapshot.json`.
@@ -224,5 +224,43 @@ Acceptance result:
 - `learnerReadyLexemes` increases from 5 to 6.
 - `ir` has no readiness blockers in `content_coverage.json`.
 - `missingA1A2GapCount` decreases from 26 to 25.
+- `--fail-on-coverage-gaps` exits 0.
+- The publish gate still rejects unreviewed rows.
+
+## A1-004 Wants: Querer
+
+**Status:** implemented locally after A1-003.
+
+**Goal:** add the smallest clean remaining priority-1 verb slice, `querer`, without schema or UI changes.
+
+**Target lemma:**
+
+| Lemma | FrequencyWords rank | Source basis | Required to ship |
+|---|---:|---|---|
+| `querer` | 1557 | `SPEC.md` §5.2 irregular verb table | 2 reviewed contexts, production + recognition exercises |
+
+Source rows used:
+
+| Lemma | Spanish sentence | Tatoeba Spanish ID | Accepted English answer | English source ID |
+|---|---|---:|---|---:|
+| `querer` | `Quiero agua.` | 584596 | `i want water` | 5085314 |
+| `querer` | `¿Quieres agua?` | 12291005 | `do you want water` | 13225760 |
+
+Implemented content delta:
+
+- 1 reviewed Wiktionary lexeme row.
+- 2 reviewed Tatoeba sentence rows.
+- 2 reviewed Tatoeba accepted-answer rows.
+- 4 `sentence_lexeme` joins (`querer` + existing `agua`).
+- 2 derived exercises:
+  - `querer` production exercise
+  - `querer` recognition exercise
+- Updated `coverage_baseline_snapshot.json`.
+
+Acceptance result:
+
+- `learnerReadyLexemes` increases from 6 to 7.
+- `querer` has no readiness blockers in `content_coverage.json`.
+- `missingA1A2GapCount` decreases from 25 to 24.
 - `--fail-on-coverage-gaps` exits 0.
 - The publish gate still rejects unreviewed rows.
