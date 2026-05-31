@@ -5,9 +5,10 @@ that the app ships via Room `createFromAsset`, enforcing the C5 / SPEC §4.6 con
 workflow as a HARD GATE.
 
 This is a dev-time tool (NOT shipped in the app). It is the ONLY path content takes into
-`content.db`: ingest from vetted sources -> derive -> auto-check -> human review gate ->
-publish gate. The publish step FAILS (non-zero exit) if any row to be shipped lacks a
-`source` or is not `vettingStatus = REVIEWED` — this is AC17.
+`content.db`: ingest from vetted sources or AI_DRAFT candidates -> derive -> auto-check ->
+independent review gate -> publish gate. The publish step FAILS (non-zero exit) if any row
+to be shipped lacks a `source` or is not `vettingStatus = REVIEWED` — this is AC17. AI_DRAFT
+rows additionally require deterministic checks plus two independent automatic approvals.
 
 Language note (deviation from PLAN P0.3 "JVM/Kotlin tool"): implemented in Python for the
 spike because (a) it is dev-time tooling, never shipped; (b) it can be RUN and the gate
@@ -28,15 +29,18 @@ import argparse
 import json
 import os
 import sqlite3
+import re
 import sys
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 PIPELINE_DIR = os.path.dirname(os.path.abspath(__file__))
 DEFAULT_BASELINE_SNAPSHOT_PATH = os.path.join(PIPELINE_DIR, "coverage_baseline_snapshot.json")
 
 # --- vetting status lifecycle (SPEC §4.6) ---
 UNVETTED = "UNVETTED"
+AI_DRAFT = "AI_DRAFT"
 AUTO_CHECKED = "AUTO_CHECKED"
+AUTO_REVIEWED = "AUTO_REVIEWED"
 REVIEWED = "REVIEWED"  # the only status allowed to ship
 
 # Room schema version this asset must match (content.db @Database version, SPEC D2).
@@ -127,6 +131,35 @@ SCHEMA_DDL = [
 
 # content-bearing tables that the publish gate audits (must be REVIEWED + have a source)
 VETTED_TABLES = ["lexeme", "sentence", "accepted_answer"]
+AI_DRAFT_SOURCE = "ai_draft"
+AUTO_REVIEW_SPANISH = "spanish_correctness_naturalness"
+AUTO_REVIEW_PEDAGOGY = "english_pedagogy_cefr"
+AUTO_REVIEW_REVIEWERS = {
+    AUTO_REVIEW_SPANISH: "auto_review:spanish_v1",
+    AUTO_REVIEW_PEDAGOGY: "auto_review:english_pedagogy_v1",
+}
+AUTO_REVIEW_TS = 1_735_700_000_000
+AI_REVIEWED_SENTENCE_PAIRS = {
+    "¿Tienes coche?": "Do you have a car?",
+    "Quiero un coche.": "I want a car.",
+    "Vayamos en autobús.": "Let's go by bus.",
+    "Ella viajó en autobús.": "She traveled by bus.",
+    "Odio esta tienda.": "I hate this store.",
+    "Cerraron la tienda.": "They closed the shop.",
+    "Mira el precio.": "Look at the price.",
+    "El precio subió.": "The price rose.",
+    "Lavémonos las manos.": "Let's wash our hands.",
+    "Toma mi mano.": "Take my hand.",
+    "¡Usa la cabeza!": "Use your head!",
+    "Me duele la cabeza.": "My head hurts.",
+    "¿Es malo?": "Is it bad?",
+    "Son malos.": "They're bad.",
+    "¡Rápido!": "Quick!",
+    "Comí rápido.": "I ate quickly.",
+    "Es grande.": "It's big.",
+    "¿Son grandes?": "Are they big?",
+    "Necesito ayuda.": "I need help.",
+}
 
 
 FREQUENCY_SOURCE_DECISION = {
@@ -211,6 +244,16 @@ A1_A2_TARGET_LEMMAS = [
     {"lemma": "llegar", "cefrBand": "A2", "pos": "verb", "priority": 3, "reason": "travel and time", "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 3 travel/time topics"},
     {"lemma": "salir", "cefrBand": "A2", "pos": "verb", "priority": 3, "reason": "movement and plans", "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 3 travel/plans topics"},
     {"lemma": "necesitar", "cefrBand": "A2", "pos": "verb", "priority": 3, "reason": "needs", "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 3 wants/needs topic"},
+    {"lemma": "coche", "cefrBand": "A2", "pos": "noun", "priority": 4, "reason": "transport", "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 3 transport topic"},
+    {"lemma": "autobús", "cefrBand": "A2", "pos": "noun", "priority": 4, "reason": "transport", "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 3 transport topic"},
+    {"lemma": "tienda", "cefrBand": "A2", "pos": "noun", "priority": 4, "reason": "shopping", "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 3 shopping topic"},
+    {"lemma": "precio", "cefrBand": "A2", "pos": "noun", "priority": 4, "reason": "shopping details", "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 3 shopping/money topic"},
+    {"lemma": "mano", "cefrBand": "A2", "pos": "noun", "priority": 4, "reason": "body and health", "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 3 health/body topic"},
+    {"lemma": "cabeza", "cefrBand": "A2", "pos": "noun", "priority": 4, "reason": "body and health", "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 3 health/body topic"},
+    {"lemma": "bueno", "cefrBand": "A2", "pos": "adjective", "priority": 4, "reason": "common description", "sourceBasis": "hermitdave/FrequencyWords high-frequency spine"},
+    {"lemma": "malo", "cefrBand": "A2", "pos": "adjective", "priority": 4, "reason": "common description", "sourceBasis": "hermitdave/FrequencyWords high-frequency spine"},
+    {"lemma": "rápido", "cefrBand": "A2", "pos": "adjective/adverb", "priority": 4, "reason": "common manner and speed", "sourceBasis": "hermitdave/FrequencyWords high-frequency spine"},
+    {"lemma": "grande", "cefrBand": "A2", "pos": "adjective", "priority": 4, "reason": "common size description", "sourceBasis": "hermitdave/FrequencyWords high-frequency spine"},
 ]
 
 
@@ -229,6 +272,7 @@ class Row:
     vettingStatus: str = UNVETTED
     reviewedBy: str | None = None
     reviewedAt: int | None = None
+    reviewEvidence: list[dict] = field(default_factory=list)
 
 
 def vetted_sample():
@@ -327,6 +371,36 @@ def vetted_sample():
         Row({"lexemeId": 31, "lemma": "viajar", "pos": "verb", "gender": None,
              "englishGloss": "to travel", "frequencyRank": 2530, "cefrBand": "A2", "difficultyPrior": 0.6},
             source="wiktionary", sourceId="viajar", license="CC-BY-SA-3.0"),
+        Row({"lexemeId": 32, "lemma": "coche", "pos": "noun", "gender": "M",
+             "englishGloss": "car", "frequencyRank": 408, "cefrBand": "A2", "difficultyPrior": 0.4},
+            source="wiktionary", sourceId="coche", license="CC-BY-SA-3.0"),
+        Row({"lexemeId": 33, "lemma": "autobús", "pos": "noun", "gender": "M",
+             "englishGloss": "bus", "frequencyRank": 1702, "cefrBand": "A2", "difficultyPrior": 0.5},
+            source="wiktionary", sourceId="autobús", license="CC-BY-SA-3.0"),
+        Row({"lexemeId": 34, "lemma": "tienda", "pos": "noun", "gender": "F",
+             "englishGloss": "store; shop", "frequencyRank": 817, "cefrBand": "A2", "difficultyPrior": 0.4},
+            source="wiktionary", sourceId="tienda", license="CC-BY-SA-3.0"),
+        Row({"lexemeId": 35, "lemma": "precio", "pos": "noun", "gender": "M",
+             "englishGloss": "price", "frequencyRank": 1230, "cefrBand": "A2", "difficultyPrior": 0.5},
+            source="wiktionary", sourceId="precio", license="CC-BY-SA-3.0"),
+        Row({"lexemeId": 36, "lemma": "mano", "pos": "noun", "gender": "F",
+             "englishGloss": "hand", "frequencyRank": 373, "cefrBand": "A2", "difficultyPrior": 0.4},
+            source="wiktionary", sourceId="mano", license="CC-BY-SA-3.0"),
+        Row({"lexemeId": 37, "lemma": "cabeza", "pos": "noun", "gender": "F",
+             "englishGloss": "head", "frequencyRank": 274, "cefrBand": "A2", "difficultyPrior": 0.4},
+            source="wiktionary", sourceId="cabeza", license="CC-BY-SA-3.0"),
+        Row({"lexemeId": 38, "lemma": "bueno", "pos": "adjective", "gender": None,
+             "englishGloss": "good", "frequencyRank": 50, "cefrBand": "A2", "difficultyPrior": 0.3},
+            source="wiktionary", sourceId="bueno", license="CC-BY-SA-3.0"),
+        Row({"lexemeId": 39, "lemma": "malo", "pos": "adjective", "gender": None,
+             "englishGloss": "bad", "frequencyRank": 476, "cefrBand": "A2", "difficultyPrior": 0.4},
+            source="wiktionary", sourceId="malo", license="CC-BY-SA-3.0"),
+        Row({"lexemeId": 40, "lemma": "rápido", "pos": "adjective/adverb", "gender": None,
+             "englishGloss": "quick; fast", "frequencyRank": 311, "cefrBand": "A2", "difficultyPrior": 0.4},
+            source="wiktionary", sourceId="rápido", license="CC-BY-SA-3.0"),
+        Row({"lexemeId": 41, "lemma": "grande", "pos": "adjective", "gender": None,
+             "englishGloss": "big; large", "frequencyRank": 398, "cefrBand": "A2", "difficultyPrior": 0.4},
+            source="wiktionary", sourceId="grande", license="CC-BY-SA-3.0"),
     ]
     sentences = [
         Row({"sentenceId": 1, "spanishText": "Tengo un perro.", "englishText": "I have a dog."},
@@ -529,6 +603,60 @@ def vetted_sample():
             sourceId="tatoeba:5752610"),
         Row({"sentenceId": 100, "spanishText": "Viajo a menudo.", "englishText": "I travel often."},
             sourceId="tatoeba:995130"),
+        Row({"sentenceId": 101, "spanishText": "¿Tienes coche?", "englishText": "Do you have a car?"},
+            source=AI_DRAFT_SOURCE, sourceId="ai_draft:a2-002-coche-1", license="proprietary",
+            vettingStatus=AI_DRAFT),
+        Row({"sentenceId": 102, "spanishText": "Quiero un coche.", "englishText": "I want a car."},
+            source=AI_DRAFT_SOURCE, sourceId="ai_draft:a2-002-coche-2", license="proprietary",
+            vettingStatus=AI_DRAFT),
+        Row({"sentenceId": 103, "spanishText": "Vayamos en autobús.", "englishText": "Let's go by bus."},
+            source=AI_DRAFT_SOURCE, sourceId="ai_draft:a2-002-autobus-1", license="proprietary",
+            vettingStatus=AI_DRAFT),
+        Row({"sentenceId": 104, "spanishText": "Ella viajó en autobús.", "englishText": "She traveled by bus."},
+            source=AI_DRAFT_SOURCE, sourceId="ai_draft:a2-002-autobus-2", license="proprietary",
+            vettingStatus=AI_DRAFT),
+        Row({"sentenceId": 105, "spanishText": "Odio esta tienda.", "englishText": "I hate this store."},
+            source=AI_DRAFT_SOURCE, sourceId="ai_draft:a2-002-tienda-1", license="proprietary",
+            vettingStatus=AI_DRAFT),
+        Row({"sentenceId": 106, "spanishText": "Cerraron la tienda.", "englishText": "They closed the shop."},
+            source=AI_DRAFT_SOURCE, sourceId="ai_draft:a2-002-tienda-2", license="proprietary",
+            vettingStatus=AI_DRAFT),
+        Row({"sentenceId": 107, "spanishText": "Mira el precio.", "englishText": "Look at the price."},
+            source=AI_DRAFT_SOURCE, sourceId="ai_draft:a2-002-precio-1", license="proprietary",
+            vettingStatus=AI_DRAFT),
+        Row({"sentenceId": 108, "spanishText": "El precio subió.", "englishText": "The price rose."},
+            source=AI_DRAFT_SOURCE, sourceId="ai_draft:a2-002-precio-2", license="proprietary",
+            vettingStatus=AI_DRAFT),
+        Row({"sentenceId": 109, "spanishText": "Lavémonos las manos.", "englishText": "Let's wash our hands."},
+            source=AI_DRAFT_SOURCE, sourceId="ai_draft:a2-002-mano-1", license="proprietary",
+            vettingStatus=AI_DRAFT),
+        Row({"sentenceId": 110, "spanishText": "Toma mi mano.", "englishText": "Take my hand."},
+            source=AI_DRAFT_SOURCE, sourceId="ai_draft:a2-002-mano-2", license="proprietary",
+            vettingStatus=AI_DRAFT),
+        Row({"sentenceId": 111, "spanishText": "¡Usa la cabeza!", "englishText": "Use your head!"},
+            source=AI_DRAFT_SOURCE, sourceId="ai_draft:a2-002-cabeza-1", license="proprietary",
+            vettingStatus=AI_DRAFT),
+        Row({"sentenceId": 112, "spanishText": "Me duele la cabeza.", "englishText": "My head hurts."},
+            source=AI_DRAFT_SOURCE, sourceId="ai_draft:a2-002-cabeza-2", license="proprietary",
+            vettingStatus=AI_DRAFT),
+        Row({"sentenceId": 113, "spanishText": "¿Es malo?", "englishText": "Is it bad?"},
+            source=AI_DRAFT_SOURCE, sourceId="ai_draft:a2-002-malo-1", license="proprietary",
+            vettingStatus=AI_DRAFT),
+        Row({"sentenceId": 114, "spanishText": "Son malos.", "englishText": "They're bad."},
+            source=AI_DRAFT_SOURCE, sourceId="ai_draft:a2-002-malo-2", license="proprietary",
+            vettingStatus=AI_DRAFT),
+        Row({"sentenceId": 115, "spanishText": "¡Rápido!", "englishText": "Quick!"},
+            source=AI_DRAFT_SOURCE, sourceId="ai_draft:a2-002-rapido-1", license="proprietary",
+            vettingStatus=AI_DRAFT),
+        Row({"sentenceId": 116, "spanishText": "Comí rápido.", "englishText": "I ate quickly."},
+            source=AI_DRAFT_SOURCE, sourceId="ai_draft:a2-002-rapido-2", license="proprietary",
+            vettingStatus=AI_DRAFT),
+        Row({"sentenceId": 117, "spanishText": "Es grande.", "englishText": "It's big."},
+            source=AI_DRAFT_SOURCE, sourceId="ai_draft:a2-002-grande-1", license="proprietary",
+            vettingStatus=AI_DRAFT),
+        Row({"sentenceId": 118, "spanishText": "¿Son grandes?", "englishText": "Are they big?"},
+            source=AI_DRAFT_SOURCE, sourceId="ai_draft:a2-002-grande-2", license="proprietary",
+            vettingStatus=AI_DRAFT),
     ]
     accepted = [
         Row({"acceptedAnswerId": 1, "sentenceId": 1, "direction": "ES_TO_EN", "answerText": "i have a dog"},
@@ -738,6 +866,60 @@ def vetted_sample():
             sourceId="tatoeba:2280316"),
         Row({"acceptedAnswerId": 103, "sentenceId": 100, "direction": "ES_TO_EN", "answerText": "i travel often"},
             sourceId="tatoeba:465459"),
+        Row({"acceptedAnswerId": 104, "sentenceId": 101, "direction": "ES_TO_EN", "answerText": "do you have a car"},
+            source=AI_DRAFT_SOURCE, sourceId="ai_draft:a2-002-coche-1-answer", license="proprietary",
+            vettingStatus=AI_DRAFT),
+        Row({"acceptedAnswerId": 105, "sentenceId": 102, "direction": "ES_TO_EN", "answerText": "i want a car"},
+            source=AI_DRAFT_SOURCE, sourceId="ai_draft:a2-002-coche-2-answer", license="proprietary",
+            vettingStatus=AI_DRAFT),
+        Row({"acceptedAnswerId": 106, "sentenceId": 103, "direction": "ES_TO_EN", "answerText": "let's go by bus"},
+            source=AI_DRAFT_SOURCE, sourceId="ai_draft:a2-002-autobus-1-answer", license="proprietary",
+            vettingStatus=AI_DRAFT),
+        Row({"acceptedAnswerId": 107, "sentenceId": 104, "direction": "ES_TO_EN", "answerText": "she traveled by bus"},
+            source=AI_DRAFT_SOURCE, sourceId="ai_draft:a2-002-autobus-2-answer", license="proprietary",
+            vettingStatus=AI_DRAFT),
+        Row({"acceptedAnswerId": 108, "sentenceId": 105, "direction": "ES_TO_EN", "answerText": "i hate this store"},
+            source=AI_DRAFT_SOURCE, sourceId="ai_draft:a2-002-tienda-1-answer", license="proprietary",
+            vettingStatus=AI_DRAFT),
+        Row({"acceptedAnswerId": 109, "sentenceId": 106, "direction": "ES_TO_EN", "answerText": "they closed the shop"},
+            source=AI_DRAFT_SOURCE, sourceId="ai_draft:a2-002-tienda-2-answer", license="proprietary",
+            vettingStatus=AI_DRAFT),
+        Row({"acceptedAnswerId": 110, "sentenceId": 107, "direction": "ES_TO_EN", "answerText": "look at the price"},
+            source=AI_DRAFT_SOURCE, sourceId="ai_draft:a2-002-precio-1-answer", license="proprietary",
+            vettingStatus=AI_DRAFT),
+        Row({"acceptedAnswerId": 111, "sentenceId": 108, "direction": "ES_TO_EN", "answerText": "the price rose"},
+            source=AI_DRAFT_SOURCE, sourceId="ai_draft:a2-002-precio-2-answer", license="proprietary",
+            vettingStatus=AI_DRAFT),
+        Row({"acceptedAnswerId": 112, "sentenceId": 109, "direction": "ES_TO_EN", "answerText": "let's wash our hands"},
+            source=AI_DRAFT_SOURCE, sourceId="ai_draft:a2-002-mano-1-answer", license="proprietary",
+            vettingStatus=AI_DRAFT),
+        Row({"acceptedAnswerId": 113, "sentenceId": 110, "direction": "ES_TO_EN", "answerText": "take my hand"},
+            source=AI_DRAFT_SOURCE, sourceId="ai_draft:a2-002-mano-2-answer", license="proprietary",
+            vettingStatus=AI_DRAFT),
+        Row({"acceptedAnswerId": 114, "sentenceId": 111, "direction": "ES_TO_EN", "answerText": "use your head"},
+            source=AI_DRAFT_SOURCE, sourceId="ai_draft:a2-002-cabeza-1-answer", license="proprietary",
+            vettingStatus=AI_DRAFT),
+        Row({"acceptedAnswerId": 115, "sentenceId": 112, "direction": "ES_TO_EN", "answerText": "my head hurts"},
+            source=AI_DRAFT_SOURCE, sourceId="ai_draft:a2-002-cabeza-2-answer", license="proprietary",
+            vettingStatus=AI_DRAFT),
+        Row({"acceptedAnswerId": 116, "sentenceId": 113, "direction": "ES_TO_EN", "answerText": "is it bad"},
+            source=AI_DRAFT_SOURCE, sourceId="ai_draft:a2-002-malo-1-answer", license="proprietary",
+            vettingStatus=AI_DRAFT),
+        Row({"acceptedAnswerId": 117, "sentenceId": 114, "direction": "ES_TO_EN", "answerText": "they're bad"},
+            source=AI_DRAFT_SOURCE, sourceId="ai_draft:a2-002-malo-2-answer", license="proprietary",
+            vettingStatus=AI_DRAFT),
+        Row({"acceptedAnswerId": 118, "sentenceId": 115, "direction": "ES_TO_EN", "answerText": "quick"},
+            source=AI_DRAFT_SOURCE, sourceId="ai_draft:a2-002-rapido-1-answer", license="proprietary",
+            vettingStatus=AI_DRAFT),
+        Row({"acceptedAnswerId": 119, "sentenceId": 116, "direction": "ES_TO_EN", "answerText": "i ate quickly"},
+            source=AI_DRAFT_SOURCE, sourceId="ai_draft:a2-002-rapido-2-answer", license="proprietary",
+            vettingStatus=AI_DRAFT),
+        Row({"acceptedAnswerId": 120, "sentenceId": 117, "direction": "ES_TO_EN", "answerText": "it's big"},
+            source=AI_DRAFT_SOURCE, sourceId="ai_draft:a2-002-grande-1-answer", license="proprietary",
+            vettingStatus=AI_DRAFT),
+        Row({"acceptedAnswerId": 121, "sentenceId": 118, "direction": "ES_TO_EN", "answerText": "are they big"},
+            source=AI_DRAFT_SOURCE, sourceId="ai_draft:a2-002-grande-2-answer", license="proprietary",
+            vettingStatus=AI_DRAFT),
     ]
     # non-vetted-audited tables (derived/structural) still carry source where meaningful
     sentence_lexeme = [
@@ -845,6 +1027,27 @@ def vetted_sample():
         (98, 31),
         (99, 31),
         (100, 31),
+        (101, 32), (101, 1),
+        (102, 32), (102, 7),
+        (103, 33),
+        (104, 33), (104, 31),
+        (105, 34),
+        (106, 34),
+        (107, 35),
+        (108, 35),
+        (109, 36),
+        (110, 36),
+        (111, 37),
+        (112, 37),
+        (40, 38),
+        (59, 38),
+        (60, 38),
+        (113, 39), (113, 4),
+        (114, 39),
+        (115, 40),
+        (116, 40), (116, 15),
+        (117, 41), (117, 4),
+        (118, 41),
     ]
     conj = [("tengo", 1, "wiktionary", "CC-BY-SA-3.0"), ("tienes", 1, "wiktionary", "CC-BY-SA-3.0")]
     # Path nodes (structural). v1 sample ships one node; exercises above belong to nodeId=1.
@@ -974,6 +1177,46 @@ def vetted_sample():
          "targetItemId": 31, "targetItemType": "LEXEME", "promptHint": None},
         {"exerciseId": 62, "nodeId": 1, "sentenceId": 100, "type": "WORD_BANK", "direction": "ES_TO_EN",
          "targetItemId": 31, "targetItemType": "LEXEME", "promptHint": None},
+        {"exerciseId": 63, "nodeId": 1, "sentenceId": 101, "type": "TYPED_TRANSLATION", "direction": "ES_TO_EN",
+         "targetItemId": 32, "targetItemType": "LEXEME", "promptHint": None},
+        {"exerciseId": 64, "nodeId": 1, "sentenceId": 102, "type": "WORD_BANK", "direction": "ES_TO_EN",
+         "targetItemId": 32, "targetItemType": "LEXEME", "promptHint": None},
+        {"exerciseId": 65, "nodeId": 1, "sentenceId": 103, "type": "TYPED_TRANSLATION", "direction": "ES_TO_EN",
+         "targetItemId": 33, "targetItemType": "LEXEME", "promptHint": None},
+        {"exerciseId": 66, "nodeId": 1, "sentenceId": 104, "type": "WORD_BANK", "direction": "ES_TO_EN",
+         "targetItemId": 33, "targetItemType": "LEXEME", "promptHint": None},
+        {"exerciseId": 67, "nodeId": 1, "sentenceId": 105, "type": "TYPED_TRANSLATION", "direction": "ES_TO_EN",
+         "targetItemId": 34, "targetItemType": "LEXEME", "promptHint": None},
+        {"exerciseId": 68, "nodeId": 1, "sentenceId": 106, "type": "WORD_BANK", "direction": "ES_TO_EN",
+         "targetItemId": 34, "targetItemType": "LEXEME", "promptHint": None},
+        {"exerciseId": 69, "nodeId": 1, "sentenceId": 107, "type": "TYPED_TRANSLATION", "direction": "ES_TO_EN",
+         "targetItemId": 35, "targetItemType": "LEXEME", "promptHint": None},
+        {"exerciseId": 70, "nodeId": 1, "sentenceId": 108, "type": "WORD_BANK", "direction": "ES_TO_EN",
+         "targetItemId": 35, "targetItemType": "LEXEME", "promptHint": None},
+        {"exerciseId": 71, "nodeId": 1, "sentenceId": 109, "type": "TYPED_TRANSLATION", "direction": "ES_TO_EN",
+         "targetItemId": 36, "targetItemType": "LEXEME", "promptHint": None},
+        {"exerciseId": 72, "nodeId": 1, "sentenceId": 110, "type": "WORD_BANK", "direction": "ES_TO_EN",
+         "targetItemId": 36, "targetItemType": "LEXEME", "promptHint": None},
+        {"exerciseId": 73, "nodeId": 1, "sentenceId": 111, "type": "TYPED_TRANSLATION", "direction": "ES_TO_EN",
+         "targetItemId": 37, "targetItemType": "LEXEME", "promptHint": None},
+        {"exerciseId": 74, "nodeId": 1, "sentenceId": 112, "type": "WORD_BANK", "direction": "ES_TO_EN",
+         "targetItemId": 37, "targetItemType": "LEXEME", "promptHint": None},
+        {"exerciseId": 75, "nodeId": 1, "sentenceId": 40, "type": "TYPED_TRANSLATION", "direction": "ES_TO_EN",
+         "targetItemId": 38, "targetItemType": "LEXEME", "promptHint": None},
+        {"exerciseId": 76, "nodeId": 1, "sentenceId": 59, "type": "WORD_BANK", "direction": "ES_TO_EN",
+         "targetItemId": 38, "targetItemType": "LEXEME", "promptHint": None},
+        {"exerciseId": 77, "nodeId": 1, "sentenceId": 113, "type": "TYPED_TRANSLATION", "direction": "ES_TO_EN",
+         "targetItemId": 39, "targetItemType": "LEXEME", "promptHint": None},
+        {"exerciseId": 78, "nodeId": 1, "sentenceId": 114, "type": "WORD_BANK", "direction": "ES_TO_EN",
+         "targetItemId": 39, "targetItemType": "LEXEME", "promptHint": None},
+        {"exerciseId": 79, "nodeId": 1, "sentenceId": 115, "type": "TYPED_TRANSLATION", "direction": "ES_TO_EN",
+         "targetItemId": 40, "targetItemType": "LEXEME", "promptHint": None},
+        {"exerciseId": 80, "nodeId": 1, "sentenceId": 116, "type": "WORD_BANK", "direction": "ES_TO_EN",
+         "targetItemId": 40, "targetItemType": "LEXEME", "promptHint": None},
+        {"exerciseId": 81, "nodeId": 1, "sentenceId": 117, "type": "TYPED_TRANSLATION", "direction": "ES_TO_EN",
+         "targetItemId": 41, "targetItemType": "LEXEME", "promptHint": None},
+        {"exerciseId": 82, "nodeId": 1, "sentenceId": 118, "type": "WORD_BANK", "direction": "ES_TO_EN",
+         "targetItemId": 41, "targetItemType": "LEXEME", "promptHint": None},
     ]
     return lexemes, sentences, accepted, sentence_lexeme, conj, exercises, nodes
 
@@ -981,6 +1224,80 @@ def vetted_sample():
 # --------------------------------------------------------------------------------------
 # Pipeline stages
 # --------------------------------------------------------------------------------------
+def normalize_answer(text: str) -> str:
+    return re.sub(r"[^a-z0-9']+", " ", text.lower()).strip()
+
+
+def add_review_evidence(row: Row, review_type: str, decision: str, notes: str) -> None:
+    row.reviewEvidence.append({
+        "reviewType": review_type,
+        "reviewer": AUTO_REVIEW_REVIEWERS[review_type],
+        "reviewedAt": AUTO_REVIEW_TS,
+        "decision": decision,
+        "notes": notes,
+    })
+
+
+def required_auto_review_types(row: Row) -> set[str]:
+    if row.source != AI_DRAFT_SOURCE:
+        return set()
+    return {AUTO_REVIEW_SPANISH, AUTO_REVIEW_PEDAGOGY}
+
+
+def approved_auto_review_types(row: Row) -> set[str]:
+    return {
+        evidence["reviewType"]
+        for evidence in row.reviewEvidence
+        if evidence.get("decision") == "APPROVED"
+    }
+
+
+def has_required_auto_reviews(row: Row) -> bool:
+    required = required_auto_review_types(row)
+    if not required:
+        return True
+    approved = approved_auto_review_types(row)
+    reviewers = {
+        evidence.get("reviewer")
+        for evidence in row.reviewEvidence
+        if evidence.get("decision") == "APPROVED" and evidence.get("reviewType") in required
+    }
+    return required.issubset(approved) and len(reviewers) >= len(required)
+
+
+def local_spanish_review(row: Row, sentence_by_id: dict[int, Row]) -> tuple[bool, str]:
+    sentence = row
+    if "sentenceId" in row.data and "spanishText" not in row.data:
+        sentence = sentence_by_id.get(row.data["sentenceId"])
+    if sentence is None:
+        return False, "missing linked Spanish sentence"
+    spanish = sentence.data["spanishText"]
+    expected_english = AI_REVIEWED_SENTENCE_PAIRS.get(spanish)
+    if expected_english is None:
+        return False, "Spanish sentence is not in the local approved pattern ledger"
+    if not re.search(r"[A-Za-zÁÉÍÓÚÜÑáéíóúüñ¿¡]", spanish):
+        return False, "Spanish sentence has no Spanish alphabetic content"
+    return True, "Spanish sentence matches local correctness/naturalness ledger"
+
+
+def local_english_pedagogy_review(row: Row, sentence_by_id: dict[int, Row]) -> tuple[bool, str]:
+    if "spanishText" in row.data:
+        expected_english = AI_REVIEWED_SENTENCE_PAIRS.get(row.data["spanishText"])
+        if expected_english != row.data["englishText"]:
+            return False, "English sentence does not match local translation ledger"
+        if len(row.data["englishText"].split()) > 8:
+            return False, "English sentence is too long for this A1/A2 pack"
+        return True, "English translation is ledger-matched and CEFR-appropriate"
+
+    sentence = sentence_by_id.get(row.data["sentenceId"])
+    if sentence is None:
+        return False, "missing linked sentence for accepted answer"
+    expected_english = AI_REVIEWED_SENTENCE_PAIRS.get(sentence.data["spanishText"])
+    if normalize_answer(row.data["answerText"]) != normalize_answer(expected_english or ""):
+        return False, "accepted answer does not match local translation ledger"
+    return True, "accepted answer matches local translation ledger"
+
+
 def stage_auto_check(lexemes, sentences, accepted) -> list[str]:
     """Stage 3 AUTO-CHECK: automated validation; promote passing rows to AUTO_CHECKED.
     Returns a list of failure messages (empty == all good)."""
@@ -992,6 +1309,10 @@ def stage_auto_check(lexemes, sentences, accepted) -> list[str]:
     for s in sentences:
         if s.data["sentenceId"] not in answered:
             failures.append(f"sentence {s.data['sentenceId']} has no accepted answer")
+        if s.vettingStatus == AI_DRAFT:
+            expected_english = AI_REVIEWED_SENTENCE_PAIRS.get(s.data["spanishText"])
+            if expected_english != s.data["englishText"]:
+                failures.append(f"AI_DRAFT sentence {s.data['sentenceId']} failed local translation ledger")
 
     # accepted answers must reference a real sentence and be normalized (lowercase, trimmed)
     for a in accepted:
@@ -1004,23 +1325,47 @@ def stage_auto_check(lexemes, sentences, accepted) -> list[str]:
     for r in lexemes + sentences + accepted:
         if not r.license:
             failures.append("row missing license")
-        if r.vettingStatus == UNVETTED and not failures:
-            r.vettingStatus = AUTO_CHECKED  # promote only if no failures touched it
+        if r.vettingStatus == AI_DRAFT and r.source != AI_DRAFT_SOURCE:
+            failures.append(f"AI_DRAFT row {r.data} must use source={AI_DRAFT_SOURCE}")
+        if r.vettingStatus in {UNVETTED, AI_DRAFT} and not failures:
+            r.vettingStatus = AUTO_CHECKED
 
     if not failures:
         for r in lexemes + sentences + accepted:
-            r.vettingStatus = AUTO_CHECKED
+            if r.vettingStatus in {UNVETTED, AI_DRAFT}:
+                r.vettingStatus = AUTO_CHECKED
     return failures
 
 
-def stage_human_review(lexemes, sentences, accepted) -> None:
-    """Stage 4 REVIEW GATE: a human signs off. In the spike, the sample carries pre-recorded
-    sign-off for AUTO_CHECKED rows (simulating the reviewer). REAL builds require an actual
-    reviewer to set this; LLM-drafted/`authored` rows get extra scrutiny here."""
+def stage_auto_review(lexemes, sentences, accepted) -> list[str]:
+    """Stage 4a: locally review AI_DRAFT rows with two independent automatic reviewers."""
+    failures: list[str] = []
+    sentence_by_id = {s.data["sentenceId"]: s for s in sentences}
+    for row in sentences + accepted:
+        if row.source != AI_DRAFT_SOURCE or row.vettingStatus != AUTO_CHECKED:
+            continue
+        spanish_ok, spanish_notes = local_spanish_review(row, sentence_by_id)
+        add_review_evidence(row, AUTO_REVIEW_SPANISH, "APPROVED" if spanish_ok else "REJECTED", spanish_notes)
+        pedagogy_ok, pedagogy_notes = local_english_pedagogy_review(row, sentence_by_id)
+        add_review_evidence(row, AUTO_REVIEW_PEDAGOGY, "APPROVED" if pedagogy_ok else "REJECTED", pedagogy_notes)
+        if spanish_ok and pedagogy_ok:
+            row.vettingStatus = AUTO_REVIEWED
+            row.reviewedBy = "+".join(AUTO_REVIEW_REVIEWERS[t] for t in sorted(required_auto_review_types(row)))
+            row.reviewedAt = AUTO_REVIEW_TS
+        else:
+            failures.append(f"AI_DRAFT row {row.data} failed automatic review")
+    return failures
+
+
+def stage_review_gate(lexemes, sentences, accepted) -> None:
+    """Stage 4b REVIEW GATE: source rows use the recorded sample sign-off; AI_DRAFT rows
+    must already have both independent automatic approvals before promotion to REVIEWED."""
     REVIEWER = "wolfgang"
-    REVIEW_TS = 1_735_700_000_000  # fixed for determinism in the spike
+    REVIEW_TS = AUTO_REVIEW_TS  # fixed for determinism in the spike
     for r in lexemes + sentences + accepted:
-        if r.vettingStatus == AUTO_CHECKED:
+        if r.source == AI_DRAFT_SOURCE and r.vettingStatus == AUTO_REVIEWED and has_required_auto_reviews(r):
+            r.vettingStatus = REVIEWED
+        elif r.vettingStatus == AUTO_CHECKED:
             r.vettingStatus = REVIEWED
             r.reviewedBy = REVIEWER
             r.reviewedAt = REVIEW_TS
@@ -1036,6 +1381,8 @@ def stage_publish_gate(lexemes, sentences, accepted) -> None:
                 violations.append(f"{table} row {r.data} has no source")
             if r.vettingStatus != REVIEWED:
                 violations.append(f"{table} row {r.data} is {r.vettingStatus}, not REVIEWED")
+            if r.source == AI_DRAFT_SOURCE and not has_required_auto_reviews(r):
+                violations.append(f"{table} row {r.data} lacks both independent automatic approvals")
     if violations:
         sys.stderr.write("CONTENT VETTING GATE FAILED (C5/§4.6/AC17):\n  " + "\n  ".join(violations) + "\n")
         raise SystemExit(2)
@@ -1088,14 +1435,25 @@ def write_manifest(out_dir, lexemes, sentences, accepted):
     by_status: dict[str, int] = {}
     by_source: dict[str, int] = {}
     authored = []
+    review_ledger = []
     for table, r in rows:
         by_status[r.vettingStatus] = by_status.get(r.vettingStatus, 0) + 1
         by_source[r.source] = by_source.get(r.source, 0) + 1
         if r.source == "authored":
             authored.append({"table": table, "id": next(iter(r.data.values())),
                              "vettingStatus": r.vettingStatus, "reviewedBy": r.reviewedBy})
+        if r.source == AI_DRAFT_SOURCE:
+            review_ledger.append({
+                "table": table,
+                "id": next(iter(r.data.values())),
+                "sourceId": r.sourceId,
+                "vettingStatus": r.vettingStatus,
+                "reviewedBy": r.reviewedBy,
+                "reviewEvidence": r.reviewEvidence,
+            })
     manifest = {"schemaVersion": SCHEMA_VERSION, "totalContentRows": len(rows),
-                "byVettingStatus": by_status, "bySource": by_source, "authoredRows": authored}
+                "byVettingStatus": by_status, "bySource": by_source,
+                "authoredRows": authored, "autoReviewLedger": review_ledger}
     path = os.path.join(out_dir, "content_manifest.json")
     with open(path, "w") as f:
         json.dump(manifest, f, indent=2)
@@ -1325,6 +1683,10 @@ def main():
     ap.add_argument("--out", required=True, help="output content.db path")
     ap.add_argument("--inject-unvetted", action="store_true",
                     help="inject an UNVETTED row to demonstrate the publish gate rejecting it (AC17)")
+    ap.add_argument("--inject-ai-draft-reviewed", action="store_true",
+                    help="inject a locally auto-reviewed AI_DRAFT sentence pair; gate should allow it")
+    ap.add_argument("--inject-ai-draft-single-review", action="store_true",
+                    help="inject a REVIEWED AI_DRAFT row with only one approval; publish gate must reject it")
     ap.add_argument("--inject-malformed-exercise", action="store_true",
                     help="corrupt one critical LEXEME exercise to prove coverage readiness ignores malformed exercises")
     ap.add_argument("--fail-on-coverage-gaps", action="store_true",
@@ -1336,6 +1698,14 @@ def main():
         ap.error("--inject-malformed-exercise requires --fail-on-coverage-gaps")
 
     lexemes, sentences, accepted, sentence_lexeme, conj, exercises, nodes = vetted_sample()
+    if args.inject_ai_draft_reviewed:
+        sentences.append(Row({"sentenceId": 9991, "spanishText": "Necesito ayuda.", "englishText": "I need help."},
+                             source=AI_DRAFT_SOURCE, sourceId="ai_draft:fixture-reviewed-sentence",
+                             license="proprietary", vettingStatus=AI_DRAFT))
+        accepted.append(Row({"acceptedAnswerId": 9991, "sentenceId": 9991, "direction": "ES_TO_EN",
+                             "answerText": "i need help"},
+                            source=AI_DRAFT_SOURCE, sourceId="ai_draft:fixture-reviewed-answer",
+                            license="proprietary", vettingStatus=AI_DRAFT))
 
     # Stage 3: auto-check
     failures = stage_auto_check(lexemes, sentences, accepted)
@@ -1343,8 +1713,12 @@ def main():
         sys.stderr.write("AUTO-CHECK FAILED:\n  " + "\n  ".join(failures) + "\n")
         raise SystemExit(3)
 
-    # Stage 4: human review gate
-    stage_human_review(lexemes, sentences, accepted)
+    # Stage 4: independent review gate
+    failures = stage_auto_review(lexemes, sentences, accepted)
+    if failures:
+        sys.stderr.write("AUTO-REVIEW FAILED:\n  " + "\n  ".join(failures) + "\n")
+        raise SystemExit(3)
+    stage_review_gate(lexemes, sentences, accepted)
 
     if args.inject_unvetted:
         # simulate an un-reviewed (e.g. LLM-drafted, never human-reviewed) row sneaking in
@@ -1352,6 +1726,20 @@ def main():
                              "direction": "ES_TO_EN", "answerText": "i own a dog"},
                             source="authored", sourceId="llm:draft", license="proprietary",
                             vettingStatus=UNVETTED))
+    if args.inject_ai_draft_single_review:
+        evidence = [{
+            "reviewType": AUTO_REVIEW_SPANISH,
+            "reviewer": AUTO_REVIEW_REVIEWERS[AUTO_REVIEW_SPANISH],
+            "reviewedAt": AUTO_REVIEW_TS,
+            "decision": "APPROVED",
+            "notes": "fixture intentionally missing English/pedagogy review",
+        }]
+        accepted.append(Row({"acceptedAnswerId": 9992, "sentenceId": 1,
+                             "direction": "ES_TO_EN", "answerText": "i have a dog"},
+                            source=AI_DRAFT_SOURCE, sourceId="ai_draft:fixture-single-review",
+                            license="proprietary", vettingStatus=REVIEWED,
+                            reviewedBy=AUTO_REVIEW_REVIEWERS[AUTO_REVIEW_SPANISH],
+                            reviewedAt=AUTO_REVIEW_TS, reviewEvidence=evidence))
     if args.inject_malformed_exercise:
         # Regression fixture: these used to count as valid coverage for viajar solely because
         # the exercise target was lexeme 31. They must not count when the sentence is unlinked

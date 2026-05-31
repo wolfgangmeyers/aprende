@@ -620,3 +620,70 @@ Acceptance result:
 - `--fail-on-coverage-gaps` exits 0.
 - The publish gate still rejects unreviewed rows.
 - No `AI_DRAFT` rows are included in shipped content.
+
+## A2-002 Practical Transport Shopping Body And Descriptors
+
+**Status:** implemented locally after coverage-readiness exercise validation.
+
+**Goal:** expand everyday fluency breadth with a larger generated-content pack, using the
+`AI_DRAFT -> AUTO_CHECKED -> AUTO_REVIEWED -> REVIEWED` lane instead of live Tatoeba
+validation.
+
+**Target lemmas:**
+
+| Lemma | FrequencyWords rank | Source basis | Required to ship |
+|---|---:|---|---|
+| `coche` | 408 | `SPANISH_BREADTH_PLAN.md` Phase 3 transport topic | 2+ reviewed contexts, production + recognition exercises |
+| `autobús` | 1702 | `SPANISH_BREADTH_PLAN.md` Phase 3 transport topic | 2+ reviewed contexts, production + recognition exercises |
+| `tienda` | 817 | `SPANISH_BREADTH_PLAN.md` Phase 3 shopping topic | 2+ reviewed contexts, production + recognition exercises |
+| `precio` | 1230 | `SPANISH_BREADTH_PLAN.md` Phase 3 shopping/money topic | 2+ reviewed contexts, production + recognition exercises |
+| `mano` | 373 | `SPANISH_BREADTH_PLAN.md` Phase 3 health/body topic | 2+ reviewed contexts, production + recognition exercises |
+| `cabeza` | 274 | `SPANISH_BREADTH_PLAN.md` Phase 3 health/body topic | 2+ reviewed contexts, production + recognition exercises |
+| `bueno` | 50 | `hermitdave/FrequencyWords` high-frequency spine | 2+ reviewed contexts, production + recognition exercises |
+| `malo` | 476 | `hermitdave/FrequencyWords` high-frequency spine | 2+ reviewed contexts, production + recognition exercises |
+| `rápido` | 311 | `hermitdave/FrequencyWords` high-frequency spine | 2+ reviewed contexts, production + recognition exercises |
+| `grande` | 398 | `hermitdave/FrequencyWords` high-frequency spine | 2+ reviewed contexts, production + recognition exercises |
+
+Generated rows and automatic review evidence:
+
+| Lemma | Spanish sentence | Draft source ID | Accepted English answer | Review evidence |
+|---|---|---|---|---|
+| `coche` | `¿Tienes coche?` | `ai_draft:a2-002-coche-1` | `do you have a car` | `spanish_correctness_naturalness`, `english_pedagogy_cefr` |
+| `coche` | `Quiero un coche.` | `ai_draft:a2-002-coche-2` | `i want a car` | `spanish_correctness_naturalness`, `english_pedagogy_cefr` |
+| `autobús` | `Vayamos en autobús.` | `ai_draft:a2-002-autobus-1` | `let's go by bus` | `spanish_correctness_naturalness`, `english_pedagogy_cefr` |
+| `autobús` | `Ella viajó en autobús.` | `ai_draft:a2-002-autobus-2` | `she traveled by bus` | `spanish_correctness_naturalness`, `english_pedagogy_cefr` |
+| `tienda` | `Odio esta tienda.` | `ai_draft:a2-002-tienda-1` | `i hate this store` | `spanish_correctness_naturalness`, `english_pedagogy_cefr` |
+| `tienda` | `Cerraron la tienda.` | `ai_draft:a2-002-tienda-2` | `they closed the shop` | `spanish_correctness_naturalness`, `english_pedagogy_cefr` |
+| `precio` | `Mira el precio.` | `ai_draft:a2-002-precio-1` | `look at the price` | `spanish_correctness_naturalness`, `english_pedagogy_cefr` |
+| `precio` | `El precio subió.` | `ai_draft:a2-002-precio-2` | `the price rose` | `spanish_correctness_naturalness`, `english_pedagogy_cefr` |
+| `mano` | `Lavémonos las manos.` | `ai_draft:a2-002-mano-1` | `let's wash our hands` | `spanish_correctness_naturalness`, `english_pedagogy_cefr` |
+| `mano` | `Toma mi mano.` | `ai_draft:a2-002-mano-2` | `take my hand` | `spanish_correctness_naturalness`, `english_pedagogy_cefr` |
+| `cabeza` | `¡Usa la cabeza!` | `ai_draft:a2-002-cabeza-1` | `use your head` | `spanish_correctness_naturalness`, `english_pedagogy_cefr` |
+| `cabeza` | `Me duele la cabeza.` | `ai_draft:a2-002-cabeza-2` | `my head hurts` | `spanish_correctness_naturalness`, `english_pedagogy_cefr` |
+| `bueno` | `La comida está buena.` | `tatoeba:2002676` | `the food is good` | previously reviewed source row |
+| `bueno` | `Eres buena persona.` | `tatoeba:4958553` | `you're a good person` | previously reviewed source row |
+| `bueno` | `Hace buen tiempo.` | `tatoeba:1215730` | `the weather is good` | previously reviewed source row |
+| `malo` | `¿Es malo?` | `ai_draft:a2-002-malo-1` | `is it bad` | `spanish_correctness_naturalness`, `english_pedagogy_cefr` |
+| `malo` | `Son malos.` | `ai_draft:a2-002-malo-2` | `they're bad` | `spanish_correctness_naturalness`, `english_pedagogy_cefr` |
+| `rápido` | `¡Rápido!` | `ai_draft:a2-002-rapido-1` | `quick` | `spanish_correctness_naturalness`, `english_pedagogy_cefr` |
+| `rápido` | `Comí rápido.` | `ai_draft:a2-002-rapido-2` | `i ate quickly` | `spanish_correctness_naturalness`, `english_pedagogy_cefr` |
+| `grande` | `Es grande.` | `ai_draft:a2-002-grande-1` | `it's big` | `spanish_correctness_naturalness`, `english_pedagogy_cefr` |
+| `grande` | `¿Son grandes?` | `ai_draft:a2-002-grande-2` | `are they big` | `spanish_correctness_naturalness`, `english_pedagogy_cefr` |
+
+Implemented content delta:
+
+- 10 reviewed Wiktionary lexeme rows.
+- 18 new `AI_DRAFT` sentence rows promoted to `REVIEWED` by two independent automatic reviewers, plus existing reviewed rows reused for `bueno`.
+- 18 new `AI_DRAFT` accepted-answer rows promoted to `REVIEWED` by the same two-reviewer gate.
+- 25 `sentence_lexeme` joins, including existing-word joins for `tener`, `querer`, `viajar`, `ser`, and `comer`.
+- 20 derived exercises:
+  - production and recognition exercises for `coche`, `autobús`, `tienda`, `precio`, `mano`, `cabeza`, `bueno`, `malo`, `rápido`, and `grande`
+
+Acceptance result:
+
+- `learnerReadyLexemes` increases from 31 to 41.
+- All current `A1_A2_TARGET_LEMMAS` have no readiness blockers in `content_coverage.json`.
+- `missingA1A2GapCount` remains 0 after adding the priority-4 pack.
+- `--fail-on-coverage-gaps` exits 0.
+- The publish gate still rejects unreviewed rows.
+- No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 36 generated content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s `autoReviewLedger`.

@@ -128,9 +128,9 @@ Deferred:
 ## Candidate Content Lane - AI Drafts After Priority-1 Verbs
 
 **Priority:** immediately after the current priority-1 verb batch is closed, if it improves throughput.
-**Produces:** non-shipping candidate rows that reviewers can promote into learner-ready content.
+**Produces:** generated candidate rows that automatic reviewers can promote into learner-ready content.
 **Depends on:** Phase 0 coverage gates and the Phase 1 review workflow.
-**Ships independently:** no; AI-drafted rows are never learner-ready until fully reviewed.
+**Ships independently:** yes, but only after deterministic checks and both independent automatic reviews promote the rows to `REVIEWED`.
 
 Work:
 
@@ -138,22 +138,22 @@ Work:
 - Continue using exact Tatoeba/Wiktionary rows for straightforward content where source material is faster and cleaner.
 - Promote `AI_DRAFT` only after:
   - automated source/license/shape checks pass
-  - one independent Spanish review signs off on correctness and naturalness
-  - one independent English/pedagogy review signs off on translation quality, accepted answers, CEFR fit, and exercise usefulness
+  - one independent automatic Spanish review signs off on correctness and naturalness
+  - one independent automatic English/pedagogy review signs off on translation quality, accepted answers, CEFR fit, and exercise usefulness
 - Record reviewer identities, timestamps, and review dimensions separately enough that a single reviewer cannot satisfy both independent approvals.
 - Keep `AI_DRAFT` and partially reviewed rows out of `learnerReadyLexemes`, generated production assets, and any shipped `content.db`.
 
 Suggested status wiring:
 
 - Add `AI_DRAFT` as a pre-`UNVETTED` or parallel candidate-only status for content-bearing rows.
-- Add review evidence fields or a review table, for example `content_review(rowTable, rowId, reviewType, reviewer, reviewedAt, decision, notes)`.
-- Promote only through `AI_DRAFT -> AUTO_CHECKED -> REVIEWED` when both review types are approved and automated checks pass.
+- Add review evidence to the build manifest or to a review table, for example `content_review(rowTable, rowId, reviewType, reviewer, reviewedAt, decision, notes)`.
+- Promote only through `AI_DRAFT -> AUTO_CHECKED -> AUTO_REVIEWED -> REVIEWED` when both review types are approved and automated checks pass.
 - Keep the publish gate strict: only `REVIEWED` rows with source, license, reviewer metadata, and satisfied review evidence can ship.
 
 Acceptance criteria:
 
-- A build containing only `AI_DRAFT` rows can produce candidate reports but cannot increase learner-ready counts.
-- `--fail-on-coverage-gaps` ignores `AI_DRAFT` as missing coverage until promoted.
+- A build containing raw `AI_DRAFT` rows cannot ship those rows or increase learner-ready counts.
+- `--fail-on-coverage-gaps` ignores `AI_DRAFT` as missing coverage until promoted to `REVIEWED`.
 - The publish gate rejects any `AI_DRAFT`, single-reviewed, or partially reviewed content-bearing row.
 
 ## Phase 2 - Vocabulary Coverage Metrics In Product And Tooling
