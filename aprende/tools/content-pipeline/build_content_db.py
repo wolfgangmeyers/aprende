@@ -247,6 +247,9 @@ def vetted_sample():
         Row({"lexemeId": 5, "lemma": "estar", "pos": "verb", "gender": None,
              "englishGloss": "to be", "frequencyRank": 131, "cefrBand": "A1", "difficultyPrior": 0.3},
             source="wiktionary", sourceId="estar", license="CC-BY-SA-3.0"),
+        Row({"lexemeId": 6, "lemma": "ir", "pos": "verb", "gender": None,
+             "englishGloss": "to go", "frequencyRank": 128, "cefrBand": "A1", "difficultyPrior": 0.3},
+            source="wiktionary", sourceId="ir", license="CC-BY-SA-3.0"),
     ]
     sentences = [
         Row({"sentenceId": 1, "spanishText": "Tengo un perro.", "englishText": "I have a dog."},
@@ -275,6 +278,14 @@ def vetted_sample():
             sourceId="tatoeba:455952"),
         Row({"sentenceId": 13, "spanishText": "Está aquí.", "englishText": "It's here."},
             sourceId="tatoeba:2532719"),
+        Row({"sentenceId": 14, "spanishText": "Vamos a casa.", "englishText": "We're going home."},
+            sourceId="tatoeba:748478"),
+        Row({"sentenceId": 15, "spanishText": "Voy contigo.", "englishText": "I am going with you."},
+            sourceId="tatoeba:1050137"),
+        Row({"sentenceId": 16, "spanishText": "Voy al parque.", "englishText": "I go to the park."},
+            sourceId="tatoeba:450251"),
+        Row({"sentenceId": 17, "spanishText": "Voy a la escuela.", "englishText": "I go to school."},
+            sourceId="tatoeba:473450"),
     ]
     accepted = [
         Row({"acceptedAnswerId": 1, "sentenceId": 1, "direction": "ES_TO_EN", "answerText": "i have a dog"},
@@ -310,6 +321,14 @@ def vetted_sample():
             sourceId="tatoeba:257272"),
         Row({"acceptedAnswerId": 16, "sentenceId": 13, "direction": "ES_TO_EN", "answerText": "it's here"},
             sourceId="tatoeba:2123598"),
+        Row({"acceptedAnswerId": 17, "sentenceId": 14, "direction": "ES_TO_EN", "answerText": "we're going home"},
+            sourceId="tatoeba:430024"),
+        Row({"acceptedAnswerId": 18, "sentenceId": 15, "direction": "ES_TO_EN", "answerText": "i am going with you"},
+            sourceId="tatoeba:894729"),
+        Row({"acceptedAnswerId": 19, "sentenceId": 16, "direction": "ES_TO_EN", "answerText": "i go to the park"},
+            sourceId="tatoeba:257353"),
+        Row({"acceptedAnswerId": 20, "sentenceId": 17, "direction": "ES_TO_EN", "answerText": "i go to school"},
+            sourceId="tatoeba:472089"),
     ]
     # non-vetted-audited tables (derived/structural) still carry source where meaningful
     sentence_lexeme = [
@@ -326,6 +345,10 @@ def vetted_sample():
         (11, 5),
         (12, 5),
         (13, 5),
+        (14, 6),
+        (15, 6),
+        (16, 6),
+        (17, 6),
     ]
     conj = [("tengo", 1, "wiktionary", "CC-BY-SA-3.0"), ("tienes", 1, "wiktionary", "CC-BY-SA-3.0")]
     # Path nodes (structural). v1 sample ships one node; exercises above belong to nodeId=1.
@@ -351,6 +374,10 @@ def vetted_sample():
          "targetItemId": 5, "targetItemType": "LEXEME", "promptHint": None},
         {"exerciseId": 10, "nodeId": 1, "sentenceId": 13, "type": "WORD_BANK", "direction": "ES_TO_EN",
          "targetItemId": 5, "targetItemType": "LEXEME", "promptHint": None},
+        {"exerciseId": 11, "nodeId": 1, "sentenceId": 14, "type": "TYPED_TRANSLATION", "direction": "ES_TO_EN",
+         "targetItemId": 6, "targetItemType": "LEXEME", "promptHint": None},
+        {"exerciseId": 12, "nodeId": 1, "sentenceId": 16, "type": "WORD_BANK", "direction": "ES_TO_EN",
+         "targetItemId": 6, "targetItemType": "LEXEME", "promptHint": None},
     ]
     return lexemes, sentences, accepted, sentence_lexeme, conj, exercises, nodes
 

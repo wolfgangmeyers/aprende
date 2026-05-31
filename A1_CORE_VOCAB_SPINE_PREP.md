@@ -129,12 +129,12 @@ Source rows used:
 
 ## Next Worker Task
 
-Implement `A1-002 Identity and location` in the content pipeline sample.
+Implement `A1-003 Movement: ir` in the content pipeline sample.
 
 Concrete steps:
 
-1. Add `ser` and `estar` lexemes from Wiktionary, using FrequencyWords ranks.
-2. Find four reviewed Tatoeba contexts for each verb.
+1. Add the next high-value movement verb, `ir`, from Wiktionary using the FrequencyWords rank.
+2. Find four reviewed Tatoeba contexts for the verb.
 3. Add the missing `sentence_lexeme` joins and derived exercises.
 4. Run the normal pipeline and inspect `content_coverage.json`.
 5. Update `coverage_baseline_snapshot.json`.
@@ -184,5 +184,45 @@ Acceptance result:
 - `learnerReadyLexemes` increases from 3 to 5.
 - `ser` and `estar` have no readiness blockers in `content_coverage.json`.
 - `missingA1A2GapCount` decreases from 28 to 26.
+- `--fail-on-coverage-gaps` exits 0.
+- The publish gate still rejects unreviewed rows.
+
+## A1-003 Movement: Ir
+
+**Status:** implemented locally after A1-002.
+
+**Goal:** add the next smallest priority-1 verb slice, `ir`, without schema or UI changes.
+
+**Target lemma:**
+
+| Lemma | FrequencyWords rank | Source basis | Required to ship |
+|---|---:|---|---|
+| `ir` | 128 | `SPEC.md` §5.2 irregular verb table | 4 reviewed contexts, production + recognition exercises |
+
+Source rows used:
+
+| Lemma | Spanish sentence | Tatoeba Spanish ID | Accepted English answer | English source ID |
+|---|---|---:|---|---:|
+| `ir` | `Vamos a casa.` | 748478 | `we're going home` | 430024 |
+| `ir` | `Voy contigo.` | 1050137 | `i am going with you` | 894729 |
+| `ir` | `Voy al parque.` | 450251 | `i go to the park` | 257353 |
+| `ir` | `Voy a la escuela.` | 473450 | `i go to school` | 472089 |
+
+Implemented content delta:
+
+- 1 reviewed Wiktionary lexeme row.
+- 4 reviewed Tatoeba sentence rows.
+- 4 reviewed Tatoeba accepted-answer rows.
+- 4 `sentence_lexeme` joins.
+- 2 derived exercises:
+  - `ir` production exercise
+  - `ir` recognition exercise
+- Updated `coverage_baseline_snapshot.json`.
+
+Acceptance result:
+
+- `learnerReadyLexemes` increases from 5 to 6.
+- `ir` has no readiness blockers in `content_coverage.json`.
+- `missingA1A2GapCount` decreases from 26 to 25.
 - `--fail-on-coverage-gaps` exits 0.
 - The publish gate still rejects unreviewed rows.

@@ -37,44 +37,44 @@
     "reviewPolicy": "This list is a local source-checked audit target, not shipped learning content. A target lemma only becomes shipped content after the normal lexeme/sentence/accepted-answer provenance and REVIEWED gate pass."
   },
   "summary": {
-    "rawLexemes": 5,
-    "learnerReadyLexemes": 5,
-    "reviewedSentences": 13,
-    "reviewedAcceptedAnswers": 16,
-    "exerciseCount": 10,
-    "missingA1A2GapCount": 26
+    "rawLexemes": 6,
+    "learnerReadyLexemes": 6,
+    "reviewedSentences": 17,
+    "reviewedAcceptedAnswers": 20,
+    "exerciseCount": 12,
+    "missingA1A2GapCount": 25
   },
   "counts": {
     "lexemesByPos": {
       "noun": 2,
-      "verb": 3
+      "verb": 4
     },
     "lexemesByCefrBand": {
-      "A1": 5
+      "A1": 6
     },
     "lexemesByFrequencyBucket": {
-      "0001-0500": 4,
+      "0001-0500": 5,
       "0501-1000": 1
     },
     "contentRowsBySource": {
       "authored": 2,
-      "tatoeba": 27,
-      "wiktionary": 5
+      "tatoeba": 35,
+      "wiktionary": 6
     },
     "contentRowsByLicense": {
-      "CC-BY-2.0-FR": 27,
-      "CC-BY-SA-3.0": 5,
+      "CC-BY-2.0-FR": 35,
+      "CC-BY-SA-3.0": 6,
       "proprietary": 2
     },
     "contentRowsByVettingStatus": {
-      "REVIEWED": 34
+      "REVIEWED": 43
     },
     "exerciseTargetsByType": {
-      "LEXEME": 10
+      "LEXEME": 12
     },
     "exerciseTypes": {
-      "TYPED_TRANSLATION": 5,
-      "WORD_BANK": 5
+      "TYPED_TRANSLATION": 6,
+      "WORD_BANK": 6
     }
   },
   "topMissingA1A2Gaps": [
@@ -99,21 +99,6 @@
       "pos": "verb",
       "priority": 1,
       "reason": "daily actions and weather",
-      "sourceBasis": "SPEC.md \u00a75.2 irregular verb table",
-      "status": "missing_lexeme",
-      "blockers": [
-        "add_reviewed_lexeme",
-        "add_reviewed_contexts",
-        "add_exercises"
-      ],
-      "currentLexemeId": null
-    },
-    {
-      "lemma": "ir",
-      "cefrBand": "A1",
-      "pos": "verb",
-      "priority": 1,
-      "reason": "movement and near future",
       "sourceBasis": "SPEC.md \u00a75.2 irregular verb table",
       "status": "missing_lexeme",
       "blockers": [
@@ -370,6 +355,21 @@
       "priority": 3,
       "reason": "shopping",
       "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 3 shopping/money topic",
+      "status": "missing_lexeme",
+      "blockers": [
+        "add_reviewed_lexeme",
+        "add_reviewed_contexts",
+        "add_exercises"
+      ],
+      "currentLexemeId": null
+    },
+    {
+      "lemma": "escuela",
+      "cefrBand": "A2",
+      "pos": "noun",
+      "priority": 3,
+      "reason": "school",
+      "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 3 work/school topic",
       "status": "missing_lexeme",
       "blockers": [
         "add_reviewed_lexeme",
