@@ -37,138 +37,48 @@
     "reviewPolicy": "This list is a local source-checked audit target, not shipped learning content. A target lemma only becomes shipped content after the normal lexeme/sentence/accepted-answer provenance and REVIEWED gate pass."
   },
   "summary": {
-    "rawLexemes": 17,
-    "learnerReadyLexemes": 17,
-    "reviewedSentences": 51,
-    "reviewedAcceptedAnswers": 54,
-    "exerciseCount": 34,
-    "missingA1A2GapCount": 14
+    "rawLexemes": 23,
+    "learnerReadyLexemes": 23,
+    "reviewedSentences": 71,
+    "reviewedAcceptedAnswers": 74,
+    "exerciseCount": 46,
+    "missingA1A2GapCount": 8
   },
   "counts": {
     "lexemesByPos": {
-      "noun": 5,
-      "verb": 12
+      "noun": 8,
+      "verb": 15
     },
     "lexemesByCefrBand": {
-      "A1": 17
+      "A1": 23
     },
     "lexemesByFrequencyBucket": {
-      "0001-0500": 14,
+      "0001-0500": 20,
       "0501-1000": 1,
       "1001-2000": 2
     },
     "contentRowsBySource": {
       "authored": 2,
-      "tatoeba": 103,
-      "wiktionary": 17
+      "tatoeba": 143,
+      "wiktionary": 23
     },
     "contentRowsByLicense": {
-      "CC-BY-2.0-FR": 103,
-      "CC-BY-SA-3.0": 17,
+      "CC-BY-2.0-FR": 143,
+      "CC-BY-SA-3.0": 23,
       "proprietary": 2
     },
     "contentRowsByVettingStatus": {
-      "REVIEWED": 122
+      "REVIEWED": 168
     },
     "exerciseTargetsByType": {
-      "LEXEME": 34
+      "LEXEME": 46
     },
     "exerciseTypes": {
-      "TYPED_TRANSLATION": 17,
-      "WORD_BANK": 17
+      "TYPED_TRANSLATION": 23,
+      "WORD_BANK": 23
     }
   },
   "topMissingA1A2Gaps": [
-    {
-      "lemma": "d\u00eda",
-      "cefrBand": "A1",
-      "pos": "noun",
-      "priority": 2,
-      "reason": "time",
-      "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 1 time/routines topic",
-      "status": "missing_lexeme",
-      "blockers": [
-        "add_reviewed_lexeme",
-        "add_reviewed_contexts",
-        "add_exercises"
-      ],
-      "currentLexemeId": null
-    },
-    {
-      "lemma": "hablar",
-      "cefrBand": "A1",
-      "pos": "verb",
-      "priority": 2,
-      "reason": "communication",
-      "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 1 questions topic",
-      "status": "missing_lexeme",
-      "blockers": [
-        "add_reviewed_lexeme",
-        "add_reviewed_contexts",
-        "add_exercises"
-      ],
-      "currentLexemeId": null
-    },
-    {
-      "lemma": "persona",
-      "cefrBand": "A1",
-      "pos": "noun",
-      "priority": 2,
-      "reason": "people",
-      "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 1 people topic",
-      "status": "missing_lexeme",
-      "blockers": [
-        "add_reviewed_lexeme",
-        "add_reviewed_contexts",
-        "add_exercises"
-      ],
-      "currentLexemeId": null
-    },
-    {
-      "lemma": "tiempo",
-      "cefrBand": "A1",
-      "pos": "noun",
-      "priority": 2,
-      "reason": "time and weather",
-      "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 1 time/routines topic",
-      "status": "missing_lexeme",
-      "blockers": [
-        "add_reviewed_lexeme",
-        "add_reviewed_contexts",
-        "add_exercises"
-      ],
-      "currentLexemeId": null
-    },
-    {
-      "lemma": "ver",
-      "cefrBand": "A1",
-      "pos": "verb",
-      "priority": 2,
-      "reason": "perception",
-      "sourceBasis": "hermitdave/FrequencyWords high-frequency spine",
-      "status": "missing_lexeme",
-      "blockers": [
-        "add_reviewed_lexeme",
-        "add_reviewed_contexts",
-        "add_exercises"
-      ],
-      "currentLexemeId": null
-    },
-    {
-      "lemma": "vivir",
-      "cefrBand": "A1",
-      "pos": "verb",
-      "priority": 2,
-      "reason": "home and biography",
-      "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 1 home/routines topics",
-      "status": "missing_lexeme",
-      "blockers": [
-        "add_reviewed_lexeme",
-        "add_reviewed_contexts",
-        "add_exercises"
-      ],
-      "currentLexemeId": null
-    },
     {
       "lemma": "comprar",
       "cefrBand": "A2",

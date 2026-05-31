@@ -129,11 +129,11 @@ Source rows used:
 
 ## Next Worker Task
 
-After the `A1-009 Home Food And Family` batch is reviewed and committed, continue with the remaining priority-2 gaps.
+After the `A1-010 Time People Communication And Living` batch is reviewed and committed, continue with the remaining A2 priority-3 gaps.
 
 Concrete steps:
 
-1. Prefer a 5-10 lexeme source-checked A1 topic pack from the current top gaps: `día`, `hablar`, `persona`, `tiempo`, `ver`, `vivir`.
+1. Prefer a 5-10 lexeme source-checked A2 topic pack from the current top gaps: `comprar`, `dinero`, `escuela`, `llegar`, `necesitar`, `salir`, `trabajo`, `viajar`.
 2. Use Tatoeba/Wiktionary rows where source material is straightforward; keep AI-drafted rows out of learner-ready content unless the AI draft lane is wired and reviewed.
 3. Add enough reviewed sentence coverage, accepted answers, `sentence_lexeme` joins, and derived exercises for each included lexeme.
 4. Run the normal pipeline and inspect `content_coverage.json`.
@@ -484,6 +484,67 @@ Acceptance result:
 - `learnerReadyLexemes` increases from 12 to 17.
 - `casa`, `comida`, `comer`, `beber`, and `familia` have no readiness blockers in `content_coverage.json`.
 - `missingA1A2GapCount` decreases from 19 to 14.
+- `--fail-on-coverage-gaps` exits 0.
+- The publish gate still rejects unreviewed rows.
+- No `AI_DRAFT` rows are included in shipped content.
+
+## A1-010 Time People Communication And Living
+
+**Status:** implemented locally after A1-009.
+
+**Goal:** close the remaining priority-2 A1 gaps with a larger source-checked topic pack, without AI-drafted shipping rows.
+
+**Target lemmas:**
+
+| Lemma | FrequencyWords rank | Source basis | Required to ship |
+|---|---:|---|---|
+| `día` | 134 | `SPANISH_BREADTH_PLAN.md` Phase 1 time topic | 2+ reviewed contexts, production + recognition exercises |
+| `hablar` | 154 | `SPANISH_BREADTH_PLAN.md` Phase 1 questions topic | 4 reviewed contexts, production + recognition exercises |
+| `persona` | 310 | `SPANISH_BREADTH_PLAN.md` Phase 1 people topic | 2+ reviewed contexts, production + recognition exercises |
+| `tiempo` | 95 | `SPANISH_BREADTH_PLAN.md` Phase 1 time/weather topic | 2+ reviewed contexts, production + recognition exercises |
+| `ver` | 120 | hermitdave/FrequencyWords high-frequency spine | 4 reviewed contexts, production + recognition exercises |
+| `vivir` | 454 | `SPANISH_BREADTH_PLAN.md` Phase 1 home/routines topic | 4 reviewed contexts, production + recognition exercises |
+
+Source rows used:
+
+| Lemma | Spanish sentence | Tatoeba Spanish ID | Accepted English answer | English source ID |
+|---|---|---:|---|---:|
+| `día` | `¡Buen día!` | 855394 | `good day` | 855284 |
+| `día` | `Buenos días.` | 2258235 | `good morning` | 2258234 |
+| `hablar` | `Hablo español.` | 2011085 | `i speak spanish` | 1755331 |
+| `hablar` | `¿Hablas español?` | 1550980 | `do you speak spanish` | 719306 |
+| `hablar` | `Todos hablamos español.` | 6003088 | `we all speak spanish` | 6003093 |
+| `hablar` | `También hablo español.` | 10480474 | `i also speak spanish` | 10573599 |
+| `persona` | `¿Cuántas personas?` | 3582800 | `how many people` | 24515 |
+| `persona` | `Somos personas.` | 1408294 | `we are people` | 671753 |
+| `persona` | `Eres buena persona.` | 4958553 | `you're a good person` | 2547447 |
+| `tiempo` | `Hace buen tiempo.` | 1215730 | `the weather is good` | 1766700 |
+| `tiempo` | `Tengo tiempo.` | 4859590 | `i have time` | 2245901 |
+| `tiempo` | `Necesitamos tiempo.` | 9706925 | `we need time` | 2241424 |
+| `ver` | `Veo algo.` | 9706879 | `i see something` | 2247403 |
+| `ver` | `Veo esto.` | 1732156 | `i see this` | 871792 |
+| `ver` | `Quiero ver tu casa.` | 9884000 | `i want to see your house` | 2396149 |
+| `ver` | `¿Puedes ver?` | 1748229 | `can you see` | 1553530 |
+| `vivir` | `Vivo cerca.` | 11160801 | `i live nearby` | 3565068 |
+| `vivir` | `Vive aquí.` | 11035294 | `he lives here` | 5143986 |
+| `vivir` | `Vivimos aquí.` | 6694248 | `we live here` | 2549740 |
+| `vivir` | `¿Viven aquí?` | 894294 | `do you live here` | 15882 |
+
+Implemented content delta:
+
+- 6 reviewed Wiktionary lexeme rows.
+- 20 reviewed Tatoeba sentence rows.
+- 20 reviewed Tatoeba accepted-answer rows.
+- 25 `sentence_lexeme` joins, including existing-word joins for `ser`, `hacer`, `tener`, `querer`, `casa`, and `poder`.
+- 12 derived exercises:
+  - production and recognition exercises for `día`, `hablar`, `persona`, `tiempo`, `ver`, and `vivir`
+- Updated `coverage_baseline_snapshot.json`.
+
+Acceptance result:
+
+- `learnerReadyLexemes` increases from 17 to 23.
+- `día`, `hablar`, `persona`, `tiempo`, `ver`, and `vivir` have no readiness blockers in `content_coverage.json`.
+- `missingA1A2GapCount` decreases from 14 to 8.
 - `--fail-on-coverage-gaps` exits 0.
 - The publish gate still rejects unreviewed rows.
 - No `AI_DRAFT` rows are included in shipped content.
