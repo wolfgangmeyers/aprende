@@ -944,6 +944,59 @@ Acceptance target:
   content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
   `autoReviewLedger`.
 
+## A2-026 Accelerated B1/B2 Services, Public Admin, Education, Food, Household, Social, Health, Directions, and Transport Pack
+
+**Status:** implemented locally after A2-025.
+
+**Goal:** add learner-ready B1/B2 breadth for delivery and service counters, public administration,
+education logistics, food ordering, household routines, social plans, emotional/health language,
+directions, and transport/legal incidents. Rows use the
+`AI_DRAFT -> AUTO_CHECKED -> AUTO_REVIEWED -> REVIEWED` lane with two independent automatic
+reviewers.
+
+**Target lemmas:** `servicio de mensajería`, `retiro programado`, `entrega incompleta`, `paquete
+asegurado`, `punto de recogida`, `horario de apertura`, `franja disponible`, `agenda modificada`,
+`confirmación automática`, `recordatorio enviado`, `espera estimada`, `cola virtual`, `servicio
+presencial`, `ventanilla única`, `número de turno`, `formulario firmado`, `solicitud archivada`,
+`expediente completo`, `registro actualizado`, `certificado emitido`, `permiso concedido`,
+`licencia temporal`, `autorización especial`, `recurso presentado`, `contestación oficial`,
+`prórroga concedida`, `sello electrónico`, `copia autenticada`, `firma electrónica`,
+`notificación recibida`, `clase de apoyo`, `programa intensivo`, `material de estudio`, `práctica
+oral`, `corrección escrita`, `nivel intermedio`, `objetivo del curso`, `progreso semanal`,
+`asistencia obligatoria`, `constancia de asistencia`, `mesa reservada`, `menú ejecutivo`, `plato
+sin carne`, `opción sin gluten`, `alergia declarada`, `pago separado`, `servicio incluido`,
+`pedido confirmado`, `pedido retrasado`, `reclamación del pedido`, `servicio doméstico`, `limpieza
+profunda`, `ropa planchada`, `lavadora averiada`, `secadora disponible`, `frigorífico vacío`,
+`cocina equipada`, `vajilla completa`, `basura separada`, `bolsa de tela`, `encuentro familiar`,
+`invitación aceptada`, `invitación rechazada`, `celebración privada`, `regalo compartido`,
+`mensaje de felicitación`, `visita inesperada`, `plan cancelado`, `excusa válida`, `malentendido
+resuelto`, `ansiedad leve`, `estrés acumulado`, `ánimo bajo`, `apoyo emocional`, `pausa
+necesaria`, `descanso suficiente`, `insomnio leve`, `molestia muscular`, `respiración profunda`,
+`ejercicio moderado`, `camino alternativo`, `vía cortada`, `tráfico denso`, `señal confusa`,
+`salida equivocada`, `entrada principal`, `paso peatonal`, `zona caminable`, `vía ciclista`,
+`casco obligatorio`, `control policial`, `sanción administrativa`, `cobertura obligatoria`,
+`matrícula provisional`, `revisión técnica`, `combustible caro`, `cargador disponible`, `batería
+baja`, `neumático pinchado`, `grúa solicitada`.
+
+Implemented content delta:
+
+- 100 reviewed Wiktionary lexeme rows.
+- 200 `AI_DRAFT` sentence rows promoted to `REVIEWED` by two independent automatic reviewers.
+- 200 `AI_DRAFT` accepted-answer rows promoted to `REVIEWED` by the same two-reviewer gate.
+- 200 `sentence_lexeme` joins.
+- 200 derived production and recognition exercises for all 100 target lemmas.
+
+Acceptance target:
+
+- `learnerReadyLexemes` is 2285.
+- `reviewedSentences` is 4630 after restoring the non-fixture strict build.
+- `reviewedAcceptedAnswers` is 4633 after restoring the non-fixture strict build.
+- `exerciseCount` is 4570.
+- `missingA1A2GapCount` remains 0.
+- No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 400 generated
+  content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
+  `autoReviewLedger`.
+
 ## A2-023 Accelerated B1/B2 Education, Community, Environment, Media, Family, Civic, Shopping, Delivery, and Money Pack
 
 **Status:** implemented locally after A2-022.
