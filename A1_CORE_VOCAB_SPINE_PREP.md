@@ -2241,3 +2241,66 @@ Acceptance result:
 - No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 572 generated
   content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
   `autoReviewLedger`.
+
+## A2-019 Accelerated B1/B2 Confirmations, Service Status, Money, Documents, and Medical Pack
+
+**Status:** implemented locally after A2-018.
+
+**Goal:** add learner-ready B1/B2 breadth for short confirmation and apology chunks, scheduling,
+service status, public-service documents, payment/invoice workflows, account access, medical
+follow-up, and work/leave vocabulary. Rows use the
+`AI_DRAFT -> AUTO_CHECKED -> AUTO_REVIEWED -> REVIEWED` lane with two independent automatic
+reviewers.
+
+**Target lemmas:** `por favor confirme`, `confirme la recepción`, `recibido, gracias`,
+`no hay problema`, `sin inconveniente`, `con mucho gusto`, `lo siento mucho`,
+`perdón por el retraso`, `se lo agradezco`, `le agradezco la ayuda`, `me viene bien`,
+`no me viene bien`, `me encaja`, `no me encaja`, `mejor otro día`,
+`cuando le vaya bien`, `si no es molestia`, `si fuera posible`,
+`en cuanto tenga tiempo`, `antes de que cierre`, `después de la reunión`,
+`por el momento`, `al mismo tiempo`, `por una razón sencilla`, `en mi experiencia`,
+`según mi experiencia`, `según el contrato`, `según la factura`, `según el informe`,
+`según el médico`, `según la empresa`, `por teléfono`, `a distancia`,
+`con cita previa`, `sin cita previa`, `fuera de horario`, `dentro del plazo`,
+`con antelación`, `sin aviso`, `aviso urgente`, `mensaje urgente`, `correo urgente`,
+`llamada urgente`, `respuesta pendiente`, `solicitud pendiente`, `firma pendiente`,
+`revisión pendiente`, `copia pendiente`, `reserva pendiente`, `confirmación pendiente`,
+`cambio pendiente`, `caso abierto`, `caso cerrado`, `número de caso`,
+`número de cliente`, `número de contrato`, `número de factura`,
+`fecha de vencimiento`, `fecha de pago`, `fecha de entrega`, `fecha de entrada`,
+`fecha de salida`, `importe total`, `importe pendiente`, `importe exacto`,
+`precio final`, `precio aproximado`, `coste adicional`, `gasto adicional`,
+`recargo adicional`, `saldo insuficiente`, `tarjeta bloqueada`, `tarjeta caducada`,
+`transferencia pendiente`, `transferencia recibida`, `pago confirmado`,
+`pago anulado`, `recibo duplicado`, `factura vencida`, `factura corregida`,
+`presupuesto aprobado`, `presupuesto rechazado`, `contrato renovado`,
+`contrato vencido`, `servicio cancelado`, `servicio activo`, `servicio suspendido`,
+`alta confirmada`, `baja confirmada`, `acceso denegado`, `acceso permitido`,
+`usuario registrado`, `perfil actualizado`, `código de verificación`,
+`código incorrecto`, `archivo adjunto`, `documento firmado`, `formulario incompleto`,
+`formulario enviado`, `copia digital`, `copia impresa`, `certificado válido`,
+`certificado vencido`, `permiso vigente`, `permiso vencido`, `seguro vigente`,
+`seguro vencido`, `revisión médica pendiente`, `consulta urgente`,
+`cita de seguimiento`, `tratamiento pendiente`, `medicación habitual`,
+`medicación nueva`, `alergia conocida`, `síntoma nuevo`, `fiebre persistente`,
+`herida infectada`, `resultado pendiente`, `prueba pendiente`, `baja temporal`.
+
+Implemented content delta:
+
+- 120 reviewed Wiktionary lexeme rows.
+- 240 `AI_DRAFT` sentence rows promoted to `REVIEWED` by two independent automatic reviewers.
+- 240 `AI_DRAFT` accepted-answer rows promoted to `REVIEWED` by the same two-reviewer gate.
+- 240 `sentence_lexeme` joins.
+- 240 derived exercises:
+  - production and recognition exercises for all 120 target lemmas.
+
+Acceptance result:
+
+- `learnerReadyLexemes` increases from 1329 to 1449.
+- `reviewedSentences` increases from 2718 to 2958.
+- `reviewedAcceptedAnswers` increases from 2721 to 2961.
+- `exerciseCount` increases from 2658 to 2898.
+- `missingA1A2GapCount` remains 0.
+- No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 480 generated
+  content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
+  `autoReviewLedger`.
