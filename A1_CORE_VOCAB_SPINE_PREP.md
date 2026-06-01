@@ -3431,3 +3431,40 @@ Acceptance result:
 - No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 480 generated
   content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
   `autoReviewLedger`.
+
+## A2-044 Accelerated B1/B2 Prior Confirmation, Review, Notice, Control, Registration, Validation, Authorization, Consultation, Report, and Agreement Pack
+
+**Status:** implemented locally after A2-043.
+
+**Goal:** add learner-ready B1/B2 breadth for prior confirmations, reviews, notices, controls,
+registrations, validations, authorizations, consultations, reports, and agreements across
+payment, safety, documents, appointments, travel, service, account, claims, treatment,
+maintenance, contracts, and projects. Rows use the
+`AI_DRAFT -> AUTO_CHECKED -> AUTO_REVIEWED -> REVIEWED` lane with two independent automatic
+reviewers.
+
+**Target lemma families:** `confirmación previa de ...`, `revisión previa de ...`,
+`aviso previo de ...`, `control previo de ...`, `registro previo de ...`,
+`validación previa de ...`, `autorización previa de ...`, `consulta previa de ...`,
+`informe previo de ...`, and `acuerdo previo de ...` across money, safety, bureaucracy,
+services, travel, health, repairs, legal, and work domains.
+
+Implemented content delta:
+
+- 120 reviewed Wiktionary lexeme rows.
+- 240 `AI_DRAFT` sentence rows promoted to `REVIEWED` by two independent automatic reviewers.
+- 240 `AI_DRAFT` accepted-answer rows promoted to `REVIEWED` by the same two-reviewer gate.
+- 240 `sentence_lexeme` joins.
+- 240 derived exercises:
+  - production and recognition exercises for all 120 target lemmas.
+
+Acceptance result:
+
+- `learnerReadyLexemes` increases from 4311 to 4431.
+- `reviewedSentences` increases from 8682 to 8922.
+- `reviewedAcceptedAnswers` increases from 8685 to 8925.
+- `exerciseCount` increases from 8622 to 8862.
+- `missingA1A2GapCount` remains 0.
+- No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 480 generated
+  content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
+  `autoReviewLedger`.
