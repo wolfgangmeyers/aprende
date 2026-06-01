@@ -3293,3 +3293,69 @@ Acceptance result:
 - No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 480 generated
   content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
   `autoReviewLedger`.
+
+## A2-041 Accelerated B1/B2 Forms, Certificates, Codes, Bills, Insurance, Legal, Health, and Digital Pack
+
+**Status:** implemented locally after A2-040.
+
+**Goal:** add learner-ready B1/B2 breadth for job/visa/service requests, forms, certificates,
+case and tracking numbers, customer codes, notifications, confirmations, bills, insurance,
+formal letters, medical service points, legal notices, and digital signatures/passwords. Rows use
+the `AI_DRAFT -> AUTO_CHECKED -> AUTO_REVIEWED -> REVIEWED` lane with two independent automatic
+reviewers.
+
+**Target lemmas:** `solicitud de empleo`, `solicitud de visa`, `petición de cita`,
+`petición de reembolso`, `solicitud de cambio`, `petición de información`,
+`solicitud de acceso`, `petición de ayuda`, `solicitud de presupuesto`,
+`solicitud de préstamo`, `formulario de contacto`, `formulario de inscripción`,
+`formulario de queja`, `formulario de autorización`, `formulario de consentimiento`,
+`formulario de evaluación`, `formulario de reserva`, `formulario de devolución`,
+`formulario de garantía`, `formulario de registro`, `constancia médica`,
+`certificado laboral`, `certificado escolar`, `credencial digital`,
+`certificado de nacimiento`, `certificado de matrimonio`, `certificado de residencia`,
+`certificado de vacunación`, `certificado de antecedentes`, `certificado de ingresos`,
+`identificador de expediente`, `identificador de cliente`, `identificador de pedido`,
+`identificador de envío`, `identificador de cuenta`, `identificador de referencia`,
+`identificador de reserva`, `número de serie`, `identificador de póliza`,
+`identificador de contrato`, `lector de QR`, `dirección postal`,
+`código de barras`, `token de verificación`, `código de cliente`, `código de reserva`,
+`código de seguimiento`, `código de pago`, `código de error`, `código de activación`,
+`notificación de pago`, `notificación de entrega`, `notificación de devolución`,
+`notificación de cita`, `notificación de cambio`, `notificación de retraso`,
+`notificación de emergencia`, `notificación de actualización`, `notificación de vencimiento`,
+`notificación de renovación`, `confirmación de cita`, `acuse de pago`,
+`acuse de reserva`, `acuse de entrega`, `acuse de asistencia`,
+`validación de identidad`, `confirmación de correo`, `confirmación de teléfono`,
+`confirmación de inscripción`, `confirmación de cancelación`, `recibo de agua`,
+`recibo eléctrico`, `recibo de gas`, `factura de teléfono`, `factura de internet`,
+`factura de hotel`, `factura de restaurante`, `factura de transporte`, `factura de servicio`,
+`factura de reparación`, `póliza de seguro`, `póliza de salud`, `póliza de viaje`,
+`póliza de hogar`, `póliza de coche`, `reclamación por escrito`, `queja escrita`,
+`denuncia por escrito`, `respuesta escrita`, `comunicado oficial`, `carta de invitación`,
+`carta de recomendación`, `carta de autorización`, `carta de renuncia`, `carta de aviso`,
+`consultorio médico`, `centro dental`, `clínica privada`, `clínica pública`, `área de urgencias`,
+`unidad de cuidados`, `servicio de ambulancia`, `cobertura sanitaria`, `cobertura para viaje`,
+`cobertura de hogar`, `orden judicial`, `aviso judicial`, `orientación legal`, `consulta legal`,
+`acuerdo por escrito`, `tiempo de entrega`, `plazo de pago`, `fecha tope`, `hora límite`,
+`texto legal`, `firma validada`, `firma en línea`, `contraseña de un solo uso`,
+`clave de un solo uso`, `sesión iniciada`.
+
+Implemented content delta:
+
+- 120 reviewed Wiktionary lexeme rows.
+- 240 `AI_DRAFT` sentence rows promoted to `REVIEWED` by two independent automatic reviewers.
+- 240 `AI_DRAFT` accepted-answer rows promoted to `REVIEWED` by the same two-reviewer gate.
+- 240 `sentence_lexeme` joins.
+- 240 derived exercises:
+  - production and recognition exercises for all 120 target lemmas.
+
+Acceptance result:
+
+- `learnerReadyLexemes` increases from 3951 to 4071.
+- `reviewedSentences` increases from 7962 to 8202.
+- `reviewedAcceptedAnswers` increases from 7965 to 8205.
+- `exerciseCount` increases from 7902 to 8142.
+- `missingA1A2GapCount` remains 0.
+- No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 480 generated
+  content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
+  `autoReviewLedger`.
