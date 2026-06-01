@@ -3234,3 +3234,62 @@ Acceptance result:
 - No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 480 generated
   content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
   `autoReviewLedger`.
+
+## A2-040 Accelerated B1/B2 Records, Channels, Payment, Safety, Work, Travel, and Digital Pack
+
+**Status:** implemented locally after A2-039.
+
+**Goal:** add learner-ready B1/B2 breadth for records, file formats, service channels, payment
+methods, discounts, safety signs, schedules, reports, screens, and app controls. Rows use the
+`AI_DRAFT -> AUTO_CHECKED -> AUTO_REVIEWED -> REVIEWED` lane with two independent automatic
+reviewers.
+
+**Target lemmas:** `registro de entrada`, `registro de usuario`, `registro de actividad`,
+`registro de llamada`, `formato de archivo`, `formato de fecha`, `formato de pago`,
+`formato de solicitud`, `formato de informe`, `canal de comunicación`, `canal de atención`,
+`canal de soporte`, `canal de ventas`, `canal de emergencia`, `modo de pago`, `modo de acceso`,
+`modo de espera`, `modo de ahorro`, `modo de seguridad`, `nivel de acceso`, `nivel de riesgo`,
+`nivel de servicio`, `nivel de prioridad`, `nivel de cobertura`, `paquete de datos`,
+`paquete de viaje`, `paquete de servicios`, `paquete de ayuda`, `paquete de formación`,
+`reserva de hotel`, `reserva de plaza`, `reserva de coche`, `reserva de actividad`,
+`boleta de pago`, `boleta de compra`, `boleta de inscripción`, `boleta de entrega`,
+`boleta de devolución`, `recargo por cambio`, `recargo por servicio`, `recargo por equipaje`,
+`recargo por envío`, `descuento por familia`, `descuento por estudiante`,
+`descuento por temporada`, `descuento por volumen`, `descuento por reserva`, `señal de alarma`,
+`señal de salida`, `señal de tráfico`, `señal de advertencia`, `señal de emergencia`,
+`ruta de evacuación`, `ruta de regreso`, `ruta de acceso`, `ruta de trabajo`, `horario de cierre`,
+`horario de verano`, `horario de invierno`, `turno de tarde`, `turno de guardia`,
+`turno de atención`, `parte de baja`, `parte de alta`, `parte de reparación`, `parte de entrega`,
+`aviso por correo`, `aviso por mensaje`, `aviso por teléfono`, `aviso por escrito`,
+`aviso por aplicación`, `pago con tarjeta`, `pago con móvil`, `pago en efectivo`, `pago en línea`,
+`pago a plazos`, `contacto de soporte`, `contacto de facturación`, `contacto de empresa`,
+`contacto de referencia`, `método de pago`, `método de contacto`, `método de entrega`,
+`método de verificación`, `método de acceso`, `perfil de usuario`, `perfil de cliente`,
+`perfil de empresa`, `perfil de riesgo`, `perfil de salud`, `historial de pagos`,
+`historial de viajes`, `historial de salud`, `historial de mensajes`, `reporte de error`,
+`reporte de uso`, `reporte de ventas`, `reporte de daños`, `reporte de seguridad`,
+`pantalla de inicio`, `pantalla de pago`, `pantalla de acceso`, `pantalla de ayuda`,
+`botón de ayuda`, `botón de pago`, `botón de envío`, `botón de búsqueda`, `botón de salida`,
+`opción de entrega`, `opción de recogida`, `opción de devolución`, `opción de financiación`,
+`opción de cancelación`, `ventana de chat`, `ventana de ayuda`, `menú de opciones`,
+`menú de usuario`, `campo de búsqueda`, `campo de texto`, `barra de progreso`.
+
+Implemented content delta:
+
+- 120 reviewed Wiktionary lexeme rows.
+- 240 `AI_DRAFT` sentence rows promoted to `REVIEWED` by two independent automatic reviewers.
+- 240 `AI_DRAFT` accepted-answer rows promoted to `REVIEWED` by the same two-reviewer gate.
+- 240 `sentence_lexeme` joins.
+- 240 derived exercises:
+  - production and recognition exercises for all 120 target lemmas.
+
+Acceptance result:
+
+- `learnerReadyLexemes` increases from 3831 to 3951.
+- `reviewedSentences` increases from 7722 to 7962.
+- `reviewedAcceptedAnswers` increases from 7725 to 7965.
+- `exerciseCount` increases from 7662 to 7902.
+- `missingA1A2GapCount` remains 0.
+- No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 480 generated
+  content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
+  `autoReviewLedger`.
