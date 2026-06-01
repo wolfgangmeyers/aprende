@@ -3056,3 +3056,60 @@ Acceptance result:
 - No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 480 generated
   content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
   `autoReviewLedger`.
+
+## A2-037 Accelerated B1/B2 Conversation, Bureaucracy, Legal, Money, Health, Repairs, Travel, Work, and Digital Pack
+
+**Status:** implemented locally after A2-036.
+
+**Goal:** add learner-ready B1/B2 breadth for conversation repair, public-service paperwork,
+legal claims, banking and billing, medical follow-up, household repairs, travel disruption,
+work coordination, and digital-security vocabulary. Rows use the
+`AI_DRAFT -> AUTO_CHECKED -> AUTO_REVIEWED -> REVIEWED` lane with two independent automatic
+reviewers.
+
+**Target lemmas:** `pregunta cerrada`, `pregunta neutral`, `pregunta final`, `pregunta oral`,
+`pregunta natural`, `pregunta previa`, `pregunta educada`, `pregunta común`, `pregunta firme`,
+`pregunta respetuosa`, `pregunta sincera`, `pregunta detallada`, `respuesta abierta`,
+`respuesta cerrada`, `solicitud firmada`, `solicitud incompleta`, `solicitud obligatoria`,
+`solicitud provisional`, `solicitud municipal`, `solicitud provincial`, `solicitud prorrogada`,
+`solicitud sellada`, `solicitud administrativa`, `solicitud electrónica`, `solicitud válida`,
+`solicitud única`, `solicitud regional`, `formulario provisional`, `contrato dudoso`,
+`contrato obligatorio`, `contrato legal`, `contrato civil`, `contrato gratuito`,
+`contrato familiar`, `cláusula firmada`, `cláusula revisada`, `cláusula dudosa`,
+`cláusula obligatoria`, `saldo programado`, `saldo inmediato`, `saldo adicional`, `saldo dañado`,
+`saldo conjunto`, `saldo inactivo`, `saldo incorrecto`, `saldo anual`, `saldo inesperado`,
+`saldo devuelto`, `saldo duplicado`, `saldo parcial`, `saldo negociable`, `saldo confirmado`,
+`cita persistente`, `cita preocupante`, `cita repentina`, `cita abdominal`, `cita superficial`,
+`cita clínica`, `cita positiva`, `cita doble`, `cita completa`, `cita rápida`, `cita negativa`,
+`cita diaria`, `cita leve`, `consulta persistente`, `avería urgente`, `avería casera`,
+`avería original`, `avería compatible`, `avería básica`, `avería suelta`, `avería bloqueada`,
+`avería dañada`, `avería húmeda`, `avería mojada`, `avería limpia`, `avería ocupada`,
+`avería pesada`, `avería cerrada`, `vuelo directo`, `vuelo internacional`, `vuelo rápido`,
+`vuelo local`, `vuelo sencillo`, `vuelo combinado`, `vuelo confirmado`, `vuelo ligero`,
+`vuelo oficial`, `vuelo céntrico`, `vuelo tranquilo`, `vuelo pesado`, `vuelo corto`,
+`tren directo`, `reunión presencial`, `reunión virtual`, `reunión nocturna`, `reunión flexible`,
+`reunión mensual`, `reunión nueva`, `reunión aceptada`, `reunión cancelada`, `reunión retrasada`,
+`reunión satisfecha`, `reunión confiable`, `reunión trimestral`, `reunión medible`,
+`archivo cifrado`, `archivo duplicado`, `archivo permanente`, `archivo incorrecto`,
+`archivo expirado`, `archivo válido`, `archivo activo`, `archivo seguro`, `archivo principal`,
+`archivo remoto`, `archivo automático`, `archivo vencido`, `archivo público`.
+
+Implemented content delta:
+
+- 120 reviewed Wiktionary lexeme rows.
+- 240 `AI_DRAFT` sentence rows promoted to `REVIEWED` by two independent automatic reviewers.
+- 240 `AI_DRAFT` accepted-answer rows promoted to `REVIEWED` by the same two-reviewer gate.
+- 240 `sentence_lexeme` joins.
+- 240 derived exercises:
+  - production and recognition exercises for all 120 target lemmas.
+
+Acceptance result:
+
+- `learnerReadyLexemes` increases from 3471 to 3591.
+- `reviewedSentences` increases from 7002 to 7242.
+- `reviewedAcceptedAnswers` increases from 7005 to 7245.
+- `exerciseCount` increases from 6942 to 7182.
+- `missingA1A2GapCount` remains 0.
+- No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 480 generated
+  content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
+  `autoReviewLedger`.
