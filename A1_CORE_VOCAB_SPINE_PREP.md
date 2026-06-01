@@ -1108,6 +1108,36 @@ Acceptance target:
   content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
   `autoReviewLedger`.
 
+## A2-030 Accelerated B1/B2 Legal, Money, Work, Family, School, Pets, Transport, Media, and Digital Pack
+
+**Status:** implemented locally after A2-029.
+
+**Goal:** add learner-ready B1/B2 breadth for legal and tax paperwork, personal finance, workplace
+processes, family and school logistics, pet care, transport incidents, media literacy, and digital
+security/reliability. Rows use the `AI_DRAFT -> AUTO_CHECKED -> AUTO_REVIEWED -> REVIEWED` lane
+with two independent automatic reviewers.
+
+**Target lemmas:** `pasaporte provisional`, `permiso caducado`, `aduana abierta`, `impuesto local`, `deducción fiscal`, `recargo aplicado`, `multa pendiente`, `reclamación fiscal`, `asesor financiero`, `cuenta de ahorro`, `interés variable`, `riesgo financiero`, `compra impulsiva`, `deuda pequeña`, `préstamo familiar`, `recibo atrasado`, `cláusula clara`, `copia privada`, `prueba documental`, `asesoría laboral`, `despido improcedente`, `nómina revisada`, `vacante interna`, `ascenso posible`, `objetivo anual`, `reunión individual`, `evaluación pendiente`, `formación interna`, `manual actualizado`, `protocolo nuevo`, `riesgo operativo`, `pausa obligatoria`, `familia numerosa`, `custodia compartida`, `permiso escolar`, `autorización paterna`, `cuidado infantil`, `actividad extraescolar`, `reunión escolar`, `uniforme obligatorio`, `nota informativa`, `boletín escolar`, `apoyo educativo`, `orientación familiar`, `mascota enferma`, `vacuna pendiente`, `collar nuevo`, `jaula limpia`, `paseador disponible`, `residencia canina`, `peluquería canina`, `juguete seguro`, `arena limpia`, `microchip registrado`, `parada provisional`, `transbordo gratuito`, `billete sencillo`, `abono joven`, `horario especial`, `ruta circular`, `vehículo eléctrico`, `punto de carga`, `límite de velocidad`, `control de alcoholemia`, `accidente leve`, `parte amistoso`, `coche de sustitución`, `rueda de repuesto`, `llave del coche`, `noticia local`, `boletín informativo`, `fuente oficial`, `entrevista grabada`, `programa en directo`, `señal en vivo`, `repetición disponible`, `archivo sonoro`, `imagen nítida`, `texto legible`, `artículo destacado`, `titular exagerado`, `comentario moderado`, `perfil verificado`, `inicio seguro`, `sesión activa`, `ventana emergente`, `permiso de cámara`, `micrófono silenciado`, `archivo pesado`, `espacio libre`, `servidor caído`, `conexión estable`, `actualización pendiente`, `modo avión`, `pantalla compartida`, `mensaje cifrado`, `visado urgente`, `aduana digital`, `control migratorio`, `seguro internacional`, `resguardo fiscal`, `base imponible`, `interés compuesto`, `fondo común`, `saldo previsto`, `pago recurrente`, `cheque bancario`, `aval familiar`, `contrato mercantil`, `anexo firmado`, `copia confidencial`, `prueba escrita`, `citación judicial`, `turno presencial`, `ventanilla fiscal`, `asesor jurídico`, `mediador neutral`, `acta firmada`, `permiso sindical`, `calendario laboral`.
+
+Implemented content delta:
+
+- 120 reviewed Wiktionary lexeme rows.
+- 240 `AI_DRAFT` sentence rows promoted to `REVIEWED` by two independent automatic reviewers.
+- 240 `AI_DRAFT` accepted-answer rows promoted to `REVIEWED` by the same two-reviewer gate.
+- 240 `sentence_lexeme` joins.
+- 240 derived production and recognition exercises for all 120 target lemmas.
+
+Acceptance target:
+
+- `learnerReadyLexemes` is 2751.
+- `reviewedSentences` is 5562 after restoring the non-fixture strict build.
+- `reviewedAcceptedAnswers` is 5565 after restoring the non-fixture strict build.
+- `exerciseCount` is 5502.
+- `missingA1A2GapCount` remains 0.
+- No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 480 generated
+  content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
+  `autoReviewLedger`.
+
 ## A2-023 Accelerated B1/B2 Education, Community, Environment, Media, Family, Civic, Shopping, Delivery, and Money Pack
 
 **Status:** implemented locally after A2-022.
