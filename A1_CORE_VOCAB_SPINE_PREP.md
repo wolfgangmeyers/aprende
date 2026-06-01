@@ -1904,6 +1904,64 @@ Acceptance result:
   content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
   `autoReviewLedger`.
 
+## A2-016 Accelerated B1/B2 Repair, Systems, and Services Pack
+
+**Status:** implemented locally after A2-015.
+
+**Goal:** add learner-ready B1/B2 breadth for listening-friendly repair chunks, phone/service
+phrases, money/banking, medical/work/legal/travel systems, household repairs, and public-service
+paperwork. Rows use the `AI_DRAFT -> AUTO_CHECKED -> AUTO_REVIEWED -> REVIEWED` lane with two
+independent automatic reviewers.
+
+**Target lemmas:** `cómo digo`, `cómo se dice`, `no capto`, `no entiendo la palabra`,
+`hable claro`, `mande un mensaje`, `déjeme pensar`, `déjeme verlo`, `vuelvo enseguida`,
+`gracias por avisar`, `gracias por esperar`, `perdón por molestar`, `sin problema`,
+`con permiso`, `por favor avise`, `quedo atento`, `estoy disponible`, `estoy ocupado`,
+`no puedo atender`, `llámeme luego`, `avísame cuando puedas`, `según entiendo`,
+`según me dicen`, `por lo general`, `en concreto`, `en parte`, `de todas maneras`,
+`a más tardar`, `fuera de plazo`, `bajo petición`, `a nombre de`, `a cargo de`,
+`en nombre de`, `de forma urgente`, `de forma segura`, `mediante transferencia`,
+`pago aplazado`, `pago inicial`, `saldo pendiente`, `cobro indebido`, `recibo pendiente`,
+`aviso de pago`, `límite de crédito`, `retirada de efectivo`, `ingreso bancario`,
+`número de póliza`, `historial médico`, `receta médica`, `parte médico`,
+`consulta telefónica`, `seguro dental`, `centro médico`, `médico de guardia`,
+`dolor de garganta`, `fiebre alta`, `justificante médico`, `dolor muscular`,
+`prueba rápida`, `informe clínico`, `sala de urgencias`, `servicio urgente`,
+`número de reserva`, `billete de vuelta`, `retraso del vuelo`, `cambio de andén`,
+`conexión perdida`, `equipaje facturado`, `seguro de viaje`, `permiso de residencia`,
+`permiso de trabajo`, `turno de mañana`, `turno de noche`, `nómina mensual`,
+`puesto vacante`, `entrevista de trabajo`, `oferta de empleo`, `horario flexible`,
+`teletrabajo`, `convenio colectivo`, `sindicato`, `indemnización`, `recurso legal`,
+`denuncia formal`, `demanda judicial`, `antecedentes penales`, `poder notarial`,
+`copia compulsada`, `firma digital`, `certificado digital`, `cita administrativa`,
+`tasa administrativa`, `documento adjunto`, `copia de seguridad`, `pantalla`, `altavoz`,
+`micrófono`, `auriculares`, `señal`, `ruido de fondo`, `mensaje de voz`,
+`llamada perdida`, `videollamada`, `taller mecánico`, `pieza de repuesto`,
+`presupuesto previo`, `reparación urgente`, `fuga de agua`, `daño material`,
+`seguro obligatorio`, `comunidad de vecinos`, `contrato de alquiler`, `gastos incluidos`,
+`recibo de luz`, `lectura del contador`, `avería eléctrica`, `entrega a domicilio`,
+`libro de familia`, `padrón municipal`, `declaración de renta`, `justicia gratuita`.
+
+Implemented content delta:
+
+- 120 reviewed Wiktionary lexeme rows.
+- 240 `AI_DRAFT` sentence rows promoted to `REVIEWED` by two independent automatic reviewers.
+- 240 `AI_DRAFT` accepted-answer rows promoted to `REVIEWED` by the same two-reviewer gate.
+- 240 `sentence_lexeme` joins.
+- 240 derived exercises:
+  - production and recognition exercises for all 120 target lemmas.
+
+Acceptance result:
+
+- `learnerReadyLexemes` increases from 946 to 1066.
+- `reviewedSentences` increases from 1952 to 2192.
+- `reviewedAcceptedAnswers` increases from 1955 to 2195.
+- `exerciseCount` increases from 1892 to 2132.
+- `missingA1A2GapCount` remains 0.
+- No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 480 generated
+  content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
+  `autoReviewLedger`.
+
 ## A2-015 Accelerated B1/B2 Fluency, Listening Repair, Systems, and Travel Pack
 
 **Status:** implemented locally after A2-014.
