@@ -3359,3 +3359,39 @@ Acceptance result:
 - No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 480 generated
   content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
   `autoReviewLedger`.
+
+## A2-042 Accelerated B1/B2 Communication, Management, Follow-up, Review, Scheduling, Authorization, and Verification Pack
+
+**Status:** implemented locally after A2-041.
+
+**Goal:** add learner-ready B1/B2 breadth for practical service/work flows: communications,
+case management, follow-up, reviews, assessments, scheduling, cancellations, status updates,
+authorizations, and identity/payment/document verification. Rows use the
+`AI_DRAFT -> AUTO_CHECKED -> AUTO_REVIEWED -> REVIEWED` lane with two independent automatic
+reviewers.
+
+**Target lemma families:** `comunicación de ...`, `gestión de ...`, `seguimiento de ...`,
+`revisión de ...`, `evaluación de ...`, `programación de ...`, `cancelación de ...`,
+`actualización de ...`, `autorización para ...`, and `verificación de ...` across services,
+money, work, travel, health, housing, legal, safety, bureaucracy, repairs, shopping, insurance,
+and digital domains.
+
+Implemented content delta:
+
+- 120 reviewed Wiktionary lexeme rows.
+- 240 `AI_DRAFT` sentence rows promoted to `REVIEWED` by two independent automatic reviewers.
+- 240 `AI_DRAFT` accepted-answer rows promoted to `REVIEWED` by the same two-reviewer gate.
+- 240 `sentence_lexeme` joins.
+- 240 derived exercises:
+  - production and recognition exercises for all 120 target lemmas.
+
+Acceptance result:
+
+- `learnerReadyLexemes` increases from 4071 to 4191.
+- `reviewedSentences` increases from 8202 to 8442.
+- `reviewedAcceptedAnswers` increases from 8205 to 8445.
+- `exerciseCount` increases from 8142 to 8382.
+- `missingA1A2GapCount` remains 0.
+- No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 480 generated
+  content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
+  `autoReviewLedger`.

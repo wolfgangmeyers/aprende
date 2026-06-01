@@ -1846,6 +1846,18 @@ def build_numbered_ai_accelerated_phrase_pack(start_lexeme_id, start_sentence_id
     return build_numbered_ai_accelerated_pack(start_lexeme_id, start_sentence_id, start_answer_id, expanded)
 
 
+def build_phrase_pack_specs(rows):
+    specs = []
+    for lemma, gender, english_gloss, domain, indefinite_article, definite_article in rows:
+        article = "an" if english_gloss[0].lower() in "aeiou" else "a"
+        specs.append((
+            lemma, "noun phrase", gender, english_gloss, 1800, "B1", 0.5, domain,
+            "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic",
+            indefinite_article, definite_article, f"There is {article} {english_gloss}.",
+        ))
+    return specs
+
+
 AI_ACCELERATED_PACK_A2_008 = build_ai_accelerated_pack([
     (217, "alegrarse", "verb", None, "to be glad", 1850, "B1", 0.5, "feelings", "SPANISH_BREADTH_PLAN.md B1 feelings topic", [(493, 496, "Me alegro por ti.", "I am happy for you."), (494, 497, "Nos alegramos de verte.", "We are glad to see you.")]),
     (218, "enfadarse", "verb", None, "to get angry", 1900, "B1", 0.5, "feelings and conflict", "SPANISH_BREADTH_PLAN.md B1 feelings/conflict topic", [(495, 498, "Me enfado con el servicio.", "I get angry with the service."), (496, 499, "No quiero enfadarme.", "I do not want to get angry.")]),
@@ -5809,6 +5821,129 @@ AI_ACCELERATED_PACK_A2_041 = build_numbered_ai_accelerated_phrase_pack(3952, 796
     ('sesión iniciada', 'noun phrase', 'F', 'signed-in session', 1800, 'B1', 0.5, 'digital', 'SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic', 'una', 'La', 'There is a signed-in session.'),
 ])
 
+AI_ACCELERATED_PACK_A2_042 = build_numbered_ai_accelerated_phrase_pack(4072, 8203, 8206, build_phrase_pack_specs([
+    ('comunicación de incidencia', 'F', 'incident communication', 'services', 'una', 'La'),
+    ('comunicación de avería', 'F', 'fault communication', 'repairs', 'una', 'La'),
+    ('comunicación de pago', 'F', 'payment communication', 'money', 'una', 'La'),
+    ('comunicación de viaje', 'F', 'travel communication', 'travel', 'una', 'La'),
+    ('comunicación de cita', 'F', 'appointment communication', 'services', 'una', 'La'),
+    ('comunicación de horario', 'F', 'schedule communication', 'work', 'una', 'La'),
+    ('comunicación de entrega', 'F', 'delivery communication', 'services', 'una', 'La'),
+    ('comunicación de acceso', 'F', 'access communication', 'digital', 'una', 'La'),
+    ('comunicación de seguridad', 'F', 'security communication', 'safety', 'una', 'La'),
+    ('comunicación de resultado', 'F', 'result communication', 'health', 'una', 'La'),
+    ('comunicación de documento', 'F', 'document communication', 'bureaucracy', 'una', 'La'),
+    ('comunicación de contrato', 'F', 'contract communication', 'legal', 'una', 'La'),
+    ('gestión de cita', 'F', 'appointment management', 'services', 'una', 'La'),
+    ('gestión de reserva', 'F', 'booking management', 'travel', 'una', 'La'),
+    ('gestión de pago', 'F', 'payment management', 'money', 'una', 'La'),
+    ('gestión de cobro', 'F', 'collection management', 'money', 'una', 'La'),
+    ('gestión de préstamo', 'F', 'loan management', 'money', 'una', 'La'),
+    ('gestión de cuenta', 'F', 'account management', 'money', 'una', 'La'),
+    ('gestión de reclamo', 'F', 'claim management', 'services', 'una', 'La'),
+    ('gestión de garantía', 'F', 'warranty management', 'repairs', 'una', 'La'),
+    ('gestión de reparación', 'F', 'repair management', 'repairs', 'una', 'La'),
+    ('gestión de traslado', 'F', 'transfer management', 'travel', 'una', 'La'),
+    ('gestión de permiso', 'F', 'permit management', 'bureaucracy', 'una', 'La'),
+    ('gestión de documento', 'F', 'document management', 'bureaucracy', 'una', 'La'),
+    ('seguimiento de caso', 'M', 'case follow-up', 'bureaucracy', 'un', 'El'),
+    ('seguimiento de reclamo', 'M', 'claim follow-up', 'services', 'un', 'El'),
+    ('seguimiento de tratamiento', 'M', 'treatment follow-up', 'health', 'un', 'El'),
+    ('seguimiento de reparación', 'M', 'repair follow-up', 'repairs', 'un', 'El'),
+    ('seguimiento de queja', 'M', 'complaint follow-up', 'services', 'un', 'El'),
+    ('seguimiento de entrega', 'M', 'delivery follow-up', 'services', 'un', 'El'),
+    ('seguimiento de proyecto', 'M', 'project follow-up', 'work', 'un', 'El'),
+    ('seguimiento de proceso', 'M', 'process follow-up', 'work', 'un', 'El'),
+    ('seguimiento de incidente', 'M', 'incident follow-up', 'safety', 'un', 'El'),
+    ('seguimiento de presupuesto', 'M', 'estimate follow-up', 'money', 'un', 'El'),
+    ('seguimiento de reembolso', 'M', 'refund follow-up', 'money', 'un', 'El'),
+    ('seguimiento de transferencia', 'M', 'transfer follow-up', 'money', 'un', 'El'),
+    ('revisión de cuenta', 'F', 'account review', 'money', 'una', 'La'),
+    ('revisión de factura', 'F', 'bill review', 'money', 'una', 'La'),
+    ('revisión de contrato', 'F', 'contract review', 'legal', 'una', 'La'),
+    ('revisión de documento', 'F', 'document review', 'bureaucracy', 'una', 'La'),
+    ('revisión de solicitud', 'F', 'request review', 'bureaucracy', 'una', 'La'),
+    ('revisión de expediente', 'F', 'case file review', 'bureaucracy', 'una', 'La'),
+    ('revisión de presupuesto', 'F', 'estimate review', 'money', 'una', 'La'),
+    ('revisión de garantía', 'F', 'warranty review', 'repairs', 'una', 'La'),
+    ('revisión de tratamiento', 'F', 'treatment review', 'health', 'una', 'La'),
+    ('revisión de resultado', 'F', 'result review', 'health', 'una', 'La'),
+    ('revisión de acceso', 'F', 'access review', 'digital', 'una', 'La'),
+    ('revisión de permiso', 'F', 'permit review', 'bureaucracy', 'una', 'La'),
+    ('evaluación de riesgo', 'F', 'risk assessment', 'safety', 'una', 'La'),
+    ('evaluación de salud', 'F', 'health assessment', 'health', 'una', 'La'),
+    ('evaluación de daños', 'F', 'damage assessment', 'repairs', 'una', 'La'),
+    ('evaluación de costos', 'F', 'cost assessment', 'money', 'una', 'La'),
+    ('evaluación de ingresos', 'F', 'income assessment', 'money', 'una', 'La'),
+    ('evaluación de solicitud', 'F', 'request assessment', 'bureaucracy', 'una', 'La'),
+    ('evaluación de servicio', 'F', 'service assessment', 'services', 'una', 'La'),
+    ('evaluación de proveedor', 'F', 'provider assessment', 'work', 'una', 'La'),
+    ('evaluación de vivienda', 'F', 'housing assessment', 'housing', 'una', 'La'),
+    ('evaluación de seguridad', 'F', 'security assessment', 'safety', 'una', 'La'),
+    ('evaluación de calidad', 'F', 'quality assessment', 'work', 'una', 'La'),
+    ('evaluación de desempeño', 'F', 'performance assessment', 'work', 'una', 'La'),
+    ('programación de cita', 'F', 'appointment scheduling', 'services', 'una', 'La'),
+    ('programación de reunión', 'F', 'meeting scheduling', 'work', 'una', 'La'),
+    ('programación de visita', 'F', 'visit scheduling', 'services', 'una', 'La'),
+    ('programación de llamada', 'F', 'call scheduling', 'services', 'una', 'La'),
+    ('programación de entrevista', 'F', 'interview scheduling', 'work', 'una', 'La'),
+    ('programación de entrega', 'F', 'delivery scheduling', 'services', 'una', 'La'),
+    ('programación de revisión', 'F', 'review scheduling', 'services', 'una', 'La'),
+    ('programación de mantenimiento', 'F', 'maintenance scheduling', 'repairs', 'una', 'La'),
+    ('programación de pago', 'F', 'payment scheduling', 'money', 'una', 'La'),
+    ('programación de viaje', 'F', 'travel scheduling', 'travel', 'una', 'La'),
+    ('programación de transporte', 'F', 'transport scheduling', 'travel', 'una', 'La'),
+    ('programación de vacuna', 'F', 'vaccine scheduling', 'health', 'una', 'La'),
+    ('cancelación de cita', 'F', 'appointment cancellation', 'services', 'una', 'La'),
+    ('cancelación de reserva', 'F', 'booking cancellation', 'travel', 'una', 'La'),
+    ('cancelación de pedido', 'F', 'order cancellation', 'shopping', 'una', 'La'),
+    ('cancelación de pago', 'F', 'payment cancellation', 'money', 'una', 'La'),
+    ('cancelación de contrato', 'F', 'contract cancellation', 'legal', 'una', 'La'),
+    ('cancelación de servicio', 'F', 'service cancellation', 'services', 'una', 'La'),
+    ('cancelación de suscripción', 'F', 'subscription cancellation', 'digital', 'una', 'La'),
+    ('cancelación de vuelo', 'F', 'flight cancellation', 'travel', 'una', 'La'),
+    ('cancelación de entrega', 'F', 'delivery cancellation', 'services', 'una', 'La'),
+    ('cancelación de traslado', 'F', 'transfer cancellation', 'travel', 'una', 'La'),
+    ('cancelación de visita', 'F', 'visit cancellation', 'services', 'una', 'La'),
+    ('cancelación de inscripción', 'F', 'registration cancellation', 'bureaucracy', 'una', 'La'),
+    ('actualización de datos', 'F', 'data update', 'digital', 'una', 'La'),
+    ('actualización de perfil', 'F', 'profile update', 'digital', 'una', 'La'),
+    ('actualización de contraseña', 'F', 'password update', 'digital', 'una', 'La'),
+    ('actualización de estado', 'F', 'status update', 'services', 'una', 'La'),
+    ('actualización de pago', 'F', 'payment update', 'money', 'una', 'La'),
+    ('actualización de reserva', 'F', 'booking update', 'travel', 'una', 'La'),
+    ('actualización de envío', 'F', 'shipment update', 'services', 'una', 'La'),
+    ('actualización de documento', 'F', 'document update', 'bureaucracy', 'una', 'La'),
+    ('actualización de expediente', 'F', 'case file update', 'bureaucracy', 'una', 'La'),
+    ('actualización de agenda', 'F', 'calendar update', 'work', 'una', 'La'),
+    ('actualización de dirección', 'F', 'address update', 'services', 'una', 'La'),
+    ('actualización de contacto', 'F', 'contact update', 'services', 'una', 'La'),
+    ('autorización para viajar', 'F', 'travel authorization', 'travel', 'una', 'La'),
+    ('autorización para trabajar', 'F', 'work authorization', 'work', 'una', 'La'),
+    ('autorización para entrar', 'F', 'entry authorization', 'travel', 'una', 'La'),
+    ('autorización para salir', 'F', 'exit authorization', 'travel', 'una', 'La'),
+    ('autorización para pagar', 'F', 'payment authorization', 'money', 'una', 'La'),
+    ('autorización para cobrar', 'F', 'collection authorization', 'money', 'una', 'La'),
+    ('autorización para conducir', 'F', 'driving authorization', 'travel', 'una', 'La'),
+    ('autorización para firmar', 'F', 'signature authorization', 'legal', 'una', 'La'),
+    ('autorización para retirar', 'F', 'withdrawal authorization', 'money', 'una', 'La'),
+    ('autorización para recoger', 'F', 'pickup authorization', 'services', 'una', 'La'),
+    ('autorización para compartir', 'F', 'sharing authorization', 'digital', 'una', 'La'),
+    ('autorización para operar', 'F', 'operation authorization', 'work', 'una', 'La'),
+    ('verificación de identidad', 'F', 'identity verification', 'bureaucracy', 'una', 'La'),
+    ('verificación de edad', 'F', 'age verification', 'bureaucracy', 'una', 'La'),
+    ('verificación de domicilio', 'F', 'address verification', 'bureaucracy', 'una', 'La'),
+    ('verificación de pago', 'F', 'payment verification', 'money', 'una', 'La'),
+    ('verificación de cuenta', 'F', 'account verification', 'money', 'una', 'La'),
+    ('verificación de tarjeta', 'F', 'card verification', 'money', 'una', 'La'),
+    ('verificación de correo', 'F', 'email verification', 'digital', 'una', 'La'),
+    ('verificación de teléfono', 'F', 'phone verification', 'services', 'una', 'La'),
+    ('verificación de documento', 'F', 'document verification', 'bureaucracy', 'una', 'La'),
+    ('verificación de seguro', 'F', 'insurance verification', 'insurance', 'una', 'La'),
+    ('verificación de reserva', 'F', 'booking verification', 'travel', 'una', 'La'),
+    ('verificación de entrega', 'F', 'delivery verification', 'services', 'una', 'La'),
+]))
+
 AI_REVIEWED_SENTENCE_PAIRS.update({
     spanish: english
     for pack in (
@@ -5851,6 +5986,7 @@ AI_REVIEWED_SENTENCE_PAIRS.update({
         AI_ACCELERATED_PACK_A2_039,
         AI_ACCELERATED_PACK_A2_040,
         AI_ACCELERATED_PACK_A2_041,
+        AI_ACCELERATED_PACK_A2_042,
     )
     for item in pack
     for _, _, spanish, english in item["sentences"]
@@ -5999,6 +6135,7 @@ A1_A2_TARGET_LEMMAS.extend([
         AI_ACCELERATED_PACK_A2_039,
         AI_ACCELERATED_PACK_A2_040,
         AI_ACCELERATED_PACK_A2_041,
+        AI_ACCELERATED_PACK_A2_042,
     )
     for item in pack
 ])
@@ -7163,8 +7300,12 @@ def vetted_sample():
         AI_ACCELERATED_PACK_A2_040, "a2-040", next_exercise_id,
         lexemes, sentences, accepted, sentence_lexeme, exercises,
     )
-    append_ai_accelerated_pack(
+    next_exercise_id = append_ai_accelerated_pack(
         AI_ACCELERATED_PACK_A2_041, "a2-041", next_exercise_id,
+        lexemes, sentences, accepted, sentence_lexeme, exercises,
+    )
+    append_ai_accelerated_pack(
+        AI_ACCELERATED_PACK_A2_042, "a2-042", next_exercise_id,
         lexemes, sentences, accepted, sentence_lexeme, exercises,
     )
     return lexemes, sentences, accepted, sentence_lexeme, conj, exercises, nodes
