@@ -37,54 +37,69 @@
     "reviewPolicy": "This list is a local source-checked audit target, not shipped learning content. A target lemma only becomes shipped content after the normal lexeme/sentence/accepted-answer provenance and REVIEWED gate pass."
   },
   "summary": {
-    "rawLexemes": 166,
-    "learnerReadyLexemes": 166,
-    "reviewedSentences": 393,
-    "reviewedAcceptedAnswers": 396,
-    "exerciseCount": 332,
-    "missingA1A2GapCount": 0
+    "rawLexemes": 216,
+    "learnerReadyLexemes": 215,
+    "reviewedSentences": 492,
+    "reviewedAcceptedAnswers": 495,
+    "exerciseCount": 432,
+    "missingA1A2GapCount": 1
   },
   "counts": {
     "lexemesByPos": {
-      "adjective": 26,
+      "adjective": 34,
       "adjective/adverb": 4,
       "adverb": 10,
       "adverb/noun": 1,
-      "noun": 39,
-      "verb": 86
+      "noun": 44,
+      "verb": 123
     },
     "lexemesByCefrBand": {
       "A1": 23,
       "A2": 103,
-      "B1": 40
+      "B1": 90
     },
     "lexemesByFrequencyBucket": {
       "0001-0500": 62,
-      "0501-1000": 45,
-      "1001-2000": 53,
-      "2001+": 6
+      "0501-1000": 52,
+      "1001-2000": 89,
+      "2001+": 13
     },
     "contentRowsBySource": {
-      "ai_draft": 586,
+      "ai_draft": 784,
       "authored": 2,
       "tatoeba": 201,
-      "wiktionary": 166
+      "wiktionary": 216
     },
     "contentRowsByLicense": {
       "CC-BY-2.0-FR": 201,
-      "CC-BY-SA-3.0": 166,
-      "proprietary": 588
+      "CC-BY-SA-3.0": 216,
+      "proprietary": 786
     },
     "contentRowsByVettingStatus": {
-      "REVIEWED": 955
+      "REVIEWED": 1203
     },
     "exerciseTargetsByType": {
-      "LEXEME": 332
+      "LEXEME": 432
     },
     "exerciseTypes": {
-      "TYPED_TRANSLATION": 166,
-      "WORD_BANK": 166
+      "TYPED_TRANSLATION": 216,
+      "WORD_BANK": 216
     }
   },
-  "topMissingA1A2Gaps": []
+  "topMissingA1A2Gaps": [
+    {
+      "lemma": "viajar",
+      "cefrBand": "A2",
+      "pos": "verb",
+      "priority": 3,
+      "reason": "travel",
+      "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 3 travel topic",
+      "status": "not_learner_ready",
+      "blockers": [
+        "needs_production_exercise",
+        "needs_recognition_exercise"
+      ],
+      "currentLexemeId": 31
+    }
+  ]
 }

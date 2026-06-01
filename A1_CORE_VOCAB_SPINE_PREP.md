@@ -970,3 +970,87 @@ Acceptance result:
 - No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 168 generated
   content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
   `autoReviewLedger`.
+
+## A2-007 Accelerated B1 Breadth Pack
+
+**Status:** implemented locally after A2-006.
+
+**Goal:** expand B1 practical breadth for experiences, plans, reasons, preferences, requests,
+complaints, health, travel, work, household tasks, and services. Rows use the
+`AI_DRAFT -> AUTO_CHECKED -> AUTO_REVIEWED -> REVIEWED` lane with two independent automatic
+reviewers.
+
+**Target lemmas:**
+
+| Lemma | POS | Domain |
+|---|---|---|
+| `lavar` | verb | household and health routines |
+| `secar` | verb | household and health routines |
+| `ordenar` | verb | household and errands |
+| `recoger` | verb | errands and household tasks |
+| `tirar` | verb | household and problems |
+| `apagar` | verb | household and services |
+| `encender` | verb | household and services |
+| `reparar` | verb | services and problems |
+| `atender` | verb | services and appointments |
+| `cobrar` | verb | services and money |
+| `firmar` | verb | appointments and services |
+| `solicitar` | verb | requests and services |
+| `aceptar` | verb | requests and decisions |
+| `rechazar` | verb | requests and complaints |
+| `recomendar` | verb | preferences and services |
+| `prometer` | verb | plans and social commitments |
+| `planificar` | verb | plans and work |
+| `proponer` | verb | opinions and plans |
+| `justificar` | verb | reasons and explanations |
+| `depender` | verb | reasons and conditions |
+| `causar` | verb | reasons and problems |
+| `disfrutar` | verb | experiences and preferences |
+| `sufrir` | verb | health and difficult experiences |
+| `respirar` | verb | health symptoms |
+| `toser` | verb | health symptoms |
+| `curar` | verb | health and recovery |
+| `medir` | verb | health and practical services |
+| `pesar` | verb | health and shopping |
+| `alquilar` | verb | travel and services |
+| `conducir` | verb | travel and transport |
+| `alojarse` | verb | travel lodging |
+| `embarcar` | verb | travel transit |
+| `aterrizar` | verb | travel transit |
+| `facturar` | verb | travel and services |
+| `contratar` | verb | work and services |
+| `ahorrar` | verb | work and money plans |
+| `ganar` | verb | work and outcomes |
+| `disponible` | adjective | appointments and services |
+| `cómodo` | adjective | travel and household preferences |
+| `tranquilo` | adjective | emotions and places |
+| `preocupado` | adjective | emotions and problems |
+| `satisfecho` | adjective | preferences and services |
+| `amable` | adjective | social and service interactions |
+| `reciente` | adjective | experiences and work updates |
+| `común` | adjective | reasons and explanations |
+| `experiencia` | noun | experiences and opinions |
+| `plan` | noun | plans and decisions |
+| `razón` | noun | reasons and explanations |
+| `solicitud` | noun | requests and services |
+| `queja` | noun | complaints and services |
+
+Implemented content delta:
+
+- 50 reviewed Wiktionary lexeme rows.
+- 100 `AI_DRAFT` sentence rows promoted to `REVIEWED` by two independent automatic reviewers.
+- 100 `AI_DRAFT` accepted-answer rows promoted to `REVIEWED` by the same two-reviewer gate.
+- 100 `sentence_lexeme` joins.
+- 100 derived exercises:
+  - production and recognition exercises for all 50 target lemmas.
+
+Acceptance result:
+
+- `learnerReadyLexemes` increases from 166 to 216.
+- `reviewedSentences` increases from 392 to 492.
+- `reviewedAcceptedAnswers` increases from 395 to 495.
+- `exerciseCount` increases from 332 to 432.
+- `missingA1A2GapCount` remains 0.
+- No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 200 generated
+  content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
+  `autoReviewLedger`.

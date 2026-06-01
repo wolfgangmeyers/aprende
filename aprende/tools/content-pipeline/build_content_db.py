@@ -1331,6 +1331,459 @@ AI_ACCELERATED_PACK_A2_006 = [
     },
 ]
 
+AI_ACCELERATED_PACK_A2_007 = [
+    {
+        "lexemeId": 167, "lemma": "lavar", "pos": "verb", "gender": None,
+        "englishGloss": "to wash", "frequencyRank": 1220, "cefrBand": "B1", "difficultyPrior": 0.5,
+        "reason": "household and health routines", "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 household/health topic",
+        "sentences": [
+            (393, 396, "Lavo la ropa.", "I wash the clothes."),
+            (394, 397, "Lávate las manos.", "Wash your hands."),
+        ],
+    },
+    {
+        "lexemeId": 168, "lemma": "secar", "pos": "verb", "gender": None,
+        "englishGloss": "to dry", "frequencyRank": 1785, "cefrBand": "B1", "difficultyPrior": 0.5,
+        "reason": "household and health routines", "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 household/health topic",
+        "sentences": [
+            (395, 398, "Seco los platos.", "I dry the dishes."),
+            (396, 399, "Sécate el pelo.", "Dry your hair."),
+        ],
+    },
+    {
+        "lexemeId": 169, "lemma": "ordenar", "pos": "verb", "gender": None,
+        "englishGloss": "to organize; to order", "frequencyRank": 1320, "cefrBand": "B1", "difficultyPrior": 0.5,
+        "reason": "household and errands", "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 household/services topic",
+        "sentences": [
+            (397, 400, "Ordeno la habitación.", "I organize the room."),
+            (398, 401, "Ordenamos los papeles.", "We organize the papers."),
+        ],
+    },
+    {
+        "lexemeId": 170, "lemma": "recoger", "pos": "verb", "gender": None,
+        "englishGloss": "to pick up; to collect", "frequencyRank": 1160, "cefrBand": "B1", "difficultyPrior": 0.5,
+        "reason": "errands and household tasks", "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 errands/household topic",
+        "sentences": [
+            (399, 402, "Recojo el paquete.", "I pick up the package."),
+            (400, 403, "Recogemos la mesa.", "We clear the table."),
+        ],
+    },
+    {
+        "lexemeId": 171, "lemma": "tirar", "pos": "verb", "gender": None,
+        "englishGloss": "to throw away; to pull", "frequencyRank": 980, "cefrBand": "B1", "difficultyPrior": 0.5,
+        "reason": "household and problems", "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 household topic",
+        "sentences": [
+            (401, 404, "Tiro la basura.", "I throw away the trash."),
+            (402, 405, "No tires la receta.", "Do not throw away the recipe."),
+        ],
+    },
+    {
+        "lexemeId": 172, "lemma": "apagar", "pos": "verb", "gender": None,
+        "englishGloss": "to turn off", "frequencyRank": 1500, "cefrBand": "B1", "difficultyPrior": 0.5,
+        "reason": "household and services", "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 household/services topic",
+        "sentences": [
+            (403, 406, "Apago la luz.", "I turn off the light."),
+            (404, 407, "Apaga el teléfono.", "Turn off the phone."),
+        ],
+    },
+    {
+        "lexemeId": 173, "lemma": "encender", "pos": "verb", "gender": None,
+        "englishGloss": "to turn on; to light", "frequencyRank": 1580, "cefrBand": "B1", "difficultyPrior": 0.5,
+        "reason": "household and services", "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 household/services topic",
+        "sentences": [
+            (405, 408, "Enciendo la cocina.", "I turn on the stove."),
+            (406, 409, "Enciende la luz.", "Turn on the light."),
+        ],
+    },
+    {
+        "lexemeId": 174, "lemma": "reparar", "pos": "verb", "gender": None,
+        "englishGloss": "to repair", "frequencyRank": 1700, "cefrBand": "B1", "difficultyPrior": 0.5,
+        "reason": "services and problems", "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 services/problems topic",
+        "sentences": [
+            (407, 410, "Reparo la mesa.", "I repair the table."),
+            (408, 411, "Necesito reparar el coche.", "I need to repair the car."),
+        ],
+    },
+    {
+        "lexemeId": 175, "lemma": "atender", "pos": "verb", "gender": None,
+        "englishGloss": "to attend to; to serve", "frequencyRank": 1360, "cefrBand": "B1", "difficultyPrior": 0.5,
+        "reason": "services and appointments", "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 services/appointments topic",
+        "sentences": [
+            (409, 412, "Atiendo a un cliente.", "I help a customer."),
+            (410, 413, "El médico me atiende.", "The doctor sees me."),
+        ],
+    },
+    {
+        "lexemeId": 176, "lemma": "cobrar", "pos": "verb", "gender": None,
+        "englishGloss": "to charge; to collect payment", "frequencyRank": 1525, "cefrBand": "B1", "difficultyPrior": 0.5,
+        "reason": "services and money", "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 services/money topic",
+        "sentences": [
+            (411, 414, "Cobran por el servicio.", "They charge for the service."),
+            (412, 415, "¿Cuánto cobran?", "How much do they charge?"),
+        ],
+    },
+    {
+        "lexemeId": 177, "lemma": "firmar", "pos": "verb", "gender": None,
+        "englishGloss": "to sign", "frequencyRank": 1450, "cefrBand": "B1", "difficultyPrior": 0.5,
+        "reason": "appointments and services", "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 services/work topic",
+        "sentences": [
+            (413, 416, "Firmo el papel.", "I sign the paper."),
+            (414, 417, "Necesito firmar aquí.", "I need to sign here."),
+        ],
+    },
+    {
+        "lexemeId": 178, "lemma": "solicitar", "pos": "verb", "gender": None,
+        "englishGloss": "to request; to apply for", "frequencyRank": 1830, "cefrBand": "B1", "difficultyPrior": 0.5,
+        "reason": "requests and services", "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 requests/services topic",
+        "sentences": [
+            (415, 418, "Solicito una cita.", "I request an appointment."),
+            (416, 419, "Solicitamos ayuda.", "We request help."),
+        ],
+    },
+    {
+        "lexemeId": 179, "lemma": "aceptar", "pos": "verb", "gender": None,
+        "englishGloss": "to accept", "frequencyRank": 980, "cefrBand": "B1", "difficultyPrior": 0.5,
+        "reason": "requests and decisions", "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 requests/opinions topic",
+        "sentences": [
+            (417, 420, "Acepto la oferta.", "I accept the offer."),
+            (418, 421, "Aceptamos el plan.", "We accept the plan."),
+        ],
+    },
+    {
+        "lexemeId": 180, "lemma": "rechazar", "pos": "verb", "gender": None,
+        "englishGloss": "to reject; to refuse", "frequencyRank": 1680, "cefrBand": "B1", "difficultyPrior": 0.5,
+        "reason": "requests and complaints", "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 requests/complaints topic",
+        "sentences": [
+            (419, 422, "Rechazo la oferta.", "I reject the offer."),
+            (420, 423, "No quiero rechazar la ayuda.", "I do not want to refuse the help."),
+        ],
+    },
+    {
+        "lexemeId": 181, "lemma": "recomendar", "pos": "verb", "gender": None,
+        "englishGloss": "to recommend", "frequencyRank": 1540, "cefrBand": "B1", "difficultyPrior": 0.5,
+        "reason": "preferences and services", "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 preferences/services topic",
+        "sentences": [
+            (421, 424, "Recomiendo este hotel.", "I recommend this hotel."),
+            (422, 425, "El médico recomienda descansar.", "The doctor recommends resting."),
+        ],
+    },
+    {
+        "lexemeId": 182, "lemma": "prometer", "pos": "verb", "gender": None,
+        "englishGloss": "to promise", "frequencyRank": 1465, "cefrBand": "B1", "difficultyPrior": 0.5,
+        "reason": "plans and social commitments", "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 plans/social topic",
+        "sentences": [
+            (423, 426, "Prometo llamar mañana.", "I promise to call tomorrow."),
+            (424, 427, "Ella promete llegar temprano.", "She promises to arrive early."),
+        ],
+    },
+    {
+        "lexemeId": 183, "lemma": "planificar", "pos": "verb", "gender": None,
+        "englishGloss": "to plan", "frequencyRank": 2100, "cefrBand": "B1", "difficultyPrior": 0.5,
+        "reason": "plans and work", "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 plans/work topic",
+        "sentences": [
+            (425, 428, "Planifico el viaje.", "I plan the trip."),
+            (426, 429, "Planificamos la semana.", "We plan the week."),
+        ],
+    },
+    {
+        "lexemeId": 184, "lemma": "proponer", "pos": "verb", "gender": None,
+        "englishGloss": "to propose; to suggest", "frequencyRank": 1620, "cefrBand": "B1", "difficultyPrior": 0.5,
+        "reason": "opinions and plans", "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 opinions/plans topic",
+        "sentences": [
+            (427, 430, "Propongo otra opción.", "I suggest another option."),
+            (428, 431, "Proponemos un plan.", "We propose a plan."),
+        ],
+    },
+    {
+        "lexemeId": 185, "lemma": "justificar", "pos": "verb", "gender": None,
+        "englishGloss": "to justify", "frequencyRank": 2050, "cefrBand": "B1", "difficultyPrior": 0.6,
+        "reason": "reasons and explanations", "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 reasons/opinions topic",
+        "sentences": [
+            (429, 432, "Justifico mi decisión.", "I justify my decision."),
+            (430, 433, "No puedo justificar el precio.", "I cannot justify the price."),
+        ],
+    },
+    {
+        "lexemeId": 186, "lemma": "depender", "pos": "verb", "gender": None,
+        "englishGloss": "to depend", "frequencyRank": 1180, "cefrBand": "B1", "difficultyPrior": 0.5,
+        "reason": "reasons and conditions", "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 reasons/plans topic",
+        "sentences": [
+            (431, 434, "Depende del tiempo.", "It depends on the weather."),
+            (432, 435, "Todo depende de la cita.", "Everything depends on the appointment."),
+        ],
+    },
+    {
+        "lexemeId": 187, "lemma": "causar", "pos": "verb", "gender": None,
+        "englishGloss": "to cause", "frequencyRank": 1060, "cefrBand": "B1", "difficultyPrior": 0.5,
+        "reason": "reasons and problems", "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 reasons/problems topic",
+        "sentences": [
+            (433, 436, "Eso causa problemas.", "That causes problems."),
+            (434, 437, "El ruido causa dolor.", "The noise causes pain."),
+        ],
+    },
+    {
+        "lexemeId": 188, "lemma": "disfrutar", "pos": "verb", "gender": None,
+        "englishGloss": "to enjoy", "frequencyRank": 1165, "cefrBand": "B1", "difficultyPrior": 0.5,
+        "reason": "experiences and preferences", "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 experiences/preferences topic",
+        "sentences": [
+            (435, 438, "Disfruto el viaje.", "I enjoy the trip."),
+            (436, 439, "Disfrutamos la comida.", "We enjoy the food."),
+        ],
+    },
+    {
+        "lexemeId": 189, "lemma": "sufrir", "pos": "verb", "gender": None,
+        "englishGloss": "to suffer", "frequencyRank": 1020, "cefrBand": "B1", "difficultyPrior": 0.5,
+        "reason": "health and difficult experiences", "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 health/experiences topic",
+        "sentences": [
+            (437, 440, "Sufro dolor.", "I suffer pain."),
+            (438, 441, "Ella sufre mucho.", "She suffers a lot."),
+        ],
+    },
+    {
+        "lexemeId": 190, "lemma": "respirar", "pos": "verb", "gender": None,
+        "englishGloss": "to breathe", "frequencyRank": 1600, "cefrBand": "B1", "difficultyPrior": 0.5,
+        "reason": "health symptoms", "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 health topic",
+        "sentences": [
+            (439, 442, "Respiro bien.", "I breathe well."),
+            (440, 443, "No puedo respirar.", "I cannot breathe."),
+        ],
+    },
+    {
+        "lexemeId": 191, "lemma": "toser", "pos": "verb", "gender": None,
+        "englishGloss": "to cough", "frequencyRank": 2300, "cefrBand": "B1", "difficultyPrior": 0.6,
+        "reason": "health symptoms", "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 health topic",
+        "sentences": [
+            (441, 444, "Toso mucho.", "I cough a lot."),
+            (442, 445, "El niño tose.", "The boy coughs."),
+        ],
+    },
+    {
+        "lexemeId": 192, "lemma": "curar", "pos": "verb", "gender": None,
+        "englishGloss": "to cure; to heal", "frequencyRank": 1705, "cefrBand": "B1", "difficultyPrior": 0.5,
+        "reason": "health and recovery", "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 health topic",
+        "sentences": [
+            (443, 446, "La medicina cura el dolor.", "The medicine cures the pain."),
+            (444, 447, "Quiero curarme pronto.", "I want to get well soon."),
+        ],
+    },
+    {
+        "lexemeId": 193, "lemma": "medir", "pos": "verb", "gender": None,
+        "englishGloss": "to measure", "frequencyRank": 1505, "cefrBand": "B1", "difficultyPrior": 0.5,
+        "reason": "health and practical services", "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 health/services topic",
+        "sentences": [
+            (445, 448, "Mido la mesa.", "I measure the table."),
+            (446, 449, "El médico mide la presión.", "The doctor measures the blood pressure."),
+        ],
+    },
+    {
+        "lexemeId": 194, "lemma": "pesar", "pos": "verb", "gender": None,
+        "englishGloss": "to weigh", "frequencyRank": 1585, "cefrBand": "B1", "difficultyPrior": 0.5,
+        "reason": "health and shopping", "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 health/shopping topic",
+        "sentences": [
+            (447, 450, "Peso la comida.", "I weigh the food."),
+            (448, 451, "El paquete pesa mucho.", "The package weighs a lot."),
+        ],
+    },
+    {
+        "lexemeId": 195, "lemma": "alquilar", "pos": "verb", "gender": None,
+        "englishGloss": "to rent", "frequencyRank": 1950, "cefrBand": "B1", "difficultyPrior": 0.5,
+        "reason": "travel and services", "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 travel/services topic",
+        "sentences": [
+            (449, 452, "Alquilo un coche.", "I rent a car."),
+            (450, 453, "Queremos alquilar una casa.", "We want to rent a house."),
+        ],
+    },
+    {
+        "lexemeId": 196, "lemma": "conducir", "pos": "verb", "gender": None,
+        "englishGloss": "to drive", "frequencyRank": 1040, "cefrBand": "B1", "difficultyPrior": 0.5,
+        "reason": "travel and transport", "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 travel/transport topic",
+        "sentences": [
+            (451, 454, "Conduzco al trabajo.", "I drive to work."),
+            (452, 455, "Ella conduce bien.", "She drives well."),
+        ],
+    },
+    {
+        "lexemeId": 197, "lemma": "alojarse", "pos": "verb", "gender": None,
+        "englishGloss": "to stay; to lodge", "frequencyRank": 2400, "cefrBand": "B1", "difficultyPrior": 0.6,
+        "reason": "travel lodging", "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 travel topic",
+        "sentences": [
+            (453, 456, "Me alojo en el hotel.", "I stay at the hotel."),
+            (454, 457, "Nos alojamos cerca.", "We stay nearby."),
+        ],
+    },
+    {
+        "lexemeId": 198, "lemma": "embarcar", "pos": "verb", "gender": None,
+        "englishGloss": "to board", "frequencyRank": 2600, "cefrBand": "B1", "difficultyPrior": 0.6,
+        "reason": "travel transit", "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 travel topic",
+        "sentences": [
+            (455, 458, "Embarco a tiempo.", "I board on time."),
+            (456, 459, "Embarcamos en la puerta.", "We board at the gate."),
+        ],
+    },
+    {
+        "lexemeId": 199, "lemma": "aterrizar", "pos": "verb", "gender": None,
+        "englishGloss": "to land", "frequencyRank": 2550, "cefrBand": "B1", "difficultyPrior": 0.6,
+        "reason": "travel transit", "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 travel topic",
+        "sentences": [
+            (457, 460, "El avión aterriza tarde.", "The plane lands late."),
+            (458, 461, "Aterrizamos en Madrid.", "We land in Madrid."),
+        ],
+    },
+    {
+        "lexemeId": 200, "lemma": "facturar", "pos": "verb", "gender": None,
+        "englishGloss": "to check in; to invoice", "frequencyRank": 2500, "cefrBand": "B1", "difficultyPrior": 0.6,
+        "reason": "travel and services", "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 travel/services topic",
+        "sentences": [
+            (459, 462, "Facturo mi maleta.", "I check in my suitcase."),
+            (460, 463, "Necesito facturar ahora.", "I need to check in now."),
+        ],
+    },
+    {
+        "lexemeId": 201, "lemma": "contratar", "pos": "verb", "gender": None,
+        "englishGloss": "to hire; to contract", "frequencyRank": 1455, "cefrBand": "B1", "difficultyPrior": 0.5,
+        "reason": "work and services", "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 work/services topic",
+        "sentences": [
+            (461, 464, "Contratan a mi amigo.", "They hire my friend."),
+            (462, 465, "Quiero contratar un servicio.", "I want to hire a service."),
+        ],
+    },
+    {
+        "lexemeId": 202, "lemma": "ahorrar", "pos": "verb", "gender": None,
+        "englishGloss": "to save money", "frequencyRank": 1850, "cefrBand": "B1", "difficultyPrior": 0.5,
+        "reason": "work and money plans", "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 work/money topic",
+        "sentences": [
+            (463, 466, "Ahorro dinero.", "I save money."),
+            (464, 467, "Queremos ahorrar más.", "We want to save more."),
+        ],
+    },
+    {
+        "lexemeId": 203, "lemma": "ganar", "pos": "verb", "gender": None,
+        "englishGloss": "to earn; to win", "frequencyRank": 588, "cefrBand": "B1", "difficultyPrior": 0.5,
+        "reason": "work and outcomes", "sourceBasis": "hermitdave/FrequencyWords high-frequency spine",
+        "sentences": [
+            (465, 468, "Gano dinero.", "I earn money."),
+            (466, 469, "Queremos ganar el partido.", "We want to win the game."),
+        ],
+    },
+    {
+        "lexemeId": 204, "lemma": "disponible", "pos": "adjective", "gender": None,
+        "englishGloss": "available", "frequencyRank": 1250, "cefrBand": "B1", "difficultyPrior": 0.5,
+        "reason": "appointments and services", "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 appointments/services topic",
+        "sentences": [
+            (467, 470, "Estoy disponible mañana.", "I am available tomorrow."),
+            (468, 471, "La cita está disponible.", "The appointment is available."),
+        ],
+    },
+    {
+        "lexemeId": 205, "lemma": "cómodo", "pos": "adjective", "gender": None,
+        "englishGloss": "comfortable", "frequencyRank": 1365, "cefrBand": "B1", "difficultyPrior": 0.5,
+        "reason": "travel and household preferences", "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 travel/household topic",
+        "sentences": [
+            (469, 472, "El hotel es cómodo.", "The hotel is comfortable."),
+            (470, 473, "La silla es cómoda.", "The chair is comfortable."),
+        ],
+    },
+    {
+        "lexemeId": 206, "lemma": "tranquilo", "pos": "adjective", "gender": None,
+        "englishGloss": "calm; quiet", "frequencyRank": 1185, "cefrBand": "B1", "difficultyPrior": 0.5,
+        "reason": "emotions and places", "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 emotions/household topic",
+        "sentences": [
+            (471, 474, "Estoy tranquilo.", "I am calm."),
+            (472, 475, "La calle está tranquila.", "The street is quiet."),
+        ],
+    },
+    {
+        "lexemeId": 207, "lemma": "preocupado", "pos": "adjective", "gender": None,
+        "englishGloss": "worried", "frequencyRank": 1325, "cefrBand": "B1", "difficultyPrior": 0.5,
+        "reason": "emotions and problems", "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 emotions/problems topic",
+        "sentences": [
+            (473, 476, "Estoy preocupado.", "I am worried."),
+            (474, 477, "Ella está preocupada por la cita.", "She is worried about the appointment."),
+        ],
+    },
+    {
+        "lexemeId": 208, "lemma": "satisfecho", "pos": "adjective", "gender": None,
+        "englishGloss": "satisfied", "frequencyRank": 1625, "cefrBand": "B1", "difficultyPrior": 0.5,
+        "reason": "preferences and services", "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 services/opinions topic",
+        "sentences": [
+            (475, 478, "Estoy satisfecho.", "I am satisfied."),
+            (476, 479, "Estamos satisfechos con el servicio.", "We are satisfied with the service."),
+        ],
+    },
+    {
+        "lexemeId": 209, "lemma": "amable", "pos": "adjective", "gender": None,
+        "englishGloss": "kind; friendly", "frequencyRank": 1435, "cefrBand": "B1", "difficultyPrior": 0.5,
+        "reason": "social and service interactions", "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 social/services topic",
+        "sentences": [
+            (477, 480, "El médico es amable.", "The doctor is kind."),
+            (478, 481, "La persona fue amable.", "The person was friendly."),
+        ],
+    },
+    {
+        "lexemeId": 210, "lemma": "reciente", "pos": "adjective", "gender": None,
+        "englishGloss": "recent", "frequencyRank": 1180, "cefrBand": "B1", "difficultyPrior": 0.5,
+        "reason": "experiences and work updates", "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 experiences/work topic",
+        "sentences": [
+            (479, 482, "Es una experiencia reciente.", "It is a recent experience."),
+            (480, 483, "El cambio es reciente.", "The change is recent."),
+        ],
+    },
+    {
+        "lexemeId": 211, "lemma": "común", "pos": "adjective", "gender": None,
+        "englishGloss": "common", "frequencyRank": 520, "cefrBand": "B1", "difficultyPrior": 0.5,
+        "reason": "reasons and explanations", "sourceBasis": "hermitdave/FrequencyWords high-frequency spine",
+        "sentences": [
+            (481, 484, "Es un problema común.", "It is a common problem."),
+            (482, 485, "Es una razón común.", "It is a common reason."),
+        ],
+    },
+    {
+        "lexemeId": 212, "lemma": "experiencia", "pos": "noun", "gender": "F",
+        "englishGloss": "experience", "frequencyRank": 555, "cefrBand": "B1", "difficultyPrior": 0.5,
+        "reason": "experiences and opinions", "sourceBasis": "hermitdave/FrequencyWords high-frequency spine",
+        "sentences": [
+            (483, 486, "Tengo experiencia.", "I have experience."),
+            (484, 487, "Fue una buena experiencia.", "It was a good experience."),
+        ],
+    },
+    {
+        "lexemeId": 213, "lemma": "plan", "pos": "noun", "gender": "M",
+        "englishGloss": "plan", "frequencyRank": 705, "cefrBand": "B1", "difficultyPrior": 0.5,
+        "reason": "plans and decisions", "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 plans topic",
+        "sentences": [
+            (485, 488, "Tengo un plan.", "I have a plan."),
+            (486, 489, "El plan cambia.", "The plan changes."),
+        ],
+    },
+    {
+        "lexemeId": 214, "lemma": "razón", "pos": "noun", "gender": "F",
+        "englishGloss": "reason", "frequencyRank": 515, "cefrBand": "B1", "difficultyPrior": 0.5,
+        "reason": "reasons and explanations", "sourceBasis": "hermitdave/FrequencyWords high-frequency spine",
+        "sentences": [
+            (487, 490, "Tengo una razón.", "I have a reason."),
+            (488, 491, "La razón es simple.", "The reason is simple."),
+        ],
+    },
+    {
+        "lexemeId": 215, "lemma": "solicitud", "pos": "noun", "gender": "F",
+        "englishGloss": "request; application", "frequencyRank": 1855, "cefrBand": "B1", "difficultyPrior": 0.5,
+        "reason": "requests and services", "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 requests/services topic",
+        "sentences": [
+            (489, 492, "Envío la solicitud.", "I send the request."),
+            (490, 493, "La solicitud está lista.", "The application is ready."),
+        ],
+    },
+    {
+        "lexemeId": 216, "lemma": "queja", "pos": "noun", "gender": "F",
+        "englishGloss": "complaint", "frequencyRank": 1900, "cefrBand": "B1", "difficultyPrior": 0.5,
+        "reason": "complaints and services", "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 complaints/services topic",
+        "sentences": [
+            (491, 494, "Tengo una queja.", "I have a complaint."),
+            (492, 495, "La queja es sobre el servicio.", "The complaint is about the service."),
+        ],
+    },
+]
+
 AI_REVIEWED_SENTENCE_PAIRS.update({
     spanish: english
     for pack in (
@@ -1338,6 +1791,7 @@ AI_REVIEWED_SENTENCE_PAIRS.update({
         AI_ACCELERATED_PACK_A2_004,
         AI_ACCELERATED_PACK_A2_005,
         AI_ACCELERATED_PACK_A2_006,
+        AI_ACCELERATED_PACK_A2_007,
     )
     for item in pack
     for _, _, spanish, english in item["sentences"]
@@ -1451,6 +1905,7 @@ A1_A2_TARGET_LEMMAS.extend([
         AI_ACCELERATED_PACK_A2_004,
         AI_ACCELERATED_PACK_A2_005,
         AI_ACCELERATED_PACK_A2_006,
+        AI_ACCELERATED_PACK_A2_007,
     )
     for item in pack
 ])
@@ -2475,8 +2930,12 @@ def vetted_sample():
         AI_ACCELERATED_PACK_A2_005, "a2-005", next_exercise_id,
         lexemes, sentences, accepted, sentence_lexeme, exercises,
     )
-    append_ai_accelerated_pack(
+    next_exercise_id = append_ai_accelerated_pack(
         AI_ACCELERATED_PACK_A2_006, "a2-006", next_exercise_id,
+        lexemes, sentences, accepted, sentence_lexeme, exercises,
+    )
+    append_ai_accelerated_pack(
+        AI_ACCELERATED_PACK_A2_007, "a2-007", next_exercise_id,
         lexemes, sentences, accepted, sentence_lexeme, exercises,
     )
     return lexemes, sentences, accepted, sentence_lexeme, conj, exercises, nodes
