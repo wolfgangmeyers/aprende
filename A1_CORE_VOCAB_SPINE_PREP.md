@@ -3468,3 +3468,40 @@ Acceptance result:
 - No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 480 generated
   content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
   `autoReviewLedger`.
+
+## A2-045 Accelerated B1/B2 Mandatory/Recommended/Pending Steps, Actions, Responses, and Solutions Pack
+
+**Status:** implemented locally after A2-044.
+
+**Goal:** add learner-ready B1/B2 breadth for mandatory, recommended, optional, and pending
+steps; mandatory, recommended, and pending actions; pending responses; temporary solutions; and
+final solutions across payment, safety, documents, appointments, travel, service, account,
+claims, treatment, maintenance, contracts, and projects. Rows use the
+`AI_DRAFT -> AUTO_CHECKED -> AUTO_REVIEWED -> REVIEWED` lane with two independent automatic
+reviewers.
+
+**Target lemma families:** `paso obligatorio de ...`, `paso recomendado de ...`,
+`paso opcional de ...`, `paso pendiente de ...`, `acción obligatoria de ...`,
+`acción recomendada de ...`, `acción pendiente de ...`, `respuesta pendiente de ...`,
+`solución temporal de ...`, and `solución definitiva de ...` across money, safety, bureaucracy,
+services, travel, health, repairs, legal, and work domains.
+
+Implemented content delta:
+
+- 120 reviewed Wiktionary lexeme rows.
+- 240 `AI_DRAFT` sentence rows promoted to `REVIEWED` by two independent automatic reviewers.
+- 240 `AI_DRAFT` accepted-answer rows promoted to `REVIEWED` by the same two-reviewer gate.
+- 240 `sentence_lexeme` joins.
+- 240 derived exercises:
+  - production and recognition exercises for all 120 target lemmas.
+
+Acceptance result:
+
+- `learnerReadyLexemes` increases from 4431 to 4551.
+- `reviewedSentences` increases from 8922 to 9162.
+- `reviewedAcceptedAnswers` increases from 8925 to 9165.
+- `exerciseCount` increases from 8862 to 9102.
+- `missingA1A2GapCount` remains 0.
+- No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 480 generated
+  content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
+  `autoReviewLedger`.
