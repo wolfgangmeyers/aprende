@@ -2999,3 +2999,60 @@ Acceptance result:
 - No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 480 generated
   content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
   `autoReviewLedger`.
+
+## A2-036 Accelerated B1/B2 Conversation, Bureaucracy, Money, Health, Repairs, Travel, Work, and Digital Pack
+
+**Status:** implemented locally after A2-035.
+
+**Goal:** add learner-ready B1/B2 breadth for conversation repair, formal requests, legal and
+bureaucratic paperwork, banking, medical and household problems, travel disruption, workplace
+coordination, and digital-service vocabulary. Rows use the
+`AI_DRAFT -> AUTO_CHECKED -> AUTO_REVIEWED -> REVIEWED` lane with two independent automatic
+reviewers.
+
+**Target lemmas:** `conversación tranquila`, `conversación difícil`, `frase útil`, `frase educada`,
+`pregunta breve`, `respuesta útil`, `respuesta educada`, `comentario sincero`, `tono tranquilo`,
+`tono respetuoso`, `aclaración útil`, `confusión inicial`, `desacuerdo leve`, `trámite digital`,
+`trámite provincial`, `certificado municipal`, `permiso municipal`, `expediente pendiente`,
+`expediente digital`, `plazo administrativo`, `plazo prorrogado`, `copia sellada`,
+`denuncia pendiente`, `cuota pendiente`, `deuda antigua`, `deuda familiar`, `ingreso variable`,
+`pago parcial`, `recibo electrónico`, `cajero disponible`, `tarjeta temporal`, `límite mensual`,
+`dolor constante`, `tos persistente`, `tos nocturna`, `síntoma reciente`, `alergia estacional`,
+`tensión alta`, `cobertura médica`, `centro sanitario`, `espera larga`, `receta nueva`,
+`control médico`, `infección reciente`, `vendaje seco`, `consulta dental`, `urgencia familiar`,
+`cerradura atascada`, `tubería bloqueada`, `fuga visible`, `fuga interna`, `bombilla fundida`,
+`enchufe roto`, `cable suelto`, `calefacción rota`, `aire frío`, `lavadora nueva`, `horno apagado`,
+`visita urgente`, `reparación provisional`, `vuelo nocturno`, `andén cerrado`, `desayuno temprano`,
+`cambio de horario`, `billete digital`, `terminal nueva`, `tarea pendiente`, `tarea prioritaria`,
+`supervisor directo`, `equipo nuevo`, `contrato pendiente`, `llamada interna`, `cliente nuevo`,
+`error técnico`, `queja pendiente`, `solución provisional`, `objetivo mensual`,
+`resultado parcial`, `enlace temporal`, `archivo ligero`, `carpeta nueva`, `copia reciente`,
+`actualización reciente`, `aplicación nueva`, `mensaje privado`, `cita municipal`,
+`oficina regional`, `oficina central`, `solicitud digital`, `solicitud urgente`,
+`autorización pendiente`, `autorización temporal`, `formulario obligatorio`,
+`certificado familiar`, `comprobante impreso`, `comprobante digital`, `número provisional`,
+`turno administrativo`, `ventanilla cerrada`, `tarifa reducida`, `tarifa mensual`, `ingreso anual`,
+`gasto anual`, `pago automático`, `tarjeta prepago`, `transferencia automática`, `comisión fija`,
+`consulta rápida`, `revisión dental`, `prueba negativa`, `prueba positiva`, `fiebre baja`,
+`tratamiento corto`, `pastilla diaria`, `dosis correcta`, `pieza suelta`, `pieza dañada`,
+`técnico autorizado`, `técnico disponible`, `aparato roto`.
+
+Implemented content delta:
+
+- 120 reviewed Wiktionary lexeme rows.
+- 240 `AI_DRAFT` sentence rows promoted to `REVIEWED` by two independent automatic reviewers.
+- 240 `AI_DRAFT` accepted-answer rows promoted to `REVIEWED` by the same two-reviewer gate.
+- 240 `sentence_lexeme` joins.
+- 240 derived exercises:
+  - production and recognition exercises for all 120 target lemmas.
+
+Acceptance result:
+
+- `learnerReadyLexemes` increases from 3351 to 3471.
+- `reviewedSentences` increases from 6762 to 7002.
+- `reviewedAcceptedAnswers` increases from 6765 to 7005.
+- `exerciseCount` increases from 6702 to 6942.
+- `missingA1A2GapCount` remains 0.
+- No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 480 generated
+  content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
+  `autoReviewLedger`.
