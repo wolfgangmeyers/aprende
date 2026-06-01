@@ -1148,3 +1148,107 @@ Acceptance result:
 - No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 240 generated
   content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
   `autoReviewLedger`.
+
+## A2-009 Accelerated B1 Narration and Interaction Pack
+
+**Status:** implemented locally after A2-008.
+
+**Goal:** expand learner-ready B1 breadth for narration, past/future planning, opinions,
+workplace communication, social interaction, health visits, and service interactions. Rows use the
+`AI_DRAFT -> AUTO_CHECKED -> AUTO_REVIEWED -> REVIEWED` lane with two independent automatic
+reviewers.
+
+**Target lemmas:**
+
+| Lemma | POS | Domain |
+|---|---|---|
+| `contar` | verb | narration and social interaction |
+| `narrar` | verb | narration |
+| `describir` | verb | narration and health |
+| `mencionar` | verb | opinions and workplace |
+| `ocurrir` | verb | narration and past events |
+| `suceder` | verb | narration and past events |
+| `continuar` | verb | planning and work |
+| `avanzar` | verb | planning and workplace |
+| `retrasar` | verb | planning and transit |
+| `finalizar` | verb | workplace and planning |
+| `lograr` | verb | planning and outcomes |
+| `intentar` | verb | planning and problem solving |
+| `prever` | verb | future planning |
+| `evaluar` | verb | workplace and services |
+| `analizar` | verb | workplace and opinions |
+| `resumir` | verb | narration and workplace |
+| `presentar` | verb | workplace and services |
+| `participar` | verb | workplace and social interaction |
+| `colaborar` | verb | workplace and social interaction |
+| `reunirse` | verb | workplace and social interaction |
+| `entrevistar` | verb | workplace |
+| `capacitar` | verb | workplace |
+| `ascender` | verb | workplace |
+| `renunciar` | verb | workplace and decisions |
+| `consultar` | verb | health and services |
+| `comunicar` | verb | workplace and services |
+| `informar` | verb | workplace and services |
+| `saludar` | verb | social interaction |
+| `despedirse` | verb | social interaction |
+| `invitar` | verb | social interaction |
+| `agradecer` | verb | social and service interactions |
+| `disculparse` | verb | social and service interactions |
+| `celebrar` | verb | social interaction and narration |
+| `conversar` | verb | social interaction |
+| `confiar` | verb | opinions and relationships |
+| `respetar` | verb | opinions and social interaction |
+| `afirmar` | verb | opinions |
+| `negar` | verb | opinions and conflict |
+| `dudar` | verb | opinions and uncertainty |
+| `parecer` | verb | opinions |
+| `mejorar` | verb | health and services |
+| `empeorar` | verb | health and problems |
+| `diagnosticar` | verb | health |
+| `ingresar` | verb | health and services |
+| `operar` | verb | health and services |
+| `tratar` | verb | health and problem solving |
+| `devolver` | verb | services and shopping |
+| `entregar` | verb | services and workplace |
+| `contactar` | verb | services and workplace |
+| `ajustar` | verb | planning and services |
+| `renovar` | verb | services and planning |
+| `aprobar` | verb | workplace and decisions |
+| `suspender` | verb | services and planning |
+| `proteger` | verb | services and health |
+| `historia` | noun | narration |
+| `detalle` | noun | narration and services |
+| `noticia` | noun | narration and social interaction |
+| `futuro` | noun | future planning |
+| `pasado` | noun | past narration |
+| `reunión` | noun | workplace and planning |
+| `proyecto` | noun | workplace and planning |
+| `empresa` | noun | workplace |
+| `jefe` | noun | workplace and social interaction |
+| `compañero` | noun | workplace and social interaction |
+| `contrato` | noun | workplace and services |
+| `horario` | noun | planning and services |
+| `turno` | noun | workplace and services |
+| `salario` | noun | workplace and money |
+| `farmacia` | noun | health and services |
+| `síntoma` | noun | health |
+
+Implemented content delta:
+
+- 70 reviewed Wiktionary lexeme rows.
+- 140 `AI_DRAFT` sentence rows promoted to `REVIEWED` by two independent automatic reviewers.
+- 140 `AI_DRAFT` accepted-answer rows promoted to `REVIEWED` by the same two-reviewer gate.
+- 140 `sentence_lexeme` joins.
+- 140 derived exercises:
+  - production and recognition exercises for all 70 target lemmas.
+
+Acceptance result:
+
+- `learnerReadyLexemes` increases from 276 to 346.
+- `reviewedSentences` increases from 612 to 752.
+- `reviewedAcceptedAnswers` increases from 615 to 755.
+- `exerciseCount` increases from 552 to 692.
+- `missingA1A2GapCount` remains 0.
+- No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 280 generated
+  content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
+  `autoReviewLedger`.

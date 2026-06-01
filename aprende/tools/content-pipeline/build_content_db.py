@@ -1870,6 +1870,80 @@ AI_ACCELERATED_PACK_A2_008 = build_ai_accelerated_pack([
     (276, "emergencia", "noun", "F", "emergency", 1450, "B1", 0.5, "medical and services", "SPANISH_BREADTH_PLAN.md B1 medical/services topic", [(611, 614, "Es una emergencia.", "It is an emergency."), (612, 615, "Llamo por una emergencia.", "I call about an emergency.")]),
 ])
 
+
+AI_ACCELERATED_PACK_A2_009 = build_ai_accelerated_pack([
+    (277, "contar", "verb", None, "to tell; to count", 620, "B1", 0.5, "narration and social interaction", "hermitdave/FrequencyWords high-frequency spine", [(613, 616, "Te cuento la historia.", "I tell you the story."), (614, 617, "Contamos lo que pasó.", "We tell what happened.")]),
+    (278, "narrar", "verb", None, "to narrate", 2600, "B1", 0.6, "narration", "SPANISH_BREADTH_PLAN.md B1 narration topic", [(615, 618, "Narro mi experiencia.", "I narrate my experience."), (616, 619, "Ella narra el viaje.", "She narrates the trip.")]),
+    (279, "describir", "verb", None, "to describe", 1350, "B1", 0.5, "narration and health", "SPANISH_BREADTH_PLAN.md B1 narration/health topic", [(617, 620, "Describo el problema.", "I describe the problem."), (618, 621, "Él describe sus síntomas.", "He describes his symptoms.")]),
+    (280, "mencionar", "verb", None, "to mention", 1500, "B1", 0.5, "opinions and workplace", "SPANISH_BREADTH_PLAN.md B1 opinions/workplace topic", [(619, 622, "Menciono la reunión.", "I mention the meeting."), (620, 623, "No mencionan el precio.", "They do not mention the price.")]),
+    (281, "ocurrir", "verb", None, "to happen", 760, "B1", 0.5, "narration and past events", "hermitdave/FrequencyWords high-frequency spine", [(621, 624, "Ocurre un cambio.", "A change happens."), (622, 625, "¿Qué ocurrió ayer?", "What happened yesterday?")]),
+    (282, "suceder", "verb", None, "to happen", 900, "B1", 0.5, "narration and past events", "hermitdave/FrequencyWords high-frequency spine", [(623, 626, "Sucede algo importante.", "Something important happens."), (624, 627, "Eso sucedió antes.", "That happened before.")]),
+    (283, "continuar", "verb", None, "to continue", 800, "B1", 0.5, "planning and work", "hermitdave/FrequencyWords high-frequency spine", [(625, 628, "Continúo el trabajo.", "I continue the work."), (626, 629, "Continuamos mañana.", "We continue tomorrow.")]),
+    (284, "avanzar", "verb", None, "to advance; to make progress", 1250, "B1", 0.5, "planning and workplace", "SPANISH_BREADTH_PLAN.md B1 planning/workplace topic", [(627, 630, "Avanzo con el proyecto.", "I make progress on the project."), (628, 631, "El plan avanza rápido.", "The plan moves forward quickly.")]),
+    (285, "retrasar", "verb", None, "to delay", 1700, "B1", 0.5, "planning and transit", "SPANISH_BREADTH_PLAN.md B1 planning/transit topic", [(629, 632, "Retraso la cita.", "I delay the appointment."), (630, 633, "El tren se retrasa.", "The train is delayed.")]),
+    (286, "finalizar", "verb", None, "to finish; to end", 1450, "B1", 0.5, "workplace and planning", "SPANISH_BREADTH_PLAN.md B1 workplace/planning topic", [(631, 634, "Finalizo el informe.", "I finish the report."), (632, 635, "La reunión finaliza tarde.", "The meeting ends late.")]),
+    (287, "lograr", "verb", None, "to manage; to achieve", 850, "B1", 0.5, "planning and outcomes", "hermitdave/FrequencyWords high-frequency spine", [(633, 636, "Logro entenderlo.", "I manage to understand it."), (634, 637, "Queremos lograr el objetivo.", "We want to achieve the goal.")]),
+    (288, "intentar", "verb", None, "to try", 900, "B1", 0.5, "planning and problem solving", "hermitdave/FrequencyWords high-frequency spine", [(635, 638, "Intento llamar.", "I try to call."), (636, 639, "Intentamos resolverlo.", "We try to solve it.")]),
+    (289, "prever", "verb", None, "to foresee; to expect", 1900, "B1", 0.5, "future planning", "SPANISH_BREADTH_PLAN.md B1 future planning topic", [(637, 640, "Preveo un problema.", "I foresee a problem."), (638, 641, "Prevemos más trabajo.", "We expect more work.")]),
+    (290, "evaluar", "verb", None, "to evaluate", 1800, "B1", 0.5, "workplace and services", "SPANISH_BREADTH_PLAN.md B1 workplace/services topic", [(639, 642, "Evalúo la situación.", "I evaluate the situation."), (640, 643, "Evalúan el servicio.", "They evaluate the service.")]),
+    (291, "analizar", "verb", None, "to analyze", 1500, "B1", 0.5, "workplace and opinions", "SPANISH_BREADTH_PLAN.md B1 workplace/opinions topic", [(641, 644, "Analizo los datos.", "I analyze the data."), (642, 645, "Analizamos la respuesta.", "We analyze the response.")]),
+    (292, "resumir", "verb", None, "to summarize", 2100, "B1", 0.6, "narration and workplace", "SPANISH_BREADTH_PLAN.md B1 narration/workplace topic", [(643, 646, "Resumo el informe.", "I summarize the report."), (644, 647, "Él resume la historia.", "He summarizes the story.")]),
+    (293, "presentar", "verb", None, "to present; to submit", 700, "B1", 0.5, "workplace and services", "hermitdave/FrequencyWords high-frequency spine", [(645, 648, "Presento el proyecto.", "I present the project."), (646, 649, "Ella presenta una queja.", "She files a complaint.")]),
+    (294, "participar", "verb", None, "to participate", 1100, "B1", 0.5, "workplace and social interaction", "SPANISH_BREADTH_PLAN.md B1 workplace/social topic", [(647, 650, "Participo en la reunión.", "I participate in the meeting."), (648, 651, "Participamos en el curso.", "We participate in the course.")]),
+    (295, "colaborar", "verb", None, "to collaborate", 1800, "B1", 0.5, "workplace and social interaction", "SPANISH_BREADTH_PLAN.md B1 workplace/social topic", [(649, 652, "Colaboro con mi equipo.", "I collaborate with my team."), (650, 653, "Colaboramos en el proyecto.", "We collaborate on the project.")]),
+    (296, "reunirse", "verb", None, "to meet", 1250, "B1", 0.5, "workplace and social interaction", "SPANISH_BREADTH_PLAN.md B1 workplace/social topic", [(651, 654, "Me reúno con el jefe.", "I meet with the boss."), (652, 655, "Nos reunimos mañana.", "We meet tomorrow.")]),
+    (297, "entrevistar", "verb", None, "to interview", 2300, "B1", 0.6, "workplace", "SPANISH_BREADTH_PLAN.md B1 workplace topic", [(653, 656, "Entrevisto al candidato.", "I interview the candidate."), (654, 657, "Me entrevistan hoy.", "They interview me today.")]),
+    (298, "capacitar", "verb", None, "to train", 2400, "B1", 0.6, "workplace", "SPANISH_BREADTH_PLAN.md B1 workplace topic", [(655, 658, "Capacito al equipo.", "I train the team."), (656, 659, "La empresa capacita al personal.", "The company trains the staff.")]),
+    (299, "ascender", "verb", None, "to be promoted; to rise", 2200, "B1", 0.6, "workplace", "SPANISH_BREADTH_PLAN.md B1 workplace topic", [(657, 660, "Asciendo en el trabajo.", "I get promoted at work."), (658, 661, "Ella asciende este año.", "She is promoted this year.")]),
+    (300, "renunciar", "verb", None, "to resign; to give up", 1900, "B1", 0.5, "workplace and decisions", "SPANISH_BREADTH_PLAN.md B1 workplace/decisions topic", [(659, 662, "Renuncio al puesto.", "I resign from the position."), (660, 663, "No quiero renunciar.", "I do not want to resign.")]),
+    (301, "consultar", "verb", None, "to consult; to check", 1100, "B1", 0.5, "health and services", "SPANISH_BREADTH_PLAN.md B1 health/services topic", [(661, 664, "Consulto al médico.", "I consult the doctor."), (662, 665, "Consultamos el horario.", "We check the schedule.")]),
+    (302, "comunicar", "verb", None, "to communicate", 1200, "B1", 0.5, "workplace and services", "SPANISH_BREADTH_PLAN.md B1 workplace/services topic", [(663, 666, "Comunico la decisión.", "I communicate the decision."), (664, 667, "Nos comunican el cambio.", "They inform us of the change.")]),
+    (303, "informar", "verb", None, "to inform", 850, "B1", 0.5, "workplace and services", "hermitdave/FrequencyWords high-frequency spine", [(665, 668, "Informo al cliente.", "I inform the customer."), (666, 669, "Nos informan del retraso.", "They inform us about the delay.")]),
+    (304, "saludar", "verb", None, "to greet", 1900, "B1", 0.5, "social interaction", "SPANISH_BREADTH_PLAN.md B1 social topic", [(667, 670, "Saludo a mi vecino.", "I greet my neighbor."), (668, 671, "Nos saludan al entrar.", "They greet us when we enter.")]),
+    (305, "despedirse", "verb", None, "to say goodbye", 2200, "B1", 0.6, "social interaction", "SPANISH_BREADTH_PLAN.md B1 social topic", [(669, 672, "Me despido del equipo.", "I say goodbye to the team."), (670, 673, "Nos despedimos en la estación.", "We say goodbye at the station.")]),
+    (306, "invitar", "verb", None, "to invite", 1200, "B1", 0.5, "social interaction", "SPANISH_BREADTH_PLAN.md B1 social topic", [(671, 674, "Invito a mis amigos.", "I invite my friends."), (672, 675, "Nos invitan a cenar.", "They invite us to dinner.")]),
+    (307, "agradecer", "verb", None, "to thank; to appreciate", 1600, "B1", 0.5, "social and service interactions", "SPANISH_BREADTH_PLAN.md B1 social/services topic", [(673, 676, "Agradezco tu ayuda.", "I appreciate your help."), (674, 677, "Agradecemos el consejo.", "We appreciate the advice.")]),
+    (308, "disculparse", "verb", None, "to apologize", 2400, "B1", 0.6, "social and service interactions", "SPANISH_BREADTH_PLAN.md B1 social/services topic", [(675, 678, "Me disculpo por el error.", "I apologize for the mistake."), (676, 679, "Ella se disculpa tarde.", "She apologizes late.")]),
+    (309, "celebrar", "verb", None, "to celebrate", 1300, "B1", 0.5, "social interaction and narration", "SPANISH_BREADTH_PLAN.md B1 social/narration topic", [(677, 680, "Celebro mi cumpleaños.", "I celebrate my birthday."), (678, 681, "Celebramos la noticia.", "We celebrate the news.")]),
+    (310, "conversar", "verb", None, "to talk; to converse", 2100, "B1", 0.6, "social interaction", "SPANISH_BREADTH_PLAN.md B1 social topic", [(679, 682, "Converso con mi compañero.", "I talk with my coworker."), (680, 683, "Conversamos después.", "We talk afterward.")]),
+    (311, "confiar", "verb", None, "to trust", 1350, "B1", 0.5, "opinions and relationships", "SPANISH_BREADTH_PLAN.md B1 opinions/social topic", [(681, 684, "Confío en ti.", "I trust you."), (682, 685, "Confiamos en el médico.", "We trust the doctor.")]),
+    (312, "respetar", "verb", None, "to respect", 1200, "B1", 0.5, "opinions and social interaction", "SPANISH_BREADTH_PLAN.md B1 opinions/social topic", [(683, 686, "Respeto tu opinión.", "I respect your opinion."), (684, 687, "Respetamos las reglas.", "We respect the rules.")]),
+    (313, "afirmar", "verb", None, "to state; to affirm", 1400, "B1", 0.5, "opinions", "SPANISH_BREADTH_PLAN.md B1 opinions topic", [(685, 688, "Afirmo que es posible.", "I state that it is possible."), (686, 689, "Ella afirma lo contrario.", "She states the opposite.")]),
+    (314, "negar", "verb", None, "to deny", 1250, "B1", 0.5, "opinions and conflict", "SPANISH_BREADTH_PLAN.md B1 opinions/conflict topic", [(687, 690, "Niego el error.", "I deny the mistake."), (688, 691, "No niegan el problema.", "They do not deny the problem.")]),
+    (315, "dudar", "verb", None, "to doubt", 1500, "B1", 0.5, "opinions and uncertainty", "SPANISH_BREADTH_PLAN.md B1 opinions/uncertainty topic", [(689, 692, "Dudo de la respuesta.", "I doubt the answer."), (690, 693, "Dudamos del plan.", "We doubt the plan.")]),
+    (316, "parecer", "verb", None, "to seem", 520, "B1", 0.5, "opinions", "hermitdave/FrequencyWords high-frequency spine", [(691, 694, "Parece difícil.", "It seems difficult."), (692, 695, "Me parece adecuado.", "It seems appropriate to me.")]),
+    (317, "mejorar", "verb", None, "to improve", 1100, "B1", 0.5, "health and services", "SPANISH_BREADTH_PLAN.md B1 health/services topic", [(693, 696, "Mejoro cada día.", "I improve every day."), (694, 697, "El servicio mejora mucho.", "The service improves a lot.")]),
+    (318, "empeorar", "verb", None, "to get worse", 2200, "B1", 0.6, "health and problems", "SPANISH_BREADTH_PLAN.md B1 health/problems topic", [(695, 698, "Empeora el dolor.", "The pain gets worse."), (696, 699, "No quiero empeorar.", "I do not want to get worse.")]),
+    (319, "diagnosticar", "verb", None, "to diagnose", 2500, "B1", 0.6, "health", "SPANISH_BREADTH_PLAN.md B1 health topic", [(697, 700, "Los médicos diagnostican la enfermedad.", "The doctors diagnose the illness."), (698, 701, "El médico diagnostica el problema.", "The doctor diagnoses the problem.")]),
+    (320, "ingresar", "verb", None, "to be admitted; to enter", 1200, "B1", 0.5, "health and services", "SPANISH_BREADTH_PLAN.md B1 health/services topic", [(699, 702, "Ingreso en la clínica.", "I am admitted to the clinic."), (700, 703, "Ella ingresa mañana.", "She is admitted tomorrow.")]),
+    (321, "operar", "verb", None, "to operate; to perform surgery", 1050, "B1", 0.5, "health and services", "SPANISH_BREADTH_PLAN.md B1 health/services topic", [(701, 704, "Los médicos operan al paciente.", "The doctors operate on the patient."), (702, 705, "El hospital opera hoy.", "The hospital operates today.")]),
+    (322, "tratar", "verb", None, "to treat; to deal with", 620, "B1", 0.5, "health and problem solving", "hermitdave/FrequencyWords high-frequency spine", [(703, 706, "Trato el problema.", "I deal with the problem."), (704, 707, "El médico trata la infección.", "The doctor treats the infection.")]),
+    (323, "devolver", "verb", None, "to return; to refund", 1400, "B1", 0.5, "services and shopping", "SPANISH_BREADTH_PLAN.md B1 services/shopping topic", [(705, 708, "Devuelvo el producto.", "I return the product."), (706, 709, "Me devuelven el dinero.", "They refund my money.")]),
+    (324, "entregar", "verb", None, "to deliver; to submit", 1000, "B1", 0.5, "services and workplace", "SPANISH_BREADTH_PLAN.md B1 services/workplace topic", [(707, 710, "Entrego el documento.", "I submit the document."), (708, 711, "Entregan el paquete.", "They deliver the package.")]),
+    (325, "contactar", "verb", None, "to contact", 1700, "B1", 0.5, "services and workplace", "SPANISH_BREADTH_PLAN.md B1 services/workplace topic", [(709, 712, "Contacto con el servicio.", "I contact the service."), (710, 713, "Nos contactan mañana.", "They contact us tomorrow.")]),
+    (326, "ajustar", "verb", None, "to adjust", 1500, "B1", 0.5, "planning and services", "SPANISH_BREADTH_PLAN.md B1 planning/services topic", [(711, 714, "Ajusto el horario.", "I adjust the schedule."), (712, 715, "Ajustamos el precio.", "We adjust the price.")]),
+    (327, "renovar", "verb", None, "to renew", 1800, "B1", 0.5, "services and planning", "SPANISH_BREADTH_PLAN.md B1 services/planning topic", [(713, 716, "Renuevo el contrato.", "I renew the contract."), (714, 717, "Necesito renovar mi tarjeta.", "I need to renew my card.")]),
+    (328, "aprobar", "verb", None, "to approve; to pass", 1150, "B1", 0.5, "workplace and decisions", "SPANISH_BREADTH_PLAN.md B1 workplace/decisions topic", [(715, 718, "Apruebo el plan.", "I approve the plan."), (716, 719, "La empresa aprueba el cambio.", "The company approves the change.")]),
+    (329, "suspender", "verb", None, "to suspend; to cancel", 1700, "B1", 0.5, "services and planning", "SPANISH_BREADTH_PLAN.md B1 services/planning topic", [(717, 720, "Suspenden la reunión.", "They suspend the meeting."), (718, 721, "El servicio se suspende.", "The service is suspended.")]),
+    (330, "proteger", "verb", None, "to protect", 950, "B1", 0.5, "services and health", "SPANISH_BREADTH_PLAN.md B1 services/health topic", [(719, 722, "Protejo mis datos.", "I protect my data."), (720, 723, "El seguro nos protege.", "The insurance protects us.")]),
+    (331, "historia", "noun", "F", "story; history", 680, "B1", 0.5, "narration", "hermitdave/FrequencyWords high-frequency spine", [(721, 724, "La historia es larga.", "The story is long."), (722, 725, "Él cuenta una historia.", "He tells a story.")]),
+    (332, "detalle", "noun", "M", "detail", 1200, "B1", 0.5, "narration and services", "SPANISH_BREADTH_PLAN.md B1 narration/services topic", [(723, 726, "Falta un detalle.", "A detail is missing."), (724, 727, "Reviso cada detalle.", "I check every detail.")]),
+    (333, "noticia", "noun", "F", "news", 900, "B1", 0.5, "narration and social interaction", "hermitdave/FrequencyWords high-frequency spine", [(725, 728, "La noticia es buena.", "The news is good."), (726, 729, "Recibo una noticia.", "I receive some news.")]),
+    (334, "futuro", "noun", "M", "future", 820, "B1", 0.5, "future planning", "hermitdave/FrequencyWords high-frequency spine", [(727, 730, "Pienso en el futuro.", "I think about the future."), (728, 731, "El futuro parece mejor.", "The future seems better.")]),
+    (335, "pasado", "noun", "M", "past", 900, "B1", 0.5, "past narration", "SPANISH_BREADTH_PLAN.md B1 past narration topic", [(729, 732, "Recuerdo el pasado.", "I remember the past."), (730, 733, "Eso pasó en el pasado.", "That happened in the past.")]),
+    (336, "reunión", "noun", "F", "meeting", 850, "B1", 0.5, "workplace and planning", "hermitdave/FrequencyWords high-frequency spine", [(731, 734, "La reunión empieza ahora.", "The meeting starts now."), (732, 735, "Cancelo la reunión.", "I cancel the meeting.")]),
+    (337, "proyecto", "noun", "M", "project", 700, "B1", 0.5, "workplace and planning", "hermitdave/FrequencyWords high-frequency spine", [(733, 736, "El proyecto avanza.", "The project moves forward."), (734, 737, "El proyecto es importante.", "The project is important.")]),
+    (338, "empresa", "noun", "F", "company", 560, "B1", 0.5, "workplace", "hermitdave/FrequencyWords high-frequency spine", [(735, 738, "Trabajo en una empresa.", "I work at a company."), (736, 739, "La empresa llama hoy.", "The company calls today.")]),
+    (339, "jefe", "noun", "M", "boss", 1000, "B1", 0.5, "workplace and social interaction", "SPANISH_BREADTH_PLAN.md B1 workplace/social topic", [(737, 740, "Mi jefe llega tarde.", "My boss arrives late."), (738, 741, "Hablo con el jefe.", "I speak with the boss.")]),
+    (340, "compañero", "noun", "M", "coworker; companion", 1300, "B1", 0.5, "workplace and social interaction", "SPANISH_BREADTH_PLAN.md B1 workplace/social topic", [(739, 742, "Ayudo a mi compañero.", "I help my coworker."), (740, 743, "Mi compañero está enfermo.", "My coworker is sick.")]),
+    (341, "contrato", "noun", "M", "contract", 900, "B1", 0.5, "workplace and services", "hermitdave/FrequencyWords high-frequency spine", [(741, 744, "Firmo el contrato.", "I sign the contract."), (742, 745, "El contrato termina hoy.", "The contract ends today.")]),
+    (342, "horario", "noun", "M", "schedule", 1400, "B1", 0.5, "planning and services", "SPANISH_BREADTH_PLAN.md B1 planning/services topic", [(743, 746, "Reviso el horario.", "I check the schedule."), (744, 747, "El horario cambia mañana.", "The schedule changes tomorrow.")]),
+    (343, "turno", "noun", "M", "shift; turn", 1600, "B1", 0.5, "workplace and services", "SPANISH_BREADTH_PLAN.md B1 workplace/services topic", [(745, 748, "Trabajo en el turno de tarde.", "I work the evening shift."), (746, 749, "Cambio mi turno.", "I change my shift.")]),
+    (344, "salario", "noun", "M", "salary", 1500, "B1", 0.5, "workplace and money", "SPANISH_BREADTH_PLAN.md B1 workplace/money topic", [(747, 750, "Recibo mi salario.", "I receive my salary."), (748, 751, "El salario es mensual.", "The salary is monthly.")]),
+    (345, "farmacia", "noun", "F", "pharmacy", 1900, "B1", 0.5, "health and services", "SPANISH_BREADTH_PLAN.md B1 health/services topic", [(749, 752, "Voy a la farmacia.", "I go to the pharmacy."), (750, 753, "La farmacia está cerca.", "The pharmacy is nearby.")]),
+    (346, "síntoma", "noun", "M", "symptom", 2300, "B1", 0.6, "health", "SPANISH_BREADTH_PLAN.md B1 health topic", [(751, 754, "Tengo un síntoma nuevo.", "I have a new symptom."), (752, 755, "Describo el síntoma.", "I describe the symptom.")]),
+])
+
 AI_REVIEWED_SENTENCE_PAIRS.update({
     spanish: english
     for pack in (
@@ -1879,6 +1953,7 @@ AI_REVIEWED_SENTENCE_PAIRS.update({
         AI_ACCELERATED_PACK_A2_006,
         AI_ACCELERATED_PACK_A2_007,
         AI_ACCELERATED_PACK_A2_008,
+        AI_ACCELERATED_PACK_A2_009,
     )
     for item in pack
     for _, _, spanish, english in item["sentences"]
@@ -1994,6 +2069,7 @@ A1_A2_TARGET_LEMMAS.extend([
         AI_ACCELERATED_PACK_A2_006,
         AI_ACCELERATED_PACK_A2_007,
         AI_ACCELERATED_PACK_A2_008,
+        AI_ACCELERATED_PACK_A2_009,
     )
     for item in pack
 ])
@@ -3026,8 +3102,12 @@ def vetted_sample():
         AI_ACCELERATED_PACK_A2_007, "a2-007", next_exercise_id,
         lexemes, sentences, accepted, sentence_lexeme, exercises,
     )
-    append_ai_accelerated_pack(
+    next_exercise_id = append_ai_accelerated_pack(
         AI_ACCELERATED_PACK_A2_008, "a2-008", next_exercise_id,
+        lexemes, sentences, accepted, sentence_lexeme, exercises,
+    )
+    append_ai_accelerated_pack(
+        AI_ACCELERATED_PACK_A2_009, "a2-009", next_exercise_id,
         lexemes, sentences, accepted, sentence_lexeme, exercises,
     )
     return lexemes, sentences, accepted, sentence_lexeme, conj, exercises, nodes
