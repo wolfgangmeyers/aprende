@@ -1078,6 +1078,36 @@ Acceptance target:
   content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
   `autoReviewLedger`.
 
+## A2-029 Accelerated B1/B2 Education, Environment, Civic Services, Shopping, Food, Health, Digital, and Community Pack
+
+**Status:** implemented locally after A2-028.
+
+**Goal:** add learner-ready B1/B2 breadth for education workflows, environmental and civic services,
+shopping and food interactions, health language, digital access, and community participation. Rows
+use the `AI_DRAFT -> AUTO_CHECKED -> AUTO_REVIEWED -> REVIEWED` lane with two independent automatic
+reviewers.
+
+**Target lemmas:** `clase grabada`, `material descargable`, `foro abierto`, `tutoría virtual`, `certificado pendiente`, `práctica guiada`, `nota provisional`, `horario lectivo`, `aula virtual`, `beca renovada`, `matrícula parcial`, `recurso didáctico`, `lectura obligatoria`, `resumen entregado`, `plazo académico`, `consulta docente`, `proyecto final`, `grupo reducido`, `sesión práctica`, `nivel avanzado`, `punto limpio móvil`, `contenedor marrón`, `residuo orgánico`, `ahorro energético`, `consumo de agua`, `ruido ambiental`, `calidad del aire`, `sendero señalizado`, `playa vigilada`, `zona inundable`, `incendio controlado`, `refugio climático`, `sombra natural`, `fuente pública`, `huerto urbano`, `compost doméstico`, `recogida selectiva`, `emisión reducida`, `riesgo ambiental`, `campaña municipal`, `biblioteca móvil`, `registro municipal`, `padrón actualizado`, `permiso especial`, `inspección rutinaria`, `multa recurrida`, `notificación pendiente`, `archivo histórico`, `asesoría gratuita`, `mediación familiar`, `acceso autorizado`, `norma interna`, `requisito mínimo`, `cesta de compra`, `talla disponible`, `color elegido`, `probador libre`, `cola rápida`, `cupón aplicado`, `devolución aceptada`, `garantía ampliada`, `pedido mínimo`, `bolsa reciclada`, `recargo pequeño`, `caja automática`, `receta casera`, `ingrediente fresco`, `salsa picante`, `ración pequeña`, `mesa exterior`, `vaso reutilizable`, `agua con gas`, `postre compartido`, `cuenta dividida`, `propina voluntaria`, `reserva nocturna`, `menú infantil`, `plato recomendado`, `pan integral`, `salud mental`, `terapia grupal`, `apoyo psicológico`, `crisis nerviosa`, `cansancio extremo`, `ritmo cardíaco`, `presión baja`, `mareo repentino`, `visión borrosa`, `cuidado preventivo`, `control anual`, `medida preventiva`, `aplicación móvil`, `modo oscuro`, `notificación silenciosa`, `pantalla bloqueada`, `código QR`, `archivo temporal`, `red pública`, `batería externa`, `cargador rápido`, `descarga lenta`, `comentario fijado`, `canal privado`, `acuerdo comunitario`, `ayuda mutua`, `conflicto abierto`, `participación activa`, `opinión pública`, `protesta pacífica`, `campaña solidaria`, `voto anticipado`, `asamblea local`, `debate público`, `turno vecinal`, `centro electoral`, `acta pública`, `plan urbano`, `calle peatonal`, `carril bus`, `alumbrado nuevo`.
+
+Implemented content delta:
+
+- 120 reviewed Wiktionary lexeme rows.
+- 240 `AI_DRAFT` sentence rows promoted to `REVIEWED` by two independent automatic reviewers.
+- 240 `AI_DRAFT` accepted-answer rows promoted to `REVIEWED` by the same two-reviewer gate.
+- 240 `sentence_lexeme` joins.
+- 240 derived production and recognition exercises for all 120 target lemmas.
+
+Acceptance target:
+
+- `learnerReadyLexemes` is 2631.
+- `reviewedSentences` is 5322 after restoring the non-fixture strict build.
+- `reviewedAcceptedAnswers` is 5325 after restoring the non-fixture strict build.
+- `exerciseCount` is 5262.
+- `missingA1A2GapCount` remains 0.
+- No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 480 generated
+  content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
+  `autoReviewLedger`.
+
 ## A2-023 Accelerated B1/B2 Education, Community, Environment, Media, Family, Civic, Shopping, Delivery, and Money Pack
 
 **Status:** implemented locally after A2-022.
