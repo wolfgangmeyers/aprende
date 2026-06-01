@@ -4264,3 +4264,40 @@ Acceptance result:
 - No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 480 generated
   content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
   `autoReviewLedger`.
+
+## A2-067 Accelerated B1/B2 Health, Urgent Care, Work, and Travel Safety Pack
+
+**Status:** implemented locally after A2-066.
+
+**Goal:** add learner-ready B1/B2 breadth for mild symptoms, recent pain, low fever, dry cough,
+possible allergies, small wounds, fast pulse, new prescriptions, pending vaccines, and
+necessary rest across reports, appointments, clinics, insurance, work, travel, accidents,
+medication, waits, urgent care, and support. Rows use the
+`AI_DRAFT -> AUTO_CHECKED -> AUTO_REVIEWED -> REVIEWED` lane with two independent automatic
+reviewers.
+
+**Target lemma families:** `síntoma leve para ...`, `dolor reciente para ...`,
+`fiebre baja para ...`, `tos seca para ...`, `alergia posible para ...`,
+`herida pequeña para ...`, `pulso rápido para ...`, `receta nueva para ...`,
+`vacuna pendiente para ...`, and `descanso necesario para ...` across health, bureaucracy, work,
+travel, emergency, and services contexts.
+
+Implemented content delta:
+
+- 120 reviewed Wiktionary lexeme rows.
+- 240 `AI_DRAFT` sentence rows promoted to `REVIEWED` by two independent automatic reviewers.
+- 240 `AI_DRAFT` accepted-answer rows promoted to `REVIEWED` by the same two-reviewer gate.
+- 240 `sentence_lexeme` joins.
+- 240 derived exercises:
+  - production and recognition exercises for all 120 target lemmas.
+
+Acceptance result:
+
+- `learnerReadyLexemes` increases from 7071 to 7191.
+- `reviewedSentences` increases from 14202 to 14442.
+- `reviewedAcceptedAnswers` increases from 14205 to 14445.
+- `exerciseCount` increases from 14142 to 14382.
+- `missingA1A2GapCount` remains 0.
+- No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 480 generated
+  content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
+  `autoReviewLedger`.
