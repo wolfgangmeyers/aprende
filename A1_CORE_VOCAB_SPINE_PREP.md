@@ -3791,3 +3791,39 @@ Acceptance result:
 - No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 480 generated
   content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
   `autoReviewLedger`.
+
+## A2-054 Accelerated B1/B2 Contact and Support Channel Pack
+
+**Status:** implemented locally after A2-053.
+
+**Goal:** add learner-ready B1/B2 breadth for practical contact, direct-number, email, channel, line, and
+responsible-person phrases across banking, health, work, travel, legal, services, repairs, refunds,
+treatment, applications, and customer-service contexts. Rows use the
+`AI_DRAFT -> AUTO_CHECKED -> AUTO_REVIEWED -> REVIEWED` lane with two independent automatic
+reviewers.
+
+**Target lemma families:** `contacto principal para ...`, `contacto alternativo para ...`,
+`número directo para ...`, `correo oficial para ...`, `canal seguro para ...`,
+`canal alternativo para ...`, `línea activa para ...`, `línea urgente para ...`,
+`persona responsable para ...`, and `persona disponible para ...` across banks, hospitals, offices,
+trips, bookings, contracts, claims, refunds, repairs, treatment, applications, and customer service.
+
+Implemented content delta:
+
+- 120 reviewed Wiktionary lexeme rows.
+- 240 `AI_DRAFT` sentence rows promoted to `REVIEWED` by two independent automatic reviewers.
+- 240 `AI_DRAFT` accepted-answer rows promoted to `REVIEWED` by the same two-reviewer gate.
+- 240 `sentence_lexeme` joins.
+- 240 derived exercises:
+  - production and recognition exercises for all 120 target lemmas.
+
+Acceptance result:
+
+- `learnerReadyLexemes` increases from 5511 to 5631.
+- `reviewedSentences` increases from 11082 to 11322.
+- `reviewedAcceptedAnswers` increases from 11085 to 11325.
+- `exerciseCount` increases from 11022 to 11262.
+- `missingA1A2GapCount` remains 0.
+- No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 480 generated
+  content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
+  `autoReviewLedger`.
