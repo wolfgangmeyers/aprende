@@ -3174,3 +3174,63 @@ Acceptance result:
 - No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 480 generated
   content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
   `autoReviewLedger`.
+
+## A2-039 Accelerated B1/B2 Systems, Services, Problems, Risk, Documents, Travel, Work, and Digital Pack
+
+**Status:** implemented locally after A2-038.
+
+**Goal:** add learner-ready B1/B2 breadth for guides, lists, service points, systems, problems,
+delays, risk language, checks, permits, contracts, and digital file workflows. Rows use the
+`AI_DRAFT -> AUTO_CHECKED -> AUTO_REVIEWED -> REVIEWED` lane with two independent automatic
+reviewers.
+
+**Target lemmas:** `guía de usuario`, `manual de usuario`, `guía de viaje`, `guía de trámites`,
+`guía de pagos`, `lista de compras`, `lista de contactos`, `lista de invitados`,
+`lista de prioridades`, `plan de emergencia`, `plan de estudios`, `plan de mantenimiento`,
+`plan de seguridad`, `zona de espera`, `zona de carga`, `zona de descanso`, `zona de trabajo`,
+`zona de seguridad`, `punto de información`, `punto de acceso`, `punto de control`,
+`punto de venta`, `punto de salida`, `centro de llamadas`, `centro de formación`,
+`centro de vacunación`, `centro de emergencias`, `centro de servicios`, `línea de ayuda`,
+`línea de soporte`, `línea de autobús`, `línea de metro`, `línea de financiación`,
+`área de espera`, `área de descanso`, `área de trabajo`, `área de seguridad`,
+`área de información`, `mesa de ayuda`, `mesa de entrada`, `mesa de registro`, `mesa de trabajo`,
+`mesa de negociación`, `sala de reuniones`, `sala de consultas`, `sala de formación`,
+`sala de espera infantil`, `servicio de traducción`, `servicio de recogida`,
+`servicio de devolución`, `servicio de transporte`, `servicio de facturación`, `programa de ayuda`,
+`programa de formación`, `programa de salud`, `programa de puntos`, `programa de descuentos`,
+`sistema de reservas`, `sistema de pagos`, `sistema de acceso`, `sistema de turnos`,
+`sistema de seguridad`, `problema de conexión`, `problema de acceso`, `problema de pago`,
+`problema de entrega`, `problema de salud`, `error de sistema`, `error de facturación`,
+`error de dirección`, `error de reserva`, `error de contraseña`, `falta de información`,
+`falta de pago`, `falta de cobertura`, `falta de tiempo`, `falta de personal`,
+`cambio en la factura`, `cambio en la reserva`, `cambio en el contrato`, `cambio en el horario`,
+`cambio en el servicio`, `retraso en el pago`, `retraso en la entrega`, `retraso en el vuelo`,
+`retraso en la respuesta`, `retraso en la reparación`, `riesgo de caída`, `riesgo de incendio`,
+`riesgo de fraude`, `riesgo de pérdida`, `riesgo de infección`, `prueba de acceso`,
+`prueba de nivel`, `prueba de sonido`, `prueba de conexión`, `prueba de funcionamiento`,
+`control de calidad`, `control de identidad`, `control de acceso`, `control de gastos`,
+`control de temperatura`, `caso de emergencia`, `caso de fraude`, `caso de pérdida`,
+`caso de accidente`, `caso de reclamación`, `archivo de contrato`, `archivo de factura`,
+`archivo de imagen`, `archivo de vídeo`, `archivo de texto`, `copia de trabajo`,
+`copia de seguridad local`, `copia de seguridad remota`, `copia de archivo`, `permiso de entrada`,
+`permiso de salida`, `permiso de aparcamiento`, `contrato de trabajo`.
+
+Implemented content delta:
+
+- 120 reviewed Wiktionary lexeme rows.
+- 240 `AI_DRAFT` sentence rows promoted to `REVIEWED` by two independent automatic reviewers.
+- 240 `AI_DRAFT` accepted-answer rows promoted to `REVIEWED` by the same two-reviewer gate.
+- 240 `sentence_lexeme` joins.
+- 240 derived exercises:
+  - production and recognition exercises for all 120 target lemmas.
+
+Acceptance result:
+
+- `learnerReadyLexemes` increases from 3711 to 3831.
+- `reviewedSentences` increases from 7482 to 7722.
+- `reviewedAcceptedAnswers` increases from 7485 to 7725.
+- `exerciseCount` increases from 7422 to 7662.
+- `missingA1A2GapCount` remains 0.
+- No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 480 generated
+  content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
+  `autoReviewLedger`.
