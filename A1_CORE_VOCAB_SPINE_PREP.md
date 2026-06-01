@@ -3936,3 +3936,38 @@ Acceptance result:
 - No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 480 generated
   content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
   `autoReviewLedger`.
+
+## A2-058 Accelerated B1/B2 Payments, Charges, Balances, Transfers, and Receipts Pack
+
+**Status:** implemented locally after A2-057.
+
+**Goal:** add learner-ready B1/B2 breadth for partial/full payments, monthly/duplicate charges,
+pending/available balances, domestic/urgent transfers, digital receipts, and valid proof across
+money, travel, legal, services, bureaucracy, housing, health, and repairs contexts. Rows use the
+`AI_DRAFT -> AUTO_CHECKED -> AUTO_REVIEWED -> REVIEWED` lane with two independent automatic
+reviewers.
+
+**Target lemma families:** `pago parcial ...`, `pago completo ...`, `cargo mensual ...`,
+`cargo duplicado ...`, `saldo pendiente ...`, `saldo disponible ...`, `transferencia nacional ...`,
+`transferencia urgente ...`, `recibo digital ...`, and `comprobante válido ...` across accounts,
+cards, banks, refunds, bookings, contracts, services, insurance, rent, treatment, trips, and shops.
+
+Implemented content delta:
+
+- 120 reviewed Wiktionary lexeme rows.
+- 240 `AI_DRAFT` sentence rows promoted to `REVIEWED` by two independent automatic reviewers.
+- 240 `AI_DRAFT` accepted-answer rows promoted to `REVIEWED` by the same two-reviewer gate.
+- 240 `sentence_lexeme` joins.
+- 240 derived exercises:
+  - production and recognition exercises for all 120 target lemmas.
+
+Acceptance result:
+
+- `learnerReadyLexemes` increases from 5991 to 6111.
+- `reviewedSentences` increases from 12042 to 12282.
+- `reviewedAcceptedAnswers` increases from 12045 to 12285.
+- `exerciseCount` increases from 11982 to 12222.
+- `missingA1A2GapCount` remains 0.
+- No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 480 generated
+  content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
+  `autoReviewLedger`.
