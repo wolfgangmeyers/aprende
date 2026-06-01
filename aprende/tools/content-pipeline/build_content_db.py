@@ -964,9 +964,381 @@ AI_ACCELERATED_PACK_A2_005 = [
     },
 ]
 
+AI_ACCELERATED_PACK_A2_006 = [
+    {
+        "lexemeId": 127, "lemma": "creer", "pos": "verb", "gender": None,
+        "englishGloss": "to believe; to think", "frequencyRank": 180, "cefrBand": "B1", "difficultyPrior": 0.4,
+        "reason": "opinions and uncertainty", "sourceBasis": "hermitdave/FrequencyWords high-frequency spine",
+        "sentences": [
+            (309, 312, "Creo que sí.", "I think so."),
+            (310, 313, "No creo eso.", "I do not believe that."),
+            (389, 392, "Creo en ti.", "I believe in you."),
+            (390, 393, "Creemos que es importante.", "We think it is important."),
+        ],
+    },
+    {
+        "lexemeId": 128, "lemma": "opinar", "pos": "verb", "gender": None,
+        "englishGloss": "to give an opinion", "frequencyRank": 2050, "cefrBand": "B1", "difficultyPrior": 0.6,
+        "reason": "opinions", "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 opinions topic",
+        "sentences": [
+            (311, 314, "Opino que es mejor.", "I think it is better."),
+            (312, 315, "Quiero opinar también.", "I want to give my opinion too."),
+        ],
+    },
+    {
+        "lexemeId": 129, "lemma": "preferir", "pos": "verb", "gender": None,
+        "englishGloss": "to prefer", "frequencyRank": 1175, "cefrBand": "B1", "difficultyPrior": 0.5,
+        "reason": "preferences and choices", "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 opinions topic",
+        "sentences": [
+            (313, 316, "Prefiero comer en casa.", "I prefer to eat at home."),
+            (314, 317, "Ella prefiere el tren.", "She prefers the train."),
+        ],
+    },
+    {
+        "lexemeId": 130, "lemma": "decidir", "pos": "verb", "gender": None,
+        "englishGloss": "to decide", "frequencyRank": 845, "cefrBand": "B1", "difficultyPrior": 0.5,
+        "reason": "plans and choices", "sourceBasis": "hermitdave/FrequencyWords high-frequency spine",
+        "sentences": [
+            (315, 318, "Decido salir temprano.", "I decide to leave early."),
+            (316, 319, "Decidimos cambiar la reserva.", "We decide to change the reservation."),
+        ],
+    },
+    {
+        "lexemeId": 131, "lemma": "explicar", "pos": "verb", "gender": None,
+        "englishGloss": "to explain", "frequencyRank": 996, "cefrBand": "B1", "difficultyPrior": 0.5,
+        "reason": "clarifying problems", "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 problems/services topic",
+        "sentences": [
+            (317, 320, "Explico el problema.", "I explain the problem."),
+            (318, 321, "¿Puedes explicar esto?", "Can you explain this?"),
+        ],
+    },
+    {
+        "lexemeId": 132, "lemma": "avisar", "pos": "verb", "gender": None,
+        "englishGloss": "to notify; to warn", "frequencyRank": 1500, "cefrBand": "B1", "difficultyPrior": 0.5,
+        "reason": "appointments and problems", "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 appointments topic",
+        "sentences": [
+            (319, 322, "Te aviso mañana.", "I will let you know tomorrow."),
+            (320, 323, "Avísame si hay un problema.", "Let me know if there is a problem."),
+        ],
+    },
+    {
+        "lexemeId": 133, "lemma": "confirmar", "pos": "verb", "gender": None,
+        "englishGloss": "to confirm", "frequencyRank": 1600, "cefrBand": "B1", "difficultyPrior": 0.5,
+        "reason": "appointments and bookings", "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 appointments/services topic",
+        "sentences": [
+            (321, 324, "Confirmo la cita.", "I confirm the appointment."),
+            (322, 325, "Necesito confirmar la reserva.", "I need to confirm the reservation."),
+        ],
+    },
+    {
+        "lexemeId": 134, "lemma": "arreglar", "pos": "verb", "gender": None,
+        "englishGloss": "to fix; to arrange", "frequencyRank": 1360, "cefrBand": "B1", "difficultyPrior": 0.5,
+        "reason": "problems and repairs", "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 problems/services topic",
+        "sentences": [
+            (323, 326, "Arreglo la puerta.", "I fix the door."),
+            (324, 327, "Quiero arreglar la cita.", "I want to arrange the appointment."),
+        ],
+    },
+    {
+        "lexemeId": 135, "lemma": "quejarse", "pos": "verb", "gender": None,
+        "englishGloss": "to complain", "frequencyRank": 2200, "cefrBand": "B1", "difficultyPrior": 0.6,
+        "reason": "services and problems", "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 services/problems topic",
+        "sentences": [
+            (325, 328, "Me quejo del servicio.", "I complain about the service."),
+            (326, 329, "No quiero quejarme.", "I do not want to complain."),
+        ],
+    },
+    {
+        "lexemeId": 136, "lemma": "solucionar", "pos": "verb", "gender": None,
+        "englishGloss": "to solve", "frequencyRank": 1900, "cefrBand": "B1", "difficultyPrior": 0.5,
+        "reason": "problems", "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 problems topic",
+        "sentences": [
+            (327, 330, "Soluciono el problema.", "I solve the problem."),
+            (328, 331, "Podemos solucionar esto.", "We can solve this."),
+        ],
+    },
+    {
+        "lexemeId": 137, "lemma": "elegir", "pos": "verb", "gender": None,
+        "englishGloss": "to choose", "frequencyRank": 1210, "cefrBand": "B1", "difficultyPrior": 0.5,
+        "reason": "choices and services", "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 choices topic",
+        "sentences": [
+            (329, 332, "Elijo este plato.", "I choose this dish."),
+            (330, 333, "Elegimos el hotel.", "We choose the hotel."),
+        ],
+    },
+    {
+        "lexemeId": 138, "lemma": "probar", "pos": "verb", "gender": None,
+        "englishGloss": "to try; to taste", "frequencyRank": 734, "cefrBand": "B1", "difficultyPrior": 0.5,
+        "reason": "food and testing solutions", "sourceBasis": "hermitdave/FrequencyWords high-frequency spine",
+        "sentences": [
+            (331, 334, "Pruebo la sopa.", "I taste the soup."),
+            (332, 335, "Quiero probar otra opción.", "I want to try another option."),
+        ],
+    },
+    {
+        "lexemeId": 139, "lemma": "añadir", "pos": "verb", "gender": None,
+        "englishGloss": "to add", "frequencyRank": 1505, "cefrBand": "B1", "difficultyPrior": 0.5,
+        "reason": "food preparation and details", "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 food prep topic",
+        "sentences": [
+            (333, 336, "Añado sal.", "I add salt."),
+            (334, 337, "Añadimos agua a la sopa.", "We add water to the soup."),
+        ],
+    },
+    {
+        "lexemeId": 140, "lemma": "mezclar", "pos": "verb", "gender": None,
+        "englishGloss": "to mix", "frequencyRank": 1805, "cefrBand": "B1", "difficultyPrior": 0.5,
+        "reason": "food preparation", "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 food prep topic",
+        "sentences": [
+            (335, 338, "Mezclo los ingredientes.", "I mix the ingredients."),
+            (336, 339, "Mezcla bien la comida.", "Mix the food well."),
+        ],
+    },
+    {
+        "lexemeId": 141, "lemma": "calentar", "pos": "verb", "gender": None,
+        "englishGloss": "to heat up", "frequencyRank": 1750, "cefrBand": "B1", "difficultyPrior": 0.5,
+        "reason": "food preparation", "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 food prep topic",
+        "sentences": [
+            (337, 340, "Caliento la comida.", "I heat up the food."),
+            (338, 341, "Calentamos agua.", "We heat up water."),
+        ],
+    },
+    {
+        "lexemeId": 142, "lemma": "freír", "pos": "verb", "gender": None,
+        "englishGloss": "to fry", "frequencyRank": 2450, "cefrBand": "B1", "difficultyPrior": 0.6,
+        "reason": "food preparation", "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 food prep topic",
+        "sentences": [
+            (339, 342, "Frío las papas.", "I fry the potatoes."),
+            (340, 343, "No quiero freír la comida.", "I do not want to fry the food."),
+        ],
+    },
+    {
+        "lexemeId": 143, "lemma": "hervir", "pos": "verb", "gender": None,
+        "englishGloss": "to boil", "frequencyRank": 2350, "cefrBand": "B1", "difficultyPrior": 0.6,
+        "reason": "food preparation", "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 food prep topic",
+        "sentences": [
+            (341, 344, "Hiervo agua.", "I boil water."),
+            (342, 345, "La sopa hierve.", "The soup boils."),
+        ],
+    },
+    {
+        "lexemeId": 144, "lemma": "girar", "pos": "verb", "gender": None,
+        "englishGloss": "to turn", "frequencyRank": 1550, "cefrBand": "B1", "difficultyPrior": 0.5,
+        "reason": "directions", "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 directions topic",
+        "sentences": [
+            (343, 346, "Giro a la derecha.", "I turn right."),
+            (344, 347, "Gira en la esquina.", "Turn at the corner."),
+        ],
+    },
+    {
+        "lexemeId": 145, "lemma": "cruzar", "pos": "verb", "gender": None,
+        "englishGloss": "to cross", "frequencyRank": 1240, "cefrBand": "B1", "difficultyPrior": 0.5,
+        "reason": "directions and travel", "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 directions topic",
+        "sentences": [
+            (345, 348, "Cruzo la calle.", "I cross the street."),
+            (346, 349, "Cruzamos el puente.", "We cross the bridge."),
+        ],
+    },
+    {
+        "lexemeId": 146, "lemma": "subir", "pos": "verb", "gender": None,
+        "englishGloss": "to go up; to get on", "frequencyRank": 620, "cefrBand": "B1", "difficultyPrior": 0.5,
+        "reason": "directions and transport", "sourceBasis": "hermitdave/FrequencyWords high-frequency spine",
+        "sentences": [
+            (347, 350, "Subo al tren.", "I get on the train."),
+            (348, 351, "Subimos las escaleras.", "We go up the stairs."),
+        ],
+    },
+    {
+        "lexemeId": 147, "lemma": "bajar", "pos": "verb", "gender": None,
+        "englishGloss": "to go down; to get off", "frequencyRank": 710, "cefrBand": "B1", "difficultyPrior": 0.5,
+        "reason": "directions and transport", "sourceBasis": "hermitdave/FrequencyWords high-frequency spine",
+        "sentences": [
+            (349, 352, "Bajo del autobús.", "I get off the bus."),
+            (350, 353, "Bajamos por la calle.", "We go down the street."),
+        ],
+    },
+    {
+        "lexemeId": 148, "lemma": "perder", "pos": "verb", "gender": None,
+        "englishGloss": "to lose", "frequencyRank": 630, "cefrBand": "B1", "difficultyPrior": 0.5,
+        "reason": "travel and problems", "sourceBasis": "hermitdave/FrequencyWords high-frequency spine",
+        "sentences": [
+            (351, 354, "Pierdo mi llave.", "I lose my key."),
+            (352, 355, "Perdimos el tren.", "We missed the train."),
+        ],
+    },
+    {
+        "lexemeId": 149, "lemma": "olvidar", "pos": "verb", "gender": None,
+        "englishGloss": "to forget", "frequencyRank": 905, "cefrBand": "B1", "difficultyPrior": 0.5,
+        "reason": "problems and appointments", "sourceBasis": "hermitdave/FrequencyWords high-frequency spine",
+        "sentences": [
+            (353, 356, "Olvido la cita.", "I forget the appointment."),
+            (354, 357, "No olvides el mensaje.", "Do not forget the message."),
+        ],
+    },
+    {
+        "lexemeId": 150, "lemma": "dejar", "pos": "verb", "gender": None,
+        "englishGloss": "to leave; to let", "frequencyRank": 210, "cefrBand": "B1", "difficultyPrior": 0.4,
+        "reason": "errands, permission, and problems", "sourceBasis": "hermitdave/FrequencyWords high-frequency spine",
+        "sentences": [
+            (355, 358, "Dejo la llave aquí.", "I leave the key here."),
+            (356, 359, "Déjame hablar.", "Let me speak."),
+            (391, 394, "Dejamos el coche en casa.", "We leave the car at home."),
+            (392, 395, "No dejes la puerta abierta.", "Do not leave the door open."),
+        ],
+    },
+    {
+        "lexemeId": 151, "lemma": "importante", "pos": "adjective", "gender": None,
+        "englishGloss": "important", "frequencyRank": 456, "cefrBand": "B1", "difficultyPrior": 0.4,
+        "reason": "opinions and priorities", "sourceBasis": "hermitdave/FrequencyWords high-frequency spine",
+        "sentences": [
+            (357, 360, "La cita es importante.", "The appointment is important."),
+            (358, 361, "Es importante llegar temprano.", "It is important to arrive early."),
+        ],
+    },
+    {
+        "lexemeId": 152, "lemma": "posible", "pos": "adjective", "gender": None,
+        "englishGloss": "possible", "frequencyRank": 410, "cefrBand": "B1", "difficultyPrior": 0.4,
+        "reason": "plans and problem solving", "sourceBasis": "hermitdave/FrequencyWords high-frequency spine",
+        "sentences": [
+            (359, 362, "Es posible cambiar la cita.", "It is possible to change the appointment."),
+            (360, 363, "¿Es posible pagar ahora?", "Is it possible to pay now?"),
+        ],
+    },
+    {
+        "lexemeId": 153, "lemma": "necesario", "pos": "adjective", "gender": None,
+        "englishGloss": "necessary", "frequencyRank": 690, "cefrBand": "B1", "difficultyPrior": 0.5,
+        "reason": "needs and services", "sourceBasis": "hermitdave/FrequencyWords high-frequency spine",
+        "sentences": [
+            (361, 364, "Es necesario llamar.", "It is necessary to call."),
+            (362, 365, "No es necesario esperar.", "It is not necessary to wait."),
+        ],
+    },
+    {
+        "lexemeId": 154, "lemma": "urgente", "pos": "adjective", "gender": None,
+        "englishGloss": "urgent", "frequencyRank": 1800, "cefrBand": "B1", "difficultyPrior": 0.5,
+        "reason": "health and service problems", "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 problems/services topic",
+        "sentences": [
+            (363, 366, "Es urgente.", "It is urgent."),
+            (364, 367, "Necesito ayuda urgente.", "I need urgent help."),
+        ],
+    },
+    {
+        "lexemeId": 155, "lemma": "grave", "pos": "adjective", "gender": None,
+        "englishGloss": "serious", "frequencyRank": 1100, "cefrBand": "B1", "difficultyPrior": 0.5,
+        "reason": "health and problems", "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 problems/health topic",
+        "sentences": [
+            (365, 368, "El problema es grave.", "The problem is serious."),
+            (366, 369, "No parece grave.", "It does not seem serious."),
+        ],
+    },
+    {
+        "lexemeId": 156, "lemma": "fácil", "pos": "adjective", "gender": None,
+        "englishGloss": "easy", "frequencyRank": 700, "cefrBand": "B1", "difficultyPrior": 0.5,
+        "reason": "opinions and difficulty", "sourceBasis": "hermitdave/FrequencyWords high-frequency spine",
+        "sentences": [
+            (367, 370, "La receta es fácil.", "The recipe is easy."),
+            (368, 371, "Es fácil llegar.", "It is easy to arrive."),
+        ],
+    },
+    {
+        "lexemeId": 157, "lemma": "difícil", "pos": "adjective", "gender": None,
+        "englishGloss": "difficult", "frequencyRank": 602, "cefrBand": "B1", "difficultyPrior": 0.5,
+        "reason": "opinions and difficulty", "sourceBasis": "hermitdave/FrequencyWords high-frequency spine",
+        "sentences": [
+            (369, 372, "La pregunta es difícil.", "The question is difficult."),
+            (370, 373, "Es difícil encontrar la oficina.", "It is difficult to find the office."),
+        ],
+    },
+    {
+        "lexemeId": 158, "lemma": "molesto", "pos": "adjective", "gender": None,
+        "englishGloss": "annoying; upset", "frequencyRank": 1905, "cefrBand": "B1", "difficultyPrior": 0.5,
+        "reason": "emotions and complaints", "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 emotions/problems topic",
+        "sentences": [
+            (371, 374, "Estoy molesto.", "I am upset."),
+            (372, 375, "El ruido es molesto.", "The noise is annoying."),
+        ],
+    },
+    {
+        "lexemeId": 159, "lemma": "claramente", "pos": "adverb", "gender": None,
+        "englishGloss": "clearly", "frequencyRank": 1705, "cefrBand": "B1", "difficultyPrior": 0.5,
+        "reason": "explaining opinions", "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 opinions/clarification topic",
+        "sentences": [
+            (373, 376, "Habla claramente.", "Speak clearly."),
+            (374, 377, "Explico el problema claramente.", "I explain the problem clearly."),
+        ],
+    },
+    {
+        "lexemeId": 160, "lemma": "problema", "pos": "noun", "gender": "M",
+        "englishGloss": "problem", "frequencyRank": 358, "cefrBand": "B1", "difficultyPrior": 0.4,
+        "reason": "problems and services", "sourceBasis": "hermitdave/FrequencyWords high-frequency spine",
+        "sentences": [
+            (375, 378, "Tengo un problema.", "I have a problem."),
+            (376, 379, "El problema está aquí.", "The problem is here."),
+        ],
+    },
+    {
+        "lexemeId": 161, "lemma": "cita", "pos": "noun", "gender": "F",
+        "englishGloss": "appointment", "frequencyRank": 1205, "cefrBand": "B1", "difficultyPrior": 0.5,
+        "reason": "appointments", "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 appointments topic",
+        "sentences": [
+            (377, 380, "Tengo una cita.", "I have an appointment."),
+            (378, 381, "Cancelo la cita.", "I cancel the appointment."),
+        ],
+    },
+    {
+        "lexemeId": 162, "lemma": "servicio", "pos": "noun", "gender": "M",
+        "englishGloss": "service", "frequencyRank": 512, "cefrBand": "B1", "difficultyPrior": 0.5,
+        "reason": "services and complaints", "sourceBasis": "hermitdave/FrequencyWords high-frequency spine",
+        "sentences": [
+            (379, 382, "El servicio es bueno.", "The service is good."),
+            (380, 383, "Necesito otro servicio.", "I need another service."),
+        ],
+    },
+    {
+        "lexemeId": 163, "lemma": "receta", "pos": "noun", "gender": "F",
+        "englishGloss": "recipe; prescription", "frequencyRank": 1808, "cefrBand": "B1", "difficultyPrior": 0.5,
+        "reason": "food prep and health", "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 food prep/health topic",
+        "sentences": [
+            (381, 384, "Sigo la receta.", "I follow the recipe."),
+            (382, 385, "El médico escribe una receta.", "The doctor writes a prescription."),
+        ],
+    },
+    {
+        "lexemeId": 164, "lemma": "ingrediente", "pos": "noun", "gender": "M",
+        "englishGloss": "ingredient", "frequencyRank": 2205, "cefrBand": "B1", "difficultyPrior": 0.5,
+        "reason": "food preparation", "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 food prep topic",
+        "sentences": [
+            (383, 386, "Necesito un ingrediente.", "I need an ingredient."),
+            (384, 387, "Mezclo los ingredientes.", "I mix the ingredients."),
+        ],
+    },
+    {
+        "lexemeId": 165, "lemma": "esquina", "pos": "noun", "gender": "F",
+        "englishGloss": "corner", "frequencyRank": 1420, "cefrBand": "B1", "difficultyPrior": 0.5,
+        "reason": "directions", "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 directions topic",
+        "sentences": [
+            (385, 388, "Gira en la esquina.", "Turn at the corner."),
+            (386, 389, "La tienda está en la esquina.", "The store is on the corner."),
+        ],
+    },
+    {
+        "lexemeId": 166, "lemma": "puente", "pos": "noun", "gender": "M",
+        "englishGloss": "bridge", "frequencyRank": 1325, "cefrBand": "B1", "difficultyPrior": 0.5,
+        "reason": "directions and travel", "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 directions/travel topic",
+        "sentences": [
+            (387, 390, "Cruzo el puente.", "I cross the bridge."),
+            (388, 391, "El puente está cerca.", "The bridge is nearby."),
+        ],
+    },
+]
+
 AI_REVIEWED_SENTENCE_PAIRS.update({
     spanish: english
-    for pack in (AI_ACCELERATED_PACK_A2_003, AI_ACCELERATED_PACK_A2_004, AI_ACCELERATED_PACK_A2_005)
+    for pack in (
+        AI_ACCELERATED_PACK_A2_003,
+        AI_ACCELERATED_PACK_A2_004,
+        AI_ACCELERATED_PACK_A2_005,
+        AI_ACCELERATED_PACK_A2_006,
+    )
     for item in pack
     for _, _, spanish, english in item["sentences"]
 })
@@ -1074,7 +1446,12 @@ A1_A2_TARGET_LEMMAS.extend([
         "reason": item["reason"],
         "sourceBasis": item["sourceBasis"],
     }
-    for pack in (AI_ACCELERATED_PACK_A2_003, AI_ACCELERATED_PACK_A2_004, AI_ACCELERATED_PACK_A2_005)
+    for pack in (
+        AI_ACCELERATED_PACK_A2_003,
+        AI_ACCELERATED_PACK_A2_004,
+        AI_ACCELERATED_PACK_A2_005,
+        AI_ACCELERATED_PACK_A2_006,
+    )
     for item in pack
 ])
 
@@ -2094,8 +2471,12 @@ def vetted_sample():
         AI_ACCELERATED_PACK_A2_004, "a2-004", next_exercise_id,
         lexemes, sentences, accepted, sentence_lexeme, exercises,
     )
-    append_ai_accelerated_pack(
+    next_exercise_id = append_ai_accelerated_pack(
         AI_ACCELERATED_PACK_A2_005, "a2-005", next_exercise_id,
+        lexemes, sentences, accepted, sentence_lexeme, exercises,
+    )
+    append_ai_accelerated_pack(
+        AI_ACCELERATED_PACK_A2_006, "a2-006", next_exercise_id,
         lexemes, sentences, accepted, sentence_lexeme, exercises,
     )
     return lexemes, sentences, accepted, sentence_lexeme, conj, exercises, nodes

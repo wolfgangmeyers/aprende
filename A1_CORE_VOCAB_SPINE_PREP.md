@@ -896,3 +896,77 @@ Acceptance result:
 - No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 152 generated
   content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
   `autoReviewLedger`.
+
+## A2-006 Accelerated B1-Bridge Fluency Pack
+
+**Status:** implemented locally after A2-005.
+
+**Goal:** extend breadth toward B1 with opinions, emotions, errands, appointments, food prep,
+directions, services, and problem-solving language. Rows use the
+`AI_DRAFT -> AUTO_CHECKED -> AUTO_REVIEWED -> REVIEWED` lane with two independent automatic
+reviewers.
+
+**Target lemmas:**
+
+| Lemma | POS | Domain |
+|---|---|---|
+| `creer` | verb | opinions and uncertainty |
+| `opinar` | verb | opinions |
+| `preferir` | verb | preferences and choices |
+| `decidir` | verb | plans and choices |
+| `explicar` | verb | clarifying problems |
+| `avisar` | verb | appointments and problems |
+| `confirmar` | verb | appointments and bookings |
+| `arreglar` | verb | problems and repairs |
+| `quejarse` | verb | services and problems |
+| `solucionar` | verb | problems |
+| `elegir` | verb | choices and services |
+| `probar` | verb | food and testing solutions |
+| `añadir` | verb | food preparation and details |
+| `mezclar` | verb | food preparation |
+| `calentar` | verb | food preparation |
+| `freír` | verb | food preparation |
+| `hervir` | verb | food preparation |
+| `girar` | verb | directions |
+| `cruzar` | verb | directions and travel |
+| `subir` | verb | directions and transport |
+| `bajar` | verb | directions and transport |
+| `perder` | verb | travel and problems |
+| `olvidar` | verb | problems and appointments |
+| `dejar` | verb | errands, permission, and problems |
+| `importante` | adjective | opinions and priorities |
+| `posible` | adjective | plans and problem solving |
+| `necesario` | adjective | needs and services |
+| `urgente` | adjective | health and service problems |
+| `grave` | adjective | health and problems |
+| `fácil` | adjective | opinions and difficulty |
+| `difícil` | adjective | opinions and difficulty |
+| `molesto` | adjective | emotions and complaints |
+| `claramente` | adverb | explaining opinions |
+| `problema` | noun | problems and services |
+| `cita` | noun | appointments |
+| `servicio` | noun | services and complaints |
+| `receta` | noun | food prep and health |
+| `ingrediente` | noun | food preparation |
+| `esquina` | noun | directions |
+| `puente` | noun | directions and travel |
+
+Implemented content delta:
+
+- 40 reviewed Wiktionary lexeme rows.
+- 84 `AI_DRAFT` sentence rows promoted to `REVIEWED` by two independent automatic reviewers.
+- 84 `AI_DRAFT` accepted-answer rows promoted to `REVIEWED` by the same two-reviewer gate.
+- 84 `sentence_lexeme` joins.
+- 80 derived exercises:
+  - production and recognition exercises for all 40 target lemmas.
+
+Acceptance result:
+
+- `learnerReadyLexemes` increases from 126 to 166.
+- `reviewedSentences` increases from 308 to 392.
+- `reviewedAcceptedAnswers` increases from 311 to 395.
+- `exerciseCount` increases from 252 to 332.
+- `missingA1A2GapCount` remains 0.
+- No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 168 generated
+  content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
+  `autoReviewLedger`.
