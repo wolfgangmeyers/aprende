@@ -828,3 +828,71 @@ Acceptance result:
 - No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 148 generated
   content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
   `autoReviewLedger`.
+
+## A2-005 Accelerated Fluency Pack
+
+**Status:** implemented locally after A2-004.
+
+**Goal:** expand practical travel, health, social, household, and work fluency with a larger
+generated pack. Rows use the `AI_DRAFT -> AUTO_CHECKED -> AUTO_REVIEWED -> REVIEWED` lane with
+two independent automatic reviewers.
+
+**Target lemmas:**
+
+| Lemma | POS | Domain |
+|---|---|---|
+| `reservar` | verb | travel bookings |
+| `cancelar` | verb | travel and appointment changes |
+| `llamar` | verb | phone and health communication |
+| `preguntar` | verb | questions and help |
+| `responder` | verb | communication |
+| `enviar` | verb | work and social communication |
+| `recibir` | verb | work and household communication |
+| `usar` | verb | tools and daily tasks |
+| `limpiar` | verb | household routines |
+| `cocinar` | verb | food and household routines |
+| `descansar` | verb | health and routines |
+| `dormir` | verb | health and routines |
+| `sentir` | verb | health and feelings |
+| `doler` | verb | health symptoms |
+| `cuidar` | verb | health, home, and family care |
+| `visitar` | verb | travel and social plans |
+| `conocer` | verb | people, places, and introductions |
+| `compartir` | verb | social and household interaction |
+| `preparar` | verb | work, food, and travel preparation |
+| `seguir` | verb | directions and continuing actions |
+| `cerca` | adverb | location and travel |
+| `lejos` | adverb | location and travel |
+| `ocupado` | adjective | work and availability |
+| `libre` | adjective | availability and plans |
+| `enfermo` | adjective | health state |
+| `sano` | adjective | health state |
+| `limpio` | adjective | household description |
+| `sucio` | adjective | household description |
+| `seguro` | adjective | travel safety and confidence |
+| `listo` | adjective | readiness and routines |
+| `hotel` | noun | travel lodging |
+| `aeropuerto` | noun | travel transit |
+| `tren` | noun | transport |
+| `médico` | noun | health services |
+| `oficina` | noun | workplace |
+
+Implemented content delta:
+
+- 35 reviewed Wiktionary lexeme rows.
+- 76 `AI_DRAFT` sentence rows promoted to `REVIEWED` by two independent automatic reviewers.
+- 76 `AI_DRAFT` accepted-answer rows promoted to `REVIEWED` by the same two-reviewer gate.
+- 76 `sentence_lexeme` joins.
+- 70 derived exercises:
+  - production and recognition exercises for all 35 target lemmas.
+
+Acceptance result:
+
+- `learnerReadyLexemes` increases from 91 to 126.
+- `reviewedSentences` increases from 232 to 308.
+- `reviewedAcceptedAnswers` increases from 235 to 311.
+- `exerciseCount` increases from 182 to 252.
+- `missingA1A2GapCount` remains 0.
+- No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 152 generated
+  content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
+  `autoReviewLedger`.

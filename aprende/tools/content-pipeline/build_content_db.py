@@ -640,9 +640,333 @@ AI_ACCELERATED_PACK_A2_004 = [
     },
 ]
 
+AI_ACCELERATED_PACK_A2_005 = [
+    {
+        "lexemeId": 92, "lemma": "reservar", "pos": "verb", "gender": None,
+        "englishGloss": "to reserve; to book", "frequencyRank": 1260, "cefrBand": "A2", "difficultyPrior": 0.5,
+        "reason": "travel bookings", "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 3 travel topic",
+        "sentences": [
+            (233, 236, "Reservo una habitación.", "I book a room."),
+            (234, 237, "Reservamos el hotel.", "We book the hotel."),
+        ],
+    },
+    {
+        "lexemeId": 93, "lemma": "cancelar", "pos": "verb", "gender": None,
+        "englishGloss": "to cancel", "frequencyRank": 1700, "cefrBand": "A2", "difficultyPrior": 0.5,
+        "reason": "travel and appointment changes", "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 3 travel/work topic",
+        "sentences": [
+            (235, 238, "Cancelo la reserva.", "I cancel the reservation."),
+            (236, 239, "Cancelamos el viaje.", "We cancel the trip."),
+        ],
+    },
+    {
+        "lexemeId": 94, "lemma": "llamar", "pos": "verb", "gender": None,
+        "englishGloss": "to call", "frequencyRank": 647, "cefrBand": "A2", "difficultyPrior": 0.5,
+        "reason": "phone and health communication", "sourceBasis": "hermitdave/FrequencyWords high-frequency spine",
+        "sentences": [
+            (237, 240, "Llamo al médico.", "I call the doctor."),
+            (238, 241, "Llámame mañana.", "Call me tomorrow."),
+        ],
+    },
+    {
+        "lexemeId": 95, "lemma": "preguntar", "pos": "verb", "gender": None,
+        "englishGloss": "to ask", "frequencyRank": 768, "cefrBand": "A2", "difficultyPrior": 0.5,
+        "reason": "questions and help", "sourceBasis": "hermitdave/FrequencyWords high-frequency spine",
+        "sentences": [
+            (239, 242, "Pregunto la hora.", "I ask the time."),
+            (240, 243, "Preguntamos en la oficina.", "We ask at the office."),
+        ],
+    },
+    {
+        "lexemeId": 96, "lemma": "responder", "pos": "verb", "gender": None,
+        "englishGloss": "to answer; to respond", "frequencyRank": 955, "cefrBand": "A2", "difficultyPrior": 0.5,
+        "reason": "communication", "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 3 communication topic",
+        "sentences": [
+            (241, 244, "Respondo al mensaje.", "I answer the message."),
+            (242, 245, "Ella responde rápido.", "She answers quickly."),
+        ],
+    },
+    {
+        "lexemeId": 97, "lemma": "enviar", "pos": "verb", "gender": None,
+        "englishGloss": "to send", "frequencyRank": 1112, "cefrBand": "A2", "difficultyPrior": 0.5,
+        "reason": "work and social communication", "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 3 work/communication topic",
+        "sentences": [
+            (243, 246, "Envío un mensaje.", "I send a message."),
+            (244, 247, "Enviamos dinero.", "We send money."),
+        ],
+    },
+    {
+        "lexemeId": 98, "lemma": "recibir", "pos": "verb", "gender": None,
+        "englishGloss": "to receive", "frequencyRank": 758, "cefrBand": "A2", "difficultyPrior": 0.5,
+        "reason": "work and household communication", "sourceBasis": "hermitdave/FrequencyWords high-frequency spine",
+        "sentences": [
+            (245, 248, "Recibo una carta.", "I receive a letter."),
+            (246, 249, "Recibimos ayuda.", "We receive help."),
+        ],
+    },
+    {
+        "lexemeId": 99, "lemma": "usar", "pos": "verb", "gender": None,
+        "englishGloss": "to use", "frequencyRank": 421, "cefrBand": "A2", "difficultyPrior": 0.4,
+        "reason": "tools and daily tasks", "sourceBasis": "hermitdave/FrequencyWords high-frequency spine",
+        "sentences": [
+            (247, 250, "Uso el teléfono.", "I use the phone."),
+            (248, 251, "Usamos la cocina.", "We use the kitchen."),
+            (303, 306, "Uso esta llave.", "I use this key."),
+            (304, 307, "Usan el tren.", "They use the train."),
+        ],
+    },
+    {
+        "lexemeId": 100, "lemma": "limpiar", "pos": "verb", "gender": None,
+        "englishGloss": "to clean", "frequencyRank": 1380, "cefrBand": "A2", "difficultyPrior": 0.5,
+        "reason": "household routines", "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 3 household topic",
+        "sentences": [
+            (249, 252, "Limpio la casa.", "I clean the house."),
+            (250, 253, "Limpiamos la mesa.", "We clean the table."),
+        ],
+    },
+    {
+        "lexemeId": 101, "lemma": "cocinar", "pos": "verb", "gender": None,
+        "englishGloss": "to cook", "frequencyRank": 1450, "cefrBand": "A2", "difficultyPrior": 0.5,
+        "reason": "food and household routines", "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 3 household/food topic",
+        "sentences": [
+            (251, 254, "Cocino comida.", "I cook food."),
+            (252, 255, "Ella cocina en casa.", "She cooks at home."),
+        ],
+    },
+    {
+        "lexemeId": 102, "lemma": "descansar", "pos": "verb", "gender": None,
+        "englishGloss": "to rest", "frequencyRank": 1505, "cefrBand": "A2", "difficultyPrior": 0.5,
+        "reason": "health and routines", "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 3 health/routines topic",
+        "sentences": [
+            (253, 256, "Descanso por la tarde.", "I rest in the afternoon."),
+            (254, 257, "Necesito descansar.", "I need to rest."),
+        ],
+    },
+    {
+        "lexemeId": 103, "lemma": "dormir", "pos": "verb", "gender": None,
+        "englishGloss": "to sleep", "frequencyRank": 770, "cefrBand": "A2", "difficultyPrior": 0.5,
+        "reason": "health and routines", "sourceBasis": "hermitdave/FrequencyWords high-frequency spine",
+        "sentences": [
+            (255, 258, "Duermo bien.", "I sleep well."),
+            (256, 259, "El niño duerme.", "The boy sleeps."),
+        ],
+    },
+    {
+        "lexemeId": 104, "lemma": "sentir", "pos": "verb", "gender": None,
+        "englishGloss": "to feel", "frequencyRank": 520, "cefrBand": "A2", "difficultyPrior": 0.5,
+        "reason": "health and feelings", "sourceBasis": "hermitdave/FrequencyWords high-frequency spine",
+        "sentences": [
+            (257, 260, "Me siento mejor.", "I feel better."),
+            (258, 261, "Siento frío.", "I feel cold."),
+        ],
+    },
+    {
+        "lexemeId": 105, "lemma": "doler", "pos": "verb", "gender": None,
+        "englishGloss": "to hurt; to ache", "frequencyRank": 1620, "cefrBand": "A2", "difficultyPrior": 0.5,
+        "reason": "health symptoms", "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 3 health/body topic",
+        "sentences": [
+            (259, 262, "Me duele el pie.", "My foot hurts."),
+            (260, 263, "A él le duele la mano.", "His hand hurts."),
+        ],
+    },
+    {
+        "lexemeId": 106, "lemma": "cuidar", "pos": "verb", "gender": None,
+        "englishGloss": "to take care of", "frequencyRank": 1188, "cefrBand": "A2", "difficultyPrior": 0.5,
+        "reason": "health, home, and family care", "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 3 health/household topic",
+        "sentences": [
+            (261, 264, "Cuido a mi hijo.", "I take care of my son."),
+            (262, 265, "Cuidamos la casa.", "We take care of the house."),
+        ],
+    },
+    {
+        "lexemeId": 107, "lemma": "visitar", "pos": "verb", "gender": None,
+        "englishGloss": "to visit", "frequencyRank": 1355, "cefrBand": "A2", "difficultyPrior": 0.5,
+        "reason": "travel and social plans", "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 3 travel/social topic",
+        "sentences": [
+            (263, 266, "Visito a mi familia.", "I visit my family."),
+            (264, 267, "Visitamos la ciudad.", "We visit the city."),
+        ],
+    },
+    {
+        "lexemeId": 108, "lemma": "conocer", "pos": "verb", "gender": None,
+        "englishGloss": "to know; to meet", "frequencyRank": 250, "cefrBand": "A2", "difficultyPrior": 0.4,
+        "reason": "people, places, and introductions", "sourceBasis": "hermitdave/FrequencyWords high-frequency spine",
+        "sentences": [
+            (265, 268, "Conozco a tu amigo.", "I know your friend."),
+            (266, 269, "Quiero conocer el país.", "I want to get to know the country."),
+            (305, 308, "Conozco la ciudad.", "I know the city."),
+            (306, 309, "Conocemos al médico.", "We know the doctor."),
+        ],
+    },
+    {
+        "lexemeId": 109, "lemma": "compartir", "pos": "verb", "gender": None,
+        "englishGloss": "to share", "frequencyRank": 1322, "cefrBand": "A2", "difficultyPrior": 0.5,
+        "reason": "social and household interaction", "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 3 social/household topic",
+        "sentences": [
+            (267, 270, "Comparto mi comida.", "I share my food."),
+            (268, 271, "Compartimos la mesa.", "We share the table."),
+        ],
+    },
+    {
+        "lexemeId": 110, "lemma": "preparar", "pos": "verb", "gender": None,
+        "englishGloss": "to prepare", "frequencyRank": 890, "cefrBand": "A2", "difficultyPrior": 0.5,
+        "reason": "work, food, and travel preparation", "sourceBasis": "hermitdave/FrequencyWords high-frequency spine",
+        "sentences": [
+            (269, 272, "Preparo la comida.", "I prepare the food."),
+            (270, 273, "Preparamos el viaje.", "We prepare the trip."),
+        ],
+    },
+    {
+        "lexemeId": 111, "lemma": "seguir", "pos": "verb", "gender": None,
+        "englishGloss": "to follow; to continue", "frequencyRank": 172, "cefrBand": "A2", "difficultyPrior": 0.4,
+        "reason": "directions and continuing actions", "sourceBasis": "hermitdave/FrequencyWords high-frequency spine",
+        "sentences": [
+            (271, 274, "Sigo el camino.", "I follow the road."),
+            (272, 275, "Sigue trabajando.", "Keep working."),
+            (307, 310, "Seguimos juntos.", "We continue together."),
+            (308, 311, "Sigo aquí.", "I am still here."),
+        ],
+    },
+    {
+        "lexemeId": 112, "lemma": "cerca", "pos": "adverb", "gender": None,
+        "englishGloss": "near; nearby", "frequencyRank": 579, "cefrBand": "A2", "difficultyPrior": 0.4,
+        "reason": "location and travel", "sourceBasis": "hermitdave/FrequencyWords high-frequency spine",
+        "sentences": [
+            (273, 276, "El hotel está cerca.", "The hotel is nearby."),
+            (274, 277, "Trabajo cerca de casa.", "I work near home."),
+        ],
+    },
+    {
+        "lexemeId": 113, "lemma": "lejos", "pos": "adverb", "gender": None,
+        "englishGloss": "far; far away", "frequencyRank": 892, "cefrBand": "A2", "difficultyPrior": 0.5,
+        "reason": "location and travel", "sourceBasis": "hermitdave/FrequencyWords high-frequency spine",
+        "sentences": [
+            (275, 278, "El aeropuerto está lejos.", "The airport is far away."),
+            (276, 279, "Vivo lejos de la oficina.", "I live far from the office."),
+        ],
+    },
+    {
+        "lexemeId": 114, "lemma": "ocupado", "pos": "adjective", "gender": None,
+        "englishGloss": "busy; occupied", "frequencyRank": 1344, "cefrBand": "A2", "difficultyPrior": 0.5,
+        "reason": "work and availability", "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 3 work/social topic",
+        "sentences": [
+            (277, 280, "Estoy ocupado hoy.", "I am busy today."),
+            (278, 281, "Mi amigo está ocupado.", "My friend is busy."),
+        ],
+    },
+    {
+        "lexemeId": 115, "lemma": "libre", "pos": "adjective", "gender": None,
+        "englishGloss": "free; available", "frequencyRank": 639, "cefrBand": "A2", "difficultyPrior": 0.5,
+        "reason": "availability and plans", "sourceBasis": "hermitdave/FrequencyWords high-frequency spine",
+        "sentences": [
+            (279, 282, "Estoy libre mañana.", "I am free tomorrow."),
+            (280, 283, "La mesa está libre.", "The table is free."),
+        ],
+    },
+    {
+        "lexemeId": 116, "lemma": "enfermo", "pos": "adjective", "gender": None,
+        "englishGloss": "sick; ill", "frequencyRank": 1267, "cefrBand": "A2", "difficultyPrior": 0.5,
+        "reason": "health state", "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 3 health topic",
+        "sentences": [
+            (281, 284, "Estoy enfermo.", "I am sick."),
+            (282, 285, "El niño está enfermo.", "The boy is sick."),
+        ],
+    },
+    {
+        "lexemeId": 117, "lemma": "sano", "pos": "adjective", "gender": None,
+        "englishGloss": "healthy", "frequencyRank": 1625, "cefrBand": "A2", "difficultyPrior": 0.5,
+        "reason": "health state", "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 3 health topic",
+        "sentences": [
+            (283, 286, "Estoy sano.", "I am healthy."),
+            (284, 287, "La comida es sana.", "The food is healthy."),
+        ],
+    },
+    {
+        "lexemeId": 118, "lemma": "limpio", "pos": "adjective", "gender": None,
+        "englishGloss": "clean", "frequencyRank": 1280, "cefrBand": "A2", "difficultyPrior": 0.5,
+        "reason": "household description", "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 3 household topic",
+        "sentences": [
+            (285, 288, "El hotel está limpio.", "The hotel is clean."),
+            (286, 289, "La mesa está limpia.", "The table is clean."),
+        ],
+    },
+    {
+        "lexemeId": 119, "lemma": "sucio", "pos": "adjective", "gender": None,
+        "englishGloss": "dirty", "frequencyRank": 1565, "cefrBand": "A2", "difficultyPrior": 0.5,
+        "reason": "household description", "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 3 household topic",
+        "sentences": [
+            (287, 290, "El baño está sucio.", "The bathroom is dirty."),
+            (288, 291, "Mi camisa está sucia.", "My shirt is dirty."),
+        ],
+    },
+    {
+        "lexemeId": 120, "lemma": "seguro", "pos": "adjective", "gender": None,
+        "englishGloss": "safe; sure", "frequencyRank": 613, "cefrBand": "A2", "difficultyPrior": 0.5,
+        "reason": "travel safety and confidence", "sourceBasis": "hermitdave/FrequencyWords high-frequency spine",
+        "sentences": [
+            (289, 292, "El viaje es seguro.", "The trip is safe."),
+            (290, 293, "Estoy seguro.", "I am sure."),
+        ],
+    },
+    {
+        "lexemeId": 121, "lemma": "listo", "pos": "adjective", "gender": None,
+        "englishGloss": "ready", "frequencyRank": 977, "cefrBand": "A2", "difficultyPrior": 0.5,
+        "reason": "readiness and routines", "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 3 routines/work topic",
+        "sentences": [
+            (291, 294, "Estoy listo.", "I am ready."),
+            (292, 295, "La comida está lista.", "The food is ready."),
+        ],
+    },
+    {
+        "lexemeId": 122, "lemma": "hotel", "pos": "noun", "gender": "M",
+        "englishGloss": "hotel", "frequencyRank": 726, "cefrBand": "A2", "difficultyPrior": 0.5,
+        "reason": "travel lodging", "sourceBasis": "hermitdave/FrequencyWords high-frequency spine",
+        "sentences": [
+            (293, 296, "El hotel es nuevo.", "The hotel is new."),
+            (294, 297, "Reservo un hotel.", "I book a hotel."),
+        ],
+    },
+    {
+        "lexemeId": 123, "lemma": "aeropuerto", "pos": "noun", "gender": "M",
+        "englishGloss": "airport", "frequencyRank": 1900, "cefrBand": "A2", "difficultyPrior": 0.5,
+        "reason": "travel transit", "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 3 travel/transport topic",
+        "sentences": [
+            (295, 298, "Llego al aeropuerto.", "I arrive at the airport."),
+            (296, 299, "Busco el aeropuerto.", "I look for the airport."),
+        ],
+    },
+    {
+        "lexemeId": 124, "lemma": "tren", "pos": "noun", "gender": "M",
+        "englishGloss": "train", "frequencyRank": 1050, "cefrBand": "A2", "difficultyPrior": 0.5,
+        "reason": "transport", "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 3 travel/transport topic",
+        "sentences": [
+            (297, 300, "Tomo el tren.", "I take the train."),
+            (298, 301, "El tren llega tarde.", "The train arrives late."),
+        ],
+    },
+    {
+        "lexemeId": 125, "lemma": "médico", "pos": "noun", "gender": "M",
+        "englishGloss": "doctor", "frequencyRank": 874, "cefrBand": "A2", "difficultyPrior": 0.5,
+        "reason": "health services", "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 3 health topic",
+        "sentences": [
+            (299, 302, "Necesito un médico.", "I need a doctor."),
+            (300, 303, "Veo al médico.", "I see the doctor."),
+        ],
+    },
+    {
+        "lexemeId": 126, "lemma": "oficina", "pos": "noun", "gender": "F",
+        "englishGloss": "office", "frequencyRank": 806, "cefrBand": "A2", "difficultyPrior": 0.5,
+        "reason": "workplace", "sourceBasis": "hermitdave/FrequencyWords high-frequency spine",
+        "sentences": [
+            (301, 304, "Trabajo en la oficina.", "I work in the office."),
+            (302, 305, "La oficina abre temprano.", "The office opens early."),
+        ],
+    },
+]
+
 AI_REVIEWED_SENTENCE_PAIRS.update({
     spanish: english
-    for pack in (AI_ACCELERATED_PACK_A2_003, AI_ACCELERATED_PACK_A2_004)
+    for pack in (AI_ACCELERATED_PACK_A2_003, AI_ACCELERATED_PACK_A2_004, AI_ACCELERATED_PACK_A2_005)
     for item in pack
     for _, _, spanish, english in item["sentences"]
 })
@@ -750,7 +1074,7 @@ A1_A2_TARGET_LEMMAS.extend([
         "reason": item["reason"],
         "sourceBasis": item["sourceBasis"],
     }
-    for pack in (AI_ACCELERATED_PACK_A2_003, AI_ACCELERATED_PACK_A2_004)
+    for pack in (AI_ACCELERATED_PACK_A2_003, AI_ACCELERATED_PACK_A2_004, AI_ACCELERATED_PACK_A2_005)
     for item in pack
 ])
 
@@ -1766,8 +2090,12 @@ def vetted_sample():
         AI_ACCELERATED_PACK_A2_003, "a2-003", 83,
         lexemes, sentences, accepted, sentence_lexeme, exercises,
     )
-    append_ai_accelerated_pack(
+    next_exercise_id = append_ai_accelerated_pack(
         AI_ACCELERATED_PACK_A2_004, "a2-004", next_exercise_id,
+        lexemes, sentences, accepted, sentence_lexeme, exercises,
+    )
+    append_ai_accelerated_pack(
+        AI_ACCELERATED_PACK_A2_005, "a2-005", next_exercise_id,
         lexemes, sentences, accepted, sentence_lexeme, exercises,
     )
     return lexemes, sentences, accepted, sentence_lexeme, conj, exercises, nodes
