@@ -1168,6 +1168,36 @@ Acceptance target:
   content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
   `autoReviewLedger`.
 
+## A2-032 Accelerated B1/B2 Health, Legal, Money, Food, Travel, Culture, Conversation, and Planning Pack
+
+**Status:** implemented locally after A2-031.
+
+**Goal:** add learner-ready B1/B2 breadth for health appointments and diet, legal/bureaucratic
+documents, banking and shopping flows, restaurant/culture/travel details, conversation repair, and
+practical planning. Rows use the `AI_DRAFT -> AUTO_CHECKED -> AUTO_REVIEWED -> REVIEWED` lane
+with two independent automatic reviewers.
+
+**Target lemmas:** `reserva médica`, `consulta presencial`, `turno asignado`, `sala de rayos`, `laboratorio abierto`, `muestra recogida`, `tratamiento suspendido`, `control de peso`, `plan nutricional`, `comida saludable`, `bebida isotónica`, `menú sin sal`, `receta baja en azúcar`, `ejercicio suave`, `estiramiento diario`, `masaje terapéutico`, `terapia ocupacional`, `descanso activo`, `contrato vigente`, `cláusula pendiente`, `anexo digital`, `copia escaneada`, `aviso legal`, `plazo judicial`, `ventanilla abierta`, `trámite presencial`, `clave permanente`, `carpeta ciudadana`, `notificación electrónica`, `servicio tributario`, `consulta fiscal`, `pago telemático`, `transferencia programada`, `comisión oculta`, `tipo fijo`, `tipo variable`, `interés mensual`, `plan de ahorro`, `fondo de emergencia`, `compra aplazada`, `factura simplificada`, `ticket electrónico`, `entrega certificada`, `mensajería urgente`, `repartidor local`, `ruta de reparto`, `almacén temporal`, `producto devuelto`, `artículo reservado`, `pedido personalizado`, `stock actualizado`, `precio unitario`, `carrito lleno`, `caja cerrada`, `sistema caído`, `terminal activo`, `camarero atento`, `pedido equivocado`, `plato frío`, `bebida caliente`, `sopa casera`, `ensalada mixta`, `carne hecha`, `pescado fresco`, `postre casero`, `cuenta correcta`, `código de mesa`, `turno de cocina`, `servicio rápido`, `cita cultural`, `visita nocturna`, `guía local`, `mapa turístico`, `sendero corto`, `mirador abierto`, `museo gratuito`, `taller creativo`, `concierto acústico`, `fila delantera`, `sonido claro`, `luz tenue`, `programa impreso`, `opinión sincera`, `debate tranquilo`, `pregunta pendiente`, `respuesta completa`, `comentario breve`, `argumento central`, `razón principal`, `conclusión clara`, `acuerdo posible`, `conflicto resuelto`, `malentendido pequeño`, `disculpa aceptada`, `promesa cumplida`, `prioridad personal`, `objetivo compartido`, `paso siguiente`, `recordatorio pendiente`, `turno médico`, `consulta privada`, `sala silenciosa`, `muestra de sangre`, `informe urgente`, `terapia familiar`, `dieta blanda`, `agua mineral`, `merienda saludable`, `contrato ampliado`, `cláusula adicional`, `archivo notarial`, `registro abierto`, `cita tributaria`, `declaración pendiente`, `cuenta familiar`, `comisión reducida`, `fondo reservado`, `entrega programada`, `paquete devuelto`, `almacén abierto`.
+
+Implemented content delta:
+
+- 120 reviewed Wiktionary lexeme rows.
+- 240 `AI_DRAFT` sentence rows promoted to `REVIEWED` by two independent automatic reviewers.
+- 240 `AI_DRAFT` accepted-answer rows promoted to `REVIEWED` by the same two-reviewer gate.
+- 240 `sentence_lexeme` joins.
+- 240 derived production and recognition exercises for all 120 target lemmas.
+
+Acceptance target:
+
+- `learnerReadyLexemes` is 2991.
+- `reviewedSentences` is 6042 after restoring the non-fixture strict build.
+- `reviewedAcceptedAnswers` is 6045 after restoring the non-fixture strict build.
+- `exerciseCount` is 5982.
+- `missingA1A2GapCount` remains 0.
+- No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 480 generated
+  content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
+  `autoReviewLedger`.
+
 ## A2-023 Accelerated B1/B2 Education, Community, Environment, Media, Family, Civic, Shopping, Delivery, and Money Pack
 
 **Status:** implemented locally after A2-022.
