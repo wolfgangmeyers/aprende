@@ -37,59 +37,76 @@
     "reviewPolicy": "This list is a local source-checked audit target, not shipped learning content. A target lemma only becomes shipped content after the normal lexeme/sentence/accepted-answer provenance and REVIEWED gate pass."
   },
   "summary": {
-    "rawLexemes": 606,
-    "learnerReadyLexemes": 606,
-    "reviewedSentences": 1272,
-    "reviewedAcceptedAnswers": 1275,
-    "exerciseCount": 1212,
-    "missingA1A2GapCount": 0
+    "rawLexemes": 706,
+    "learnerReadyLexemes": 705,
+    "reviewedSentences": 1472,
+    "reviewedAcceptedAnswers": 1475,
+    "exerciseCount": 1412,
+    "missingA1A2GapCount": 1
   },
   "counts": {
     "lexemesByPos": {
-      "adjective": 49,
+      "adjective": 63,
+      "adjective phrase": 1,
       "adjective/adverb": 4,
       "adverb": 26,
       "adverb/noun": 1,
-      "adverbial phrase": 20,
+      "adverbial phrase": 40,
       "conjunction": 2,
-      "noun": 206,
-      "noun phrase": 1,
+      "noun": 243,
+      "noun phrase": 5,
       "preposition": 4,
       "prepositional phrase": 2,
-      "verb": 291
+      "verb": 315
     },
     "lexemesByCefrBand": {
       "A1": 23,
       "A2": 103,
-      "B1": 480
+      "B1": 541,
+      "B2": 39
     },
     "lexemesByFrequencyBucket": {
       "0001-0500": 69,
-      "0501-1000": 173,
-      "1001-2000": 284,
-      "2001+": 80
+      "0501-1000": 186,
+      "1001-2000": 339,
+      "2001+": 112
     },
     "contentRowsBySource": {
-      "ai_draft": 2344,
+      "ai_draft": 2744,
       "authored": 2,
       "tatoeba": 201,
-      "wiktionary": 606
+      "wiktionary": 706
     },
     "contentRowsByLicense": {
       "CC-BY-2.0-FR": 201,
-      "CC-BY-SA-3.0": 606,
-      "proprietary": 2346
+      "CC-BY-SA-3.0": 706,
+      "proprietary": 2746
     },
     "contentRowsByVettingStatus": {
-      "REVIEWED": 3153
+      "REVIEWED": 3653
     },
     "exerciseTargetsByType": {
-      "LEXEME": 1212
+      "LEXEME": 1412
     },
     "exerciseTypes": {
-      "TYPED_TRANSLATION": 606,
-      "WORD_BANK": 606
+      "TYPED_TRANSLATION": 706,
+      "WORD_BANK": 706
     }
   },
-  "topMissingA1A2Gaps": []
+  "topMissingA1A2Gaps": [
+    {
+      "lemma": "viajar",
+      "cefrBand": "A2",
+      "pos": "verb",
+      "priority": 3,
+      "reason": "travel",
+      "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 3 travel topic",
+      "status": "not_learner_ready",
+      "blockers": [
+        "needs_production_exercise",
+        "needs_recognition_exercise"
+      ],
+      "currentLexemeId": 31
+    }
+  ]
 }

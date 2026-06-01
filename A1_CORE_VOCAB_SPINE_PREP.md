@@ -1614,3 +1614,137 @@ Acceptance result:
 - No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 360 generated
   content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
   `autoReviewLedger`.
+
+## A2-013 Accelerated B1/B2 Bridge Public Systems, Negotiation, Travel, Housing, and Legal Pack
+
+**Status:** implemented locally after A2-012.
+
+**Goal:** add learner-ready B1/B2 bridge breadth for connectors, discourse markers, bureaucracy,
+work and social negotiation, health systems, emergencies, travel disruptions, housing/legal, and
+money. Rows use the `AI_DRAFT -> AUTO_CHECKED -> AUTO_REVIEWED -> REVIEWED` lane with two
+independent automatic reviewers.
+
+**Target lemmas:**
+
+| Lemma | POS | Domain |
+|---|---|---|
+| `no obstante` | adverbial phrase | discourse markers |
+| `aun así` | adverbial phrase | discourse markers |
+| `en resumen` | adverbial phrase | summaries and narration |
+| `en conclusión` | adverbial phrase | summaries and argumentation |
+| `por un lado` | adverbial phrase | structured opinions |
+| `por otro lado` | adverbial phrase | structured opinions |
+| `es decir` | adverbial phrase | clarification chunks |
+| `en otras palabras` | adverbial phrase | clarification chunks |
+| `al respecto` | adverbial phrase | formal discourse |
+| `mientras tanto` | adverbial phrase | narration and sequencing |
+| `de todos modos` | adverbial phrase | discourse markers |
+| `de inmediato` | adverbial phrase | emergencies and services |
+| `a largo plazo` | adverbial phrase | planning and money |
+| `a corto plazo` | adverbial phrase | planning and money |
+| `a continuación` | adverbial phrase | instructions and bureaucracy |
+| `sin falta` | adverbial phrase | appointments and obligations |
+| `por adelantado` | adverbial phrase | money and appointments |
+| `en efectivo` | adverbial phrase | money and services |
+| `con tarjeta` | adverbial phrase | money and services |
+| `en persona` | adverbial phrase | public services |
+| `mediar` | verb | work and social conflict |
+| `conciliar` | verb | negotiation and work |
+| `ceder` | verb | negotiation and conflict |
+| `reembolsar` | verb | money and services |
+| `indemnizar` | verb | legal and money |
+| `asegurar` | verb | money housing and safety |
+| `cotizar` | verb | money and work |
+| `presupuestar` | verb | money and services |
+| `liquidar` | verb | banking and legal obligations |
+| `endeudarse` | verb | money and planning |
+| `hospitalizar` | verb | health systems |
+| `derivar` | verb | health and services |
+| `monitorizar` | verb | health systems |
+| `rehabilitarse` | verb | health systems |
+| `desviar` | verb | travel disruptions |
+| `reubicar` | verb | travel housing and work |
+| `compensar` | verb | services and conflict |
+| `desalojar` | verb | housing legal and emergencies |
+| `demandar` | verb | legal and conflict |
+| `apelar` | verb | legal and bureaucracy |
+| `testificar` | verb | legal |
+| `certificar` | verb | bureaucracy |
+| `homologar` | verb | bureaucracy and work |
+| `empadronarse` | verb | public services and housing |
+| `solicitud formal` | noun phrase | bureaucracy |
+| `expediente` | noun | bureaucracy and legal |
+| `denuncia` | noun | legal and public services |
+| `cita previa` | noun phrase | public services |
+| `seguro médico` | noun phrase | health systems |
+| `urgencias` | noun | health systems and emergencies |
+| `especialista` | noun | health systems |
+| `alergia` | noun | medical |
+| `lesión` | noun | medical and body |
+| `fractura` | noun | medical and body |
+| `radiografía` | noun | medical systems |
+| `hipoteca` | noun | housing and banking |
+| `nómina` | noun | work and banking |
+| `ahorro` | noun | money and planning |
+| `tarifa` | noun | money and travel |
+| `comisión` | noun | banking and work |
+| `recargo` | noun | money and services |
+| `inquilino` | noun | housing and legal |
+| `propietario` | noun | housing and legal |
+| `fianza` | noun | housing and money |
+| `comunidad` | noun | housing and public life |
+| `contratista` | noun | housing and repairs |
+| `humedad` | noun | housing and health |
+| `grieta` | noun | housing and repairs |
+| `enchufe` | noun | housing and repairs |
+| `cancelación` | noun | travel disruptions and appointments |
+| `reembolso` | noun | money and travel disruptions |
+| `itinerario` | noun | travel |
+| `andén` | noun | travel and transit |
+| `aduana` | noun | travel and public services |
+| `pasajero` | noun | travel |
+| `vuelo` | noun | travel disruptions |
+| `malentendido` | noun | social conflict |
+| `disculpa` | noun | social conflict |
+| `tensión` | noun | social and work conflict |
+| `mediación` | noun | social and legal conflict |
+| `acoso` | noun | work and legal conflict |
+| `testigo` | noun | legal and public services |
+| `abogado` | noun | legal and services |
+| `juez` | noun | legal |
+| `prueba legal` | noun phrase | legal |
+| `prioritario` | adjective | emergencies and services |
+| `leve` | adjective | medical and legal |
+| `obligado` | adjective | obligations and bureaucracy |
+| `autorizado` | adjective | bureaucracy and services |
+| `pendiente de pago` | adjective phrase | money and bureaucracy |
+| `apto` | adjective | health work and bureaucracy |
+| `válido` | adjective | bureaucracy and travel |
+| `vencido` | adjective | bureaucracy and banking |
+| `imprescindible` | adjective | formal opinions and bureaucracy |
+| `razonable` | adjective | negotiation and opinions |
+| `abusivo` | adjective | legal money and conflict |
+| `confidencial` | adjective | work and bureaucracy |
+| `presencial` | adjective | public services and work |
+| `remoto` | adjective | work and services |
+| `aproximado` | adjective | money and planning |
+
+Implemented content delta:
+
+- 100 reviewed Wiktionary lexeme rows.
+- 200 `AI_DRAFT` sentence rows promoted to `REVIEWED` by two independent automatic reviewers.
+- 200 `AI_DRAFT` accepted-answer rows promoted to `REVIEWED` by the same two-reviewer gate.
+- 200 `sentence_lexeme` joins.
+- 200 derived exercises:
+  - production and recognition exercises for all 100 target lemmas.
+
+Acceptance result:
+
+- `learnerReadyLexemes` increases from 606 to 706.
+- `reviewedSentences` increases from 1272 to 1472.
+- `reviewedAcceptedAnswers` increases from 1275 to 1475.
+- `exerciseCount` increases from 1212 to 1412.
+- `missingA1A2GapCount` remains 0.
+- No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 400 generated
+  content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
+  `autoReviewLedger`.
