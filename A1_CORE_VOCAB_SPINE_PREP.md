@@ -1903,3 +1903,158 @@ Acceptance result:
 - No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 480 generated
   content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
   `autoReviewLedger`.
+
+## A2-015 Accelerated B1/B2 Fluency, Listening Repair, Systems, and Travel Pack
+
+**Status:** implemented locally after A2-014.
+
+**Goal:** add learner-ready B1/B2 breadth for high-frequency fluency chunks,
+pronunciation/listening-friendly repair phrases, household/legal/medical/money/work/travel
+interactions, and everyday conversation repair. Rows use the
+`AI_DRAFT -> AUTO_CHECKED -> AUTO_REVIEWED -> REVIEWED` lane with two independent automatic
+reviewers.
+
+**Target lemmas:**
+
+| Lemma | POS | Domain |
+|---|---|---|
+| `a ver` | discourse marker | conversation repair |
+| `o sea` | discourse marker | conversation repair |
+| `me refiero a` | verbal phrase | clarification |
+| `quiero decir` | verbal phrase | clarification |
+| `si no me equivoco` | adverbial phrase | careful speech |
+| `corrígeme si me equivoco` | sentence chunk | conversation repair |
+| `dicho de otra manera` | adverbial phrase | clarification |
+| `por así decirlo` | adverbial phrase | argument nuance |
+| `en pocas palabras` | adverbial phrase | summaries |
+| `en definitiva` | adverbial phrase | summaries and opinion |
+| `para empezar` | adverbial phrase | sequencing |
+| `para terminar` | adverbial phrase | sequencing |
+| `en primer lugar` | adverbial phrase | structured argument |
+| `en segundo lugar` | adverbial phrase | structured argument |
+| `por último` | adverbial phrase | sequencing |
+| `por una parte` | adverbial phrase | structured opinion |
+| `por otra parte` | adverbial phrase | structured opinion |
+| `sea como sea` | adverbial phrase | argument repair |
+| `de todas formas` | adverbial phrase | discourse markers |
+| `de momento` | adverbial phrase | status and planning |
+| `hasta entonces` | adverbial phrase | time and planning |
+| `desde luego que sí` | sentence chunk | agreement |
+| `claro que no` | sentence chunk | disagreement |
+| `ni hablar` | sentence chunk | strong disagreement |
+| `ni modo` | sentence chunk | reaction chunks |
+| `qué va` | sentence chunk | informal disagreement |
+| `ya veo` | sentence chunk | listening and repair |
+| `entiendo` | sentence chunk | listening and repair |
+| `lo siento` | sentence chunk | apologies |
+| `perdona` | sentence chunk | apologies and repair |
+| `disculpe` | sentence chunk | formal repair |
+| `un momento` | sentence chunk | conversation repair |
+| `espere un momento` | sentence chunk | service interaction |
+| `hable más despacio` | sentence chunk | listening repair |
+| `no le oigo` | sentence chunk | listening repair |
+| `se corta la llamada` | sentence chunk | phone repair |
+| `se oye mal` | sentence chunk | listening repair |
+| `repita por favor` | sentence chunk | listening repair |
+| `puede repetir` | sentence chunk | listening repair |
+| `cómo se pronuncia` | question chunk | pronunciation repair |
+| `cómo se escribe` | question chunk | spelling repair |
+| `qué significa` | question chunk | meaning repair |
+| `a qué se refiere` | question chunk | clarification |
+| `no me queda claro` | sentence chunk | clarification |
+| `me queda claro` | sentence chunk | confirmation |
+| `estoy de acuerdo` | sentence chunk | agreement |
+| `no estoy seguro` | sentence chunk | uncertainty |
+| `depende` | sentence chunk | uncertainty |
+| `puede ser` | sentence chunk | uncertainty |
+| `me preocupa` | sentence chunk | concerns and opinion |
+| `me molesta` | sentence chunk | complaints |
+| `me conviene` | sentence chunk | preferences |
+| `me interesa` | sentence chunk | preferences |
+| `me cuesta` | sentence chunk | difficulty and repair |
+| `me hace falta` | sentence chunk | needs and services |
+| `me falta` | sentence chunk | needs and paperwork |
+| `me sobra` | sentence chunk | money and quantities |
+| `me urge` | sentence chunk | urgency and services |
+| `me da miedo` | sentence chunk | emotions and medical |
+| `me da vergüenza` | sentence chunk | emotions and repair |
+| `me da rabia` | sentence chunk | emotions and complaints |
+| `me da pena` | sentence chunk | emotions |
+| `me alegra` | sentence chunk | emotions and social |
+| `quedar en algo` | verbal phrase | negotiation |
+| `ponerse de acuerdo` | verbal phrase | negotiation |
+| `llegar a un acuerdo` | verbal phrase | negotiation |
+| `romper el acuerdo` | verbal phrase | legal and conflict |
+| `hacer falta` | verbal phrase | needs and services |
+| `tener sentido` | verbal phrase | opinion and repair |
+| `tener en cuenta` | verbal phrase | planning and argument |
+| `darse cuenta` | verbal phrase | narration and repair |
+| `echar de menos` | verbal phrase | emotions and social |
+| `llevar a cabo` | verbal phrase | formal work |
+| `poner en marcha` | verbal phrase | work and services |
+| `dar de alta` | verbal phrase | medical and services |
+| `dar de baja` | verbal phrase | services and work |
+| `estar al tanto` | verbal phrase | work and updates |
+| `estar pendiente` | verbal phrase | status and planning |
+| `enviar adjunto` | verbal phrase | bureaucracy and technology |
+| `acuse de recibo` | noun phrase | bureaucracy and legal |
+| `plazo de entrega` | noun phrase | services and work |
+| `fecha límite` | noun phrase | work and bureaucracy |
+| `lista de espera` | noun phrase | medical and services |
+| `número de expediente` | noun phrase | bureaucracy and legal |
+| `código postal` | noun phrase | forms and addresses |
+| `dirección fiscal` | noun phrase | taxes and bureaucracy |
+| `domicilio actual` | noun phrase | forms and housing |
+| `titular de cuenta` | noun phrase | banking |
+| `justificante de pago` | noun phrase | money and bureaucracy |
+| `orden de pago` | noun phrase | banking |
+| `recargo por demora` | noun phrase | money and complaints |
+| `interés de demora` | noun phrase | banking and legal |
+| `impago` | noun | money and legal |
+| `deudor` | noun | money and legal |
+| `acreedor` | noun | money and legal |
+| `aval` | noun | banking and housing |
+| `garante` | noun | banking and housing |
+| `horas extra` | noun phrase | work and money |
+| `periodo de prueba` | noun phrase | work |
+| `desempleo` | noun | work and public services |
+| `sala de espera` | noun phrase | medical and services |
+| `consulta externa` | noun phrase | medical systems |
+| `urgencia médica` | noun phrase | medical emergencies |
+| `dolor agudo` | noun phrase | medical symptoms |
+| `dolor crónico` | noun phrase | medical symptoms |
+| `malestar` | noun | medical symptoms |
+| `náusea` | noun | medical symptoms |
+| `tos seca` | noun phrase | medical symptoms |
+| `falta de aire` | noun phrase | medical symptoms |
+| `dificultad respiratoria` | noun phrase | medical symptoms |
+| `alquiler mensual` | noun phrase | housing and money |
+| `seguro de hogar` | noun phrase | housing and money |
+| `corte de luz` | noun phrase | household emergencies |
+| `corte de agua` | noun phrase | household emergencies |
+| `fuga de gas` | noun phrase | household emergencies |
+| `llave de repuesto` | noun phrase | housing |
+| `hora de salida` | noun phrase | travel |
+| `control de seguridad` | noun phrase | travel |
+| `pérdida de equipaje` | noun phrase | travel disruptions |
+| `salida de emergencia` | noun phrase | travel and emergencies |
+
+Implemented content delta:
+
+- 120 reviewed Wiktionary lexeme rows.
+- 240 `AI_DRAFT` sentence rows promoted to `REVIEWED` by two independent automatic reviewers.
+- 240 `AI_DRAFT` accepted-answer rows promoted to `REVIEWED` by the same two-reviewer gate.
+- 240 `sentence_lexeme` joins.
+- 240 derived exercises:
+  - production and recognition exercises for all 120 target lemmas.
+
+Acceptance result:
+
+- `learnerReadyLexemes` increases from 826 to 946.
+- `reviewedSentences` increases from 1712 to 1952.
+- `reviewedAcceptedAnswers` increases from 1715 to 1955.
+- `exerciseCount` increases from 1652 to 1892.
+- `missingA1A2GapCount` remains 0.
+- No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 480 generated
+  content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
+  `autoReviewLedger`.
