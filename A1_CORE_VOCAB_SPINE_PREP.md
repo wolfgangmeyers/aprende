@@ -1198,6 +1198,36 @@ Acceptance target:
   content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
   `autoReviewLedger`.
 
+## A2-033 Accelerated B1/B2 Health, Housing, Banking, Bureaucracy, Travel, Repairs, and Digital Support Pack
+
+**Status:** implemented locally after A2-032.
+
+**Goal:** add learner-ready B1/B2 breadth for health and accessibility support, housing and
+repairs, banking and insurance, documents and bureaucracy, lodging and travel disruptions,
+transport navigation, and digital support. Rows use the `AI_DRAFT -> AUTO_CHECKED ->
+AUTO_REVIEWED -> REVIEWED` lane with two independent automatic reviewers.
+
+**Target lemmas:** `consulta cancelada`, `urgencia menor`, `ambulancia privada`, `pastilla partida`, `jarabe infantil`, `termómetro digital`, `mareo leve`, `herida limpia`, `venda estéril`, `rampa accesible`, `puerta automática`, `llave maestra`, `cerradura nueva`, `vecino responsable`, `derroche de agua`, `parte de daños`, `factura pendiente`, `pago anticipado`, `recargo bancario`, `cuota fija`, `cuota variable`, `crédito aprobado`, `clave olvidada`, `oficina bancaria`, `gestor disponible`, `contrato revisado`, `documento válido`, `permiso renovado`, `declaración jurada`, `cita modificada`, `cola larga`, `atención lenta`, `casilla obligatoria`, `justificante válido`, `reserva hotelera`, `cama supletoria`, `recepción abierta`, `maleta perdida`, `reclamación aérea`, `vuelo retrasado`, `andén correcto`, `billete impreso`, `aparcamiento libre`, `cruce peligroso`, `señal visible`, `obra cercana`, `pieza original`, `repuesto disponible`, `manual de uso`, `avería cubierta`, `instalación rápida`, `revisión gratuita`, `videollamada estable`, `micrófono abierto`, `contraseña nueva`, `soporte disponible`, `chat cerrado`, `incidencia registrada`, `solución parcial`, `ejemplo claro`, `aclaración necesaria`, `ambulancia municipal`, `tarjeta europea`, `informe radiológico`, `pastilla efervescente`, `jarabe natural`, `termómetro fiable`, `herida profunda`, `venda limpia`, `muleta ajustable`, `andador ligero`, `rampa portátil`, `baño seguro`, `llavero perdido`, `alarma silenciosa`, `vecino nuevo`, `junta ordinaria`, `consumo excesivo`, `avería común`, `luz intermitente`, `póliza vigente`, `parte abierto`, `pago atrasado`, `recargo mínimo`, `crédito disponible`, `tarjeta vencida`, `cajero vacío`, `sucursal abierta`, `gestor asignado`, `firma digitalizada`, `documento oficial`, `visado temporal`, `oficina consular`, `portal electrónico`, `turno rápido`, `fila ordenada`, `mostrador libre`, `número asignado`, `formulario digital`, `casilla marcada`, `justificante impreso`, `plazo corto`, `recurso aceptado`, `respuesta provisional`, `hotel céntrico`, `cama cómoda`, `recepción nocturna`, `salida anticipada`, `desayuno caliente`, `tasa incluida`, `maleta rota`, `vuelo cancelado`, `puerta cerrada`, `asiento libre`, `equipaje perdido`, `control rápido`, `aduana llena`, `andén vacío`, `billete móvil`, `bus lanzadera`.
+
+Implemented content delta:
+
+- 120 reviewed Wiktionary lexeme rows.
+- 240 `AI_DRAFT` sentence rows promoted to `REVIEWED` by two independent automatic reviewers.
+- 240 `AI_DRAFT` accepted-answer rows promoted to `REVIEWED` by the same two-reviewer gate.
+- 240 `sentence_lexeme` joins.
+- 240 derived production and recognition exercises for all 120 target lemmas.
+
+Acceptance target:
+
+- `learnerReadyLexemes` is 3111.
+- `reviewedSentences` is 6282 after restoring the non-fixture strict build.
+- `reviewedAcceptedAnswers` is 6285 after restoring the non-fixture strict build.
+- `exerciseCount` is 6222.
+- `missingA1A2GapCount` remains 0.
+- No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 480 generated
+  content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
+  `autoReviewLedger`.
+
 ## A2-023 Accelerated B1/B2 Education, Community, Environment, Media, Family, Civic, Shopping, Delivery, and Money Pack
 
 **Status:** implemented locally after A2-022.
