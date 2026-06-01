@@ -3113,3 +3113,64 @@ Acceptance result:
 - No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 480 generated
   content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
   `autoReviewLedger`.
+
+## A2-038 Accelerated B1/B2 Service Status, Documents, Money, Health, Work, and Digital Pack
+
+**Status:** implemented locally after A2-037.
+
+**Goal:** add learner-ready B1/B2 breadth for practical service status, confirmations, forms,
+billing, access, appointments, and everyday administration. Rows use the
+`AI_DRAFT -> AUTO_CHECKED -> AUTO_REVIEWED -> REVIEWED` lane with two independent automatic
+reviewers.
+
+**Target lemmas:** `cambio de domicilio`, `cambio de titular`, `cambio de fecha`, `cambio de ruta`,
+`cambio de tarifa`, `cambio de contraseña`, `cambio de compañía`, `solicitud de cita`,
+`solicitud de ayuda`, `solicitud de información`, `solicitud de reembolso`, `solicitud de baja`,
+`solicitud de alta`, `solicitud de copia`, `solicitud de revisión`, `confirmación de asistencia`,
+`confirmación de reserva`, `confirmación de pago`, `confirmación de envío`,
+`confirmación de entrega`, `confirmación de lectura`, `confirmación de identidad`,
+`confirmación de datos`, `aviso de retraso`, `aviso de vencimiento`, `aviso de seguridad`,
+`aviso de mantenimiento`, `aviso de llegada`, `aviso de salida`, `número de referencia`,
+`número de pedido`, `número de cuenta`, `número de tarjeta`, `fecha de revisión`,
+`fecha de caducidad`, `fecha de nacimiento`, `fecha de inicio`, `fecha de fin`, `fecha de cobro`,
+`fecha de devolución`, `fecha de recogida`, `justificante de asistencia`,
+`justificante de ingresos`, `comprobante de compra`, `comprobante de reserva`,
+`comprobante de envío`, `comprobante de entrega`, `copia de contrato`, `copia de factura`,
+`copia de recibo`, `copia de pasaporte`, `copia de permiso`, `copia de denuncia`,
+`copia de informe`, `copia de receta`, `estado de cuenta`, `estado de pedido`, `estado de envío`,
+`estado de reserva`, `estado de solicitud`, `estado de reparación`, `estado de pago`,
+`estado de salud`, `cita de control`, `cita de revisión`, `cita de urgencias`,
+`cita de vacunación`, `consulta de resultados`, `consulta de facturación`, `consulta de soporte`,
+`informe de urgencias`, `informe de daños`, `informe de gastos`, `informe de actividad`,
+`informe de progreso`, `orden de reparación`, `orden de trabajo`, `orden de compra`,
+`servicio de urgencias`, `servicio de atención`, `servicio de entrega`, `servicio de asistencia`,
+`servicio de mantenimiento`, `tarjeta de crédito`, `tarjeta de débito`, `tarjeta de transporte`,
+`cuota de inscripción`, `cuota de mantenimiento`, `cargo por servicio`, `cargo por retraso`,
+`límite de gasto`, `clave de seguridad`, `código de acceso`, `código de descuento`,
+`enlace de descarga`, `archivo de respaldo`, `archivo de audio`, `carpeta de trabajo`,
+`carpeta de fotos`, `mensaje de error`, `mensaje de confirmación`, `notificación de acceso`,
+`notificación de seguridad`, `prueba de identidad`, `prueba de domicilio`, `prueba de ingresos`,
+`resumen de cuenta`, `resumen de gastos`, `resumen de actividad`, `plan de viaje`,
+`lista de documentos`, `punto de entrega`, `centro de atención`, `centro de trabajo`,
+`área de clientes`, `área de descargas`, `área de pagos`, `línea de atención`, `línea de crédito`,
+`línea de emergencia`.
+
+Implemented content delta:
+
+- 120 reviewed Wiktionary lexeme rows.
+- 240 `AI_DRAFT` sentence rows promoted to `REVIEWED` by two independent automatic reviewers.
+- 240 `AI_DRAFT` accepted-answer rows promoted to `REVIEWED` by the same two-reviewer gate.
+- 240 `sentence_lexeme` joins.
+- 240 derived exercises:
+  - production and recognition exercises for all 120 target lemmas.
+
+Acceptance result:
+
+- `learnerReadyLexemes` increases from 3591 to 3711.
+- `reviewedSentences` increases from 7242 to 7482.
+- `reviewedAcceptedAnswers` increases from 7245 to 7485.
+- `exerciseCount` increases from 7182 to 7422.
+- `missingA1A2GapCount` remains 0.
+- No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 480 generated
+  content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
+  `autoReviewLedger`.
