@@ -6818,6 +6818,43 @@ AI_ACCELERATED_PACK_A2_054 = build_numbered_ai_accelerated_phrase_pack(5512, 110
     ]
 ]))
 
+AI_ACCELERATED_PACK_A2_055 = build_numbered_ai_accelerated_phrase_pack(5632, 11323, 11326, build_phrase_pack_specs([
+    (
+        f"{spanish_head} {spanish_complement}",
+        gender,
+        f"{english_head} {english_complement}",
+        domain,
+        indefinite_article,
+        definite_article,
+    )
+    for spanish_head, gender, english_head, indefinite_article, definite_article in [
+        ("mensaje urgente", "M", "urgent message", "un", "El"),
+        ("aviso oficial", "M", "official notice", "un", "El"),
+        ("correo automático", "M", "automated email", "un", "El"),
+        ("recordatorio breve", "M", "brief reminder", "un", "El"),
+        ("dato actualizado", "M", "updated detail", "un", "El"),
+        ("dato incorrecto", "M", "incorrect detail", "un", "El"),
+        ("registro pendiente", "M", "pending record", "un", "El"),
+        ("registro completo", "M", "complete record", "un", "El"),
+        ("archivo adjunto", "M", "attached file", "un", "El"),
+        ("enlace seguro", "M", "secure link", "un", "El"),
+    ]
+    for spanish_complement, english_complement, domain in [
+        ("del banco", "from the bank", "money"),
+        ("del hospital", "from the hospital", "health"),
+        ("de la oficina", "from the office", "work"),
+        ("del hotel", "from the hotel", "travel"),
+        ("de la aerolínea", "from the airline", "travel"),
+        ("del seguro", "from insurance", "bureaucracy"),
+        ("del juzgado", "from the court", "legal"),
+        ("del taller", "from the shop", "repairs"),
+        ("del propietario", "from the landlord", "housing"),
+        ("del servicio técnico", "from tech support", "services"),
+        ("de atención al cliente", "from support", "services"),
+        ("de la farmacia", "from the pharmacy", "health"),
+    ]
+]))
+
 AI_REVIEWED_SENTENCE_PAIRS.update({
     spanish: english
     for pack in (
@@ -6873,6 +6910,7 @@ AI_REVIEWED_SENTENCE_PAIRS.update({
         AI_ACCELERATED_PACK_A2_052,
         AI_ACCELERATED_PACK_A2_053,
         AI_ACCELERATED_PACK_A2_054,
+        AI_ACCELERATED_PACK_A2_055,
     )
     for item in pack
     for _, _, spanish, english in item["sentences"]
@@ -7034,6 +7072,7 @@ A1_A2_TARGET_LEMMAS.extend([
         AI_ACCELERATED_PACK_A2_052,
         AI_ACCELERATED_PACK_A2_053,
         AI_ACCELERATED_PACK_A2_054,
+        AI_ACCELERATED_PACK_A2_055,
     )
     for item in pack
 ])
@@ -8250,8 +8289,12 @@ def vetted_sample():
         AI_ACCELERATED_PACK_A2_053, "a2-053", next_exercise_id,
         lexemes, sentences, accepted, sentence_lexeme, exercises,
     )
-    append_ai_accelerated_pack(
+    next_exercise_id = append_ai_accelerated_pack(
         AI_ACCELERATED_PACK_A2_054, "a2-054", next_exercise_id,
+        lexemes, sentences, accepted, sentence_lexeme, exercises,
+    )
+    append_ai_accelerated_pack(
+        AI_ACCELERATED_PACK_A2_055, "a2-055", next_exercise_id,
         lexemes, sentences, accepted, sentence_lexeme, exercises,
     )
     return lexemes, sentences, accepted, sentence_lexeme, conj, exercises, nodes

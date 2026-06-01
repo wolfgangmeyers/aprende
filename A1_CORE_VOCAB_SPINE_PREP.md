@@ -3827,3 +3827,40 @@ Acceptance result:
 - No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 480 generated
   content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
   `autoReviewLedger`.
+
+## A2-055 Accelerated B1/B2 Service Communication and Records Pack
+
+**Status:** implemented locally after A2-054.
+
+**Goal:** add learner-ready B1/B2 breadth for urgent messages, official notices, automated emails,
+brief reminders, updated/incorrect details, pending/complete records, attached files, and secure
+links across money, health, work, travel, bureaucracy, legal, repairs, housing, and services
+contexts. Rows use the `AI_DRAFT -> AUTO_CHECKED -> AUTO_REVIEWED -> REVIEWED` lane with two
+independent automatic reviewers.
+
+**Target lemma families:** `mensaje urgente de ...`, `aviso oficial de ...`,
+`correo automático de ...`, `recordatorio breve de ...`, `dato actualizado de ...`,
+`dato incorrecto de ...`, `registro pendiente de ...`, `registro completo de ...`,
+`archivo adjunto de ...`, and `enlace seguro de ...` across banks, hospitals, offices, hotels,
+airlines, insurance, courts, repair shops, landlords, technical support, customer service, and
+pharmacies.
+
+Implemented content delta:
+
+- 120 reviewed Wiktionary lexeme rows.
+- 240 `AI_DRAFT` sentence rows promoted to `REVIEWED` by two independent automatic reviewers.
+- 240 `AI_DRAFT` accepted-answer rows promoted to `REVIEWED` by the same two-reviewer gate.
+- 240 `sentence_lexeme` joins.
+- 240 derived exercises:
+  - production and recognition exercises for all 120 target lemmas.
+
+Acceptance result:
+
+- `learnerReadyLexemes` increases from 5631 to 5751.
+- `reviewedSentences` increases from 11322 to 11562.
+- `reviewedAcceptedAnswers` increases from 11325 to 11565.
+- `exerciseCount` increases from 11262 to 11502.
+- `missingA1A2GapCount` remains 0.
+- No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 480 generated
+  content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
+  `autoReviewLedger`.
