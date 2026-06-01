@@ -829,6 +829,64 @@ Acceptance result:
   content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
   `autoReviewLedger`.
 
+## A2-024 Accelerated B1/B2 Culture, Sports, Care, Accessibility, Taxes, Immigration, Insurance, Finance, Legal, and Digital Security Pack
+
+**Status:** implemented locally after A2-023.
+
+**Goal:** add learner-ready B1/B2 breadth for culture and events, sports, childcare and eldercare,
+accessibility, taxes, immigration, insurance, personal finance, legal documents, digital forms, and
+account security. Rows use the `AI_DRAFT -> AUTO_CHECKED -> AUTO_REVIEWED -> REVIEWED` lane with
+two independent automatic reviewers.
+
+**Target lemmas:** `entrada anticipada al museo`, `visita guiada`, `audioguía disponible`,
+`exposición temporal`, `obra original`, `copia artística autorizada`, `función agotada`,
+`butaca reservada`, `entrada reducida`, `descuento joven`, `competición local`, `partido
+amistoso`, `entrenamiento semanal`, `lesión leve`, `lesión grave`, `calentamiento previo`,
+`equipo rival`, `resultado final`, `árbitro principal`, `norma del juego`, `guardería cercana`,
+`cuidador disponible`, `recogida del niño`, `autorización de salida`, `merienda preparada`,
+`pañales suficientes`, `silla infantil`, `carrito plegable`, `juguete perdido`, `cita
+pediátrica`, `acompañamiento familiar`, `cuidador nocturno`, `ayuda a domicilio`, `movilidad
+reducida`, `acceso adaptado`, `ascensor averiado`, `rampa disponible`, `silla de ruedas`, `baño
+adaptado`, `ayuda auditiva`, `subtítulos disponibles`, `intérprete disponible`, `declaración
+anual`, `borrador fiscal`, `deducción aplicable`, `ingreso declarado`, `gasto deducible`,
+`recibo fiscal`, `notificación tributaria`, `deuda tributaria`, `abono diferido`, `certificado
+tributario`, `cita consular`, `trámite migratorio`, `autorización de residencia`, `tarjeta de
+residencia`, `copia del pasaporte`, `foto de carnet`, `huella registrada`, `cita de huellas`,
+`resolución favorable`, `resolución denegada`, `seguro del hogar`, `póliza activa`, `póliza
+vencida`, `siniestro abierto`, `parte de accidente`, `perito asignado`, `cobertura parcial`,
+`cobertura completa`, `prima anual`, `franquicia alta`, `franquicia baja`, `reclamación al
+seguro`, `daño cubierto`, `daño excluido`, `carta de renovación`, `cuota del seguro`,
+`beneficiario registrado`, `cobro pendiente`, `ingreso pendiente`, `ahorros disponibles`,
+`presupuesto ajustado`, `gasto previsto`, `gasto imprevisto`, `préstamo aprobado`, `préstamo
+rechazado`, `cuota vencida`, `comprobante pendiente`, `contrato digital`, `cláusula principal`,
+`condición especial`, `firma obligatoria`, `copia legal`, `traducción jurada`, `sello
+consular`, `registro consular`, `documento apostillado`, `certificado traducido`, `cita de
+renovación`, `solicitud renovada`, `formulario actualizado`, `archivo rechazado`, `archivo
+aceptado`, `tamaño máximo`, `formato permitido`, `documento pesado`, `imagen borrosa`, `foto
+nítida`, `pantalla de error`, `aviso emergente`, `botón desactivado`, `campo obligatorio`,
+`captcha incorrecto`, `verificación fallida`, `autenticación segura`, `doble factor`, `código
+de respaldo`, `sesión segura`, `alerta de seguridad`.
+
+Implemented content delta:
+
+- 120 reviewed Wiktionary lexeme rows.
+- 240 `AI_DRAFT` sentence rows promoted to `REVIEWED` by two independent automatic reviewers.
+- 240 `AI_DRAFT` accepted-answer rows promoted to `REVIEWED` by the same two-reviewer gate.
+- 240 `sentence_lexeme` joins.
+- 240 derived exercises:
+  - production and recognition exercises for all 120 target lemmas.
+
+Acceptance target:
+
+- `learnerReadyLexemes` is 2065.
+- `reviewedSentences` is 4190 after restoring the non-fixture strict build.
+- `reviewedAcceptedAnswers` is 4193 after restoring the non-fixture strict build.
+- `exerciseCount` is 4130.
+- `missingA1A2GapCount` remains 0.
+- No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 480 generated
+  content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
+  `autoReviewLedger`.
+
 ## A2-023 Accelerated B1/B2 Education, Community, Environment, Media, Family, Civic, Shopping, Delivery, and Money Pack
 
 **Status:** implemented locally after A2-022.
