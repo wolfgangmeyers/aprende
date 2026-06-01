@@ -39,8 +39,8 @@
   "summary": {
     "rawLexemes": 2385,
     "learnerReadyLexemes": 2385,
-    "reviewedSentences": 4831,
-    "reviewedAcceptedAnswers": 4834,
+    "reviewedSentences": 4830,
+    "reviewedAcceptedAnswers": 4833,
     "exerciseCount": 4770,
     "missingA1A2GapCount": 0
   },
@@ -76,7 +76,7 @@
       "2001+": 275
     },
     "contentRowsBySource": {
-      "ai_draft": 9462,
+      "ai_draft": 9460,
       "authored": 2,
       "tatoeba": 201,
       "wiktionary": 2385
@@ -84,10 +84,10 @@
     "contentRowsByLicense": {
       "CC-BY-2.0-FR": 201,
       "CC-BY-SA-3.0": 2385,
-      "proprietary": 9464
+      "proprietary": 9462
     },
     "contentRowsByVettingStatus": {
-      "REVIEWED": 12050
+      "REVIEWED": 12048
     },
     "exerciseTargetsByType": {
       "LEXEME": 4770
