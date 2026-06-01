@@ -765,3 +765,66 @@ Acceptance result:
 - FrequencyWords rank metadata is exposed in the shipped `content.db` attribution path via
   `content_attribution` as `frequencywords` / `CC-BY-SA-4.0`, so the app credits screen can
   render the frequency-spine license alongside row-level content sources.
+
+## A2-004 Accelerated Daily Fluency Pack
+
+**Status:** implemented locally after A2-003.
+
+**Goal:** expand practical fluency with a larger generated pack of high-frequency daily verbs,
+adjectives/adverbs, and life nouns. Rows use the `AI_DRAFT -> AUTO_CHECKED -> AUTO_REVIEWED ->
+REVIEWED` lane with two independent automatic reviewers.
+
+**Target lemmas:**
+
+| Lemma | POS | Domain |
+|---|---|---|
+| `buscar` | verb | finding and errands |
+| `encontrar` | verb | finding and errands |
+| `pensar` | verb | thoughts and opinions |
+| `entender` | verb | clarification and learning |
+| `recordar` | verb | memory and plans |
+| `esperar` | verb | waiting and plans |
+| `mirar` | verb | perception and directions |
+| `llevar` | verb | movement and possessions |
+| `tomar` | verb | food, drink, and transport |
+| `entrar` | verb | movement and errands |
+| `pasar` | verb | movement and events |
+| `volver` | verb | movement and routines |
+| `empezar` | verb | time sequencing |
+| `terminar` | verb | time sequencing |
+| `cambiar` | verb | daily changes and plans |
+| `pequeño` | adjective | common description |
+| `nuevo` | adjective | common description |
+| `viejo` | adjective | common description |
+| `mismo` | adjective | comparison |
+| `primero` | adjective/adverb | sequencing |
+| `último` | adjective | sequencing |
+| `mejor` | adjective/adverb | comparison and health state |
+| `peor` | adjective/adverb | comparison and health state |
+| `temprano` | adverb | time and routines |
+| `tarde` | adverb/noun | time and routines |
+| `ciudad` | noun | places and travel |
+| `país` | noun | places and identity |
+| `amigo` | noun | relationships |
+| `niño` | noun | people and family |
+| `mujer` | noun | people and relationships |
+
+Implemented content delta:
+
+- 30 reviewed Wiktionary lexeme rows.
+- 74 `AI_DRAFT` sentence rows promoted to `REVIEWED` by two independent automatic reviewers.
+- 74 `AI_DRAFT` accepted-answer rows promoted to `REVIEWED` by the same two-reviewer gate.
+- 74 `sentence_lexeme` joins.
+- 60 derived exercises:
+  - production and recognition exercises for all 30 target lemmas.
+
+Acceptance result:
+
+- `learnerReadyLexemes` increases from 61 to 91.
+- `reviewedSentences` increases from 158 to 232.
+- `reviewedAcceptedAnswers` increases from 161 to 235.
+- `exerciseCount` increases from 122 to 182.
+- `missingA1A2GapCount` remains 0.
+- No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 148 generated
+  content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
+  `autoReviewLedger`.

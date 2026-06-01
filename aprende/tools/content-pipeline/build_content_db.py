@@ -353,9 +353,297 @@ AI_ACCELERATED_PACK_A2_003 = [
     },
 ]
 
+AI_ACCELERATED_PACK_A2_004 = [
+    {
+        "lexemeId": 62, "lemma": "buscar", "pos": "verb", "gender": None,
+        "englishGloss": "to look for; to search", "frequencyRank": 640, "cefrBand": "A2", "difficultyPrior": 0.5,
+        "reason": "daily problem solving", "sourceBasis": "hermitdave/FrequencyWords high-frequency spine",
+        "sentences": [
+            (159, 162, "Busco mi teléfono.", "I look for my phone."),
+            (160, 163, "Buscamos la tienda.", "We look for the store."),
+        ],
+    },
+    {
+        "lexemeId": 63, "lemma": "encontrar", "pos": "verb", "gender": None,
+        "englishGloss": "to find", "frequencyRank": 533, "cefrBand": "A2", "difficultyPrior": 0.5,
+        "reason": "daily problem solving", "sourceBasis": "hermitdave/FrequencyWords high-frequency spine",
+        "sentences": [
+            (161, 164, "Encuentro mi casa.", "I find my house."),
+            (162, 165, "Encontré dinero.", "I found money."),
+        ],
+    },
+    {
+        "lexemeId": 64, "lemma": "pensar", "pos": "verb", "gender": None,
+        "englishGloss": "to think", "frequencyRank": 330, "cefrBand": "A2", "difficultyPrior": 0.4,
+        "reason": "thought and opinions", "sourceBasis": "hermitdave/FrequencyWords high-frequency spine",
+        "sentences": [
+            (163, 166, "Pienso en mi familia.", "I think about my family."),
+            (164, 167, "¿Qué piensas?", "What do you think?"),
+            (219, 222, "Pienso mucho.", "I think a lot."),
+            (220, 223, "Pienso en ti.", "I think about you."),
+        ],
+    },
+    {
+        "lexemeId": 65, "lemma": "entender", "pos": "verb", "gender": None,
+        "englishGloss": "to understand", "frequencyRank": 674, "cefrBand": "A2", "difficultyPrior": 0.5,
+        "reason": "clarification and learning", "sourceBasis": "hermitdave/FrequencyWords high-frequency spine",
+        "sentences": [
+            (165, 168, "Entiendo la pregunta.", "I understand the question."),
+            (166, 169, "No entiendo.", "I do not understand."),
+        ],
+    },
+    {
+        "lexemeId": 66, "lemma": "recordar", "pos": "verb", "gender": None,
+        "englishGloss": "to remember", "frequencyRank": 1177, "cefrBand": "A2", "difficultyPrior": 0.5,
+        "reason": "memory and plans", "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 3 practical communication topic",
+        "sentences": [
+            (167, 170, "Recuerdo tu casa.", "I remember your house."),
+            (168, 171, "¿Recuerdas mi nombre?", "Do you remember my name?"),
+        ],
+    },
+    {
+        "lexemeId": 67, "lemma": "esperar", "pos": "verb", "gender": None,
+        "englishGloss": "to wait; to hope", "frequencyRank": 477, "cefrBand": "A2", "difficultyPrior": 0.4,
+        "reason": "waiting and plans", "sourceBasis": "hermitdave/FrequencyWords high-frequency spine",
+        "sentences": [
+            (169, 172, "Espero aquí.", "I wait here."),
+            (170, 173, "Espero verte luego.", "I hope to see you later."),
+            (221, 224, "Esperamos el autobús.", "We wait for the bus."),
+            (222, 225, "Espero a mi amigo.", "I wait for my friend."),
+        ],
+    },
+    {
+        "lexemeId": 68, "lemma": "mirar", "pos": "verb", "gender": None,
+        "englishGloss": "to look at; to watch", "frequencyRank": 312, "cefrBand": "A2", "difficultyPrior": 0.4,
+        "reason": "perception and directions", "sourceBasis": "hermitdave/FrequencyWords high-frequency spine",
+        "sentences": [
+            (171, 174, "Miro la puerta.", "I look at the door."),
+            (172, 175, "Mira esta mesa.", "Look at this table."),
+            (223, 226, "Miro la ciudad.", "I look at the city."),
+            (224, 227, "Miramos el teléfono.", "We look at the phone."),
+        ],
+    },
+    {
+        "lexemeId": 69, "lemma": "llevar", "pos": "verb", "gender": None,
+        "englishGloss": "to carry; to wear", "frequencyRank": 454, "cefrBand": "A2", "difficultyPrior": 0.4,
+        "reason": "daily movement and possessions", "sourceBasis": "hermitdave/FrequencyWords high-frequency spine",
+        "sentences": [
+            (173, 176, "Llevo mi teléfono.", "I carry my phone."),
+            (174, 177, "Ella lleva comida.", "She carries food."),
+            (225, 228, "Llevo dinero.", "I carry money."),
+            (226, 229, "Llevamos agua.", "We carry water."),
+        ],
+    },
+    {
+        "lexemeId": 70, "lemma": "tomar", "pos": "verb", "gender": None,
+        "englishGloss": "to take; to drink", "frequencyRank": 445, "cefrBand": "A2", "difficultyPrior": 0.4,
+        "reason": "food, drink, and transport", "sourceBasis": "hermitdave/FrequencyWords high-frequency spine",
+        "sentences": [
+            (175, 178, "Tomo agua.", "I drink water."),
+            (176, 179, "Toma el autobús.", "Take the bus."),
+            (227, 230, "Tomo el autobús.", "I take the bus."),
+            (228, 231, "Tomamos agua.", "We drink water."),
+        ],
+    },
+    {
+        "lexemeId": 71, "lemma": "entrar", "pos": "verb", "gender": None,
+        "englishGloss": "to enter; to come in", "frequencyRank": 932, "cefrBand": "A2", "difficultyPrior": 0.5,
+        "reason": "movement and errands", "sourceBasis": "hermitdave/FrequencyWords high-frequency spine",
+        "sentences": [
+            (177, 180, "Entro en la tienda.", "I enter the store."),
+            (178, 181, "Entra ahora.", "Come in now."),
+        ],
+    },
+    {
+        "lexemeId": 72, "lemma": "pasar", "pos": "verb", "gender": None,
+        "englishGloss": "to pass; to happen", "frequencyRank": 197, "cefrBand": "A2", "difficultyPrior": 0.4,
+        "reason": "movement and events", "sourceBasis": "hermitdave/FrequencyWords high-frequency spine",
+        "sentences": [
+            (179, 182, "El autobús pasa.", "The bus passes."),
+            (180, 183, "Paso por la calle.", "I pass through the street."),
+            (229, 232, "Él pasa por aquí.", "He passes through here."),
+            (230, 233, "Pasamos por la ciudad.", "We pass through the city."),
+        ],
+    },
+    {
+        "lexemeId": 73, "lemma": "volver", "pos": "verb", "gender": None,
+        "englishGloss": "to return; to come back", "frequencyRank": 289, "cefrBand": "A2", "difficultyPrior": 0.4,
+        "reason": "movement and routines", "sourceBasis": "hermitdave/FrequencyWords high-frequency spine",
+        "sentences": [
+            (181, 184, "Vuelvo a casa.", "I return home."),
+            (182, 185, "Vuelve luego.", "Come back later."),
+            (231, 234, "Volvemos a la escuela.", "We return to school."),
+            (232, 235, "Vuelvo temprano.", "I return early."),
+        ],
+    },
+    {
+        "lexemeId": 74, "lemma": "empezar", "pos": "verb", "gender": None,
+        "englishGloss": "to start; to begin", "frequencyRank": 1054, "cefrBand": "A2", "difficultyPrior": 0.5,
+        "reason": "time sequencing", "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 3 routines topic",
+        "sentences": [
+            (183, 186, "Empiezo ahora.", "I start now."),
+            (184, 187, "La clase empieza.", "The class starts."),
+        ],
+    },
+    {
+        "lexemeId": 75, "lemma": "terminar", "pos": "verb", "gender": None,
+        "englishGloss": "to finish; to end", "frequencyRank": 1163, "cefrBand": "A2", "difficultyPrior": 0.5,
+        "reason": "time sequencing", "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 3 routines topic",
+        "sentences": [
+            (185, 188, "Termino el trabajo.", "I finish the job."),
+            (186, 189, "La clase termina ahora.", "The class ends now."),
+        ],
+    },
+    {
+        "lexemeId": 76, "lemma": "cambiar", "pos": "verb", "gender": None,
+        "englishGloss": "to change", "frequencyRank": 595, "cefrBand": "A2", "difficultyPrior": 0.4,
+        "reason": "daily changes and plans", "sourceBasis": "hermitdave/FrequencyWords high-frequency spine",
+        "sentences": [
+            (187, 190, "Cambio de trabajo.", "I change jobs."),
+            (188, 191, "El tiempo cambia.", "The weather changes."),
+        ],
+    },
+    {
+        "lexemeId": 77, "lemma": "pequeño", "pos": "adjective", "gender": None,
+        "englishGloss": "small", "frequencyRank": 535, "cefrBand": "A2", "difficultyPrior": 0.4,
+        "reason": "common description", "sourceBasis": "hermitdave/FrequencyWords high-frequency spine",
+        "sentences": [
+            (189, 192, "La casa es pequeña.", "The house is small."),
+            (190, 193, "El perro es pequeño.", "The dog is small."),
+        ],
+    },
+    {
+        "lexemeId": 78, "lemma": "nuevo", "pos": "adjective", "gender": None,
+        "englishGloss": "new", "frequencyRank": 143, "cefrBand": "A2", "difficultyPrior": 0.3,
+        "reason": "common description", "sourceBasis": "hermitdave/FrequencyWords high-frequency spine",
+        "sentences": [
+            (191, 194, "Tengo un teléfono nuevo.", "I have a new phone."),
+            (192, 195, "La escuela es nueva.", "The school is new."),
+        ],
+    },
+    {
+        "lexemeId": 79, "lemma": "viejo", "pos": "adjective", "gender": None,
+        "englishGloss": "old", "frequencyRank": 576, "cefrBand": "A2", "difficultyPrior": 0.4,
+        "reason": "common description", "sourceBasis": "hermitdave/FrequencyWords high-frequency spine",
+        "sentences": [
+            (193, 196, "Mi coche es viejo.", "My car is old."),
+            (194, 197, "La casa es vieja.", "The house is old."),
+        ],
+    },
+    {
+        "lexemeId": 80, "lemma": "mismo", "pos": "adjective", "gender": None,
+        "englishGloss": "same", "frequencyRank": 173, "cefrBand": "A2", "difficultyPrior": 0.4,
+        "reason": "common description and comparison", "sourceBasis": "hermitdave/FrequencyWords high-frequency spine",
+        "sentences": [
+            (195, 198, "Es la misma persona.", "It is the same person."),
+            (196, 199, "Tengo el mismo teléfono.", "I have the same phone."),
+        ],
+    },
+    {
+        "lexemeId": 81, "lemma": "primero", "pos": "adjective/adverb", "gender": None,
+        "englishGloss": "first", "frequencyRank": 242, "cefrBand": "A2", "difficultyPrior": 0.4,
+        "reason": "sequencing", "sourceBasis": "hermitdave/FrequencyWords high-frequency spine",
+        "sentences": [
+            (197, 200, "Soy el primero.", "I am first."),
+            (198, 201, "Es mi primer día.", "It is my first day."),
+        ],
+    },
+    {
+        "lexemeId": 82, "lemma": "último", "pos": "adjective", "gender": None,
+        "englishGloss": "last; latest", "frequencyRank": 386, "cefrBand": "A2", "difficultyPrior": 0.4,
+        "reason": "sequencing", "sourceBasis": "hermitdave/FrequencyWords high-frequency spine",
+        "sentences": [
+            (199, 202, "Es el último autobús.", "It is the last bus."),
+            (200, 203, "La última pregunta es difícil.", "The last question is difficult."),
+        ],
+    },
+    {
+        "lexemeId": 83, "lemma": "mejor", "pos": "adjective/adverb", "gender": None,
+        "englishGloss": "better; best", "frequencyRank": 116, "cefrBand": "A2", "difficultyPrior": 0.3,
+        "reason": "comparison and health state", "sourceBasis": "hermitdave/FrequencyWords high-frequency spine",
+        "sentences": [
+            (201, 204, "Estoy mejor ahora.", "I am better now."),
+            (202, 205, "Es mejor así.", "It is better this way."),
+        ],
+    },
+    {
+        "lexemeId": 84, "lemma": "peor", "pos": "adjective/adverb", "gender": None,
+        "englishGloss": "worse; worst", "frequencyRank": 798, "cefrBand": "A2", "difficultyPrior": 0.5,
+        "reason": "comparison and health state", "sourceBasis": "hermitdave/FrequencyWords high-frequency spine",
+        "sentences": [
+            (203, 206, "Estoy peor hoy.", "I am worse today."),
+            (204, 207, "Es peor ahora.", "It is worse now."),
+        ],
+    },
+    {
+        "lexemeId": 85, "lemma": "temprano", "pos": "adverb", "gender": None,
+        "englishGloss": "early", "frequencyRank": 1551, "cefrBand": "A2", "difficultyPrior": 0.5,
+        "reason": "time and routines", "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 3 routines topic",
+        "sentences": [
+            (205, 208, "Llego temprano.", "I arrive early."),
+            (206, 209, "Salimos temprano.", "We leave early."),
+        ],
+    },
+    {
+        "lexemeId": 86, "lemma": "tarde", "pos": "adverb/noun", "gender": "F",
+        "englishGloss": "late; afternoon", "frequencyRank": 425, "cefrBand": "A2", "difficultyPrior": 0.4,
+        "reason": "time and routines", "sourceBasis": "hermitdave/FrequencyWords high-frequency spine",
+        "sentences": [
+            (207, 210, "Llego tarde.", "I arrive late."),
+            (208, 211, "Trabajo por la tarde.", "I work in the afternoon."),
+        ],
+    },
+    {
+        "lexemeId": 87, "lemma": "ciudad", "pos": "noun", "gender": "F",
+        "englishGloss": "city", "frequencyRank": 272, "cefrBand": "A2", "difficultyPrior": 0.4,
+        "reason": "places and travel", "sourceBasis": "hermitdave/FrequencyWords high-frequency spine",
+        "sentences": [
+            (209, 212, "Vivo en la ciudad.", "I live in the city."),
+            (210, 213, "La ciudad es grande.", "The city is big."),
+        ],
+    },
+    {
+        "lexemeId": 88, "lemma": "país", "pos": "noun", "gender": "M",
+        "englishGloss": "country", "frequencyRank": 435, "cefrBand": "A2", "difficultyPrior": 0.4,
+        "reason": "places and identity", "sourceBasis": "hermitdave/FrequencyWords high-frequency spine",
+        "sentences": [
+            (211, 214, "Mi país es grande.", "My country is big."),
+            (212, 215, "Vivo en este país.", "I live in this country."),
+        ],
+    },
+    {
+        "lexemeId": 89, "lemma": "amigo", "pos": "noun", "gender": "M",
+        "englishGloss": "friend", "frequencyRank": 160, "cefrBand": "A2", "difficultyPrior": 0.3,
+        "reason": "relationships", "sourceBasis": "hermitdave/FrequencyWords high-frequency spine",
+        "sentences": [
+            (213, 216, "Mi amigo está aquí.", "My friend is here."),
+            (214, 217, "Tengo un amigo.", "I have a friend."),
+        ],
+    },
+    {
+        "lexemeId": 90, "lemma": "niño", "pos": "noun", "gender": "M",
+        "englishGloss": "child; boy", "frequencyRank": 345, "cefrBand": "A2", "difficultyPrior": 0.4,
+        "reason": "people and family", "sourceBasis": "hermitdave/FrequencyWords high-frequency spine",
+        "sentences": [
+            (215, 218, "El niño come.", "The boy eats."),
+            (216, 219, "Veo al niño.", "I see the boy."),
+        ],
+    },
+    {
+        "lexemeId": 91, "lemma": "mujer", "pos": "noun", "gender": "F",
+        "englishGloss": "woman", "frequencyRank": 134, "cefrBand": "A2", "difficultyPrior": 0.3,
+        "reason": "people and relationships", "sourceBasis": "hermitdave/FrequencyWords high-frequency spine",
+        "sentences": [
+            (217, 220, "La mujer trabaja aquí.", "The woman works here."),
+            (218, 221, "Esa mujer es mi amiga.", "That woman is my friend."),
+        ],
+    },
+]
+
 AI_REVIEWED_SENTENCE_PAIRS.update({
     spanish: english
-    for item in AI_ACCELERATED_PACK_A2_003
+    for pack in (AI_ACCELERATED_PACK_A2_003, AI_ACCELERATED_PACK_A2_004)
+    for item in pack
     for _, _, spanish, english in item["sentences"]
 })
 
@@ -462,7 +750,8 @@ A1_A2_TARGET_LEMMAS.extend([
         "reason": item["reason"],
         "sourceBasis": item["sourceBasis"],
     }
-    for item in AI_ACCELERATED_PACK_A2_003
+    for pack in (AI_ACCELERATED_PACK_A2_003, AI_ACCELERATED_PACK_A2_004)
+    for item in pack
 ])
 
 
@@ -484,9 +773,9 @@ class Row:
     reviewEvidence: list[dict] = field(default_factory=list)
 
 
-def append_ai_accelerated_pack(lexemes, sentences, accepted, sentence_lexeme, exercises) -> None:
-    exercise_id = 83
-    for item in AI_ACCELERATED_PACK_A2_003:
+def append_ai_accelerated_pack(pack, pack_slug: str, exercise_id: int,
+                               lexemes, sentences, accepted, sentence_lexeme, exercises) -> int:
+    for item in pack:
         lexeme_id = item["lexemeId"]
         lexemes.append(Row({
             "lexemeId": lexeme_id,
@@ -507,7 +796,7 @@ def append_ai_accelerated_pack(lexemes, sentences, accepted, sentence_lexeme, ex
                 "spanishText": spanish,
                 "englishText": english,
             }, source=AI_DRAFT_SOURCE,
-                sourceId=f"ai_draft:a2-003-{item['lemma']}-{len(sentence_ids)}",
+                sourceId=f"ai_draft:{pack_slug}-{item['lemma']}-{len(sentence_ids)}",
                 license="proprietary", vettingStatus=AI_DRAFT))
             accepted.append(Row({
                 "acceptedAnswerId": accepted_id,
@@ -515,7 +804,7 @@ def append_ai_accelerated_pack(lexemes, sentences, accepted, sentence_lexeme, ex
                 "direction": "ES_TO_EN",
                 "answerText": normalize_answer(english),
             }, source=AI_DRAFT_SOURCE,
-                sourceId=f"ai_draft:a2-003-{item['lemma']}-{len(sentence_ids)}-answer",
+                sourceId=f"ai_draft:{pack_slug}-{item['lemma']}-{len(sentence_ids)}-answer",
                 license="proprietary", vettingStatus=AI_DRAFT))
             sentence_lexeme.append((sentence_id, lexeme_id))
 
@@ -527,6 +816,7 @@ def append_ai_accelerated_pack(lexemes, sentences, accepted, sentence_lexeme, ex
                           "type": "WORD_BANK", "direction": "ES_TO_EN",
                           "targetItemId": lexeme_id, "targetItemType": "LEXEME", "promptHint": None})
         exercise_id += 1
+    return exercise_id
 
 
 def vetted_sample():
@@ -1472,7 +1762,14 @@ def vetted_sample():
         {"exerciseId": 82, "nodeId": 1, "sentenceId": 118, "type": "WORD_BANK", "direction": "ES_TO_EN",
          "targetItemId": 41, "targetItemType": "LEXEME", "promptHint": None},
     ]
-    append_ai_accelerated_pack(lexemes, sentences, accepted, sentence_lexeme, exercises)
+    next_exercise_id = append_ai_accelerated_pack(
+        AI_ACCELERATED_PACK_A2_003, "a2-003", 83,
+        lexemes, sentences, accepted, sentence_lexeme, exercises,
+    )
+    append_ai_accelerated_pack(
+        AI_ACCELERATED_PACK_A2_004, "a2-004", next_exercise_id,
+        lexemes, sentences, accepted, sentence_lexeme, exercises,
+    )
     return lexemes, sentences, accepted, sentence_lexeme, conj, exercises, nodes
 
 
