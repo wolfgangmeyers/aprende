@@ -829,6 +829,64 @@ Acceptance result:
   content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
   `autoReviewLedger`.
 
+## A2-023 Accelerated B1/B2 Education, Community, Environment, Media, Family, Civic, Shopping, Delivery, and Money Pack
+
+**Status:** implemented locally after A2-022.
+
+**Goal:** add learner-ready B1/B2 breadth for education, community services, civic events,
+environmental issues, media literacy, family logistics, school communication, municipal services,
+transport access, digital payments, shopping, delivery, and customs language. Rows use the
+`AI_DRAFT -> AUTO_CHECKED -> AUTO_REVIEWED -> REVIEWED` lane with two independent automatic
+reviewers.
+
+**Target lemmas:** `matrícula abierta`, `plaza disponible`, `lista provisional`, `nota final`,
+`examen aprobado`, `examen suspendido`, `clase cancelada`, `clase recuperada`, `tarea
+entregada`, `tarea atrasada`, `curso intensivo`, `curso gratuito`, `beca parcial`, `beca
+completa`, `tutor asignado`, `orientación académica`, `biblioteca abierta`, `sala de estudio`,
+`centro cultural`, `actividad gratuita`, `inscripción previa`, `aforo limitado`, `entrada
+gratuita`, `entrada agotada`, `evento aplazado`, `evento suspendido`, `voluntariado local`,
+`apoyo comunitario`, `ayuda social`, `comedor social`, `albergue temporal`, `donación puntual`,
+`recogida solidaria`, `zona verde`, `parque cerrado`, `árbol caído`, `rama peligrosa`, `aire
+contaminado`, `olor fuerte`, `agua potable`, `agua no potable`, `residuo peligroso`, `punto
+limpio`, `bolsa reutilizable`, `consumo responsable`, `noticia falsa`, `fuente fiable`,
+`titular engañoso`, `artículo completo`, `comentario público`, `perfil privado`, `perfil
+público`, `foto compartida`, `video corto`, `audio enviado`, `mensaje reenviado`, `grupo
+familiar`, `cuidado compartido`, `permiso familiar`, `emergencia familiar`, `reunión familiar`,
+`visita familiar`, `cita escolar`, `reunión de padres`, `autorización escolar`, `comedor
+escolar`, `transporte escolar`, `material escolar`, `uniforme escolar`, `ausencia justificada`,
+`ausencia injustificada`, `retraso justificado`, `justificación escrita`, `cita de
+orientación`, `consulta vecinal`, `reunión vecinal`, `ruido nocturno`, `fiesta autorizada`,
+`permiso de obra`, `obra menor`, `licencia municipal`, `tasa municipal`, `recibo municipal`,
+`servicio municipal`, `zona peatonal`, `carril bici`, `aparcamiento gratuito`, `aparcamiento
+reservado`, `zona azul`, `parquímetro roto`, `carga eléctrica`, `vehículo compartido`, `boleto
+válido`, `boleto vencido`, `pago móvil`, `monedero digital`, `saldo digital`, `recarga
+automática`, `pago sin contacto`, `código promocional`, `descuento caducado`, `oferta
+limitada`, `precio rebajado`, `producto agotado`, `producto disponible`, `talla agotada`,
+`color disponible`, `cambio gratuito`, `devolución parcial`, `reembolso parcial`, `envío
+urgente`, `entrega nocturna`, `paquete retenido`, `aduana pendiente`, `documento aduanero`,
+`valor declarado`, `firma de entrega`, `prueba de entrega`, `recibo de compra`, `historial de
+compras`.
+
+Implemented content delta:
+
+- 120 reviewed Wiktionary lexeme rows.
+- 240 `AI_DRAFT` sentence rows promoted to `REVIEWED` by two independent automatic reviewers.
+- 240 `AI_DRAFT` accepted-answer rows promoted to `REVIEWED` by the same two-reviewer gate.
+- 240 `sentence_lexeme` joins.
+- 240 derived exercises:
+  - production and recognition exercises for all 120 target lemmas.
+
+Acceptance target:
+
+- `learnerReadyLexemes` increases from 1825 to 1945.
+- `reviewedSentences` increases from 3710 to 3950.
+- `reviewedAcceptedAnswers` increases from 3713 to 3953.
+- `exerciseCount` increases from 3650 to 3890.
+- `missingA1A2GapCount` remains 0.
+- No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 480 generated
+  content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
+  `autoReviewLedger`.
+
 ## A2-022 Accelerated B1/B2 Emergencies, Transport, Shopping, Food, Household, Digital, Planning, and Argument Pack
 
 **Status:** implemented locally after A2-021.
