@@ -38,11 +38,11 @@
   },
   "summary": {
     "rawLexemes": 1329,
-    "learnerReadyLexemes": 1328,
+    "learnerReadyLexemes": 1329,
     "reviewedSentences": 2718,
     "reviewedAcceptedAnswers": 2721,
     "exerciseCount": 2658,
-    "missingA1A2GapCount": 1
+    "missingA1A2GapCount": 0
   },
   "counts": {
     "lexemesByPos": {
@@ -97,20 +97,5 @@
       "WORD_BANK": 1329
     }
   },
-  "topMissingA1A2Gaps": [
-    {
-      "lemma": "viajar",
-      "cefrBand": "A2",
-      "pos": "verb",
-      "priority": 3,
-      "reason": "travel",
-      "sourceBasis": "SPANISH_BREADTH_PLAN.md Phase 3 travel topic",
-      "status": "not_learner_ready",
-      "blockers": [
-        "needs_production_exercise",
-        "needs_recognition_exercise"
-      ],
-      "currentLexemeId": 31
-    }
-  ]
+  "topMissingA1A2Gaps": []
 }
