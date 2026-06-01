@@ -2175,3 +2175,69 @@ Acceptance result:
 - No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 480 generated
   content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
   `autoReviewLedger`.
+
+## A2-018 Accelerated B1/B2 Practical Fluency, Services, Money, Medical, Work, and Travel Pack
+
+**Status:** implemented locally after A2-017.
+
+**Goal:** add learner-ready B1/B2 breadth for short listening-friendly discourse chunks,
+conversation repair, service interactions, bureaucracy, legal/money workflows, medical systems,
+workplace language, transit, travel disruptions, and lodging. Rows use the
+`AI_DRAFT -> AUTO_CHECKED -> AUTO_REVIEWED -> REVIEWED` lane with two independent automatic
+reviewers.
+
+**Target lemmas:** `en fin`, `antes que nada`, `sobre todo`, `a partir de ahora`,
+`tarde o temprano`, `de vez en cuando`, `de verdad`, `por desgracia`, `por suerte`,
+`menos mal`, `como mínimo`, `como máximo`, `vale la pena`, `no vale la pena`,
+`ahora mismo`, `en seguida`, `por aquí`, `por allí`, `a lo mejor`, `por casualidad`,
+`de memoria`, `de acuerdo contigo`, `no estoy de acuerdo`, `me explico`, `explíqueme`,
+`perdón, no entendí`, `puede hablar más alto`, `puede escribirlo`, `lo digo por esto`,
+`no quise decir eso`, `lo reviso y le aviso`, `le llamo en cuanto pueda`,
+`le envío el documento`, `quedo a la espera`, `gracias de antemano`, `sentido común`,
+`punto de vista`, `queja formal`, `servicio al cliente`, `número de seguimiento`,
+`paquete perdido`, `entrega pendiente`, `recogida en tienda`, `devolución gratuita`,
+`garantía extendida`, `datos personales`, `protección de datos`, `consentimiento firmado`,
+`copia del contrato`, `cláusula abusiva`, `aviso previo`, `incumplimiento`,
+`multa administrativa`, `trámite pendiente`, `solicitud oficial`,
+`respuesta por escrito`, `descuento aplicado`, `cargo duplicado`, `comisión bancaria`,
+`extracto bancario`, `límite diario`, `cuenta bloqueada`, `clave de acceso`,
+`contraseña temporal`, `recuperar contraseña`, `identificación oficial`,
+`ingreso mensual`, `gasto fijo`, `presupuesto familiar`, `ahorro mensual`,
+`préstamo personal`, `analítica de sangre`, `resultado médico`, `informe de alta`,
+`cansancio`, `ansiedad`, `inyección`, `tensión arterial`, `seguro laboral`,
+`jornada completa`, `jornada parcial`, `riesgo laboral`, `seguridad social`,
+`recursos humanos`, `responsable directo`, `turno partido`, `viaje de trabajo`,
+`billete electrónico`, `escala corta`, `retraso acumulado`, `transporte público`,
+`abono mensual`, `parada cercana`, `ruta alternativa`, `mapa sin conexión`,
+`reserva cancelada`, `confirmación por correo`, `a fin de cuentas`, `para variar`,
+`por mi parte`, `por tu parte`, `hasta aquí`, `de paso`, `sin querer`, `sin prisa`,
+`en conjunto`, `cada vez más`, `cada vez menos`, `copia simple`, `contrato firmado`,
+`firma manuscrita`, `tasa pendiente`, `oficina virtual`, `buzón electrónico`,
+`cita confirmada`, `documento vencido`, `autorización firmada`,
+`reclamación pendiente`, `respuesta automática`, `atención presencial`,
+`horario de atención`, `dolor lumbar`, `dolor cervical`, `receta electrónica`,
+`historial clínico`, `urgencia dental`, `revisión médica`, `prueba diagnóstica`,
+`tratamiento urgente`, `inflamación`, `sueldo base`, `nómina atrasada`,
+`convenio laboral`, `jornada intensiva`, `puesto fijo`, `conexión cancelada`,
+`equipaje de mano`, `escala larga`, `cambio de puerta`, `autobús nocturno`,
+`tren regional`, `estación central`, `alojamiento reservado`.
+
+Implemented content delta:
+
+- 143 reviewed Wiktionary lexeme rows.
+- 286 `AI_DRAFT` sentence rows promoted to `REVIEWED` by two independent automatic reviewers.
+- 286 `AI_DRAFT` accepted-answer rows promoted to `REVIEWED` by the same two-reviewer gate.
+- 286 `sentence_lexeme` joins.
+- 286 derived exercises:
+  - production and recognition exercises for all 143 target lemmas.
+
+Acceptance result:
+
+- `learnerReadyLexemes` increases from 1186 to 1329.
+- `reviewedSentences` increases from 2432 to 2718.
+- `reviewedAcceptedAnswers` increases from 2435 to 2721.
+- `exerciseCount` increases from 2372 to 2658.
+- `missingA1A2GapCount` remains 0.
+- No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 572 generated
+  content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
+  `autoReviewLedger`.
