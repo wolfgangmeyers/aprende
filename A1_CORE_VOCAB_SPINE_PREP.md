@@ -1252,3 +1252,117 @@ Acceptance result:
 - No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 280 generated
   content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
   `autoReviewLedger`.
+
+## A2-010 Accelerated B1 Connectors and Practical Domains Pack
+
+**Status:** implemented locally after A2-009.
+
+**Goal:** broaden learner-ready B1 fluency with connectors, common chunks, sequencing language,
+problem/solution verbs, workplace nouns, appointments, health services, housing, travel, and
+banking. Rows use the `AI_DRAFT -> AUTO_CHECKED -> AUTO_REVIEWED -> REVIEWED` lane with two
+independent automatic reviewers.
+
+**Target lemmas:**
+
+| Lemma | POS | Domain |
+|---|---|---|
+| `aunque` | conjunction | connectors |
+| `además` | adverb | connectors |
+| `entonces` | adverb | connectors and narration |
+| `mientras` | conjunction | connectors and narration |
+| `todavía` | adverb | time and narration |
+| `tampoco` | adverb | connectors and opinions |
+| `incluso` | adverb | connectors and emphasis |
+| `quizás` | adverb | opinions and uncertainty |
+| `aproximadamente` | adverb | appointments and banking |
+| `normalmente` | adverb | narration and routine |
+| `actualmente` | adverb | workplace and narration |
+| `especialmente` | adverb | opinions and emphasis |
+| `finalmente` | adverb | narration and sequencing |
+| `anteriormente` | adverb | past narration |
+| `después` | adverb | sequencing and narration |
+| `durante` | preposition | time and narration |
+| `según` | preposition | connectors and opinions |
+| `mediante` | preposition | services and banking |
+| `excepto` | preposition | connectors and exceptions |
+| `alrededor` | adverb | travel and housing |
+| `relatar` | verb | narration |
+| `indicar` | verb | services and directions |
+| `señalar` | verb | narration and services |
+| `evitar` | verb | problems and health |
+| `prevenir` | verb | health and problems |
+| `afrontar` | verb | problems and solutions |
+| `enfrentar` | verb | problems and conflict |
+| `denunciar` | verb | problems and services |
+| `resolver` | verb | problems and solutions |
+| `comprobar` | verb | services and problem solving |
+| `verificar` | verb | services and banking |
+| `gestionar` | verb | workplace and services |
+| `tramitar` | verb | services and bureaucracy |
+| `anular` | verb | appointments and services |
+| `posponer` | verb | appointments and planning |
+| `citar` | verb | appointments and services |
+| `acudir` | verb | appointments and health |
+| `asistir` | verb | workplace and appointments |
+| `notificar` | verb | services and workplace |
+| `presupuesto` | noun | banking and services |
+| `cliente` | noun | workplace and services |
+| `proveedor` | noun | workplace and services |
+| `equipo` | noun | workplace |
+| `informe` | noun | workplace and narration |
+| `documento` | noun | workplace and services |
+| `tarea` | noun | workplace and planning |
+| `plazo` | noun | workplace and planning |
+| `objetivo` | noun | planning and workplace |
+| `resultado` | noun | workplace and health |
+| `dato` | noun | workplace and banking |
+| `formulario` | noun | services and appointments |
+| `permiso` | noun | services and workplace |
+| `calendario` | noun | appointments and planning |
+| `disponibilidad` | noun | appointments and services |
+| `retraso` | noun | travel and appointments |
+| `cambio` | noun | planning and services |
+| `enfermedad` | noun | health |
+| `infección` | noun | health |
+| `clínica` | noun | health and services |
+| `hospital` | noun | health and services |
+| `paciente` | noun | health |
+| `análisis` | noun | health and workplace |
+| `tratamiento` | noun | health |
+| `medicamento` | noun | health |
+| `prueba` | noun | health and services |
+| `apartamento` | noun | housing |
+| `alquiler` | noun | housing and banking |
+| `vecino` | noun | housing and social interaction |
+| `llave` | noun | housing and travel |
+| `ascensor` | noun | housing and services |
+| `baño` | noun | housing and travel |
+| `destino` | noun | travel |
+| `ruta` | noun | travel and transit |
+| `pasaporte` | noun | travel and services |
+| `billete` | noun | travel and banking |
+| `préstamo` | noun | banking |
+| `efectivo` | noun | banking and services |
+| `recibo` | noun | banking and services |
+| `cajero` | noun | banking and services |
+| `cuota` | noun | banking and services |
+
+Implemented content delta:
+
+- 80 reviewed Wiktionary lexeme rows.
+- 160 `AI_DRAFT` sentence rows promoted to `REVIEWED` by two independent automatic reviewers.
+- 160 `AI_DRAFT` accepted-answer rows promoted to `REVIEWED` by the same two-reviewer gate.
+- 160 `sentence_lexeme` joins.
+- 160 derived exercises:
+  - production and recognition exercises for all 80 target lemmas.
+
+Acceptance result:
+
+- `learnerReadyLexemes` increases from 346 to 426.
+- `reviewedSentences` increases from 752 to 912.
+- `reviewedAcceptedAnswers` increases from 755 to 915.
+- `exerciseCount` increases from 692 to 852.
+- `missingA1A2GapCount` remains 0.
+- No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 320 generated
+  content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
+  `autoReviewLedger`.
