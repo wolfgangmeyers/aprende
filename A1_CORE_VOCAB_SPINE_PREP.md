@@ -4080,3 +4080,39 @@ Acceptance result:
 - No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 480 generated
   content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
   `autoReviewLedger`.
+
+## A2-062 Accelerated B1/B2 Housing, Repairs, Utilities, and Technical Visits Pack
+
+**Status:** implemented locally after A2-061.
+
+**Goal:** add learner-ready B1/B2 breadth for visible damage, leaks, constant noise, power/water
+cuts, slow connections, broken appliances, doors/windows, and technical visits across housing,
+work, travel, repairs, bureaucracy, services, emergency, and legal contexts. Rows use the
+`AI_DRAFT -> AUTO_CHECKED -> AUTO_REVIEWED -> REVIEWED` lane with two independent automatic
+reviewers.
+
+**Target lemma families:** `daño visible en ...`, `fuga pequeña en ...`, `ruido constante en ...`,
+`corte eléctrico en ...`, `corte de agua en ...`, `conexión lenta en ...`, `aparato roto en ...`,
+`puerta cerrada en ...`, `ventana abierta en ...`, and `visita técnica en ...` across housing,
+buildings, offices, hotels, repair shops, insurance, tech support, emergencies, contracts, rent,
+repairs, and support.
+
+Implemented content delta:
+
+- 120 reviewed Wiktionary lexeme rows.
+- 240 `AI_DRAFT` sentence rows promoted to `REVIEWED` by two independent automatic reviewers.
+- 240 `AI_DRAFT` accepted-answer rows promoted to `REVIEWED` by the same two-reviewer gate.
+- 240 `sentence_lexeme` joins.
+- 240 derived exercises:
+  - production and recognition exercises for all 120 target lemmas.
+
+Acceptance result:
+
+- `learnerReadyLexemes` increases from 6471 to 6591.
+- `reviewedSentences` increases from 13002 to 13242.
+- `reviewedAcceptedAnswers` increases from 13005 to 13245.
+- `exerciseCount` increases from 12942 to 13182.
+- `missingA1A2GapCount` remains 0.
+- No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 480 generated
+  content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
+  `autoReviewLedger`.
