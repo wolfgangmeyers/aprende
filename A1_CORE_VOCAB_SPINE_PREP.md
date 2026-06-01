@@ -3719,3 +3719,39 @@ Acceptance result:
 - No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 480 generated
   content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
   `autoReviewLedger`.
+
+## A2-052 Accelerated B1/B2 Service Locations and Access Points Pack
+
+**Status:** implemented locally after A2-051.
+
+**Goal:** add learner-ready B1/B2 breadth for service locations, access points, waiting areas,
+restricted/common areas, service windows, and assigned desks across banking, health, work, travel,
+public services, legal, repairs, housing, reception, and customer-service contexts. Rows use the
+`AI_DRAFT -> AUTO_CHECKED -> AUTO_REVIEWED -> REVIEWED` lane with two independent automatic
+reviewers.
+
+**Target lemma families:** `punto de atención en ...`, `punto de información en ...`,
+`zona de espera en ...`, `zona segura en ...`, `área restringida en ...`, `área común en ...`,
+`sección abierta en ...`, `sección cerrada en ...`, `ventanilla disponible en ...`, and
+`mesa asignada en ...` across banks, hospitals, offices, airports, stations, city hall, legal aid,
+repair shops, buildings, reception, customer service, and waiting rooms.
+
+Implemented content delta:
+
+- 120 reviewed Wiktionary lexeme rows.
+- 240 `AI_DRAFT` sentence rows promoted to `REVIEWED` by two independent automatic reviewers.
+- 240 `AI_DRAFT` accepted-answer rows promoted to `REVIEWED` by the same two-reviewer gate.
+- 240 `sentence_lexeme` joins.
+- 240 derived exercises:
+  - production and recognition exercises for all 120 target lemmas.
+
+Acceptance result:
+
+- `learnerReadyLexemes` increases from 5271 to 5391.
+- `reviewedSentences` increases from 10602 to 10842.
+- `reviewedAcceptedAnswers` increases from 10605 to 10845.
+- `exerciseCount` increases from 10542 to 10782.
+- `missingA1A2GapCount` remains 0.
+- No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 480 generated
+  content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
+  `autoReviewLedger`.
