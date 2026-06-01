@@ -4338,3 +4338,40 @@ Acceptance result:
 - No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 480 generated
   content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
   `autoReviewLedger`.
+
+## A2-069 Accelerated B1/B2 Housing, Lodging, Utilities, and Maintenance Pack
+
+**Status:** implemented locally after A2-068.
+
+**Goal:** add learner-ready B1/B2 breadth for electrical problems, water problems, lost keys,
+blocked doors, broken windows, night noise, pending repairs, necessary cleaning, scheduled visits,
+and entry permission across apartments, buildings, hotels, rooms, nighttime issues, visits,
+cleaning, moving, landlords, maintenance, contracts, and insurance. Rows use the
+`AI_DRAFT -> AUTO_CHECKED -> AUTO_REVIEWED -> REVIEWED` lane with two independent automatic
+reviewers.
+
+**Target lemma families:** `problema eléctrico en ...`, `problema de agua en ...`,
+`llave perdida en ...`, `puerta bloqueada en ...`, `ventana rota en ...`,
+`ruido nocturno en ...`, `reparación pendiente en ...`, `limpieza necesaria en ...`,
+`visita programada en ...`, and `permiso de entrada en ...` across housing, travel, repairs,
+legal, and bureaucracy contexts.
+
+Implemented content delta:
+
+- 120 reviewed Wiktionary lexeme rows.
+- 240 `AI_DRAFT` sentence rows promoted to `REVIEWED` by two independent automatic reviewers.
+- 240 `AI_DRAFT` accepted-answer rows promoted to `REVIEWED` by the same two-reviewer gate.
+- 240 `sentence_lexeme` joins.
+- 240 derived exercises:
+  - production and recognition exercises for all 120 target lemmas.
+
+Acceptance result:
+
+- `learnerReadyLexemes` increases from 7311 to 7431.
+- `reviewedSentences` increases from 14682 to 14922.
+- `reviewedAcceptedAnswers` increases from 14685 to 14925.
+- `exerciseCount` increases from 14622 to 14862.
+- `missingA1A2GapCount` remains 0.
+- No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 480 generated
+  content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
+  `autoReviewLedger`.

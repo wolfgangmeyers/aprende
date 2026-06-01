@@ -7336,6 +7336,43 @@ AI_ACCELERATED_PACK_A2_068 = build_numbered_ai_accelerated_phrase_pack(7192, 144
     ]
 ]))
 
+AI_ACCELERATED_PACK_A2_069 = build_numbered_ai_accelerated_phrase_pack(7312, 14683, 14686, build_phrase_pack_specs([
+    (
+        f"{spanish_head} {spanish_complement}",
+        gender,
+        f"{english_head} {english_complement}",
+        domain,
+        indefinite_article,
+        definite_article,
+    )
+    for spanish_head, gender, english_head, indefinite_article, definite_article in [
+        ("problema eléctrico", "M", "electrical problem", "un", "El"),
+        ("problema de agua", "M", "water problem", "un", "El"),
+        ("llave perdida", "F", "lost key", "una", "La"),
+        ("puerta bloqueada", "F", "blocked door", "una", "La"),
+        ("ventana rota", "F", "broken window", "una", "La"),
+        ("ruido nocturno", "M", "night noise", "un", "El"),
+        ("reparación pendiente", "F", "pending repair", "una", "La"),
+        ("limpieza necesaria", "F", "necessary cleaning", "una", "La"),
+        ("visita programada", "F", "scheduled visit", "una", "La"),
+        ("permiso de entrada", "M", "entry permission", "un", "El"),
+    ]
+    for spanish_complement, english_complement, domain in [
+        ("en el apartamento", "in the apartment", "housing"),
+        ("en el edificio", "in the building", "housing"),
+        ("en el hotel", "at the hotel", "travel"),
+        ("en la habitación", "in the room", "travel"),
+        ("durante la noche", "during the night", "housing"),
+        ("antes de la visita", "before the visit", "housing"),
+        ("después de la limpieza", "after cleaning", "housing"),
+        ("para la mudanza", "for moving", "housing"),
+        ("con el propietario", "with the landlord", "housing"),
+        ("con mantenimiento", "with maintenance", "repairs"),
+        ("según el contrato", "under the contract", "legal"),
+        ("para el seguro", "for insurance", "bureaucracy"),
+    ]
+]))
+
 AI_REVIEWED_SENTENCE_PAIRS.update({
     spanish: english
     for pack in (
@@ -7405,6 +7442,7 @@ AI_REVIEWED_SENTENCE_PAIRS.update({
         AI_ACCELERATED_PACK_A2_066,
         AI_ACCELERATED_PACK_A2_067,
         AI_ACCELERATED_PACK_A2_068,
+        AI_ACCELERATED_PACK_A2_069,
     )
     for item in pack
     for _, _, spanish, english in item["sentences"]
@@ -7580,6 +7618,7 @@ A1_A2_TARGET_LEMMAS.extend([
         AI_ACCELERATED_PACK_A2_066,
         AI_ACCELERATED_PACK_A2_067,
         AI_ACCELERATED_PACK_A2_068,
+        AI_ACCELERATED_PACK_A2_069,
     )
     for item in pack
 ])
@@ -8852,8 +8891,12 @@ def vetted_sample():
         AI_ACCELERATED_PACK_A2_067, "a2-067", next_exercise_id,
         lexemes, sentences, accepted, sentence_lexeme, exercises,
     )
-    append_ai_accelerated_pack(
+    next_exercise_id = append_ai_accelerated_pack(
         AI_ACCELERATED_PACK_A2_068, "a2-068", next_exercise_id,
+        lexemes, sentences, accepted, sentence_lexeme, exercises,
+    )
+    append_ai_accelerated_pack(
+        AI_ACCELERATED_PACK_A2_069, "a2-069", next_exercise_id,
         lexemes, sentences, accepted, sentence_lexeme, exercises,
     )
     return lexemes, sentences, accepted, sentence_lexeme, conj, exercises, nodes
