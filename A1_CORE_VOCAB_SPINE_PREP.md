@@ -3684,3 +3684,38 @@ Acceptance result:
 - No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 480 generated
   content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
   `autoReviewLedger`.
+
+## A2-051 Accelerated B1/B2 Deadlines, Dates, and Times Pack
+
+**Status:** implemented locally after A2-050.
+
+**Goal:** add learner-ready B1/B2 breadth for deadlines, dates, and times in money, services,
+travel, bureaucracy, repairs, health, work, and legal contexts. Rows use the
+`AI_DRAFT -> AUTO_CHECKED -> AUTO_REVIEWED -> REVIEWED` lane with two independent automatic
+reviewers.
+
+**Target lemma families:** `plazo mínimo para ...`, `plazo máximo para ...`, `plazo final para ...`,
+`plazo nuevo para ...`, `fecha límite para ...`, `fecha nueva para ...`,
+`fecha confirmada para ...`, `fecha prevista para ...`, `hora exacta para ...`, and
+`hora nueva para ...` across payment, appointments, delivery, bookings, procedures, applications,
+repairs, treatment, meetings, trips, contracts, and claims.
+
+Implemented content delta:
+
+- 120 reviewed Wiktionary lexeme rows.
+- 240 `AI_DRAFT` sentence rows promoted to `REVIEWED` by two independent automatic reviewers.
+- 240 `AI_DRAFT` accepted-answer rows promoted to `REVIEWED` by the same two-reviewer gate.
+- 240 `sentence_lexeme` joins.
+- 240 derived exercises:
+  - production and recognition exercises for all 120 target lemmas.
+
+Acceptance result:
+
+- `learnerReadyLexemes` increases from 5151 to 5271.
+- `reviewedSentences` increases from 10362 to 10602.
+- `reviewedAcceptedAnswers` increases from 10365 to 10605.
+- `exerciseCount` increases from 10302 to 10542.
+- `missingA1A2GapCount` remains 0.
+- No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 480 generated
+  content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
+  `autoReviewLedger`.

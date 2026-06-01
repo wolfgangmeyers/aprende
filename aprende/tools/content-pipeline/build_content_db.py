@@ -6670,6 +6670,43 @@ AI_ACCELERATED_PACK_A2_050 = build_numbered_ai_accelerated_phrase_pack(5032, 101
     ]
 ]))
 
+AI_ACCELERATED_PACK_A2_051 = build_numbered_ai_accelerated_phrase_pack(5152, 10363, 10366, build_phrase_pack_specs([
+    (
+        f"{spanish_head} {spanish_complement}",
+        gender,
+        f"{english_head} {english_complement}",
+        domain,
+        indefinite_article,
+        definite_article,
+    )
+    for spanish_head, gender, english_head, indefinite_article, definite_article in [
+        ("plazo mínimo", "M", "minimum deadline", "un", "El"),
+        ("plazo máximo", "M", "maximum deadline", "un", "El"),
+        ("plazo final", "M", "final deadline", "un", "El"),
+        ("plazo nuevo", "M", "new deadline", "un", "El"),
+        ("fecha límite", "F", "deadline", "una", "La"),
+        ("fecha nueva", "F", "new date", "una", "La"),
+        ("fecha confirmada", "F", "confirmed date", "una", "La"),
+        ("fecha prevista", "F", "expected date", "una", "La"),
+        ("hora exacta", "F", "exact time", "una", "La"),
+        ("hora nueva", "F", "new time", "una", "La"),
+    ]
+    for spanish_complement, english_complement, domain in [
+        ("para el pago", "for payment", "money"),
+        ("para la cita", "for appointment", "services"),
+        ("para la entrega", "for delivery", "services"),
+        ("para la reserva", "for booking", "travel"),
+        ("para el trámite", "for the procedure", "bureaucracy"),
+        ("para la solicitud", "for the application", "bureaucracy"),
+        ("para la reparación", "for repair", "repairs"),
+        ("para el tratamiento", "for treatment", "health"),
+        ("para la reunión", "for the meeting", "work"),
+        ("para el viaje", "for the trip", "travel"),
+        ("para el contrato", "for the contract", "legal"),
+        ("para el reclamo", "for the claim", "services"),
+    ]
+]))
+
 AI_REVIEWED_SENTENCE_PAIRS.update({
     spanish: english
     for pack in (
@@ -6721,6 +6758,7 @@ AI_REVIEWED_SENTENCE_PAIRS.update({
         AI_ACCELERATED_PACK_A2_048,
         AI_ACCELERATED_PACK_A2_049,
         AI_ACCELERATED_PACK_A2_050,
+        AI_ACCELERATED_PACK_A2_051,
     )
     for item in pack
     for _, _, spanish, english in item["sentences"]
@@ -6878,6 +6916,7 @@ A1_A2_TARGET_LEMMAS.extend([
         AI_ACCELERATED_PACK_A2_048,
         AI_ACCELERATED_PACK_A2_049,
         AI_ACCELERATED_PACK_A2_050,
+        AI_ACCELERATED_PACK_A2_051,
     )
     for item in pack
 ])
@@ -8078,8 +8117,12 @@ def vetted_sample():
         AI_ACCELERATED_PACK_A2_049, "a2-049", next_exercise_id,
         lexemes, sentences, accepted, sentence_lexeme, exercises,
     )
-    append_ai_accelerated_pack(
+    next_exercise_id = append_ai_accelerated_pack(
         AI_ACCELERATED_PACK_A2_050, "a2-050", next_exercise_id,
+        lexemes, sentences, accepted, sentence_lexeme, exercises,
+    )
+    append_ai_accelerated_pack(
+        AI_ACCELERATED_PACK_A2_051, "a2-051", next_exercise_id,
         lexemes, sentences, accepted, sentence_lexeme, exercises,
     )
     return lexemes, sentences, accepted, sentence_lexeme, conj, exercises, nodes
