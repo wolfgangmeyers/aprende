@@ -1366,3 +1366,127 @@ Acceptance result:
 - No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 320 generated
   content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
   `autoReviewLedger`.
+
+## A2-011 Accelerated B1 Connectors, Services, and Problem-Solving Pack
+
+**Status:** implemented locally after A2-010.
+
+**Goal:** extend B1 fluency with multiword connectors, narration chunks, opinion/problem-solving
+language, workplace/service interactions, health/body vocabulary, housing/travel needs, and banking
+support language. Rows use the `AI_DRAFT -> AUTO_CHECKED -> AUTO_REVIEWED -> REVIEWED` lane with
+two independent automatic reviewers.
+
+**Target lemmas:**
+
+| Lemma | POS | Domain |
+|---|---|---|
+| `sin embargo` | adverbial phrase | connectors and opinions |
+| `por eso` | adverbial phrase | connectors and explanations |
+| `alternativamente` | adverb | connectors and planning |
+| `por ejemplo` | adverbial phrase | connectors and examples |
+| `en cuanto a` | prepositional phrase | connectors and workplace |
+| `a pesar de` | prepositional phrase | connectors and narration |
+| `de repente` | adverbial phrase | narration |
+| `al principio` | adverbial phrase | narration and sequencing |
+| `al final` | adverbial phrase | narration and sequencing |
+| `por lo tanto` | adverbial phrase | connectors and explanations |
+| `soler` | verb | routine and narration |
+| `mantener` | verb | workplace and health |
+| `apoyar` | verb | social and workplace |
+| `permitirse` | verb | banking and decisions |
+| `acostumbrarse` | verb | housing and work |
+| `convencer` | verb | opinions and conflict |
+| `criticar` | verb | opinions and workplace |
+| `valorar` | verb | opinions and workplace |
+| `argumentar` | verb | opinions and workplace |
+| `aclarar` | verb | workplace and services |
+| `corregir` | verb | workplace and services |
+| `cometer` | verb | problems and narration |
+| `fallar` | verb | problems and services |
+| `funcionar` | verb | problems and services |
+| `bloquear` | verb | banking and problems |
+| `desbloquear` | verb | banking and services |
+| `cargar` | verb | banking and services |
+| `cobertura` | noun | health and services |
+| `seguridad` | noun | health, housing, and banking |
+| `riesgo` | noun | health and banking |
+| `daño` | noun | problems and health |
+| `avería` | noun | housing and repairs |
+| `gasto` | noun | banking and housing |
+| `ingreso` | noun | banking and health |
+| `saldo` | noun | banking |
+| `cargo` | noun | banking and workplace |
+| `depósito` | noun | banking and housing |
+| `garantía` | noun | services and housing |
+| `reserva` | noun | travel and appointments |
+| `estancia` | noun | travel and lodging |
+| `recepción` | noun | lodging and services |
+| `maleta` | noun | travel |
+| `embarque` | noun | travel and transit |
+| `salida` | noun | travel and transit |
+| `llegada` | noun | travel and narration |
+| `conexión` | noun | travel and services |
+| `frontera` | noun | travel |
+| `visado` | noun | travel and services |
+| `barrio` | noun | housing and social |
+| `edificio` | noun | housing and services |
+| `calefacción` | noun | housing and services |
+| `mudanza` | noun | housing |
+| `contraseña` | noun | services and banking |
+| `usuario` | noun | services and technology |
+| `aplicación` | noun | services and technology |
+| `mensaje` | noun | social and services |
+| `llamada` | noun | social and services |
+| `código` | noun | services and banking |
+| `copia` | noun | workplace and services |
+| `firma` | noun | workplace and services |
+| `acuerdo` | noun | workplace and conflict |
+| `decisión` | noun | workplace and opinions |
+| `duda` | noun | opinions and services |
+| `opción` | noun | planning and services |
+| `ventaja` | noun | opinions and comparisons |
+| `desventaja` | noun | opinions and comparisons |
+| `culpa` | noun | conflict and problems |
+| `error` | noun | problems and services |
+| `solución` | noun | problems and solutions |
+| `alternativa` | noun | planning and opinions |
+| `prioridad` | noun | workplace and planning |
+| `responsabilidad` | noun | workplace and obligations |
+| `requisito` | noun | services and work |
+| `norma` | noun | workplace and services |
+| `multa` | noun | services and travel |
+| `reclamación` | noun | services and complaints |
+| `atención` | noun | services and health |
+| `cuidado` | noun | health and social |
+| `dolor` | noun | health |
+| `fiebre` | noun | health |
+| `tos` | noun | health |
+| `herida` | noun | health |
+| `espalda` | noun | health and body |
+| `brazo` | noun | health and body |
+| `pierna` | noun | health and body |
+| `estómago` | noun | health and body |
+| `positivo` | adjective | opinions and health |
+| `negativo` | adjective | opinions and health |
+| `útil` | adjective | opinions and services |
+| `inútil` | adjective | opinions and complaints |
+
+Implemented content delta:
+
+- 90 reviewed Wiktionary lexeme rows.
+- 180 `AI_DRAFT` sentence rows promoted to `REVIEWED` by two independent automatic reviewers.
+- 180 `AI_DRAFT` accepted-answer rows promoted to `REVIEWED` by the same two-reviewer gate.
+- 180 `sentence_lexeme` joins.
+- 180 derived exercises:
+  - production and recognition exercises for all 90 target lemmas.
+
+Acceptance result:
+
+- `learnerReadyLexemes` increases from 426 to 516.
+- `reviewedSentences` increases from 912 to 1092.
+- `reviewedAcceptedAnswers` increases from 915 to 1095.
+- `exerciseCount` increases from 852 to 1032.
+- `missingA1A2GapCount` remains 0.
+- No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 360 generated
+  content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
+  `autoReviewLedger`.
