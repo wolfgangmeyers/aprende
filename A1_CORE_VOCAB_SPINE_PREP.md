@@ -829,6 +829,65 @@ Acceptance result:
   content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
   `autoReviewLedger`.
 
+## A2-021 Accelerated B1/B2 Legal, Medical, Work, Housing, Utilities, and Travel Pack
+
+**Status:** implemented locally after A2-020.
+
+**Goal:** add learner-ready B1/B2 breadth for legal/public-service procedures, medical emergencies
+and follow-up, work scheduling and pay, housing repairs and utilities, travel disruptions, lodging,
+and transport service language. Rows use the
+`AI_DRAFT -> AUTO_CHECKED -> AUTO_REVIEWED -> REVIEWED` lane with two independent automatic
+reviewers.
+
+**Target lemmas:** `queja documentada`, `informe policial`, `audiencia próxima`, `asesoramiento
+gratuito`, `permiso provisional`, `documento provisional`, `copia autorizada`, `código de
+expediente`, `expediente abierto`, `expediente cerrado`, `recurso pendiente`, `plazo de
+recurso`, `carta oficial`, `notificación vencida`, `oficina de registro`, `domicilio
+registrado`, `certificado provisional`, `certificado médico laboral`, `cita presencial`, `cita
+virtual`, `test inmediato`, `resultado urgente`, `receta renovada`, `medicación agotada`,
+`dosis olvidada`, `opresión en el pecho`, `respiración difícil`, `pérdida de conocimiento`,
+`reacción alérgica`, `ambulancia urgente`, `urgencias abiertas`, `atención prioritaria`,
+`historial actualizado`, `informe pendiente`, `traslado sanitario`, `reposo absoluto`,
+`seguimiento médico`, `vacunación pendiente`, `alergia grave`, `guardia nocturna`, `guardia
+matinal`, `cambio de turno`, `contrato parcial`, `fase inicial`, `baja por enfermedad`,
+`accidente laboral`, `formación obligatoria`, `reunión urgente`, `informe semanal`, `objetivo
+claro`, `plazo interno`, `volumen de trabajo`, `equipo reducido`, `día remunerado`,
+`teletrabajo parcial`, `ingreso bruto`, `ingreso neto`, `complemento salarial`, `nómina
+corregida`, `vacaciones pendientes`, `vacaciones aprobadas`, `sustitución temporal`, `compañero
+nuevo`, `conflicto laboral`, `arreglo urgente`, `técnico asignado`, `visita técnica`,
+`presupuesto detallado`, `garantía válida`, `garantía vencida`, `pieza rota`, `aparato
+averiado`, `instalación nueva`, `revisión anual`, `mantenimiento pendiente`, `gas cortado`,
+`internet caído`, `señal débil`, `cobertura móvil`, `router apagado`, `contraseña wifi`,
+`factura de luz`, `factura de agua`, `lectura de medidor`, `contador averiado`, `junta de
+vecinos`, `gestor del edificio`, `alquiler pendiente`, `renta mensual`, `recibo de alquiler`,
+`contrato prorrogado`, `aviso de desalojo`, `llave extra`, `copia de llaves`, `cobertura de
+viaje`, `equipaje extraviado`, `reclamo de equipaje`, `demora del vuelo`, `embarque cerrado`,
+`asiento asignado`, `asiento cambiado`, `maleta facturada`, `filtro de seguridad`, `pasaporte
+caducado`, `visado aprobado`, `visado rechazado`, `frontera cerrada`, `reserva modificada`,
+`hotel completo`, `habitación sucia`, `cambio de habitación`, `desayuno incluido`, `transporte
+incluido`, `taxi oficial`, `tarifa fija`, `conductor disponible`, `documento original`, `copia
+vigente`, `sello de entrada`, `registro de salida`.
+
+Implemented content delta:
+
+- 120 reviewed Wiktionary lexeme rows.
+- 240 `AI_DRAFT` sentence rows promoted to `REVIEWED` by two independent automatic reviewers.
+- 240 `AI_DRAFT` accepted-answer rows promoted to `REVIEWED` by the same two-reviewer gate.
+- 240 `sentence_lexeme` joins.
+- 240 derived exercises:
+  - production and recognition exercises for all 120 target lemmas.
+
+Acceptance target:
+
+- `learnerReadyLexemes` increases from 1585 to 1705.
+- `reviewedSentences` increases from 3230 to 3470.
+- `reviewedAcceptedAnswers` increases from 3233 to 3473.
+- `exerciseCount` increases from 3170 to 3410.
+- `missingA1A2GapCount` remains 0.
+- No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 480 generated
+  content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
+  `autoReviewLedger`.
+
 ## A2-005 Accelerated Fluency Pack
 
 **Status:** implemented locally after A2-004.
