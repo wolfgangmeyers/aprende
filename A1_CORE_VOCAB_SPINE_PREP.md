@@ -1048,6 +1048,36 @@ Acceptance target:
   content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
   `autoReviewLedger`.
 
+## A2-028 Accelerated B1/B2 Emergency, Medical, Housing, Work, Banking, Travel, Services, and Conversation Pack
+
+**Status:** implemented locally after A2-027.
+
+**Goal:** add learner-ready B1/B2 breadth for emergency and medical logistics, housing repairs,
+workplace/service interactions, banking and bureaucracy, travel disruptions, delivery/services, and
+conversation repair. Rows use the `AI_DRAFT -> AUTO_CHECKED -> AUTO_REVIEWED -> REVIEWED` lane
+with two independent automatic reviewers.
+
+**Target lemmas:** `llamada de emergencia`, `pulsera médica`, `oxígeno portátil`, `intérprete médico`, `segunda opinión`, `ingreso urgente`, `radiografía pendiente`, `azúcar alta`, `vacuna recomendada`, `mascarilla disponible`, `higiene de manos`, `boletín eléctrico`, `contador compartido`, `techo manchado`, `gotera activa`, `tubería antigua`, `desagüe atascado`, `suelo resbaladizo`, `ventana abierta`, `puerta blindada`, `timbre roto`, `portero automático`, `inventario firmado`, `agencia inmobiliaria`, `recibo de renta`, `reforma autorizada`, `agenda compartida`, `objetivo trimestral`, `indicador clave`, `correo pendiente`, `copia oculta`, `cliente molesto`, `proveedor externo`, `presupuesto inicial`, `entrega parcial`, `retraso asumido`, `responsabilidad compartida`, `permiso parental`, `pausa activa`, `justificante bancario`, `clave temporal`, `cajero cercano`, `operación rechazada`, `recibo escaneado`, `trámite urgente`, `archivo cerrado`, `identidad verificada`, `mostrador abierto`, `fila prioritaria`, `puerta de salida`, `retraso anunciado`, `tren nocturno`, `andén cambiado`, `coche compartido`, `peaje electrónico`, `maleta dañada`, `habitación interior`, `llave magnética`, `mapa descargado`, `billete combinado`, `oficina turística`, `frase hecha`, `broma pesada`, `comentario fuera de lugar`, `gesto amable`, `respuesta directa`, `pregunta difícil`, `explicación sencilla`, `matiz importante`, `desacuerdo respetuoso`, `postura clara`, `propuesta razonable`, `prioridad común`, `solución intermedia`, `plan de acción`, `seguimiento posterior`, `recordatorio amable`, `llamada breve`, `conversación pendiente`, `confianza mutua`, `turno digital`, `pantalla informativa`, `aviso sonoro`, `máquina expendedora`, `ticket impreso`, `etiqueta adhesiva`, `paquete abierto`, `mensajero asignado`, `horario reducido`, `servicio mínimo`, `permiso activado`, `triaje inicial`, `camilla disponible`, `vendaje limpio`, `muleta prestada`, `consulta virtual`, `riesgo moderado`, `contacto de emergencia`, `pared húmeda`, `termo averiado`, `instalación eléctrica`, `cerrajero urgente`, `plaga doméstica`, `ventilación adecuada`, `revisión de gas`, `contador de agua`, `corte programado`, `reunión híbrida`, `versión actual`, `comentario pendiente`, `objetivo común`, `clave bancaria`, `extracto mensual`, `movimiento sospechoso`, `aviso fiscal`, `tren perdido`, `tarifa flexible`, `turno de preguntas`, `idea principal`, `contexto necesario`, `malentendido frecuente`, `acuerdo mínimo`, `respuesta honesta`, `tono neutral`, `pausa breve`, `explicación adicional`.
+
+Implemented content delta:
+
+- 126 reviewed Wiktionary lexeme rows.
+- 252 `AI_DRAFT` sentence rows promoted to `REVIEWED` by two independent automatic reviewers.
+- 252 `AI_DRAFT` accepted-answer rows promoted to `REVIEWED` by the same two-reviewer gate.
+- 252 `sentence_lexeme` joins.
+- 252 derived production and recognition exercises for all 126 target lemmas.
+
+Acceptance target:
+
+- `learnerReadyLexemes` is 2511.
+- `reviewedSentences` is 5082 after restoring the non-fixture strict build.
+- `reviewedAcceptedAnswers` is 5085 after restoring the non-fixture strict build.
+- `exerciseCount` is 5022.
+- `missingA1A2GapCount` remains 0.
+- No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 504 generated
+  content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
+  `autoReviewLedger`.
+
 ## A2-023 Accelerated B1/B2 Education, Community, Environment, Media, Family, Civic, Shopping, Delivery, and Money Pack
 
 **Status:** implemented locally after A2-022.
