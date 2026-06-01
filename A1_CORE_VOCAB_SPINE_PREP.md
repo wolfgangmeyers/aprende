@@ -3900,3 +3900,39 @@ Acceptance result:
 - No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 480 generated
   content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
   `autoReviewLedger`.
+
+## A2-057 Accelerated B1/B2 Deadlines, Appointments, Meetings, and Documents Pack
+
+**Status:** implemented locally after A2-056.
+
+**Goal:** add learner-ready B1/B2 breadth for upcoming deadlines, exact schedules, confirmed/canceled slots,
+pending/confirmed appointments, short/urgent meetings, and valid/expired documents across money,
+health, work, travel, legal, services, repairs, and bureaucracy contexts. Rows use the
+`AI_DRAFT -> AUTO_CHECKED -> AUTO_REVIEWED -> REVIEWED` lane with two independent automatic
+reviewers.
+
+**Target lemma families:** `vencimiento próximo para ...`, `horario exacto para ...`,
+`turno confirmado para ...`, `turno cancelado para ...`, `cita pendiente para ...`,
+`cita confirmada para ...`, `reunión breve para ...`, `reunión urgente para ...`,
+`documento válido para ...`, and `documento vencido para ...` across banks, hospitals, offices,
+trips, bookings, contracts, claims, refunds, repairs, treatments, applications, and support.
+
+Implemented content delta:
+
+- 120 reviewed Wiktionary lexeme rows.
+- 240 `AI_DRAFT` sentence rows promoted to `REVIEWED` by two independent automatic reviewers.
+- 240 `AI_DRAFT` accepted-answer rows promoted to `REVIEWED` by the same two-reviewer gate.
+- 240 `sentence_lexeme` joins.
+- 240 derived exercises:
+  - production and recognition exercises for all 120 target lemmas.
+
+Acceptance result:
+
+- `learnerReadyLexemes` increases from 5871 to 5991.
+- `reviewedSentences` increases from 11802 to 12042.
+- `reviewedAcceptedAnswers` increases from 11805 to 12045.
+- `exerciseCount` increases from 11742 to 11982.
+- `missingA1A2GapCount` remains 0.
+- No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 480 generated
+  content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
+  `autoReviewLedger`.
