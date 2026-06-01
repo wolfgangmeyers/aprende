@@ -1258,6 +1258,36 @@ Acceptance target:
   content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
   `autoReviewLedger`.
 
+## A2-035 Accelerated B1/B2 Travel, Services, Money, Repairs, Digital, Work, Health, and Conversation Pack
+
+**Status:** implemented locally after A2-034.
+
+**Goal:** add learner-ready B1/B2 breadth for travel and public spaces, service forms and
+documents, banking and insurance, repairs, digital support, workplace administration, health
+appointments, and practical conversation. Rows use the `AI_DRAFT -> AUTO_CHECKED ->
+AUTO_REVIEWED -> REVIEWED` lane with two independent automatic reviewers.
+
+**Target lemmas:** `playa cercana`, `montaña nevada`, `ruta rural`, `visita libre`, `guía turística`, `horario ampliado`, `oficina abierta`, `sala reservada`, `puesto libre`, `silla plegable`, `mesa redonda`, `panel informativo`, `cartel visible`, `puerta principal`, `pasillo estrecho`, `escalera mecánica`, `ascensor libre`, `rampa exterior`, `servicio nocturno`, `consulta en línea`, `formulario simple`, `casilla vacía`, `archivo enviado`, `firma válida`, `contrato nuevo`, `cláusula especial`, `anexo final`, `recibo válido`, `factura digital`, `saldo bajo`, `cuenta compartida`, `código seguro`, `transferencia fallida`, `comisión mensual`, `ahorro pequeño`, `fondo seguro`, `crédito rechazado`, `seguro básico`, `póliza nueva`, `cobertura limitada`, `parte cerrado`, `avería menor`, `repuesto caro`, `herramienta limpia`, `manual claro`, `instalación segura`, `reparación lenta`, `técnico puntual`, `servicio garantizado`, `llamada saliente`, `correo archivado`, `respuesta guardada`, `archivo visible`, `pantalla apagada`, `micrófono nuevo`, `cámara externa`, `conexión lenta`, `red segura`, `contraseña fuerte`, `cuenta activa`, `soporte lento`, `chat abierto`, `incidencia pendiente`, `solución rápida`, `explicación larga`, `ejemplo sencillo`, `aclaración breve`, `respuesta razonable`, `comentario oportuno`, `argumento débil`, `razón suficiente`, `conclusión definitiva`, `conflicto pequeño`, `promesa clara`, `plan detallado`, `paso intermedio`, `recordatorio útil`, `agenda semanal`, `turno completo`, `reunión breve`, `acta final`, `propuesta formal`, `presupuesto reducido`, `cliente habitual`, `pedido semanal`, `entrega puntual`, `informe diario`, `correo interno`, `pausa larga`, `sueldo bruto`, `permiso pendiente`, `vacación aprobada`, `cita médica privada`, `prueba visual`, `hombro dolorido`, `rodilla rígida`, `piel sensible`, `gota nasal`, `spray bucal`, `radiografía urgente`, `oficina cerrada`, `silla cómoda`, `baño limpio`, `entrada trasera`, `salida rápida`, `mapa actualizado`, `folleto impreso`, `guía oficial`, `excursión larga`, `alojamiento barato`, `zona tranquila`, `costa tranquila`, `puerto pequeño`, `billete barato`, `reserva flexible`, `maleta ligera`, `mochila segura`, `farmacia nocturna`, `consulta familiar`, `diagnóstico claro`.
+
+Implemented content delta:
+
+- 120 reviewed Wiktionary lexeme rows.
+- 240 `AI_DRAFT` sentence rows promoted to `REVIEWED` by two independent automatic reviewers.
+- 240 `AI_DRAFT` accepted-answer rows promoted to `REVIEWED` by the same two-reviewer gate.
+- 240 `sentence_lexeme` joins.
+- 240 derived production and recognition exercises for all 120 target lemmas.
+
+Acceptance target:
+
+- `learnerReadyLexemes` is 3351.
+- `reviewedSentences` is 6762 after restoring the non-fixture strict build.
+- `reviewedAcceptedAnswers` is 6765 after restoring the non-fixture strict build.
+- `exerciseCount` is 6702.
+- `missingA1A2GapCount` remains 0.
+- No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 480 generated
+  content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
+  `autoReviewLedger`.
+
 ## A2-023 Accelerated B1/B2 Education, Community, Environment, Media, Family, Civic, Shopping, Delivery, and Money Pack
 
 **Status:** implemented locally after A2-022.
