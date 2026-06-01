@@ -1138,6 +1138,36 @@ Acceptance target:
   content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
   `autoReviewLedger`.
 
+## A2-031 Accelerated B1/B2 Health, Housing, Work, Delivery, Transport, Conversation, and Digital Support Pack
+
+**Status:** implemented locally after A2-030.
+
+**Goal:** add learner-ready B1/B2 breadth for health logistics, housing details, workplace tools,
+delivery and shopping flows, transport navigation, conversation repair, and digital support. Rows use
+the `AI_DRAFT -> AUTO_CHECKED -> AUTO_REVIEWED -> REVIEWED` lane with two independent automatic
+reviewers.
+
+**Target lemmas:** `agenda médica`, `sala pediátrica`, `vacuna infantil`, `cartilla sanitaria`, `seguimiento remoto`, `síntoma leve`, `tratamiento alternativo`, `farmacéutico disponible`, `medicina genérica`, `pastillero semanal`, `crema hidratante`, `protector solar`, `picadura leve`, `corte superficial`, `vendaje adhesivo`, `cocina comunitaria`, `vecindario seguro`, `patio interior`, `balcón soleado`, `terraza cubierta`, `trastero pequeño`, `plaza de garaje`, `calle tranquila`, `portal iluminado`, `escalera estrecha`, `suelo laminado`, `baño reformado`, `ducha accesible`, `grifo nuevo`, `caldera revisada`, `termostato inteligente`, `consumo eléctrico`, `factura de gas`, `cliente potencial`, `reunión comercial`, `objetivo cumplido`, `informe mensual`, `lista de tareas`, `correo automático`, `firma corporativa`, `carpeta privada`, `permiso temporal`, `acceso remoto`, `pantalla principal`, `sesión formativa`, `manual interno`, `proceso aprobado`, `pedido internacional`, `entrega urgente`, `seguimiento del paquete`, `número de envío`, `dirección incompleta`, `paquete frágil`, `reparto nocturno`, `tienda asociada`, `stock limitado`, `impuesto incluido`, `pago seguro`, `recibo digital`, `compra recurrente`, `servicio contratado`, `viaje compartido`, `carril rápido`, `zona escolar`, `semáforo averiado`, `peatón distraído`, `bicicleta pública`, `patinete eléctrico`, `casco ajustado`, `freno delantero`, `mapa interactivo`, `ubicación actual`, `ruta guardada`, `parada solicitada`, `conductor amable`, `viajero frecuente`, `opinión personal`, `idea equivocada`, `respuesta corta`, `pregunta sencilla`, `comentario útil`, `sugerencia práctica`, `crítica constructiva`, `acuerdo definitivo`, `duda frecuente`, `matiz cultural`, `ejemplo típico`, `frase común`, `palabra clave`, `pronunciación clara`, `escucha activa`, `turno respetado`, `silencio necesario`, `mensaje resumido`, `notificación urgente`, `copia automática`, `contraseña antigua`, `usuario invitado`, `archivo eliminado`, `historial reciente`, `búsqueda avanzada`, `filtro activo`, `resultado relevante`, `página cargada`, `pantalla secundaria`, `botón principal`, `menú lateral`, `formato válido`, `ayuda contextual`, `soporte técnico`, `chat en línea`, `llamada programada`, `consulta resuelta`, `reclamo abierto`, `plazo extendido`, `servicio interrumpido`, `sección visible`, `archivo recuperado`, `cuenta reactivada`, `correo verificado`.
+
+Implemented content delta:
+
+- 120 reviewed Wiktionary lexeme rows.
+- 240 `AI_DRAFT` sentence rows promoted to `REVIEWED` by two independent automatic reviewers.
+- 240 `AI_DRAFT` accepted-answer rows promoted to `REVIEWED` by the same two-reviewer gate.
+- 240 `sentence_lexeme` joins.
+- 240 derived production and recognition exercises for all 120 target lemmas.
+
+Acceptance target:
+
+- `learnerReadyLexemes` is 2871.
+- `reviewedSentences` is 5802 after restoring the non-fixture strict build.
+- `reviewedAcceptedAnswers` is 5805 after restoring the non-fixture strict build.
+- `exerciseCount` is 5742.
+- `missingA1A2GapCount` remains 0.
+- No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 480 generated
+  content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
+  `autoReviewLedger`.
+
 ## A2-023 Accelerated B1/B2 Education, Community, Environment, Media, Family, Civic, Shopping, Delivery, and Money Pack
 
 **Status:** implemented locally after A2-022.
