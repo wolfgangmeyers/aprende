@@ -1784,6 +1784,92 @@ AI_ACCELERATED_PACK_A2_007 = [
     },
 ]
 
+
+def build_ai_accelerated_pack(items):
+    return [
+        {
+            "lexemeId": lexeme_id,
+            "lemma": lemma,
+            "pos": pos,
+            "gender": gender,
+            "englishGloss": english_gloss,
+            "frequencyRank": frequency_rank,
+            "cefrBand": cefr_band,
+            "difficultyPrior": difficulty_prior,
+            "reason": reason,
+            "sourceBasis": source_basis,
+            "sentences": sentences,
+        }
+        for (
+            lexeme_id, lemma, pos, gender, english_gloss, frequency_rank, cefr_band,
+            difficulty_prior, reason, source_basis, sentences,
+        ) in items
+    ]
+
+
+AI_ACCELERATED_PACK_A2_008 = build_ai_accelerated_pack([
+    (217, "alegrarse", "verb", None, "to be glad", 1850, "B1", 0.5, "feelings", "SPANISH_BREADTH_PLAN.md B1 feelings topic", [(493, 496, "Me alegro por ti.", "I am happy for you."), (494, 497, "Nos alegramos de verte.", "We are glad to see you.")]),
+    (218, "enfadarse", "verb", None, "to get angry", 1900, "B1", 0.5, "feelings and conflict", "SPANISH_BREADTH_PLAN.md B1 feelings/conflict topic", [(495, 498, "Me enfado con el servicio.", "I get angry with the service."), (496, 499, "No quiero enfadarme.", "I do not want to get angry.")]),
+    (219, "asustarse", "verb", None, "to get scared", 2100, "B1", 0.6, "feelings and medical situations", "SPANISH_BREADTH_PLAN.md B1 feelings/medical topic", [(497, 500, "Me asusto fácilmente.", "I get scared easily."), (498, 501, "El niño se asusta.", "The boy gets scared.")]),
+    (220, "animar", "verb", None, "to encourage; to cheer up", 1600, "B1", 0.5, "feelings and advice", "SPANISH_BREADTH_PLAN.md B1 advice/feelings topic", [(499, 502, "Animo a mi amigo.", "I encourage my friend."), (500, 503, "Ella me anima mucho.", "She encourages me a lot.")]),
+    (221, "calmar", "verb", None, "to calm", 1700, "B1", 0.5, "feelings and conflict", "SPANISH_BREADTH_PLAN.md B1 feelings/conflict topic", [(501, 504, "Calmo al niño.", "I calm the boy."), (502, 505, "Necesito calmarme.", "I need to calm down.")]),
+    (222, "obligar", "verb", None, "to oblige; to force", 1320, "B1", 0.5, "obligations", "SPANISH_BREADTH_PLAN.md B1 obligations topic", [(503, 506, "Me obligan a esperar.", "They make me wait."), (504, 507, "No quiero obligarte.", "I do not want to force you.")]),
+    (223, "permitir", "verb", None, "to allow", 760, "B1", 0.5, "permission and obligations", "hermitdave/FrequencyWords high-frequency spine", [(505, 508, "Permiten entrar ahora.", "They allow entry now."), (506, 509, "No me permite salir.", "He does not allow me to leave.")]),
+    (224, "aconsejar", "verb", None, "to advise", 1750, "B1", 0.5, "advice", "SPANISH_BREADTH_PLAN.md B1 advice topic", [(507, 510, "Te aconsejo descansar.", "I advise you to rest."), (508, 511, "El médico aconseja caminar.", "The doctor advises walking.")]),
+    (225, "advertir", "verb", None, "to warn", 1500, "B1", 0.5, "advice and problems", "SPANISH_BREADTH_PLAN.md B1 advice/problems topic", [(509, 512, "Te advierto del problema.", "I warn you about the problem."), (510, 513, "Nos advierten del retraso.", "They warn us about the delay.")]),
+    (226, "insistir", "verb", None, "to insist", 1250, "B1", 0.5, "requests and conflict", "SPANISH_BREADTH_PLAN.md B1 requests/conflict topic", [(511, 514, "Insisto en pagar.", "I insist on paying."), (512, 515, "Ella insiste en llamar.", "She insists on calling.")]),
+    (227, "comparar", "verb", None, "to compare", 1420, "B1", 0.5, "comparisons", "SPANISH_BREADTH_PLAN.md B1 comparisons topic", [(513, 516, "Comparo los precios.", "I compare the prices."), (514, 517, "Comparamos dos hoteles.", "We compare two hotels.")]),
+    (228, "superar", "verb", None, "to overcome; to exceed", 1180, "B1", 0.5, "experiences and problems", "SPANISH_BREADTH_PLAN.md B1 experiences/problems topic", [(515, 518, "Supero el problema.", "I overcome the problem."), (516, 519, "Queremos superar esto.", "We want to overcome this.")]),
+    (229, "adaptarse", "verb", None, "to adapt", 1800, "B1", 0.5, "planning and experiences", "SPANISH_BREADTH_PLAN.md B1 experiences/planning topic", [(517, 520, "Me adapto al cambio.", "I adapt to the change."), (518, 521, "Nos adaptamos rápido.", "We adapt quickly.")]),
+    (230, "organizar", "verb", None, "to organize", 1100, "B1", 0.5, "planning and work", "SPANISH_BREADTH_PLAN.md B1 planning/work topic", [(519, 522, "Organizo la reunión.", "I organize the meeting."), (520, 523, "Organizamos el viaje.", "We organize the trip.")]),
+    (231, "programar", "verb", None, "to schedule; to program", 1500, "B1", 0.5, "appointments and planning", "SPANISH_BREADTH_PLAN.md B1 appointments/planning topic", [(521, 524, "Programo una cita.", "I schedule an appointment."), (522, 525, "Programamos la visita.", "We schedule the visit.")]),
+    (232, "aplazar", "verb", None, "to postpone", 2200, "B1", 0.6, "appointments and planning", "SPANISH_BREADTH_PLAN.md B1 appointments/planning topic", [(523, 526, "Aplazo la cita.", "I postpone the appointment."), (524, 527, "Necesito aplazar el viaje.", "I need to postpone the trip.")]),
+    (233, "anticipar", "verb", None, "to anticipate", 1600, "B1", 0.5, "planning and problems", "SPANISH_BREADTH_PLAN.md B1 planning/problems topic", [(525, 528, "Anticipo un problema.", "I anticipate a problem."), (526, 529, "Anticipamos un retraso.", "We anticipate a delay.")]),
+    (234, "coordinar", "verb", None, "to coordinate", 1750, "B1", 0.5, "planning and work", "SPANISH_BREADTH_PLAN.md B1 planning/work topic", [(527, 530, "Coordino el trabajo.", "I coordinate the work."), (528, 531, "Coordinamos la reunión.", "We coordinate the meeting.")]),
+    (235, "discutir", "verb", None, "to discuss; to argue", 1050, "B1", 0.5, "conflict and opinions", "SPANISH_BREADTH_PLAN.md B1 conflict/opinions topic", [(529, 532, "Discutimos el problema.", "We discuss the problem."), (530, 533, "No quiero discutir.", "I do not want to argue.")]),
+    (236, "negociar", "verb", None, "to negotiate", 1700, "B1", 0.5, "conflict and services", "SPANISH_BREADTH_PLAN.md B1 conflict/services topic", [(531, 534, "Negocio el precio.", "I negotiate the price."), (532, 535, "Negociamos con el banco.", "We negotiate with the bank.")]),
+    (237, "acordar", "verb", None, "to agree; to arrange", 930, "B1", 0.5, "conflict and planning", "SPANISH_BREADTH_PLAN.md B1 conflict/planning topic", [(533, 536, "Acordamos una hora.", "We agree on a time."), (534, 537, "Quiero acordar un plan.", "I want to agree on a plan.")]),
+    (238, "romper", "verb", None, "to break", 880, "B1", 0.5, "repairs and problems", "SPANISH_BREADTH_PLAN.md B1 repairs/problems topic", [(535, 538, "Rompo el vaso.", "I break the glass."), (536, 539, "La silla se rompe.", "The chair breaks.")]),
+    (239, "dañar", "verb", None, "to damage", 1700, "B1", 0.5, "repairs and problems", "SPANISH_BREADTH_PLAN.md B1 repairs/problems topic", [(537, 540, "Dañan la puerta.", "They damage the door."), (538, 541, "No quiero dañar el coche.", "I do not want to damage the car.")]),
+    (240, "instalar", "verb", None, "to install", 1300, "B1", 0.5, "repairs and services", "SPANISH_BREADTH_PLAN.md B1 repairs/services topic", [(539, 542, "Instalo la aplicación.", "I install the app."), (540, 543, "Instalan una ventana.", "They install a window.")]),
+    (241, "reemplazar", "verb", None, "to replace", 2100, "B1", 0.6, "repairs and services", "SPANISH_BREADTH_PLAN.md B1 repairs/services topic", [(541, 544, "Reemplazo la llave.", "I replace the key."), (542, 545, "Necesito reemplazar la tarjeta.", "I need to replace the card.")]),
+    (242, "revisar", "verb", None, "to review; to check", 1100, "B1", 0.5, "services and medical checks", "SPANISH_BREADTH_PLAN.md B1 medical/services topic", [(543, 546, "Reviso la factura.", "I check the bill."), (544, 547, "El médico revisa la receta.", "The doctor reviews the prescription.")]),
+    (243, "examinar", "verb", None, "to examine", 1500, "B1", 0.5, "medical", "SPANISH_BREADTH_PLAN.md B1 medical topic", [(545, 548, "El médico examina mi mano.", "The doctor examines my hand."), (546, 549, "Necesito examinar el problema.", "I need to examine the problem.")]),
+    (244, "recetar", "verb", None, "to prescribe", 2300, "B1", 0.6, "medical", "SPANISH_BREADTH_PLAN.md B1 medical topic", [(547, 550, "El médico receta medicina.", "The doctor prescribes medicine."), (548, 551, "Me recetan descanso.", "They prescribe rest for me.")]),
+    (245, "vacunarse", "verb", None, "to get vaccinated", 2600, "B1", 0.6, "medical", "SPANISH_BREADTH_PLAN.md B1 medical topic", [(549, 552, "Me vacuno hoy.", "I get vaccinated today."), (550, 553, "Necesito vacunarme.", "I need to get vaccinated.")]),
+    (246, "sangrar", "verb", None, "to bleed", 2400, "B1", 0.6, "medical", "SPANISH_BREADTH_PLAN.md B1 medical topic", [(551, 554, "Me sangra la mano.", "My hand is bleeding."), (552, 555, "La herida sangra.", "The wound bleeds.")]),
+    (247, "depositar", "verb", None, "to deposit", 1900, "B1", 0.5, "banking", "SPANISH_BREADTH_PLAN.md B1 banking topic", [(553, 556, "Deposito dinero.", "I deposit money."), (554, 557, "Deposito el cheque en el banco.", "I deposit the check at the bank.")]),
+    (248, "retirar", "verb", None, "to withdraw; to remove", 1200, "B1", 0.5, "banking and services", "SPANISH_BREADTH_PLAN.md B1 banking/services topic", [(555, 558, "Retiro dinero.", "I withdraw money."), (556, 559, "Retiro la solicitud.", "I withdraw the application.")]),
+    (249, "transferir", "verb", None, "to transfer", 1700, "B1", 0.5, "banking", "SPANISH_BREADTH_PLAN.md B1 banking topic", [(557, 560, "Transfiero dinero.", "I transfer money."), (558, 561, "Transferimos el pago.", "We transfer the payment.")]),
+    (250, "prestar", "verb", None, "to lend", 1250, "B1", 0.5, "banking and requests", "SPANISH_BREADTH_PLAN.md B1 banking/requests topic", [(559, 562, "Presto dinero a mi amigo.", "I lend money to my friend."), (560, 563, "¿Puedes prestarme la tarjeta?", "Can you lend me the card?")]),
+    (251, "abonar", "verb", None, "to pay; to credit", 2050, "B1", 0.6, "banking and services", "SPANISH_BREADTH_PLAN.md B1 banking/services topic", [(561, 564, "Abono la factura.", "I pay the bill."), (562, 565, "Abonamos con tarjeta.", "We pay by card.")]),
+    (252, "mudarse", "verb", None, "to move house", 2200, "B1", 0.6, "lodging and household", "SPANISH_BREADTH_PLAN.md B1 lodging/household topic", [(563, 566, "Me mudo mañana.", "I move tomorrow."), (564, 567, "Nos mudamos a otra casa.", "We move to another house.")]),
+    (253, "registrarse", "verb", None, "to register; to check in", 2100, "B1", 0.6, "lodging and services", "SPANISH_BREADTH_PLAN.md B1 lodging/services topic", [(565, 568, "Me registro en el hotel.", "I check in at the hotel."), (566, 569, "Necesito registrarme.", "I need to register.")]),
+    (254, "reclamar", "verb", None, "to claim; to complain", 1500, "B1", 0.5, "complaints and services", "SPANISH_BREADTH_PLAN.md B1 complaints/services topic", [(567, 570, "Reclamo mi equipaje.", "I claim my luggage."), (568, 571, "Quiero reclamar el pago.", "I want to dispute the payment.")]),
+    (255, "transbordar", "verb", None, "to transfer vehicles", 2600, "B1", 0.6, "transit", "SPANISH_BREADTH_PLAN.md B1 transit topic", [(569, 572, "Transbordo en la estación.", "I transfer at the station."), (570, 573, "Necesitamos transbordar aquí.", "We need to transfer here.")]),
+    (256, "abordar", "verb", None, "to board", 1800, "B1", 0.5, "transit", "SPANISH_BREADTH_PLAN.md B1 transit topic", [(571, 574, "Abordo el tren.", "I board the train."), (572, 575, "Abordamos a tiempo.", "We board on time.")]),
+    (257, "obligatorio", "adjective", None, "required; mandatory", 1700, "B1", 0.5, "obligations", "SPANISH_BREADTH_PLAN.md B1 obligations topic", [(573, 576, "El seguro es obligatorio.", "Insurance is required."), (574, 577, "La cita no es obligatoria.", "The appointment is not mandatory.")]),
+    (258, "recomendable", "adjective", None, "recommended; advisable", 2200, "B1", 0.6, "advice", "SPANISH_BREADTH_PLAN.md B1 advice topic", [(575, 578, "Es recomendable descansar.", "It is advisable to rest."), (576, 579, "No es recomendable esperar.", "It is not advisable to wait.")]),
+    (259, "comparable", "adjective", None, "comparable", 2400, "B1", 0.6, "comparisons", "SPANISH_BREADTH_PLAN.md B1 comparisons topic", [(577, 580, "Los precios son comparables.", "The prices are comparable."), (578, 581, "No es comparable.", "It is not comparable.")]),
+    (260, "pendiente", "adjective", None, "pending", 1200, "B1", 0.5, "planning and services", "SPANISH_BREADTH_PLAN.md B1 planning/services topic", [(579, 582, "La solicitud está pendiente.", "The request is pending."), (580, 583, "Tengo una factura pendiente.", "I have a pending bill.")]),
+    (261, "mensual", "adjective", None, "monthly", 1600, "B1", 0.5, "banking and planning", "SPANISH_BREADTH_PLAN.md B1 banking/planning topic", [(581, 584, "Es un pago mensual.", "It is a monthly payment."), (582, 585, "La factura es mensual.", "The bill is monthly.")]),
+    (262, "temporal", "adjective", None, "temporary", 1300, "B1", 0.5, "lodging and work", "SPANISH_BREADTH_PLAN.md B1 lodging/work topic", [(583, 586, "Es un trabajo temporal.", "It is a temporary job."), (584, 587, "El cambio es temporal.", "The change is temporary.")]),
+    (263, "doloroso", "adjective", None, "painful", 2100, "B1", 0.6, "medical and feelings", "SPANISH_BREADTH_PLAN.md B1 medical/feelings topic", [(585, 588, "Es doloroso.", "It is painful."), (586, 589, "La herida es dolorosa.", "The wound is painful.")]),
+    (264, "descontento", "adjective", None, "dissatisfied", 2300, "B1", 0.6, "complaints and services", "SPANISH_BREADTH_PLAN.md B1 complaints/services topic", [(587, 590, "Estoy descontento.", "I am dissatisfied."), (588, 591, "Estamos descontentos con el servicio.", "We are dissatisfied with the service.")]),
+    (265, "obligación", "noun", "F", "obligation", 1300, "B1", 0.5, "obligations", "SPANISH_BREADTH_PLAN.md B1 obligations topic", [(589, 592, "Tengo una obligación.", "I have an obligation."), (590, 593, "Es una obligación importante.", "It is an important obligation.")]),
+    (266, "consejo", "noun", "M", "advice", 1150, "B1", 0.5, "advice", "SPANISH_BREADTH_PLAN.md B1 advice topic", [(591, 594, "Necesito un consejo.", "I need advice."), (592, 595, "El consejo es bueno.", "The advice is good.")]),
+    (267, "conflicto", "noun", "M", "conflict", 1200, "B1", 0.5, "conflict", "SPANISH_BREADTH_PLAN.md B1 conflict topic", [(593, 596, "Hay un conflicto.", "There is a conflict."), (594, 597, "El conflicto termina hoy.", "The conflict ends today.")]),
+    (268, "reparación", "noun", "F", "repair", 1750, "B1", 0.5, "repairs", "SPANISH_BREADTH_PLAN.md B1 repairs topic", [(595, 598, "La reparación cuesta mucho.", "The repair costs a lot."), (596, 599, "Necesito una reparación.", "I need a repair.")]),
+    (269, "factura", "noun", "F", "bill; invoice", 1350, "B1", 0.5, "banking and services", "SPANISH_BREADTH_PLAN.md B1 banking/services topic", [(597, 600, "Pago la factura.", "I pay the bill."), (598, 601, "La factura está pendiente.", "The bill is pending.")]),
+    (270, "cuenta", "noun", "F", "account; bill", 650, "B1", 0.5, "banking", "hermitdave/FrequencyWords high-frequency spine", [(599, 602, "Abro una cuenta.", "I open an account."), (600, 603, "La cuenta está activa.", "The account is active.")]),
+    (271, "banco", "noun", "M", "bank", 650, "B1", 0.5, "banking", "hermitdave/FrequencyWords high-frequency spine", [(601, 604, "Voy al banco.", "I go to the bank."), (602, 605, "El banco abre temprano.", "The bank opens early.")]),
+    (272, "tarjeta", "noun", "F", "card", 900, "B1", 0.5, "banking and services", "SPANISH_BREADTH_PLAN.md B1 banking/services topic", [(603, 606, "Pago con tarjeta.", "I pay with a card."), (604, 607, "Pierdo mi tarjeta.", "I lose my card.")]),
+    (273, "habitación", "noun", "F", "room", 1250, "B1", 0.5, "lodging", "SPANISH_BREADTH_PLAN.md B1 lodging topic", [(605, 608, "Quiero una habitación.", "I want a room."), (606, 609, "La habitación es cómoda.", "The room is comfortable.")]),
+    (274, "equipaje", "noun", "M", "luggage", 1800, "B1", 0.5, "travel", "SPANISH_BREADTH_PLAN.md B1 travel topic", [(607, 610, "Recojo mi equipaje.", "I pick up my luggage."), (608, 611, "Facturo el equipaje.", "I check in the luggage.")]),
+    (275, "estación", "noun", "F", "station", 970, "B1", 0.5, "transit", "SPANISH_BREADTH_PLAN.md B1 transit topic", [(609, 612, "La estación está cerca.", "The station is nearby."), (610, 613, "Busco la estación.", "I look for the station.")]),
+    (276, "emergencia", "noun", "F", "emergency", 1450, "B1", 0.5, "medical and services", "SPANISH_BREADTH_PLAN.md B1 medical/services topic", [(611, 614, "Es una emergencia.", "It is an emergency."), (612, 615, "Llamo por una emergencia.", "I call about an emergency.")]),
+])
+
 AI_REVIEWED_SENTENCE_PAIRS.update({
     spanish: english
     for pack in (
@@ -1792,6 +1878,7 @@ AI_REVIEWED_SENTENCE_PAIRS.update({
         AI_ACCELERATED_PACK_A2_005,
         AI_ACCELERATED_PACK_A2_006,
         AI_ACCELERATED_PACK_A2_007,
+        AI_ACCELERATED_PACK_A2_008,
     )
     for item in pack
     for _, _, spanish, english in item["sentences"]
@@ -1906,6 +1993,7 @@ A1_A2_TARGET_LEMMAS.extend([
         AI_ACCELERATED_PACK_A2_005,
         AI_ACCELERATED_PACK_A2_006,
         AI_ACCELERATED_PACK_A2_007,
+        AI_ACCELERATED_PACK_A2_008,
     )
     for item in pack
 ])
@@ -2934,8 +3022,12 @@ def vetted_sample():
         AI_ACCELERATED_PACK_A2_006, "a2-006", next_exercise_id,
         lexemes, sentences, accepted, sentence_lexeme, exercises,
     )
-    append_ai_accelerated_pack(
+    next_exercise_id = append_ai_accelerated_pack(
         AI_ACCELERATED_PACK_A2_007, "a2-007", next_exercise_id,
+        lexemes, sentences, accepted, sentence_lexeme, exercises,
+    )
+    append_ai_accelerated_pack(
+        AI_ACCELERATED_PACK_A2_008, "a2-008", next_exercise_id,
         lexemes, sentences, accepted, sentence_lexeme, exercises,
     )
     return lexemes, sentences, accepted, sentence_lexeme, conj, exercises, nodes

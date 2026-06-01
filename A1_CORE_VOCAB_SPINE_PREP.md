@@ -1054,3 +1054,97 @@ Acceptance result:
 - No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 200 generated
   content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
   `autoReviewLedger`.
+
+## A2-008 Accelerated B1 Real-Life Breadth Pack
+
+**Status:** implemented locally after A2-007.
+
+**Goal:** add learner-ready B1 breadth for feelings, obligations, advice, comparisons, planning,
+conflict, repairs, medical visits, banking, lodging, and transit. Rows use the
+`AI_DRAFT -> AUTO_CHECKED -> AUTO_REVIEWED -> REVIEWED` lane with two independent automatic
+reviewers.
+
+**Target lemmas:**
+
+| Lemma | POS | Domain |
+|---|---|---|
+| `alegrarse` | verb | feelings |
+| `enfadarse` | verb | feelings and conflict |
+| `asustarse` | verb | feelings and medical situations |
+| `animar` | verb | feelings and advice |
+| `calmar` | verb | feelings and conflict |
+| `obligar` | verb | obligations |
+| `permitir` | verb | permission and obligations |
+| `aconsejar` | verb | advice |
+| `advertir` | verb | advice and problems |
+| `insistir` | verb | requests and conflict |
+| `comparar` | verb | comparisons |
+| `superar` | verb | experiences and problems |
+| `adaptarse` | verb | planning and experiences |
+| `organizar` | verb | planning and work |
+| `programar` | verb | appointments and planning |
+| `aplazar` | verb | appointments and planning |
+| `anticipar` | verb | planning and problems |
+| `coordinar` | verb | planning and work |
+| `discutir` | verb | conflict and opinions |
+| `negociar` | verb | conflict and services |
+| `acordar` | verb | conflict and planning |
+| `romper` | verb | repairs and problems |
+| `dañar` | verb | repairs and problems |
+| `instalar` | verb | repairs and services |
+| `reemplazar` | verb | repairs and services |
+| `revisar` | verb | services and medical checks |
+| `examinar` | verb | medical |
+| `recetar` | verb | medical |
+| `vacunarse` | verb | medical |
+| `sangrar` | verb | medical |
+| `depositar` | verb | banking |
+| `retirar` | verb | banking and services |
+| `transferir` | verb | banking |
+| `prestar` | verb | banking and requests |
+| `abonar` | verb | banking and services |
+| `mudarse` | verb | lodging and household |
+| `registrarse` | verb | lodging and services |
+| `reclamar` | verb | complaints and services |
+| `transbordar` | verb | transit |
+| `abordar` | verb | transit |
+| `obligatorio` | adjective | obligations |
+| `recomendable` | adjective | advice |
+| `comparable` | adjective | comparisons |
+| `pendiente` | adjective | planning and services |
+| `mensual` | adjective | banking and planning |
+| `temporal` | adjective | lodging and work |
+| `doloroso` | adjective | medical and feelings |
+| `descontento` | adjective | complaints and services |
+| `obligación` | noun | obligations |
+| `consejo` | noun | advice |
+| `conflicto` | noun | conflict |
+| `reparación` | noun | repairs |
+| `factura` | noun | banking and services |
+| `cuenta` | noun | banking |
+| `banco` | noun | banking |
+| `tarjeta` | noun | banking and services |
+| `habitación` | noun | lodging |
+| `equipaje` | noun | travel |
+| `estación` | noun | transit |
+| `emergencia` | noun | medical and services |
+
+Implemented content delta:
+
+- 60 reviewed Wiktionary lexeme rows.
+- 120 `AI_DRAFT` sentence rows promoted to `REVIEWED` by two independent automatic reviewers.
+- 120 `AI_DRAFT` accepted-answer rows promoted to `REVIEWED` by the same two-reviewer gate.
+- 120 `sentence_lexeme` joins.
+- 120 derived exercises:
+  - production and recognition exercises for all 60 target lemmas.
+
+Acceptance result:
+
+- `learnerReadyLexemes` increases from 216 to 276.
+- `reviewedSentences` increases from 492 to 612.
+- `reviewedAcceptedAnswers` increases from 495 to 615.
+- `exerciseCount` increases from 432 to 552.
+- `missingA1A2GapCount` remains 0.
+- No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 240 generated
+  content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
+  `autoReviewLedger`.
