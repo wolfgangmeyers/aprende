@@ -4116,3 +4116,40 @@ Acceptance result:
 - No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 480 generated
   content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
   `autoReviewLedger`.
+
+## A2-063 Accelerated B1/B2 Work, Training, Permissions, Badges, and Schedules Pack
+
+**Status:** implemented locally after A2-062.
+
+**Goal:** add learner-ready B1/B2 breadth for brief training, flexible shifts, priority tasks,
+special permits, temporary badges, direct supervision, quick evaluations, internal notices, changed
+schedules, and assigned leads across work, services, legal, travel, housing, health, money,
+bureaucracy, and emergency contexts. Rows use the
+`AI_DRAFT -> AUTO_CHECKED -> AUTO_REVIEWED -> REVIEWED` lane with two independent automatic
+reviewers.
+
+**Target lemma families:** `capacitación breve en ...`, `turno flexible en ...`,
+`tarea prioritaria en ...`, `permiso especial en ...`, `credencial temporal en ...`,
+`supervisión directa en ...`, `evaluación rápida en ...`, `aviso interno en ...`,
+`horario cambiado en ...`, and `responsable asignado en ...` across work, offices, services,
+contracts, travel, housing, hospitals, banks, support, insurance, emergencies, and meetings.
+
+Implemented content delta:
+
+- 120 reviewed Wiktionary lexeme rows.
+- 240 `AI_DRAFT` sentence rows promoted to `REVIEWED` by two independent automatic reviewers.
+- 240 `AI_DRAFT` accepted-answer rows promoted to `REVIEWED` by the same two-reviewer gate.
+- 240 `sentence_lexeme` joins.
+- 240 derived exercises:
+  - production and recognition exercises for all 120 target lemmas.
+
+Acceptance result:
+
+- `learnerReadyLexemes` increases from 6591 to 6711.
+- `reviewedSentences` increases from 13242 to 13482.
+- `reviewedAcceptedAnswers` increases from 13245 to 13485.
+- `exerciseCount` increases from 13182 to 13422.
+- `missingA1A2GapCount` remains 0.
+- No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 480 generated
+  content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
+  `autoReviewLedger`.
