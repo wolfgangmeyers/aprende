@@ -7299,6 +7299,43 @@ AI_ACCELERATED_PACK_A2_067 = build_numbered_ai_accelerated_phrase_pack(7072, 142
     ]
 ]))
 
+AI_ACCELERATED_PACK_A2_068 = build_numbered_ai_accelerated_phrase_pack(7192, 14443, 14446, build_phrase_pack_specs([
+    (
+        f"{spanish_head} {spanish_complement}",
+        gender,
+        f"{english_head} {english_complement}",
+        domain,
+        indefinite_article,
+        definite_article,
+    )
+    for spanish_head, gender, english_head, indefinite_article, definite_article in [
+        ("acuerdo parcial", "M", "partial agreement", "un", "El"),
+        ("desacuerdo claro", "M", "clear disagreement", "un", "El"),
+        ("propuesta justa", "F", "fair proposal", "una", "La"),
+        ("cambio necesario", "M", "necessary change", "un", "El"),
+        ("reunión difícil", "F", "difficult meeting", "una", "La"),
+        ("conversación privada", "F", "private conversation", "una", "La"),
+        ("respuesta honesta", "F", "honest answer", "una", "La"),
+        ("límite claro", "M", "clear limit", "un", "El"),
+        ("disculpa sincera", "F", "sincere apology", "una", "La"),
+        ("decisión rápida", "F", "quick decision", "una", "La"),
+    ]
+    for spanish_complement, english_complement, domain in [
+        ("con el equipo", "with the team", "work"),
+        ("con el jefe", "with the boss", "work"),
+        ("con el cliente", "with the client", "services"),
+        ("con la familia", "with the family", "social"),
+        ("sobre el horario", "about the schedule", "work"),
+        ("sobre el salario", "about salary", "work"),
+        ("sobre el documento", "about the document", "legal"),
+        ("durante la reunión", "during the meeting", "work"),
+        ("después del problema", "after the problem", "services"),
+        ("antes del viaje", "before the trip", "travel"),
+        ("por el retraso", "because of delay", "travel"),
+        ("para el acuerdo", "for the agreement", "legal"),
+    ]
+]))
+
 AI_REVIEWED_SENTENCE_PAIRS.update({
     spanish: english
     for pack in (
@@ -7367,6 +7404,7 @@ AI_REVIEWED_SENTENCE_PAIRS.update({
         AI_ACCELERATED_PACK_A2_065,
         AI_ACCELERATED_PACK_A2_066,
         AI_ACCELERATED_PACK_A2_067,
+        AI_ACCELERATED_PACK_A2_068,
     )
     for item in pack
     for _, _, spanish, english in item["sentences"]
@@ -7541,6 +7579,7 @@ A1_A2_TARGET_LEMMAS.extend([
         AI_ACCELERATED_PACK_A2_065,
         AI_ACCELERATED_PACK_A2_066,
         AI_ACCELERATED_PACK_A2_067,
+        AI_ACCELERATED_PACK_A2_068,
     )
     for item in pack
 ])
@@ -8809,8 +8848,12 @@ def vetted_sample():
         AI_ACCELERATED_PACK_A2_066, "a2-066", next_exercise_id,
         lexemes, sentences, accepted, sentence_lexeme, exercises,
     )
-    append_ai_accelerated_pack(
+    next_exercise_id = append_ai_accelerated_pack(
         AI_ACCELERATED_PACK_A2_067, "a2-067", next_exercise_id,
+        lexemes, sentences, accepted, sentence_lexeme, exercises,
+    )
+    append_ai_accelerated_pack(
+        AI_ACCELERATED_PACK_A2_068, "a2-068", next_exercise_id,
         lexemes, sentences, accepted, sentence_lexeme, exercises,
     )
     return lexemes, sentences, accepted, sentence_lexeme, conj, exercises, nodes

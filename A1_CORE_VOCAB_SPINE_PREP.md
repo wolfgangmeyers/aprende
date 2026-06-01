@@ -4301,3 +4301,40 @@ Acceptance result:
 - No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 480 generated
   content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
   `autoReviewLedger`.
+
+## A2-068 Accelerated B1/B2 Negotiation, Conflict Repair, and Decisions Pack
+
+**Status:** implemented locally after A2-067.
+
+**Goal:** add learner-ready B1/B2 breadth for partial agreements, clear disagreements, fair
+proposals, necessary changes, difficult meetings, private conversations, honest answers, clear
+limits, sincere apologies, and quick decisions across teams, bosses, clients, family, schedules,
+salary, documents, meetings, problems, travel, delays, and agreements. Rows use the
+`AI_DRAFT -> AUTO_CHECKED -> AUTO_REVIEWED -> REVIEWED` lane with two independent automatic
+reviewers.
+
+**Target lemma families:** `acuerdo parcial con ...`, `desacuerdo claro con ...`,
+`propuesta justa con ...`, `cambio necesario con ...`, `reunión difícil con ...`,
+`conversación privada con ...`, `respuesta honesta con ...`, `límite claro con ...`,
+`disculpa sincera con ...`, and `decisión rápida con ...` across work, services, social, legal,
+and travel contexts.
+
+Implemented content delta:
+
+- 120 reviewed Wiktionary lexeme rows.
+- 240 `AI_DRAFT` sentence rows promoted to `REVIEWED` by two independent automatic reviewers.
+- 240 `AI_DRAFT` accepted-answer rows promoted to `REVIEWED` by the same two-reviewer gate.
+- 240 `sentence_lexeme` joins.
+- 240 derived exercises:
+  - production and recognition exercises for all 120 target lemmas.
+
+Acceptance result:
+
+- `learnerReadyLexemes` increases from 7191 to 7311.
+- `reviewedSentences` increases from 14442 to 14682.
+- `reviewedAcceptedAnswers` increases from 14445 to 14685.
+- `exerciseCount` increases from 14382 to 14622.
+- `missingA1A2GapCount` remains 0.
+- No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 480 generated
+  content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
+  `autoReviewLedger`.
