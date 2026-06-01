@@ -37,11 +37,11 @@
     "reviewPolicy": "This list is a local source-checked audit target, not shipped learning content. A target lemma only becomes shipped content after the normal lexeme/sentence/accepted-answer provenance and REVIEWED gate pass."
   },
   "summary": {
-    "rawLexemes": 3111,
-    "learnerReadyLexemes": 3111,
-    "reviewedSentences": 6282,
-    "reviewedAcceptedAnswers": 6285,
-    "exerciseCount": 6222,
+    "rawLexemes": 3231,
+    "learnerReadyLexemes": 3231,
+    "reviewedSentences": 6522,
+    "reviewedAcceptedAnswers": 6525,
+    "exerciseCount": 6462,
     "missingA1A2GapCount": 0
   },
   "counts": {
@@ -55,7 +55,7 @@
       "conjunction": 2,
       "discourse marker": 5,
       "noun": 310,
-      "noun phrase": 2019,
+      "noun phrase": 2139,
       "preposition": 5,
       "prepositional phrase": 10,
       "question chunk": 10,
@@ -66,35 +66,35 @@
     "lexemesByCefrBand": {
       "A1": 23,
       "A2": 103,
-      "B1": 2737,
+      "B1": 2857,
       "B2": 248
     },
     "lexemesByFrequencyBucket": {
       "0001-0500": 69,
       "0501-1000": 220,
-      "1001-2000": 2547,
+      "1001-2000": 2667,
       "2001+": 275
     },
     "contentRowsBySource": {
-      "ai_draft": 12364,
+      "ai_draft": 12844,
       "authored": 2,
       "tatoeba": 201,
-      "wiktionary": 3111
+      "wiktionary": 3231
     },
     "contentRowsByLicense": {
       "CC-BY-2.0-FR": 201,
-      "CC-BY-SA-3.0": 3111,
-      "proprietary": 12366
+      "CC-BY-SA-3.0": 3231,
+      "proprietary": 12846
     },
     "contentRowsByVettingStatus": {
-      "REVIEWED": 15678
+      "REVIEWED": 16278
     },
     "exerciseTargetsByType": {
-      "LEXEME": 6222
+      "LEXEME": 6462
     },
     "exerciseTypes": {
-      "TYPED_TRANSLATION": 3111,
-      "WORD_BANK": 3111
+      "TYPED_TRANSLATION": 3231,
+      "WORD_BANK": 3231
     }
   },
   "topMissingA1A2Gaps": []

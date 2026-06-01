@@ -1228,6 +1228,36 @@ Acceptance target:
   content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
   `autoReviewLedger`.
 
+## A2-034 Accelerated B1/B2 Transport, Repairs, Digital Support, Health, Services, Work, and Travel Pack
+
+**Status:** implemented locally after A2-033.
+
+**Goal:** add learner-ready B1/B2 breadth for transport navigation, repair logistics, digital
+support, health symptoms and appointments, public services, work administration, everyday
+conversation, and practical travel. Rows use the `AI_DRAFT -> AUTO_CHECKED -> AUTO_REVIEWED ->
+REVIEWED` lane with two independent automatic reviewers.
+
+**Target lemmas:** `abono turístico`, `parada final`, `calle estrecha`, `ruta segura`, `tráfico ligero`, `parking cubierto`, `cruce señalizado`, `señal borrosa`, `obra municipal`, `taller autorizado`, `pieza compatible`, `repuesto original`, `herramienta básica`, `manual ilustrado`, `avería grave`, `reparación cubierta`, `instalación pendiente`, `revisión completa`, `llamada entrante`, `correo recibido`, `respuesta manual`, `archivo privado`, `videollamada corta`, `micrófono externo`, `cámara frontal`, `cuenta segura`, `chat disponible`, `incidencia cerrada`, `explicación breve`, `ejemplo práctico`, `aclaración final`, `sala llena`, `médico suplente`, `enfermera amable`, `muestra válida`, `tratamiento largo`, `molestia leve`, `hinchazón visible`, `respiración lenta`, `pulso regular`, `reposo recomendado`, `dieta ligera`, `comida blanda`, `sopa caliente`, `mesa libre`, `pedido pendiente`, `anexo pendiente`, `copia válida`, `archivo firmado`, `acuse digital`, `plazo vencido`, `trámite rápido`, `ventanilla ocupada`, `clave caducada`, `notificación leída`, `consulta gratuita`, `recibo impreso`, `transferencia enviada`, `ahorro familiar`, `ticket perdido`, `mensajería local`, `repartidor externo`, `ruta confirmada`, `almacén cerrado`, `artículo agotado`, `pedido urgente`, `stock mínimo`, `carrito vacío`, `caja rápida`, `terminal lento`, `sistema actualizado`, `museo lleno`, `taller abierto`, `concierto gratuito`, `sonido fuerte`, `luz natural`, `programa cultural`, `opinión razonable`, `debate abierto`, `pregunta directa`, `comentario amable`, `razón válida`, `conclusión provisional`, `disculpa formal`, `promesa pendiente`, `prioridad urgente`, `objetivo concreto`, `paso final`, `agenda laboral`, `acta provisional`, `propuesta clara`, `proveedor local`, `pedido interno`, `entrega interna`, `pausa corta`, `sueldo neto`, `permiso aprobado`, `vacación pendiente`, `cita psicológica`, `prueba auditiva`, `hombro rígido`, `rodilla inflamada`, `piel seca`, `spray nasal`, `gota ocular`, `radiografía dental`, `cobertura básica`, `ayuda urgente`, `centro social`, `oficina pública`, `silla disponible`, `baño público`, `entrada lateral`, `salida principal`, `mapa local`, `folleto gratuito`, `guía impresa`, `excursión corta`, `alojamiento rural`, `zona de picnic`.
+
+Implemented content delta:
+
+- 120 reviewed Wiktionary lexeme rows.
+- 240 `AI_DRAFT` sentence rows promoted to `REVIEWED` by two independent automatic reviewers.
+- 240 `AI_DRAFT` accepted-answer rows promoted to `REVIEWED` by the same two-reviewer gate.
+- 240 `sentence_lexeme` joins.
+- 240 derived production and recognition exercises for all 120 target lemmas.
+
+Acceptance target:
+
+- `learnerReadyLexemes` is 3231.
+- `reviewedSentences` is 6522 after restoring the non-fixture strict build.
+- `reviewedAcceptedAnswers` is 6525 after restoring the non-fixture strict build.
+- `exerciseCount` is 6462.
+- `missingA1A2GapCount` remains 0.
+- No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 480 generated
+  content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
+  `autoReviewLedger`.
+
 ## A2-023 Accelerated B1/B2 Education, Community, Environment, Media, Family, Civic, Shopping, Delivery, and Money Pack
 
 **Status:** implemented locally after A2-022.
