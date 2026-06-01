@@ -4153,3 +4153,40 @@ Acceptance result:
 - No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 480 generated
   content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
   `autoReviewLedger`.
+
+## A2-064 Accelerated B1/B2 Planning, Opinions, Reasons, and Preferences Pack
+
+**Status:** implemented locally after A2-063.
+
+**Goal:** add learner-ready B1/B2 breadth for provisional and final plans, main and alternate
+ideas, personal and differing opinions, main and valid reasons, clear preferences, and joint
+decisions across meetings, travel, family, work, contracts, budgets, purchases, moving, treatment,
+claims, reservations, and support. Rows use the
+`AI_DRAFT -> AUTO_CHECKED -> AUTO_REVIEWED -> REVIEWED` lane with two independent automatic
+reviewers.
+
+**Target lemma families:** `plan provisional para ...`, `plan definitivo para ...`,
+`idea principal para ...`, `idea alternativa para ...`, `opinión personal para ...`,
+`opinión distinta para ...`, `motivo principal para ...`, `motivo válido para ...`,
+`preferencia clara para ...`, and `decisión conjunta para ...` across work, travel, social,
+legal, money, housing, health, and services contexts.
+
+Implemented content delta:
+
+- 120 reviewed Wiktionary lexeme rows.
+- 240 `AI_DRAFT` sentence rows promoted to `REVIEWED` by two independent automatic reviewers.
+- 240 `AI_DRAFT` accepted-answer rows promoted to `REVIEWED` by the same two-reviewer gate.
+- 240 `sentence_lexeme` joins.
+- 240 derived exercises:
+  - production and recognition exercises for all 120 target lemmas.
+
+Acceptance result:
+
+- `learnerReadyLexemes` increases from 6711 to 6831.
+- `reviewedSentences` increases from 13482 to 13722.
+- `reviewedAcceptedAnswers` increases from 13485 to 13725.
+- `exerciseCount` increases from 13422 to 13662.
+- `missingA1A2GapCount` remains 0.
+- No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 480 generated
+  content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
+  `autoReviewLedger`.
