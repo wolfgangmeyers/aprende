@@ -11,6 +11,8 @@ import com.magicalhippie.aprende.domain.model.SrsState
 import com.magicalhippie.aprende.domain.model.UserStats
 import com.magicalhippie.aprende.domain.srs.SrsItemState
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 /**
