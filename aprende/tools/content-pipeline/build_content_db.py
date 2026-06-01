@@ -6559,6 +6559,43 @@ AI_ACCELERATED_PACK_A2_047 = build_numbered_ai_accelerated_phrase_pack(4672, 940
     ('caso resuelto de proyecto', 'M', 'resolved case for project', 'work', 'un', 'El'),
 ]))
 
+AI_ACCELERATED_PACK_A2_048 = build_numbered_ai_accelerated_phrase_pack(4792, 9643, 9646, build_phrase_pack_specs([
+    (
+        f"{spanish_head} {spanish_complement}",
+        gender,
+        f"{english_head} {english_complement}",
+        domain,
+        indefinite_article,
+        definite_article,
+    )
+    for spanish_head, gender, english_head, indefinite_article, definite_article in [
+        ("motivo principal", "M", "main reason", "un", "El"),
+        ("motivo secundario", "M", "secondary reason", "un", "El"),
+        ("motivo real", "M", "real reason", "un", "El"),
+        ("motivo posible", "M", "possible reason", "un", "El"),
+        ("causa principal", "F", "main cause", "una", "La"),
+        ("causa secundaria", "F", "secondary cause", "una", "La"),
+        ("causa real", "F", "real cause", "una", "La"),
+        ("causa posible", "F", "possible cause", "una", "La"),
+        ("razón principal", "F", "main reason", "una", "La"),
+        ("razón secundaria", "F", "secondary reason", "una", "La"),
+    ]
+    for spanish_complement, english_complement, domain in [
+        ("del retraso", "for the delay", "travel"),
+        ("de la cancelación", "for the cancellation", "services"),
+        ("del rechazo", "for the rejection", "bureaucracy"),
+        ("del error", "for the error", "digital"),
+        ("del cambio", "for the change", "services"),
+        ("del gasto", "for the expense", "money"),
+        ("de la deuda", "for the debt", "money"),
+        ("de la multa", "for the fine", "legal"),
+        ("de la cita", "for the appointment", "services"),
+        ("de la ausencia", "for the absence", "work"),
+        ("del conflicto", "for the conflict", "social conflict"),
+        ("de la queja", "for the complaint", "services"),
+    ]
+]))
+
 AI_REVIEWED_SENTENCE_PAIRS.update({
     spanish: english
     for pack in (
@@ -6607,6 +6644,7 @@ AI_REVIEWED_SENTENCE_PAIRS.update({
         AI_ACCELERATED_PACK_A2_045,
         AI_ACCELERATED_PACK_A2_046,
         AI_ACCELERATED_PACK_A2_047,
+        AI_ACCELERATED_PACK_A2_048,
     )
     for item in pack
     for _, _, spanish, english in item["sentences"]
@@ -6761,6 +6799,7 @@ A1_A2_TARGET_LEMMAS.extend([
         AI_ACCELERATED_PACK_A2_045,
         AI_ACCELERATED_PACK_A2_046,
         AI_ACCELERATED_PACK_A2_047,
+        AI_ACCELERATED_PACK_A2_048,
     )
     for item in pack
 ])
@@ -7949,8 +7988,12 @@ def vetted_sample():
         AI_ACCELERATED_PACK_A2_046, "a2-046", next_exercise_id,
         lexemes, sentences, accepted, sentence_lexeme, exercises,
     )
-    append_ai_accelerated_pack(
+    next_exercise_id = append_ai_accelerated_pack(
         AI_ACCELERATED_PACK_A2_047, "a2-047", next_exercise_id,
+        lexemes, sentences, accepted, sentence_lexeme, exercises,
+    )
+    append_ai_accelerated_pack(
+        AI_ACCELERATED_PACK_A2_048, "a2-048", next_exercise_id,
         lexemes, sentences, accepted, sentence_lexeme, exercises,
     )
     return lexemes, sentences, accepted, sentence_lexeme, conj, exercises, nodes

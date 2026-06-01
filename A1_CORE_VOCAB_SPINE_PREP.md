@@ -3578,3 +3578,38 @@ Acceptance result:
 - No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 480 generated
   content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
   `autoReviewLedger`.
+
+## A2-048 Accelerated B1/B2 Reasons and Causes for Delays, Cancellations, Rejections, Errors, Changes, Expenses, Debts, Fines, Appointments, Absences, Conflicts, and Complaints Pack
+
+**Status:** implemented locally after A2-047.
+
+**Goal:** add learner-ready B1/B2 breadth for explaining reasons and causes in practical
+service, travel, money, legal, digital, work, and social-conflict situations. Rows use the
+`AI_DRAFT -> AUTO_CHECKED -> AUTO_REVIEWED -> REVIEWED` lane with two independent automatic
+reviewers.
+
+**Target lemma families:** `motivo principal ...`, `motivo secundario ...`, `motivo real ...`,
+`motivo posible ...`, `causa principal ...`, `causa secundaria ...`, `causa real ...`,
+`causa posible ...`, `razón principal ...`, and `razón secundaria ...` across delays,
+cancellations, rejections, errors, changes, expenses, debts, fines, appointments, absences,
+conflicts, and complaints.
+
+Implemented content delta:
+
+- 120 reviewed Wiktionary lexeme rows.
+- 240 `AI_DRAFT` sentence rows promoted to `REVIEWED` by two independent automatic reviewers.
+- 240 `AI_DRAFT` accepted-answer rows promoted to `REVIEWED` by the same two-reviewer gate.
+- 240 `sentence_lexeme` joins.
+- 240 derived exercises:
+  - production and recognition exercises for all 120 target lemmas.
+
+Acceptance result:
+
+- `learnerReadyLexemes` increases from 4791 to 4911.
+- `reviewedSentences` increases from 9642 to 9882.
+- `reviewedAcceptedAnswers` increases from 9645 to 9885.
+- `exerciseCount` increases from 9582 to 9822.
+- `missingA1A2GapCount` remains 0.
+- No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 480 generated
+  content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
+  `autoReviewLedger`.
