@@ -3649,3 +3649,38 @@ Acceptance result:
 - No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 480 generated
   content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
   `autoReviewLedger`.
+
+## A2-050 Accelerated B1/B2 Notices, Messages, Notifications, Receipts, and Confirmations Pack
+
+**Status:** implemented locally after A2-049.
+
+**Goal:** add learner-ready B1/B2 breadth for notices, messages, notifications, receipts, and
+confirmations in money, services, travel, legal, repair, health, work, and bureaucracy contexts.
+Rows use the `AI_DRAFT -> AUTO_CHECKED -> AUTO_REVIEWED -> REVIEWED` lane with two independent
+automatic reviewers.
+
+**Target lemma families:** `aviso temprano de ...`, `aviso urgente de ...`, `aviso oficial de ...`,
+`mensaje claro de ...`, `mensaje urgente de ...`, `notificación previa de ...`,
+`notificación oficial de ...`, `notificación pendiente de ...`, `recibo digital de ...`, and
+`confirmación final de ...` across payment, appointment, travel, delivery, booking, contract,
+claim, refund, repair, treatment, meeting, and application contexts.
+
+Implemented content delta:
+
+- 120 reviewed Wiktionary lexeme rows.
+- 240 `AI_DRAFT` sentence rows promoted to `REVIEWED` by two independent automatic reviewers.
+- 240 `AI_DRAFT` accepted-answer rows promoted to `REVIEWED` by the same two-reviewer gate.
+- 240 `sentence_lexeme` joins.
+- 240 derived exercises:
+  - production and recognition exercises for all 120 target lemmas.
+
+Acceptance result:
+
+- `learnerReadyLexemes` increases from 5031 to 5151.
+- `reviewedSentences` increases from 10122 to 10362.
+- `reviewedAcceptedAnswers` increases from 10125 to 10365.
+- `exerciseCount` increases from 10062 to 10302.
+- `missingA1A2GapCount` remains 0.
+- No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 480 generated
+  content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
+  `autoReviewLedger`.
