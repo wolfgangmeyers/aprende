@@ -4190,3 +4190,40 @@ Acceptance result:
 - No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 480 generated
   content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
   `autoReviewLedger`.
+
+## A2-065 Accelerated B1/B2 Documents, Forms, Proof, and Appointments Pack
+
+**Status:** implemented locally after A2-064.
+
+**Goal:** add learner-ready B1/B2 breadth for pending documents, incomplete forms, necessary
+signatures, digital copies, valid proof, official receipts, written confirmations, medical
+reports, written permissions, and signed contracts across applications, procedures, banks,
+insurance, clinics, rent, travel, work, school, offices, bookings, and support. Rows use the
+`AI_DRAFT -> AUTO_CHECKED -> AUTO_REVIEWED -> REVIEWED` lane with two independent automatic
+reviewers.
+
+**Target lemma families:** `documento pendiente para ...`, `formulario incompleto para ...`,
+`firma necesaria para ...`, `copia digital para ...`, `prueba válida para ...`,
+`recibo oficial para ...`, `confirmación escrita para ...`, `informe médico para ...`,
+`permiso escrito para ...`, and `contrato firmado para ...` across bureaucracy, money, health,
+housing, travel, work, school, and services contexts.
+
+Implemented content delta:
+
+- 120 reviewed Wiktionary lexeme rows.
+- 240 `AI_DRAFT` sentence rows promoted to `REVIEWED` by two independent automatic reviewers.
+- 240 `AI_DRAFT` accepted-answer rows promoted to `REVIEWED` by the same two-reviewer gate.
+- 240 `sentence_lexeme` joins.
+- 240 derived exercises:
+  - production and recognition exercises for all 120 target lemmas.
+
+Acceptance result:
+
+- `learnerReadyLexemes` increases from 6831 to 6951.
+- `reviewedSentences` increases from 13722 to 13962.
+- `reviewedAcceptedAnswers` increases from 13725 to 13965.
+- `exerciseCount` increases from 13662 to 13902.
+- `missingA1A2GapCount` remains 0.
+- No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 480 generated
+  content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
+  `autoReviewLedger`.
