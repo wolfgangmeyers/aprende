@@ -997,6 +997,57 @@ Acceptance target:
   content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
   `autoReviewLedger`.
 
+## A2-027 Accelerated B1/B2 Weather, Pets, Repairs, Digital Media, Planning, Complaints, Health, Documents, and Meetings Pack
+
+**Status:** implemented locally after A2-026.
+
+**Goal:** add learner-ready B1/B2 breadth for weather, pets, repairs, device/media workflows,
+planning language, complaints and warranties, dental/eye/skin health, identity documents, and
+meeting participation. Rows use the `AI_DRAFT -> AUTO_CHECKED -> AUTO_REVIEWED -> REVIEWED` lane
+with two independent automatic reviewers.
+
+**Target lemmas:** `pronóstico actualizado`, `lluvia intensa`, `viento fuerte`, `calor extremo`,
+`frío repentino`, `aviso de tormenta`, `cielo despejado`, `temperatura estable`, `ropa adecuada`,
+`paraguas disponible`, `mascota registrada`, `perro vacunado`, `gato perdido`, `collar
+identificado`, `veterinario disponible`, `cita veterinaria`, `vacuna anual`, `comida para
+mascotas`, `paseo diario`, `transportín homologado`, `herramienta adecuada`, `tornillo suelto`,
+`enchufe quemado`, `cable dañado`, `pintura fresca`, `pared rayada`, `cristal roto`, `mueble
+montado`, `manual de instrucciones`, `garantía vigente`, `pantalla táctil`, `volumen bajo`,
+`auricular apagado`, `videollamada activa`, `paquete comprimido`, `almacenamiento lleno`,
+`actualización instalada`, `virus detectado`, `copia cifrada`, `contraseña segura`, `noticia
+reciente`, `origen fiable`, `rumor falso`, `artículo compartido`, `grabación breve`, `audio claro`,
+`subtítulo automático`, `mensaje público`, `cuenta privada`, `publicación eliminada`, `plan
+semanal`, `meta alcanzable`, `hábito saludable`, `rutina diaria`, `avance pequeño`, `resultado
+esperado`, `intento fallido`, `segunda oportunidad`, `cambio gradual`, `mejora visible`, `reclamo
+formal`, `respuesta tardía`, `compensación justa`, `cobertura extendida`, `artículo defectuoso`,
+`pieza faltante`, `manual perdido`, `soporte remoto`, `servicio posventa`, `caso escalado`, `cita
+dental`, `limpieza dental`, `dolor de muelas`, `encía inflamada`, `revisión ocular`, `graduación
+ocular`, `lente roto`, `audífono ajustado`, `piel irritada`, `crema recetada`, `traducción
+oficial`, `apellido correcto`, `nombre completo`, `fecha exacta`, `lugar de nacimiento`, `estado
+civil`, `dirección actual`, `nacionalidad doble`, `contacto autorizado`, `rúbrica manual`, `copia
+legible`, `sala disponible`, `proyector encendido`, `presentación breve`, `pregunta abierta`,
+`respuesta parcial`, `turno de palabra`, `acuerdo parcial`, `riesgo calculado`, `decisión
+colectiva`.
+
+Implemented content delta:
+
+- 100 reviewed Wiktionary lexeme rows.
+- 200 `AI_DRAFT` sentence rows promoted to `REVIEWED` by two independent automatic reviewers.
+- 200 `AI_DRAFT` accepted-answer rows promoted to `REVIEWED` by the same two-reviewer gate.
+- 200 `sentence_lexeme` joins.
+- 200 derived production and recognition exercises for all 100 target lemmas.
+
+Acceptance target:
+
+- `learnerReadyLexemes` is 2385.
+- `reviewedSentences` is 4830 after restoring the non-fixture strict build.
+- `reviewedAcceptedAnswers` is 4833 after restoring the non-fixture strict build.
+- `exerciseCount` is 4770.
+- `missingA1A2GapCount` remains 0.
+- No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 400 generated
+  content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
+  `autoReviewLedger`.
+
 ## A2-023 Accelerated B1/B2 Education, Community, Environment, Media, Family, Civic, Shopping, Delivery, and Money Pack
 
 **Status:** implemented locally after A2-022.
