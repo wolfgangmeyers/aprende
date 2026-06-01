@@ -6596,6 +6596,43 @@ AI_ACCELERATED_PACK_A2_048 = build_numbered_ai_accelerated_phrase_pack(4792, 964
     ]
 ]))
 
+AI_ACCELERATED_PACK_A2_049 = build_numbered_ai_accelerated_phrase_pack(4912, 9883, 9886, build_phrase_pack_specs([
+    (
+        f"{spanish_head} {spanish_complement}",
+        gender,
+        f"{english_head} {english_complement}",
+        domain,
+        indefinite_article,
+        definite_article,
+    )
+    for spanish_head, gender, english_head, indefinite_article, definite_article in [
+        ("prueba necesaria", "F", "necessary proof", "una", "La"),
+        ("prueba obligatoria", "F", "mandatory proof", "una", "La"),
+        ("prueba suficiente", "F", "sufficient proof", "una", "La"),
+        ("prueba adicional", "F", "additional proof", "una", "La"),
+        ("constancia necesaria", "F", "necessary record", "una", "La"),
+        ("constancia obligatoria", "F", "mandatory record", "una", "La"),
+        ("constancia suficiente", "F", "sufficient record", "una", "La"),
+        ("constancia adicional", "F", "additional record", "una", "La"),
+        ("documento necesario", "M", "necessary document", "un", "El"),
+        ("documento adicional", "M", "additional document", "un", "El"),
+    ]
+    for spanish_complement, english_complement, domain in [
+        ("para el trámite", "for the procedure", "bureaucracy"),
+        ("para la solicitud", "for the application", "bureaucracy"),
+        ("para el reclamo", "for the claim", "services"),
+        ("para el reembolso", "for the refund", "money"),
+        ("para la multa", "for the fine", "legal"),
+        ("para el contrato", "for the contract", "legal"),
+        ("para la cita", "for the appointment", "services"),
+        ("para el informe", "for the report", "work"),
+        ("para la reparación", "for the repair", "repairs"),
+        ("para el alquiler", "for the rental", "housing"),
+        ("para el viaje", "for the trip", "travel"),
+        ("para el tratamiento", "for the treatment", "health"),
+    ]
+]))
+
 AI_REVIEWED_SENTENCE_PAIRS.update({
     spanish: english
     for pack in (
@@ -6645,6 +6682,7 @@ AI_REVIEWED_SENTENCE_PAIRS.update({
         AI_ACCELERATED_PACK_A2_046,
         AI_ACCELERATED_PACK_A2_047,
         AI_ACCELERATED_PACK_A2_048,
+        AI_ACCELERATED_PACK_A2_049,
     )
     for item in pack
     for _, _, spanish, english in item["sentences"]
@@ -6800,6 +6838,7 @@ A1_A2_TARGET_LEMMAS.extend([
         AI_ACCELERATED_PACK_A2_046,
         AI_ACCELERATED_PACK_A2_047,
         AI_ACCELERATED_PACK_A2_048,
+        AI_ACCELERATED_PACK_A2_049,
     )
     for item in pack
 ])
@@ -7992,8 +8031,12 @@ def vetted_sample():
         AI_ACCELERATED_PACK_A2_047, "a2-047", next_exercise_id,
         lexemes, sentences, accepted, sentence_lexeme, exercises,
     )
-    append_ai_accelerated_pack(
+    next_exercise_id = append_ai_accelerated_pack(
         AI_ACCELERATED_PACK_A2_048, "a2-048", next_exercise_id,
+        lexemes, sentences, accepted, sentence_lexeme, exercises,
+    )
+    append_ai_accelerated_pack(
+        AI_ACCELERATED_PACK_A2_049, "a2-049", next_exercise_id,
         lexemes, sentences, accepted, sentence_lexeme, exercises,
     )
     return lexemes, sentences, accepted, sentence_lexeme, conj, exercises, nodes
@@ -8499,10 +8542,10 @@ def main():
 
     lexemes, sentences, accepted, sentence_lexeme, conj, exercises, nodes = vetted_sample()
     if args.inject_ai_draft_reviewed:
-        sentences.append(Row({"sentenceId": 9991, "spanishText": "Necesito ayuda.", "englishText": "I need help."},
+        sentences.append(Row({"sentenceId": 999901, "spanishText": "Necesito ayuda.", "englishText": "I need help."},
                              source=AI_DRAFT_SOURCE, sourceId="ai_draft:fixture-reviewed-sentence",
                              license="proprietary", vettingStatus=AI_DRAFT))
-        accepted.append(Row({"acceptedAnswerId": 9991, "sentenceId": 9991, "direction": "ES_TO_EN",
+        accepted.append(Row({"acceptedAnswerId": 999901, "sentenceId": 999901, "direction": "ES_TO_EN",
                              "answerText": "i need help"},
                             source=AI_DRAFT_SOURCE, sourceId="ai_draft:fixture-reviewed-answer",
                             license="proprietary", vettingStatus=AI_DRAFT))

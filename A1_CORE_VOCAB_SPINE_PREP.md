@@ -3613,3 +3613,39 @@ Acceptance result:
 - No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 480 generated
   content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
   `autoReviewLedger`.
+
+## A2-049 Accelerated B1/B2 Proof, Evidence, and Document Requirements Pack
+
+**Status:** implemented locally after A2-048.
+
+**Goal:** add learner-ready B1/B2 breadth for asking about and explaining required proof,
+records, and documents in bureaucracy, services, money, legal, work, repairs, housing, travel,
+and health situations. Rows use the `AI_DRAFT -> AUTO_CHECKED -> AUTO_REVIEWED -> REVIEWED`
+lane with two independent automatic reviewers.
+
+**Target lemma families:** `prueba necesaria para ...`, `prueba obligatoria para ...`,
+`prueba suficiente para ...`, `prueba adicional para ...`, `constancia necesaria para ...`,
+`constancia obligatoria para ...`, `constancia suficiente para ...`, `constancia adicional para ...`,
+`documento necesario para ...`, and `documento adicional para ...` across procedures,
+applications, claims, refunds, fines, contracts, appointments, reports, repairs, rentals, trips,
+and treatment.
+
+Implemented content delta:
+
+- 120 reviewed Wiktionary lexeme rows.
+- 240 `AI_DRAFT` sentence rows promoted to `REVIEWED` by two independent automatic reviewers.
+- 240 `AI_DRAFT` accepted-answer rows promoted to `REVIEWED` by the same two-reviewer gate.
+- 240 `sentence_lexeme` joins.
+- 240 derived exercises:
+  - production and recognition exercises for all 120 target lemmas.
+
+Acceptance result:
+
+- `learnerReadyLexemes` increases from 4911 to 5031.
+- `reviewedSentences` increases from 9882 to 10122.
+- `reviewedAcceptedAnswers` increases from 9885 to 10125.
+- `exerciseCount` increases from 9822 to 10062.
+- `missingA1A2GapCount` remains 0.
+- No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 480 generated
+  content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
+  `autoReviewLedger`.
