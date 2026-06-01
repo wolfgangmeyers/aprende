@@ -1748,3 +1748,158 @@ Acceptance result:
 - No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 400 generated
   content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
   `autoReviewLedger`.
+
+## A2-014 Accelerated B1/B2 Bridge Everyday Systems, Repair, and Opinion Pack
+
+**Status:** implemented locally after A2-013.
+
+**Goal:** add learner-ready B1/B2 bridge breadth for high-frequency connectors and chunks,
+conversation repair, argument and opinion language, household repairs, legal and medical systems,
+money, work, travel, and service recovery. Rows use the
+`AI_DRAFT -> AUTO_CHECKED -> AUTO_REVIEWED -> REVIEWED` lane with two independent automatic
+reviewers.
+
+**Target lemmas:**
+
+| Lemma | POS | Domain |
+|---|---|---|
+| `en cambio` | adverbial phrase | argument and contrast |
+| `salvo` | preposition | exceptions and conditions |
+| `debido a` | prepositional phrase | reasons and problems |
+| `gracias a` | prepositional phrase | reasons and outcomes |
+| `al contrario` | adverbial phrase | argument and repair |
+| `en cualquier caso` | adverbial phrase | discourse markers |
+| `en ese caso` | adverbial phrase | conditions and repair |
+| `por si acaso` | adverbial phrase | planning and precaution |
+| `a propósito` | adverbial phrase | conversation and intent |
+| `desde luego` | adverbial phrase | agreement and emphasis |
+| `al fin y al cabo` | adverbial phrase | argument and summaries |
+| `por ahora` | adverbial phrase | planning and status |
+| `por lo menos` | adverbial phrase | argument and estimates |
+| `por lo visto` | adverbial phrase | uncertainty and narration |
+| `en principio` | adverbial phrase | formal planning |
+| `en realidad` | adverbial phrase | clarification |
+| `de nuevo` | adverbial phrase | repair and repetition |
+| `otra vez` | adverbial phrase | repair and repetition |
+| `a la vez` | adverbial phrase | coordination and work |
+| `al menos` | adverbial phrase | estimates and repair |
+| `en vez de` | prepositional phrase | choices and repair |
+| `a mano` | adverbial phrase | forms and household |
+| `a domicilio` | adverbial phrase | services and household |
+| `de guardia` | adverbial phrase | medical and emergencies |
+| `fuera de servicio` | adjective phrase | travel and services |
+| `en servicio` | adjective phrase | travel and services |
+| `de acuerdo con` | prepositional phrase | rules and formal speech |
+| `con respecto a` | prepositional phrase | formal discourse |
+| `por separado` | adverbial phrase | forms and money |
+| `por escrito` | adverbial phrase | bureaucracy and legal |
+| `verbalmente` | adverb | work and legal |
+| `sinceramente` | adverb | opinions and repair |
+| `justamente` | adverb | argument and emphasis |
+| `precisamente` | adverb | argument and emphasis |
+| `probablemente` | adverb | uncertainty and planning |
+| `raramente` | adverb | frequency and narration |
+| `posteriormente` | adverb | formal sequencing |
+| `diariamente` | adverb | routines and health |
+| `semanalmente` | adverb | routines and money |
+| `mensualmente` | adverb | routines and money |
+| `sustituir` | verb | services and repairs |
+| `actualizar` | verb | services and bureaucracy |
+| `adelantar` | verb | appointments and planning |
+| `interrogar` | verb | legal and conflict |
+| `investigar` | verb | legal and problems |
+| `encargarse` | verb | work and services |
+| `sellar` | verb | bureaucracy and household |
+| `escanear` | verb | bureaucracy and technology |
+| `adjuntar` | verb | bureaucracy and technology |
+| `audiencia` | noun | legal and public life |
+| `juzgar` | verb | legal and opinions |
+| `declarar` | verb | legal and bureaucracy |
+| `comparecer` | verb | legal and bureaucracy |
+| `sancionar` | verb | legal and public services |
+| `multar` | verb | legal and travel |
+| `recurso` | noun | legal and bureaucracy |
+| `apelación` | noun | legal |
+| `sentencia` | noun | legal |
+| `acusación` | noun | legal and conflict |
+| `defensa legal` | noun phrase | legal |
+| `asesoría` | noun | work legal and money |
+| `notaría` | noun | legal and bureaucracy |
+| `registro civil` | noun phrase | public services |
+| `certificado médico` | noun phrase | medical and work |
+| `alta médica` | noun phrase | medical systems |
+| `baja médica` | noun phrase | medical and work |
+| `cita médica` | noun phrase | medical systems |
+| `mareo` | noun | medical symptoms |
+| `vómito` | noun | medical symptoms |
+| `estornudo` | noun | medical symptoms |
+| `análisis de sangre` | noun phrase | medical systems |
+| `presión arterial` | noun phrase | medical systems |
+| `seguro privado` | noun phrase | health and money |
+| `tarjeta sanitaria` | noun phrase | health systems |
+| `centro de salud` | noun phrase | health systems |
+| `persiana` | noun | household and repairs |
+| `bombilla` | noun | household and repairs |
+| `interruptor` | noun | household and repairs |
+| `calentador` | noun | household and repairs |
+| `nevera` | noun | household |
+| `lavadora` | noun | household |
+| `fregadero` | noun | household and repairs |
+| `horno` | noun | household and food |
+| `colchón` | noun | household and lodging |
+| `armario` | noun | household |
+| `pasillo` | noun | housing and travel |
+| `balcón` | noun | housing |
+| `escalera` | noun | housing and travel |
+| `ruido` | noun | housing and complaints |
+| `reforma` | noun | housing and services |
+| `sueldo` | noun | work and money |
+| `convenio` | noun | work and legal |
+| `jornada laboral` | noun phrase | work |
+| `contrato temporal` | noun phrase | work and legal |
+| `baja laboral` | noun phrase | work and medical |
+| `permiso laboral` | noun phrase | work and bureaucracy |
+| `entrevista` | noun | work and social |
+| `currículum` | noun | work |
+| `departamento` | noun | work and services |
+| `equipo de trabajo` | noun phrase | work and collaboration |
+| `puerta de embarque` | noun phrase | travel |
+| `tarjeta de embarque` | noun phrase | travel |
+| `transbordo` | noun | travel and transit |
+| `atención al cliente` | noun phrase | services and complaints |
+| `hoja de reclamaciones` | noun phrase | services and legal |
+| `servicio técnico` | noun phrase | services and repairs |
+| `devolución` | noun | shopping and services |
+| `cambio de producto` | noun phrase | shopping and services |
+| `factura electrónica` | noun phrase | money and services |
+| `cajero automático` | noun phrase | banking and travel |
+| `cuenta corriente` | noun phrase | banking |
+| `cargo bancario` | noun phrase | banking and complaints |
+| `saldo disponible` | noun phrase | banking |
+| `tipo de interés` | noun phrase | banking and money |
+| `pago pendiente` | noun phrase | money and obligations |
+| `recibo domiciliado` | noun phrase | banking and housing |
+| `presupuesto cerrado` | noun phrase | money and services |
+| `contrato escrito` | noun phrase | legal and work |
+| `acuerdo verbal` | noun phrase | work and legal |
+| `en mi opinión` | adverbial phrase | opinion language |
+
+Implemented content delta:
+
+- 120 reviewed Wiktionary lexeme rows.
+- 240 `AI_DRAFT` sentence rows promoted to `REVIEWED` by two independent automatic reviewers.
+- 240 `AI_DRAFT` accepted-answer rows promoted to `REVIEWED` by the same two-reviewer gate.
+- 240 `sentence_lexeme` joins.
+- 240 derived exercises:
+  - production and recognition exercises for all 120 target lemmas.
+
+Acceptance result:
+
+- `learnerReadyLexemes` increases from 706 to 826.
+- `reviewedSentences` increases from 1472 to 1712.
+- `reviewedAcceptedAnswers` increases from 1475 to 1715.
+- `exerciseCount` increases from 1412 to 1652.
+- `missingA1A2GapCount` remains 0.
+- No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 480 generated
+  content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
+  `autoReviewLedger`.

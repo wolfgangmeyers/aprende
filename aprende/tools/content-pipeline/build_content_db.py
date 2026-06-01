@@ -1807,6 +1807,27 @@ def build_ai_accelerated_pack(items):
     ]
 
 
+def build_numbered_ai_accelerated_pack(start_lexeme_id, start_sentence_id, start_answer_id, specs):
+    items = []
+    for offset, (
+        lemma, pos, gender, english_gloss, frequency_rank, cefr_band, difficulty_prior,
+        reason, source_basis, sentence_pairs,
+    ) in enumerate(specs):
+        if len(sentence_pairs) != 2:
+            raise ValueError(f"{lemma} must define exactly two reviewed sentence pairs")
+        sentence_id = start_sentence_id + offset * 2
+        answer_id = start_answer_id + offset * 2
+        items.append((
+            start_lexeme_id + offset, lemma, pos, gender, english_gloss, frequency_rank, cefr_band,
+            difficulty_prior, reason, source_basis,
+            [
+                (sentence_id, answer_id, sentence_pairs[0][0], sentence_pairs[0][1]),
+                (sentence_id + 1, answer_id + 1, sentence_pairs[1][0], sentence_pairs[1][1]),
+            ],
+        ))
+    return build_ai_accelerated_pack(items)
+
+
 AI_ACCELERATED_PACK_A2_008 = build_ai_accelerated_pack([
     (217, "alegrarse", "verb", None, "to be glad", 1850, "B1", 0.5, "feelings", "SPANISH_BREADTH_PLAN.md B1 feelings topic", [(493, 496, "Me alegro por ti.", "I am happy for you."), (494, 497, "Nos alegramos de verte.", "We are glad to see you.")]),
     (218, "enfadarse", "verb", None, "to get angry", 1900, "B1", 0.5, "feelings and conflict", "SPANISH_BREADTH_PLAN.md B1 feelings/conflict topic", [(495, 498, "Me enfado con el servicio.", "I get angry with the service."), (496, 499, "No quiero enfadarme.", "I do not want to get angry.")]),
@@ -2320,6 +2341,130 @@ AI_ACCELERATED_PACK_A2_013 = build_ai_accelerated_pack([
     (706, "aproximado", "adjective", None, "approximate", 1700, "B1", 0.5, "money and planning", "SPANISH_BREADTH_PLAN.md B1 planning/money topic", [(1471, 1474, "El precio es aproximado.", "The price is approximate."), (1472, 1475, "Doy una fecha aproximada.", "I give an approximate date.")]),
 ])
 
+
+AI_ACCELERATED_PACK_A2_014 = build_numbered_ai_accelerated_pack(707, 1473, 1476, [
+    ("en cambio", "adverbial phrase", None, "on the other hand", 1200, "B1", 0.5, "argument and contrast", "SPANISH_BREADTH_PLAN.md B1 discourse markers topic", [("Yo pago hoy; en cambio, tú pagas mañana.", "I pay today; you pay tomorrow."), ("En cambio, prefiero esperar.", "Instead, I prefer to wait.")]),
+    ("salvo", "preposition", None, "except; save", 1300, "B1", 0.5, "exceptions and conditions", "SPANISH_BREADTH_PLAN.md B1 connectors topic", [("Todos vienen, salvo Ana.", "Everyone comes except Ana."), ("Salvo error, el pago está hecho.", "Unless there is an error, payment is done.")]),
+    ("debido a", "prepositional phrase", None, "due to", 1500, "B1", 0.5, "reasons and problems", "SPANISH_BREADTH_PLAN.md B1 reasons topic", [("El vuelo cambia debido al clima.", "The flight changes due to weather."), ("Debido al ruido, no duermo.", "Due to noise, I cannot sleep.")]),
+    ("gracias a", "prepositional phrase", None, "thanks to", 1200, "B1", 0.5, "reasons and outcomes", "SPANISH_BREADTH_PLAN.md B1 reasons topic", [("Gracias a ti, resolvemos el problema.", "Thanks to you, we solve the problem."), ("Llego a tiempo gracias al taxi.", "I arrive on time thanks to the taxi.")]),
+    ("al contrario", "adverbial phrase", None, "on the contrary", 1500, "B1", 0.5, "argument and repair", "SPANISH_BREADTH_PLAN.md B1 argument topic", [("Al contrario, estoy de acuerdo.", "On the contrary, I agree."), ("Al contrario, conviene esperar.", "On the contrary, waiting helps.")]),
+    ("en cualquier caso", "adverbial phrase", None, "in any case", 1900, "B2", 0.6, "discourse markers", "SPANISH_BREADTH_PLAN.md B2 discourse markers topic", [("En cualquier caso, llamo mañana.", "In any case, I call tomorrow."), ("En cualquier caso, necesito respuesta.", "In any case, I need an answer.")]),
+    ("en ese caso", "adverbial phrase", None, "in that case", 1700, "B1", 0.5, "conditions and repair", "SPANISH_BREADTH_PLAN.md B1 conversation repair topic", [("En ese caso, espero aquí.", "In that case, I wait here."), ("En ese caso, cambio la cita.", "In that case, I change the appointment.")]),
+    ("por si acaso", "adverbial phrase", None, "just in case", 1600, "B1", 0.5, "planning and precaution", "SPANISH_BREADTH_PLAN.md B1 everyday chunks topic", [("Llevo efectivo por si acaso.", "I carry cash just in case."), ("Guardo la copia por si acaso.", "I keep the copy just in case.")]),
+    ("a propósito", "adverbial phrase", None, "by the way; deliberately", 1400, "B1", 0.5, "conversation and intent", "SPANISH_BREADTH_PLAN.md B1 conversation chunks topic", [("A propósito, necesito tu firma.", "By the way, I need your signature."), ("No lo hice a propósito.", "I did not do it deliberately.")]),
+    ("desde luego", "adverbial phrase", None, "of course", 1300, "B1", 0.5, "agreement and emphasis", "SPANISH_BREADTH_PLAN.md B1 opinion chunks topic", [("Desde luego, acepto la propuesta.", "Of course, I accept the proposal."), ("Desde luego, esto es importante.", "Of course, this is important.")]),
+    ("al fin y al cabo", "adverbial phrase", None, "after all", 2000, "B2", 0.6, "argument and summaries", "SPANISH_BREADTH_PLAN.md B2 argument chunks topic", [("Al fin y al cabo, somos vecinos.", "After all, we are neighbors."), ("Al fin y al cabo, conviene esperar.", "After all, waiting is useful.")]),
+    ("por ahora", "adverbial phrase", None, "for now", 1200, "B1", 0.5, "planning and status", "SPANISH_BREADTH_PLAN.md B1 planning chunks topic", [("Por ahora, no necesito ayuda.", "For now, I need no help."), ("El plan funciona por ahora.", "The plan works for now.")]),
+    ("por lo menos", "adverbial phrase", None, "at least", 1100, "B1", 0.5, "argument and estimates", "SPANISH_BREADTH_PLAN.md B1 opinion chunks topic", [("Por lo menos, avísame antes.", "At least, tell me beforehand."), ("Necesito por lo menos dos copias.", "I need at least two copies.")]),
+    ("por lo visto", "adverbial phrase", None, "apparently", 1700, "B1", 0.5, "uncertainty and narration", "SPANISH_BREADTH_PLAN.md B1 narration chunks topic", [("Por lo visto, la oficina cierra.", "Apparently, the office closes."), ("Por lo visto, falta un documento.", "Apparently, a document is missing.")]),
+    ("en principio", "adverbial phrase", None, "in principle", 1600, "B2", 0.6, "formal planning", "SPANISH_BREADTH_PLAN.md B2 discourse markers topic", [("En principio, acepto el acuerdo.", "In principle, I accept the agreement."), ("En principio, la cita sigue.", "In principle, the appointment remains.")]),
+    ("en realidad", "adverbial phrase", None, "actually", 900, "B1", 0.5, "clarification", "SPANISH_BREADTH_PLAN.md B1 conversation repair topic", [("En realidad, necesito otra factura.", "Actually, I need another invoice."), ("En realidad, no estoy seguro.", "Actually, I am not sure.")]),
+    ("de nuevo", "adverbial phrase", None, "again", 850, "B1", 0.5, "repair and repetition", "SPANISH_BREADTH_PLAN.md B1 conversation repair topic", [("Explícalo de nuevo, por favor.", "Explain it again, please."), ("Llamo de nuevo mañana.", "I call again tomorrow.")]),
+    ("otra vez", "adverbial phrase", None, "again", 900, "B1", 0.5, "repair and repetition", "SPANISH_BREADTH_PLAN.md B1 conversation repair topic", [("Repite otra vez, por favor.", "Repeat it again, please."), ("La tarjeta falla otra vez.", "The card fails again.")]),
+    ("a la vez", "adverbial phrase", None, "at the same time", 1300, "B1", 0.5, "coordination and work", "SPANISH_BREADTH_PLAN.md B1 workplace chunks topic", [("Trabajamos a la vez.", "We work at the same time."), ("No hablen todos a la vez.", "Do not all speak at once.")]),
+    ("al menos", "adverbial phrase", None, "at least", 1000, "B1", 0.5, "estimates and repair", "SPANISH_BREADTH_PLAN.md B1 opinion chunks topic", [("Al menos, dame una copia.", "At least, give me a copy."), ("Necesito al menos una respuesta.", "I need at least one answer.")]),
+    ("en vez de", "prepositional phrase", None, "instead of", 1500, "B1", 0.5, "choices and repair", "SPANISH_BREADTH_PLAN.md B1 comparison chunks topic", [("Pago en efectivo en vez de tarjeta.", "I pay cash instead of card."), ("Ven hoy en vez de mañana.", "Come today instead of tomorrow.")]),
+    ("a mano", "adverbial phrase", None, "by hand", 1400, "B1", 0.5, "forms and household", "SPANISH_BREADTH_PLAN.md B1 public services topic", [("Relleno el formulario a mano.", "I fill the form by hand."), ("Escribo la dirección a mano.", "I write the address by hand.")]),
+    ("a domicilio", "adverbial phrase", None, "home delivery", 1900, "B1", 0.6, "services and household", "SPANISH_BREADTH_PLAN.md B1 services topic", [("El servicio es a domicilio.", "The service is home delivery."), ("Pido comida a domicilio.", "I order food for delivery.")]),
+    ("de guardia", "adverbial phrase", None, "on call", 1900, "B2", 0.6, "medical and emergencies", "SPANISH_BREADTH_PLAN.md B2 health systems topic", [("El médico está de guardia.", "The doctor is on call."), ("Hay una farmacia de guardia.", "There is an on-call pharmacy.")]),
+    ("fuera de servicio", "adjective phrase", None, "out of service", 2100, "B1", 0.6, "travel and services", "SPANISH_BREADTH_PLAN.md B1 travel disruptions topic", [("El ascensor está fuera de servicio.", "The elevator is out of service."), ("La máquina sigue fuera de servicio.", "The machine remains out of service.")]),
+    ("en servicio", "adjective phrase", None, "in service", 1700, "B1", 0.5, "travel and services", "SPANISH_BREADTH_PLAN.md B1 travel/services topic", [("El tren está en servicio.", "The train is in service."), ("La línea vuelve a estar en servicio.", "The line is back in service.")]),
+    ("de acuerdo con", "prepositional phrase", None, "according to", 1600, "B2", 0.6, "rules and formal speech", "SPANISH_BREADTH_PLAN.md B2 bureaucracy topic", [("Actúo de acuerdo con la norma.", "I act according to the rule."), ("De acuerdo con el contrato, pago.", "According to the contract, I pay.")]),
+    ("con respecto a", "prepositional phrase", None, "regarding", 1800, "B2", 0.6, "formal discourse", "SPANISH_BREADTH_PLAN.md B2 discourse markers topic", [("Con respecto al pago, acepto.", "Regarding the payment, I accept."), ("Tengo dudas con respecto al contrato.", "I have doubts regarding the contract.")]),
+    ("por separado", "adverbial phrase", None, "separately", 1600, "B1", 0.5, "forms and money", "SPANISH_BREADTH_PLAN.md B1 money/services topic", [("Pago las tasas por separado.", "I pay the fees separately."), ("Envío los documentos por separado.", "I send the documents separately.")]),
+    ("por escrito", "adverbial phrase", None, "in writing", 1500, "B1", 0.5, "bureaucracy and legal", "SPANISH_BREADTH_PLAN.md B1 bureaucracy/legal topic", [("Lo pido por escrito.", "I request it in writing."), ("Necesito la respuesta por escrito.", "I need the answer in writing.")]),
+    ("verbalmente", "adverb", None, "verbally", 2200, "B2", 0.6, "work and legal", "SPANISH_BREADTH_PLAN.md B2 workplace/legal topic", [("Acepto verbalmente.", "I accept verbally."), ("Me informa verbalmente.", "He informs me verbally.")]),
+    ("sinceramente", "adverb", None, "honestly", 1500, "B1", 0.5, "opinions and repair", "SPANISH_BREADTH_PLAN.md B1 opinion language topic", [("Sinceramente, no entiendo.", "Honestly, I do not understand."), ("Sinceramente, prefiero otra opción.", "Honestly, I prefer another option.")]),
+    ("justamente", "adverb", None, "precisely; fairly", 1500, "B1", 0.5, "argument and emphasis", "SPANISH_BREADTH_PLAN.md B1 argument language topic", [("Eso es justamente el problema.", "That is precisely the problem."), ("Me tratan justamente.", "They treat me fairly.")]),
+    ("precisamente", "adverb", None, "precisely", 1200, "B1", 0.5, "argument and emphasis", "SPANISH_BREADTH_PLAN.md B1 argument language topic", [("Precisamente por eso llamo.", "That is precisely why I call."), ("Necesito precisamente ese documento.", "I need precisely that document.")]),
+    ("probablemente", "adverb", None, "probably", 1100, "B1", 0.5, "uncertainty and planning", "SPANISH_BREADTH_PLAN.md B1 uncertainty topic", [("Probablemente llega tarde.", "He probably arrives late."), ("Probablemente necesito otra cita.", "I probably need another appointment.")]),
+    ("raramente", "adverb", None, "rarely", 1900, "B1", 0.5, "frequency and narration", "SPANISH_BREADTH_PLAN.md B1 frequency topic", [("Raramente uso efectivo.", "I rarely use cash."), ("Raramente tengo problemas aquí.", "I rarely have problems here.")]),
+    ("posteriormente", "adverb", None, "later; subsequently", 1800, "B2", 0.6, "formal sequencing", "SPANISH_BREADTH_PLAN.md B2 narration topic", [("Posteriormente, firmo el contrato.", "Later, I sign the contract."), ("Posteriormente, revisan el expediente.", "Later, they review the file.")]),
+    ("diariamente", "adverb", None, "daily", 1700, "B1", 0.5, "routines and health", "SPANISH_BREADTH_PLAN.md B1 routine/health topic", [("Tomo la medicina diariamente.", "I take the medicine daily."), ("Reviso el correo diariamente.", "I check email daily.")]),
+    ("semanalmente", "adverb", None, "weekly", 1900, "B1", 0.5, "routines and money", "SPANISH_BREADTH_PLAN.md B1 routine/money topic", [("Pago semanalmente.", "I pay weekly."), ("Nos reunimos semanalmente.", "We meet weekly.")]),
+    ("mensualmente", "adverb", None, "monthly", 1900, "B1", 0.5, "routines and money", "SPANISH_BREADTH_PLAN.md B1 routine/money topic", [("Pago el alquiler mensualmente.", "I pay rent monthly."), ("Recibo la factura mensualmente.", "I receive the bill monthly.")]),
+    ("sustituir", "verb", None, "to replace", 1300, "B1", 0.5, "services and repairs", "SPANISH_BREADTH_PLAN.md B1 household/services topic", [("Sustituyo la bombilla.", "I replace the bulb."), ("Necesito sustituir la tarjeta.", "I need to replace the card.")]),
+    ("actualizar", "verb", None, "to update", 1700, "B1", 0.5, "services and bureaucracy", "SPANISH_BREADTH_PLAN.md B1 services/technology topic", [("Actualizo mis datos.", "I update my details."), ("Necesito actualizar la aplicación.", "I need to update the app.")]),
+    ("adelantar", "verb", None, "to move earlier; advance", 1600, "B1", 0.5, "appointments and planning", "SPANISH_BREADTH_PLAN.md B1 appointments topic", [("Adelanto la cita.", "I move the appointment earlier."), ("Quiero adelantar el pago.", "I want to advance the payment.")]),
+    ("interrogar", "verb", None, "to question; interrogate", 2300, "B2", 0.6, "legal and conflict", "SPANISH_BREADTH_PLAN.md B2 legal topic", [("Interrogan al testigo.", "They question the witness."), ("El abogado quiere interrogarlo.", "The lawyer wants to question him.")]),
+    ("investigar", "verb", None, "to investigate", 1000, "B1", 0.5, "legal and problems", "SPANISH_BREADTH_PLAN.md B1 legal/problems topic", [("Investigo el problema.", "I investigate the problem."), ("La policía investiga la denuncia.", "The police investigate the report.")]),
+    ("encargarse", "verb", None, "to take care of", 1500, "B1", 0.5, "work and services", "SPANISH_BREADTH_PLAN.md B1 work/services topic", [("Me encargo del trámite.", "I handle the procedure."), ("Ella se encarga del pago.", "She handles the payment.")]),
+    ("sellar", "verb", None, "to stamp; seal", 2200, "B1", 0.6, "bureaucracy and household", "SPANISH_BREADTH_PLAN.md B1 bureaucracy topic", [("Sello el formulario.", "I stamp the form."), ("Sellan la copia en recepción.", "They stamp the copy at reception.")]),
+    ("escanear", "verb", None, "to scan", 2400, "B1", 0.6, "bureaucracy and technology", "SPANISH_BREADTH_PLAN.md B1 public services topic", [("Escaneo el documento.", "I scan the document."), ("Necesito escanear la copia.", "I need to scan the copy.")]),
+    ("adjuntar", "verb", None, "to attach", 2300, "B1", 0.6, "bureaucracy and technology", "SPANISH_BREADTH_PLAN.md B1 public services topic", [("Adjunto la factura.", "I attach the invoice."), ("Debes adjuntar el certificado.", "You must attach the certificate.")]),
+    ("audiencia", "noun", "F", "hearing; audience", 1600, "B2", 0.6, "legal and public life", "SPANISH_BREADTH_PLAN.md B2 legal topic", [("La audiencia empieza mañana.", "The hearing starts tomorrow."), ("Asisto a la audiencia.", "I attend the hearing.")]),
+    ("juzgar", "verb", None, "to judge", 1400, "B1", 0.5, "legal and opinions", "SPANISH_BREADTH_PLAN.md B1 legal/opinions topic", [("No quiero juzgarte.", "I do not want to judge you."), ("El juez juzga el caso.", "The judge tries the case.")]),
+    ("declarar", "verb", None, "to declare; testify", 1000, "B1", 0.5, "legal and bureaucracy", "SPANISH_BREADTH_PLAN.md B1 legal topic", [("Declaro la verdad.", "I state the truth."), ("Ella declara ante el juez.", "She testifies before the judge.")]),
+    ("comparecer", "verb", None, "to appear formally", 2400, "B2", 0.6, "legal and bureaucracy", "SPANISH_BREADTH_PLAN.md B2 legal topic", [("Comparezco ante el juez.", "I appear before the judge."), ("Debes comparecer mañana.", "You must appear tomorrow.")]),
+    ("sancionar", "verb", None, "to penalize; sanction", 2100, "B2", 0.6, "legal and public services", "SPANISH_BREADTH_PLAN.md B2 legal/public services topic", [("Sancionan a la empresa.", "They penalize the company."), ("Pueden sancionar el incumplimiento.", "They can penalize noncompliance.")]),
+    ("multar", "verb", None, "to fine", 2200, "B1", 0.6, "legal and travel", "SPANISH_BREADTH_PLAN.md B1 legal/travel topic", [("Me multan por aparcar mal.", "They fine me for bad parking."), ("Pueden multar al conductor.", "They can fine the driver.")]),
+    ("recurso", "noun", "M", "appeal; resource", 1200, "B2", 0.6, "legal and bureaucracy", "SPANISH_BREADTH_PLAN.md B2 legal topic", [("Presento un recurso.", "I file an appeal."), ("El recurso sigue pendiente.", "The appeal remains pending.")]),
+    ("apelación", "noun", "F", "appeal", 2200, "B2", 0.6, "legal", "SPANISH_BREADTH_PLAN.md B2 legal topic", [("La apelación tarda meses.", "The appeal takes months."), ("Preparo la apelación.", "I prepare the appeal.")]),
+    ("sentencia", "noun", "F", "sentence; ruling", 1100, "B2", 0.6, "legal", "SPANISH_BREADTH_PLAN.md B2 legal topic", [("La sentencia sale hoy.", "The ruling comes out today."), ("Leo la sentencia completa.", "I read the complete ruling.")]),
+    ("acusación", "noun", "F", "accusation", 1900, "B2", 0.6, "legal and conflict", "SPANISH_BREADTH_PLAN.md B2 legal/conflict topic", [("La acusación es grave.", "The accusation is serious."), ("Niega la acusación.", "He denies the accusation.")]),
+    ("defensa legal", "noun phrase", "F", "legal defense", 2600, "B2", 0.6, "legal", "SPANISH_BREADTH_PLAN.md B2 legal topic", [("Necesito defensa legal.", "I need legal defense."), ("La defensa legal cuesta dinero.", "Legal defense costs money.")]),
+    ("asesoría", "noun", "F", "advisory office", 2200, "B2", 0.6, "work legal and money", "SPANISH_BREADTH_PLAN.md B2 services topic", [("Voy a una asesoría.", "I go to an advisory office."), ("La asesoría revisa mis impuestos.", "The advisory office reviews my taxes.")]),
+    ("notaría", "noun", "F", "notary office", 2500, "B2", 0.6, "legal and bureaucracy", "SPANISH_BREADTH_PLAN.md B2 legal/bureaucracy topic", [("Voy a la notaría.", "I go to the notary office."), ("Firmo en la notaría.", "I sign at the notary office.")]),
+    ("registro civil", "noun phrase", "M", "civil registry", 2500, "B2", 0.6, "public services", "SPANISH_BREADTH_PLAN.md B2 public services topic", [("Voy al registro civil.", "I go to the civil registry."), ("El registro civil emite certificados.", "The civil registry issues certificates.")]),
+    ("certificado médico", "noun phrase", "M", "medical certificate", 2200, "B1", 0.6, "medical and work", "SPANISH_BREADTH_PLAN.md B1 medical/work topic", [("Necesito un certificado médico.", "I need a medical certificate."), ("El certificado médico llega hoy.", "The medical certificate arrives today.")]),
+    ("alta médica", "noun phrase", "F", "medical discharge", 2300, "B2", 0.6, "medical systems", "SPANISH_BREADTH_PLAN.md B2 medical systems topic", [("Recibo el alta médica.", "I receive medical discharge."), ("El alta médica depende del doctor.", "Medical discharge depends on the doctor.")]),
+    ("baja médica", "noun phrase", "F", "sick leave", 2100, "B1", 0.6, "medical and work", "SPANISH_BREADTH_PLAN.md B1 medical/work topic", [("Tengo baja médica.", "I have sick leave."), ("La baja médica dura una semana.", "The sick leave lasts one week.")]),
+    ("cita médica", "noun phrase", "F", "medical appointment", 1200, "B1", 0.5, "medical systems", "SPANISH_BREADTH_PLAN.md B1 medical topic", [("Tengo una cita médica.", "I have a medical appointment."), ("Cambio la cita médica.", "I change the medical appointment.")]),
+    ("mareo", "noun", "M", "dizziness", 1900, "B1", 0.5, "medical symptoms", "SPANISH_BREADTH_PLAN.md B1 medical symptoms topic", [("Siento mareo.", "I feel dizzy."), ("El mareo pasa pronto.", "Dizziness passes soon.")]),
+    ("vómito", "noun", "M", "vomiting", 2200, "B1", 0.6, "medical symptoms", "SPANISH_BREADTH_PLAN.md B1 medical symptoms topic", [("El vómito continúa.", "The vomiting continues."), ("El niño tiene vómitos.", "The child is vomiting.")]),
+    ("estornudo", "noun", "M", "sneeze", 2200, "B1", 0.6, "medical symptoms", "SPANISH_BREADTH_PLAN.md B1 medical symptoms topic", [("Los estornudos me molestan.", "The sneezes bother me."), ("Tengo estornudos por la alergia.", "I sneeze because of allergies.")]),
+    ("análisis de sangre", "noun phrase", "M", "blood test", 2300, "B1", 0.6, "medical systems", "SPANISH_BREADTH_PLAN.md B1 medical systems topic", [("Necesito un análisis de sangre.", "I need a blood test."), ("El análisis de sangre sale bien.", "The blood test comes out well.")]),
+    ("presión arterial", "noun phrase", "F", "blood pressure", 2100, "B1", 0.6, "medical systems", "SPANISH_BREADTH_PLAN.md B1 medical systems topic", [("Miden mi presión arterial.", "They measure my blood pressure."), ("La presión arterial está alta.", "Blood pressure is high.")]),
+    ("seguro privado", "noun phrase", "M", "private insurance", 2200, "B2", 0.6, "health and money", "SPANISH_BREADTH_PLAN.md B2 health/money topic", [("Tengo seguro privado.", "I have private insurance."), ("El seguro privado cubre la consulta.", "Private insurance covers the consultation.")]),
+    ("tarjeta sanitaria", "noun phrase", "F", "health card", 2100, "B1", 0.6, "health systems", "SPANISH_BREADTH_PLAN.md B1 health systems topic", [("Traigo mi tarjeta sanitaria.", "I bring my health card."), ("La tarjeta sanitaria está vencida.", "The health card is expired.")]),
+    ("centro de salud", "noun phrase", "M", "health center", 1500, "B1", 0.5, "health systems", "SPANISH_BREADTH_PLAN.md B1 health systems topic", [("Voy al centro de salud.", "I go to the health center."), ("El centro de salud abre temprano.", "The health center opens early.")]),
+    ("persiana", "noun", "F", "blind; shutter", 2200, "B1", 0.6, "household and repairs", "SPANISH_BREADTH_PLAN.md B1 household topic", [("La persiana está rota.", "The blind is broken."), ("Subo la persiana.", "I raise the blind.")]),
+    ("bombilla", "noun", "F", "light bulb", 2200, "B1", 0.6, "household and repairs", "SPANISH_BREADTH_PLAN.md B1 household topic", [("Cambio la bombilla.", "I change the bulb."), ("La bombilla no funciona.", "The bulb does not work.")]),
+    ("interruptor", "noun", "M", "switch", 2200, "B1", 0.6, "household and repairs", "SPANISH_BREADTH_PLAN.md B1 household topic", [("El interruptor falla.", "The switch fails."), ("Pulso el interruptor.", "I press the switch.")]),
+    ("calentador", "noun", "M", "water heater", 2200, "B1", 0.6, "household and repairs", "SPANISH_BREADTH_PLAN.md B1 household topic", [("El calentador no enciende.", "The heater does not start."), ("Reviso el calentador.", "I check the heater.")]),
+    ("nevera", "noun", "F", "fridge", 1600, "B1", 0.5, "household", "SPANISH_BREADTH_PLAN.md B1 household topic", [("La nevera está vacía.", "The fridge is empty."), ("Limpio la nevera.", "I clean the fridge.")]),
+    ("lavadora", "noun", "F", "washing machine", 1900, "B1", 0.5, "household", "SPANISH_BREADTH_PLAN.md B1 household topic", [("La lavadora pierde agua.", "The washer leaks water."), ("Uso la lavadora.", "I use the washer.")]),
+    ("fregadero", "noun", "M", "sink", 2200, "B1", 0.6, "household and repairs", "SPANISH_BREADTH_PLAN.md B1 household topic", [("El fregadero está atascado.", "The sink is clogged."), ("Limpio el fregadero.", "I clean the sink.")]),
+    ("horno", "noun", "M", "oven", 1700, "B1", 0.5, "household and food", "SPANISH_BREADTH_PLAN.md B1 household/food topic", [("El horno calienta mal.", "The oven heats badly."), ("Apago el horno.", "I turn off the oven.")]),
+    ("colchón", "noun", "M", "mattress", 2200, "B1", 0.6, "household and lodging", "SPANISH_BREADTH_PLAN.md B1 lodging topic", [("El colchón es incómodo.", "The mattress is uncomfortable."), ("Cambio el colchón.", "I change the mattress.")]),
+    ("armario", "noun", "M", "closet; cabinet", 1800, "B1", 0.5, "household", "SPANISH_BREADTH_PLAN.md B1 household topic", [("El armario está lleno.", "The closet is full."), ("Ordeno el armario.", "I organize the closet.")]),
+    ("pasillo", "noun", "M", "hallway", 1800, "B1", 0.5, "housing and travel", "SPANISH_BREADTH_PLAN.md B1 housing/lodging topic", [("El pasillo está oscuro.", "The hallway is dark."), ("Espero en el pasillo.", "I wait in the hallway.")]),
+    ("balcón", "noun", "M", "balcony", 1700, "B1", 0.5, "housing", "SPANISH_BREADTH_PLAN.md B1 housing topic", [("El balcón es pequeño.", "The balcony is small."), ("Limpio el balcón.", "I clean the balcony.")]),
+    ("escalera", "noun", "F", "stairs; ladder", 1500, "B1", 0.5, "housing and travel", "SPANISH_BREADTH_PLAN.md B1 housing topic", [("Subo la escalera.", "I climb the stairs."), ("La escalera está mojada.", "The stairs are wet.")]),
+    ("ruido", "noun", "M", "noise", 1200, "B1", 0.5, "housing and complaints", "SPANISH_BREADTH_PLAN.md B1 housing/complaints topic", [("El ruido no me deja dormir.", "The noise keeps me awake."), ("Denuncio el ruido.", "I report the noise.")]),
+    ("reforma", "noun", "F", "renovation; reform", 1300, "B1", 0.5, "housing and services", "SPANISH_BREADTH_PLAN.md B1 housing/services topic", [("La reforma empieza mañana.", "The renovation starts tomorrow."), ("Pago parte de la reforma.", "I pay part of the renovation.")]),
+    ("sueldo", "noun", "M", "salary", 1600, "B1", 0.5, "work and money", "SPANISH_BREADTH_PLAN.md B1 work/money topic", [("Cobro el sueldo mañana.", "I collect my salary tomorrow."), ("El sueldo no alcanza.", "The salary is not enough.")]),
+    ("convenio", "noun", "M", "agreement; labor contract", 1500, "B2", 0.6, "work and legal", "SPANISH_BREADTH_PLAN.md B2 workplace/legal topic", [("El convenio mejora el horario.", "The agreement improves the schedule."), ("Reviso el convenio.", "I review the agreement.")]),
+    ("jornada laboral", "noun phrase", "F", "workday", 1800, "B1", 0.5, "work", "SPANISH_BREADTH_PLAN.md B1 workplace topic", [("La jornada laboral termina tarde.", "The workday ends late."), ("Reduzco mi jornada laboral.", "I reduce my workday.")]),
+    ("contrato temporal", "noun phrase", "M", "temporary contract", 1900, "B1", 0.6, "work and legal", "SPANISH_BREADTH_PLAN.md B1 workplace/legal topic", [("Tengo un contrato temporal.", "I have a temporary contract."), ("El contrato temporal termina pronto.", "The temporary contract ends soon.")]),
+    ("baja laboral", "noun phrase", "F", "work leave", 2000, "B2", 0.6, "work and medical", "SPANISH_BREADTH_PLAN.md B2 workplace/medical topic", [("Pido una baja laboral.", "I request work leave."), ("La baja laboral está aprobada.", "The work leave is approved.")]),
+    ("permiso laboral", "noun phrase", "M", "work permit", 1900, "B1", 0.6, "work and bureaucracy", "SPANISH_BREADTH_PLAN.md B1 workplace/bureaucracy topic", [("Necesito permiso laboral.", "I need work permission."), ("El permiso laboral está firmado.", "The work permit is signed.")]),
+    ("entrevista", "noun", "F", "interview", 1200, "B1", 0.5, "work and social", "SPANISH_BREADTH_PLAN.md B1 workplace topic", [("Tengo una entrevista mañana.", "I have an interview tomorrow."), ("La entrevista sale bien.", "The interview goes well.")]),
+    ("currículum", "noun", "M", "resume", 2000, "B1", 0.6, "work", "SPANISH_BREADTH_PLAN.md B1 workplace topic", [("Envío mi currículum.", "I send my resume."), ("Actualizo el currículum.", "I update the resume.")]),
+    ("departamento", "noun", "M", "department", 900, "B1", 0.5, "work and services", "SPANISH_BREADTH_PLAN.md B1 workplace/services topic", [("Trabajo en otro departamento.", "I work in another department."), ("El departamento responde tarde.", "The department answers late.")]),
+    ("equipo de trabajo", "noun phrase", "M", "work team", 1600, "B1", 0.5, "work and collaboration", "SPANISH_BREADTH_PLAN.md B1 workplace topic", [("El equipo de trabajo ayuda.", "The work team helps."), ("Cambio de equipo de trabajo mañana.", "I change work teams tomorrow.")]),
+    ("puerta de embarque", "noun phrase", "F", "boarding gate", 1900, "B1", 0.6, "travel", "SPANISH_BREADTH_PLAN.md B1 travel topic", [("Busco la puerta de embarque.", "I look for the boarding gate."), ("La puerta de embarque cambia.", "The boarding gate changes.")]),
+    ("tarjeta de embarque", "noun phrase", "F", "boarding pass", 1900, "B1", 0.6, "travel", "SPANISH_BREADTH_PLAN.md B1 travel topic", [("Imprimo la tarjeta de embarque.", "I print the boarding pass."), ("Pierdo la tarjeta de embarque.", "I lose the boarding pass.")]),
+    ("transbordo", "noun", "M", "transfer", 1700, "B1", 0.5, "travel and transit", "SPANISH_BREADTH_PLAN.md B1 transit topic", [("Hago transbordo en Madrid.", "I transfer in Madrid."), ("El transbordo tarda diez minutos.", "The transfer takes ten minutes.")]),
+    ("atención al cliente", "noun phrase", "F", "customer service", 1400, "B1", 0.5, "services and complaints", "SPANISH_BREADTH_PLAN.md B1 services topic", [("Llamo a atención al cliente.", "I call customer service."), ("Atención al cliente no responde.", "Customer service does not answer.")]),
+    ("hoja de reclamaciones", "noun phrase", "F", "complaint form", 2400, "B2", 0.6, "services and legal", "SPANISH_BREADTH_PLAN.md B2 services/legal topic", [("Pido la hoja de reclamaciones.", "I request the complaint form."), ("Relleno la hoja de reclamaciones.", "I fill the complaint form.")]),
+    ("servicio técnico", "noun phrase", "M", "technical service", 1900, "B1", 0.6, "services and repairs", "SPANISH_BREADTH_PLAN.md B1 services/repairs topic", [("Llamo al servicio técnico.", "I call technical service."), ("El servicio técnico llega tarde.", "Technical service arrives late.")]),
+    ("devolución", "noun", "F", "return; refund", 1600, "B1", 0.5, "shopping and services", "SPANISH_BREADTH_PLAN.md B1 shopping/services topic", [("Pido una devolución.", "I request a return."), ("La devolución tarda tres días.", "The return takes three days.")]),
+    ("cambio de producto", "noun phrase", "M", "product exchange", 2300, "B1", 0.6, "shopping and services", "SPANISH_BREADTH_PLAN.md B1 shopping/services topic", [("Pido un cambio de producto.", "I request a product exchange."), ("El cambio de producto es gratis.", "The product exchange is free.")]),
+    ("factura electrónica", "noun phrase", "F", "electronic invoice", 2000, "B1", 0.6, "money and services", "SPANISH_BREADTH_PLAN.md B1 money/services topic", [("Recibo la factura electrónica.", "I receive the electronic invoice."), ("La factura electrónica está lista.", "The electronic invoice is ready.")]),
+    ("cajero automático", "noun phrase", "M", "ATM", 1700, "B1", 0.5, "banking and travel", "SPANISH_BREADTH_PLAN.md B1 banking topic", [("Uso el cajero automático.", "I use the ATM."), ("El cajero automático no funciona.", "The ATM does not work.")]),
+    ("cuenta corriente", "noun phrase", "F", "checking account", 1800, "B1", 0.5, "banking", "SPANISH_BREADTH_PLAN.md B1 banking topic", [("Abro una cuenta corriente.", "I open a checking account."), ("La cuenta corriente tiene saldo.", "The checking account has balance.")]),
+    ("cargo bancario", "noun phrase", "M", "bank charge", 2000, "B1", 0.6, "banking and complaints", "SPANISH_BREADTH_PLAN.md B1 banking/complaints topic", [("No reconozco el cargo bancario.", "I do not recognize the charge."), ("El cargo bancario es incorrecto.", "The bank charge is incorrect.")]),
+    ("saldo disponible", "noun phrase", "M", "available balance", 1900, "B1", 0.5, "banking", "SPANISH_BREADTH_PLAN.md B1 banking topic", [("Consulto el saldo disponible.", "I check the available balance."), ("El saldo disponible es bajo.", "The available balance is low.")]),
+    ("tipo de interés", "noun phrase", "M", "interest rate", 1900, "B2", 0.6, "banking and money", "SPANISH_BREADTH_PLAN.md B2 banking topic", [("El tipo de interés sube.", "The interest rate rises."), ("Comparo el tipo de interés.", "I compare the interest rate.")]),
+    ("pago pendiente", "noun phrase", "M", "pending payment", 1700, "B1", 0.5, "money and obligations", "SPANISH_BREADTH_PLAN.md B1 money/obligations topic", [("Tengo un pago pendiente.", "I have a pending payment."), ("El pago pendiente vence hoy.", "The pending payment is due today.")]),
+    ("recibo domiciliado", "noun phrase", "M", "direct-debit bill", 2300, "B2", 0.6, "banking and housing", "SPANISH_BREADTH_PLAN.md B2 banking/housing topic", [("Pago el recibo domiciliado.", "I pay the direct-debit bill."), ("El recibo domiciliado falla.", "The direct-debit bill fails.")]),
+    ("presupuesto cerrado", "noun phrase", "M", "fixed estimate", 2300, "B2", 0.6, "money and services", "SPANISH_BREADTH_PLAN.md B2 money/services topic", [("Quiero un presupuesto cerrado.", "I want a fixed estimate."), ("El presupuesto cerrado incluye todo.", "The fixed estimate includes everything.")]),
+    ("contrato escrito", "noun phrase", "M", "written contract", 1900, "B1", 0.5, "legal and work", "SPANISH_BREADTH_PLAN.md B1 legal/work topic", [("Necesito un contrato escrito.", "I need a written contract."), ("El contrato escrito protege a ambos.", "The written contract protects both.")]),
+    ("acuerdo verbal", "noun phrase", "M", "verbal agreement", 2200, "B2", 0.6, "work and legal", "SPANISH_BREADTH_PLAN.md B2 workplace/legal topic", [("Tenemos un acuerdo verbal.", "We have a verbal agreement."), ("El acuerdo verbal no basta.", "The verbal agreement is insufficient.")]),
+    ("en mi opinión", "adverbial phrase", None, "in my opinion", 1100, "B1", 0.5, "opinion language", "SPANISH_BREADTH_PLAN.md B1 opinion language topic", [("En mi opinión, conviene esperar.", "In my opinion, waiting helps."), ("En mi opinión, falta información.", "In my opinion, information is missing.")]),
+])
+
 AI_REVIEWED_SENTENCE_PAIRS.update({
     spanish: english
     for pack in (
@@ -2334,6 +2479,7 @@ AI_REVIEWED_SENTENCE_PAIRS.update({
         AI_ACCELERATED_PACK_A2_011,
         AI_ACCELERATED_PACK_A2_012,
         AI_ACCELERATED_PACK_A2_013,
+        AI_ACCELERATED_PACK_A2_014,
     )
     for item in pack
     for _, _, spanish, english in item["sentences"]
@@ -2454,6 +2600,7 @@ A1_A2_TARGET_LEMMAS.extend([
         AI_ACCELERATED_PACK_A2_011,
         AI_ACCELERATED_PACK_A2_012,
         AI_ACCELERATED_PACK_A2_013,
+        AI_ACCELERATED_PACK_A2_014,
     )
     for item in pack
 ])
@@ -3506,8 +3653,12 @@ def vetted_sample():
         AI_ACCELERATED_PACK_A2_012, "a2-012", next_exercise_id,
         lexemes, sentences, accepted, sentence_lexeme, exercises,
     )
-    append_ai_accelerated_pack(
+    next_exercise_id = append_ai_accelerated_pack(
         AI_ACCELERATED_PACK_A2_013, "a2-013", next_exercise_id,
+        lexemes, sentences, accepted, sentence_lexeme, exercises,
+    )
+    append_ai_accelerated_pack(
+        AI_ACCELERATED_PACK_A2_014, "a2-014", next_exercise_id,
         lexemes, sentences, accepted, sentence_lexeme, exercises,
     )
     return lexemes, sentences, accepted, sentence_lexeme, conj, exercises, nodes
