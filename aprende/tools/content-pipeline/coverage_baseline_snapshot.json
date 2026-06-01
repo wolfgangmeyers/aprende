@@ -37,57 +37,58 @@
     "reviewPolicy": "This list is a local source-checked audit target, not shipped learning content. A target lemma only becomes shipped content after the normal lexeme/sentence/accepted-answer provenance and REVIEWED gate pass."
   },
   "summary": {
-    "rawLexemes": 516,
-    "learnerReadyLexemes": 516,
-    "reviewedSentences": 1092,
-    "reviewedAcceptedAnswers": 1095,
-    "exerciseCount": 1032,
+    "rawLexemes": 606,
+    "learnerReadyLexemes": 606,
+    "reviewedSentences": 1272,
+    "reviewedAcceptedAnswers": 1275,
+    "exerciseCount": 1212,
     "missingA1A2GapCount": 0
   },
   "counts": {
     "lexemesByPos": {
-      "adjective": 46,
+      "adjective": 49,
       "adjective/adverb": 4,
-      "adverb": 25,
+      "adverb": 26,
       "adverb/noun": 1,
-      "adverbial phrase": 7,
+      "adverbial phrase": 20,
       "conjunction": 2,
-      "noun": 172,
+      "noun": 206,
+      "noun phrase": 1,
       "preposition": 4,
       "prepositional phrase": 2,
-      "verb": 253
+      "verb": 291
     },
     "lexemesByCefrBand": {
       "A1": 23,
       "A2": 103,
-      "B1": 390
+      "B1": 480
     },
     "lexemesByFrequencyBucket": {
-      "0001-0500": 68,
-      "0501-1000": 143,
-      "1001-2000": 249,
-      "2001+": 56
+      "0001-0500": 69,
+      "0501-1000": 173,
+      "1001-2000": 284,
+      "2001+": 80
     },
     "contentRowsBySource": {
-      "ai_draft": 1984,
+      "ai_draft": 2344,
       "authored": 2,
       "tatoeba": 201,
-      "wiktionary": 516
+      "wiktionary": 606
     },
     "contentRowsByLicense": {
       "CC-BY-2.0-FR": 201,
-      "CC-BY-SA-3.0": 516,
-      "proprietary": 1986
+      "CC-BY-SA-3.0": 606,
+      "proprietary": 2346
     },
     "contentRowsByVettingStatus": {
-      "REVIEWED": 2703
+      "REVIEWED": 3153
     },
     "exerciseTargetsByType": {
-      "LEXEME": 1032
+      "LEXEME": 1212
     },
     "exerciseTypes": {
-      "TYPED_TRANSLATION": 516,
-      "WORD_BANK": 516
+      "TYPED_TRANSLATION": 606,
+      "WORD_BANK": 606
     }
   },
   "topMissingA1A2Gaps": []

@@ -1490,3 +1490,127 @@ Acceptance result:
 - No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 360 generated
   content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
   `autoReviewLedger`.
+
+## A2-012 Accelerated B1 Public Services, Money, Health, and Housing Pack
+
+**Status:** implemented locally after A2-011.
+
+**Goal:** add learner-ready B1 breadth for common connectors and chunks, emotions/opinions,
+public services, money and banking, medical care, housing repairs, workplace conflict, social
+interaction, and narration. Rows use the `AI_DRAFT -> AUTO_CHECKED -> AUTO_REVIEWED -> REVIEWED`
+lane with two independent automatic reviewers.
+
+**Target lemmas:**
+
+| Lemma | POS | Domain |
+|---|---|---|
+| `sin duda` | adverbial phrase | opinions and emphasis |
+| `tal vez` | adverbial phrase | opinions and uncertainty |
+| `de hecho` | adverbial phrase | connectors and opinions |
+| `por supuesto` | adverbial phrase | social interaction |
+| `a tiempo` | adverbial phrase | appointments and travel |
+| `a menudo` | adverbial phrase | narration and routine |
+| `en serio` | adverbial phrase | opinions and social interaction |
+| `por cierto` | adverbial phrase | connectors and social interaction |
+| `en general` | adverbial phrase | opinions and summaries |
+| `cuanto antes` | adverbial phrase | appointments and urgency |
+| `hasta ahora` | adverbial phrase | narration |
+| `desde entonces` | adverbial phrase | past narration |
+| `poco a poco` | adverbial phrase | narration and progress |
+| `admitir` | verb | opinions and conflict |
+| `exigir` | verb | services and conflict |
+| `asumir` | verb | workplace and responsibility |
+| `reconocer` | verb | opinions and banking |
+| `demostrar` | verb | workplace and opinions |
+| `sugerir` | verb | advice and workplace |
+| `debatir` | verb | opinions and workplace |
+| `interrumpir` | verb | social and workplace conflict |
+| `competir` | verb | workplace and goals |
+| `liderar` | verb | workplace |
+| `supervisar` | verb | workplace |
+| `despedir` | verb | workplace conflict |
+| `jubilarse` | verb | work and life plans |
+| `faltar` | verb | services and problems |
+| `sobrar` | verb | money and planning |
+| `matricularse` | verb | public services and education |
+| `inscribirse` | verb | public services and appointments |
+| `votar` | verb | public services |
+| `caducar` | verb | public services and banking |
+| `autorizar` | verb | public services and banking |
+| `financiar` | verb | banking and housing |
+| `invertir` | verb | money and planning |
+| `gastar` | verb | money and housing |
+| `adeudar` | verb | money and obligations |
+| `recuperar` | verb | health and money |
+| `marearse` | verb | medical |
+| `vomitar` | verb | medical |
+| `estornudar` | verb | medical |
+| `adelgazar` | verb | health |
+| `engordar` | verb | health |
+| `pintar` | verb | housing and repairs |
+| `construir` | verb | housing and work |
+| `conectar` | verb | housing and services |
+| `desconectar` | verb | housing and services |
+| `gotear` | verb | housing and repairs |
+| `inundar` | verb | housing and problems |
+| `despegar` | verb | travel |
+| `hospedarse` | verb | travel and lodging |
+| `gobierno` | noun | public services |
+| `ayuntamiento` | noun | public services |
+| `policía` | noun | public services and safety |
+| `bombero` | noun | public services and emergencies |
+| `juzgado` | noun | public services |
+| `certificado` | noun | public services |
+| `impuesto` | noun | public services and money |
+| `deuda` | noun | banking |
+| `inversión` | noun | banking and planning |
+| `transferencia` | noun | banking |
+| `interés` | noun | banking and opinions |
+| `moneda` | noun | money and travel |
+| `enfermera` | noun | medical |
+| `ambulancia` | noun | medical and emergency |
+| `consulta` | noun | medical and services |
+| `vacuna` | noun | medical |
+| `pastilla` | noun | medical |
+| `sangre` | noun | medical |
+| `pecho` | noun | medical and body |
+| `rodilla` | noun | medical and body |
+| `dedo` | noun | medical and body |
+| `vivienda` | noun | housing and public services |
+| `techo` | noun | housing and repairs |
+| `pared` | noun | housing and repairs |
+| `suelo` | noun | housing |
+| `grifo` | noun | housing and repairs |
+| `tubería` | noun | housing and repairs |
+| `cocina` | noun | housing |
+| `salón` | noun | housing |
+| `empleado` | noun | workplace |
+| `candidato` | noun | workplace |
+| `puesto` | noun | workplace |
+| `ascenso` | noun | workplace |
+| `despido` | noun | workplace conflict |
+| `turno extra` | noun phrase | workplace |
+| `retrasado` | adjective | travel and appointments |
+| `mojado` | adjective | housing and weather |
+| `seco` | adjective | housing and health |
+| `seguramente` | adverb | opinions and uncertainty |
+
+Implemented content delta:
+
+- 90 reviewed Wiktionary lexeme rows.
+- 180 `AI_DRAFT` sentence rows promoted to `REVIEWED` by two independent automatic reviewers.
+- 180 `AI_DRAFT` accepted-answer rows promoted to `REVIEWED` by the same two-reviewer gate.
+- 180 `sentence_lexeme` joins.
+- 180 derived exercises:
+  - production and recognition exercises for all 90 target lemmas.
+
+Acceptance result:
+
+- `learnerReadyLexemes` increases from 516 to 606.
+- `reviewedSentences` increases from 1092 to 1272.
+- `reviewedAcceptedAnswers` increases from 1095 to 1275.
+- `exerciseCount` increases from 1032 to 1212.
+- `missingA1A2GapCount` remains 0.
+- No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 360 generated
+  content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
+  `autoReviewLedger`.
