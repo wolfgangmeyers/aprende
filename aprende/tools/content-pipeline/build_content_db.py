@@ -1828,6 +1828,24 @@ def build_numbered_ai_accelerated_pack(start_lexeme_id, start_sentence_id, start
     return build_ai_accelerated_pack(items)
 
 
+def build_numbered_ai_accelerated_phrase_pack(start_lexeme_id, start_sentence_id, start_answer_id, specs):
+    expanded = []
+    for (
+        lemma, pos, gender, english_gloss, frequency_rank, cefr_band, difficulty_prior,
+        reason, source_basis, indefinite_article, definite_article, there_is_answer,
+    ) in specs:
+        prefix = f"{indefinite_article} " if indefinite_article else ""
+        expanded.append((
+            lemma, pos, gender, english_gloss, frequency_rank, cefr_band, difficulty_prior,
+            reason, source_basis,
+            [
+                (f"Hay {prefix}{lemma}.", there_is_answer),
+                (f"{definite_article} {lemma} aparece aquí.", f"The {english_gloss} appears here."),
+            ],
+        ))
+    return build_numbered_ai_accelerated_pack(start_lexeme_id, start_sentence_id, start_answer_id, expanded)
+
+
 AI_ACCELERATED_PACK_A2_008 = build_ai_accelerated_pack([
     (217, "alegrarse", "verb", None, "to be glad", 1850, "B1", 0.5, "feelings", "SPANISH_BREADTH_PLAN.md B1 feelings topic", [(493, 496, "Me alegro por ti.", "I am happy for you."), (494, 497, "Nos alegramos de verte.", "We are glad to see you.")]),
     (218, "enfadarse", "verb", None, "to get angry", 1900, "B1", 0.5, "feelings and conflict", "SPANISH_BREADTH_PLAN.md B1 feelings/conflict topic", [(495, 498, "Me enfado con el servicio.", "I get angry with the service."), (496, 499, "No quiero enfadarme.", "I do not want to get angry.")]),
@@ -3734,6 +3752,129 @@ AI_ACCELERATED_PACK_A2_024 = build_numbered_ai_accelerated_pack(1946, 3951, 3954
     ("sesión segura", "noun phrase", "F", "secure session", 1700, "B1", 0.5, "digital security", "SPANISH_BREADTH_PLAN.md B1 digital topic", [("Uso sesión segura.", "I use a secure session."), ("La sesión segura protege datos.", "The secure session protects data.")]),
     ("alerta de seguridad", "noun phrase", "F", "security alert", 1600, "B1", 0.5, "digital security", "SPANISH_BREADTH_PLAN.md B1 digital topic", [("Recibo alerta de seguridad.", "I receive a security alert."), ("La alerta de seguridad preocupa.", "The security alert is worrying.")]),
 ])
+
+AI_ACCELERATED_PACK_A2_025 = build_numbered_ai_accelerated_phrase_pack(2066, 4191, 4194, [
+    ("actualización del padrón", "noun phrase", "F", "address registration update", 1800, "B1", 0.5, "housing/civic", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "una", "La", "There is an address registration update."),
+    ("justificante de domicilio", "noun phrase", "M", "proof of address", 1800, "B1", 0.5, "housing/civic", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "un", "El", "There is proof of address."),
+    ("contrato extendido", "noun phrase", "M", "extended contract", 1800, "B1", 0.5, "housing/legal", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "un", "El", "There is an extended contract."),
+    ("fianza retenida", "noun phrase", "F", "held deposit", 1800, "B1", 0.5, "housing/money", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "una", "La", "There is a held deposit."),
+    ("inquilino ruidoso", "noun phrase", "M", "noisy tenant", 1800, "B1", 0.5, "housing/conflict", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "un", "El", "There is a noisy tenant."),
+    ("reparación pendiente", "noun phrase", "F", "pending repair", 1800, "B1", 0.5, "housing/services", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "una", "La", "There is a pending repair."),
+    ("humedad visible", "noun phrase", "F", "visible dampness", 1800, "B1", 0.5, "housing/repairs", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "", "La", "There is visible dampness."),
+    ("persiana rota", "noun phrase", "F", "broken blind", 1800, "B1", 0.5, "housing/repairs", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "una", "La", "There is a broken blind."),
+    ("cerradura cambiada", "noun phrase", "F", "changed lock", 1800, "B1", 0.5, "housing/security", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "una", "La", "There is a changed lock."),
+    ("llave duplicada", "noun phrase", "F", "duplicate key", 1800, "B1", 0.5, "housing/security", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "una", "La", "There is a duplicate key."),
+    ("duplicado de llaves", "noun phrase", "M", "key duplicate", 1800, "B1", 0.5, "housing/security", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "un", "El", "There is a key duplicate."),
+    ("aviso de lanzamiento", "noun phrase", "M", "eviction notice", 1800, "B1", 0.5, "housing/legal", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "un", "El", "There is an eviction notice."),
+    ("visita del técnico", "noun phrase", "F", "technician visit", 1800, "B1", 0.5, "housing/services", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "una", "La", "There is a technician visit."),
+    ("revisión de caldera", "noun phrase", "F", "boiler inspection", 1800, "B1", 0.5, "housing/services", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "una", "La", "There is a boiler inspection."),
+    ("certificado energético", "noun phrase", "M", "energy certificate", 1800, "B1", 0.5, "housing/legal", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "un", "El", "There is an energy certificate."),
+    ("limpieza comunitaria", "noun phrase", "F", "shared building cleaning", 1800, "B1", 0.5, "housing/services", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "", "La", "There is shared building cleaning."),
+    ("cuota comunitaria", "noun phrase", "F", "building association fee", 1800, "B1", 0.5, "housing/money", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "una", "La", "There is a building association fee."),
+    ("seguro de alquiler", "noun phrase", "M", "rental insurance", 1800, "B1", 0.5, "housing/insurance", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "un", "El", "There is rental insurance."),
+    ("inventario del piso", "noun phrase", "M", "apartment inventory", 1800, "B1", 0.5, "housing/legal", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "un", "El", "There is an apartment inventory."),
+    ("acta de entrega", "noun phrase", "F", "handover record", 1800, "B1", 0.5, "housing/legal", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "un", "El", "There is a handover record."),
+    ("resumen clínico", "noun phrase", "M", "clinical summary", 1800, "B1", 0.5, "medical", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "un", "El", "There is a clinical summary."),
+    ("derivación médica", "noun phrase", "F", "medical referral", 1800, "B1", 0.5, "medical", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "una", "La", "There is a medical referral."),
+    ("volante médico", "noun phrase", "M", "medical referral form", 1800, "B1", 0.5, "medical", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "un", "El", "There is a medical referral form."),
+    ("cita con especialista", "noun phrase", "F", "specialist appointment", 1800, "B1", 0.5, "medical", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "una", "La", "There is a specialist appointment."),
+    ("lista de espera médica", "noun phrase", "F", "medical waiting list", 1800, "B1", 0.5, "medical", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "una", "La", "There is a medical waiting list."),
+    ("síntoma persistente", "noun phrase", "M", "persistent symptom", 1800, "B1", 0.5, "medical", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "un", "El", "There is a persistent symptom."),
+    ("molestia aguda", "noun phrase", "F", "acute discomfort", 1800, "B1", 0.5, "medical", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "una", "La", "There is acute discomfort."),
+    ("reacción alimentaria", "noun phrase", "F", "food reaction", 1800, "B1", 0.5, "medical", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "una", "La", "There is a food reaction."),
+    ("consentimiento informado", "noun phrase", "M", "informed consent", 1800, "B1", 0.5, "medical/legal", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "un", "El", "There is informed consent."),
+    ("antecedente médico", "noun phrase", "M", "medical antecedent", 1800, "B1", 0.5, "medical", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "un", "El", "There is a medical antecedent."),
+    ("control médico periódico", "noun phrase", "M", "regular medical checkup", 1800, "B1", 0.5, "medical", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "un", "El", "There is a regular medical checkup."),
+    ("medicina preventiva", "noun phrase", "F", "preventive medicine", 1800, "B1", 0.5, "medical", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "", "La", "There is preventive medicine."),
+    ("llamada médica", "noun phrase", "F", "medical call", 1800, "B1", 0.5, "medical", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "una", "La", "There is a medical call."),
+    ("receta actualizada", "noun phrase", "F", "updated prescription", 1800, "B1", 0.5, "medical", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "una", "La", "There is an updated prescription."),
+    ("farmacia de guardia", "noun phrase", "F", "on-call pharmacy", 1800, "B1", 0.5, "medical/services", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "una", "La", "There is an on-call pharmacy."),
+    ("tratamiento continuado", "noun phrase", "M", "continued treatment", 1800, "B1", 0.5, "medical", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "un", "El", "There is continued treatment."),
+    ("baja médica renovada", "noun phrase", "F", "renewed medical leave", 1800, "B1", 0.5, "medical/work", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "una", "La", "There is renewed medical leave."),
+    ("justificante sanitario", "noun phrase", "M", "health certificate", 1800, "B1", 0.5, "medical/work", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "un", "El", "There is a health certificate."),
+    ("minuta de reunión", "noun phrase", "F", "meeting minutes", 1800, "B1", 0.5, "work", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "una", "La", "There are meeting minutes."),
+    ("evaluación anual", "noun phrase", "F", "annual evaluation", 1800, "B1", 0.5, "work", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "una", "La", "There is an annual evaluation."),
+    ("aumento salarial", "noun phrase", "M", "salary increase", 1800, "B1", 0.5, "work/money", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "un", "El", "There is a salary increase."),
+    ("horario comprimido", "noun phrase", "M", "compressed schedule", 1800, "B1", 0.5, "work", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "un", "El", "There is a compressed schedule."),
+    ("trabajo remoto parcial", "noun phrase", "M", "partial remote work", 1800, "B1", 0.5, "work", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "", "El", "There is partial remote work."),
+    ("jornada reducida", "noun phrase", "F", "reduced workday", 1800, "B1", 0.5, "work", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "una", "La", "There is a reduced workday."),
+    ("hora extra", "noun phrase", "F", "overtime hour", 1800, "B1", 0.5, "work", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "una", "La", "There is an overtime hour."),
+    ("permiso pagado", "noun phrase", "M", "paid leave", 1800, "B1", 0.5, "work", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "un", "El", "There is paid leave."),
+    ("disputa laboral", "noun phrase", "F", "workplace dispute", 1800, "B1", 0.5, "work/conflict", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "una", "La", "There is a workplace dispute."),
+    ("mediación laboral", "noun phrase", "F", "workplace mediation", 1800, "B1", 0.5, "work/conflict", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "una", "La", "There is workplace mediation."),
+    ("carga laboral alta", "noun phrase", "F", "heavy workload", 1800, "B1", 0.5, "work", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "una", "La", "There is a heavy workload."),
+    ("encargo urgente", "noun phrase", "M", "urgent assignment", 1800, "B1", 0.5, "work", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "un", "El", "There is an urgent assignment."),
+    ("prioridad crítica", "noun phrase", "F", "critical priority", 1800, "B1", 0.5, "work", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "una", "La", "There is a critical priority."),
+    ("informe final", "noun phrase", "M", "final report", 1800, "B1", 0.5, "work", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "un", "El", "There is a final report."),
+    ("propuesta comercial", "noun phrase", "F", "business proposal", 1800, "B1", 0.5, "work", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "una", "La", "There is a business proposal."),
+    ("cliente difícil", "noun phrase", "M", "difficult client", 1800, "B1", 0.5, "work/conflict", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "un", "El", "There is a difficult client."),
+    ("llamada pendiente", "noun phrase", "F", "pending call", 1800, "B1", 0.5, "work", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "una", "La", "There is a pending call."),
+    ("mensaje laboral urgente", "noun phrase", "M", "urgent work message", 1800, "B1", 0.5, "work", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "un", "El", "There is an urgent work message."),
+    ("archivo compartido", "noun phrase", "M", "shared file", 1800, "B1", 0.5, "work/digital", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "un", "El", "There is a shared file."),
+    ("acceso interno", "noun phrase", "M", "internal access", 1800, "B1", 0.5, "work/digital", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "un", "El", "There is internal access."),
+    ("embarque prioritario", "noun phrase", "M", "priority boarding", 1800, "B1", 0.5, "travel", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "", "El", "There is priority boarding."),
+    ("plaza asignada", "noun phrase", "F", "assigned spot", 1800, "B1", 0.5, "travel", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "una", "La", "There is an assigned spot."),
+    ("maleta documentada", "noun phrase", "F", "checked suitcase", 1800, "B1", 0.5, "travel", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "una", "La", "There is a checked suitcase."),
+    ("cancelación confirmada", "noun phrase", "F", "confirmed cancellation", 1800, "B1", 0.5, "travel", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "una", "La", "There is a confirmed cancellation."),
+    ("informe de equipaje", "noun phrase", "M", "luggage report", 1800, "B1", 0.5, "travel", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "un", "El", "There is a luggage report."),
+    ("mostrador cerrado", "noun phrase", "M", "closed counter", 1800, "B1", 0.5, "travel", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "un", "El", "There is a closed counter."),
+    ("puerta cambiada", "noun phrase", "F", "changed gate", 1800, "B1", 0.5, "travel", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "una", "La", "There is a changed gate."),
+    ("escala prolongada", "noun phrase", "F", "long layover", 1800, "B1", 0.5, "travel", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "una", "La", "There is a long layover."),
+    ("hotel alternativo", "noun phrase", "M", "alternative hotel", 1800, "B1", 0.5, "travel", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "un", "El", "There is an alternative hotel."),
+    ("transporte sustituto", "noun phrase", "M", "replacement transport", 1800, "B1", 0.5, "travel", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "un", "El", "There is replacement transport."),
+    ("bono de viaje", "noun phrase", "M", "travel voucher", 1800, "B1", 0.5, "travel/money", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "un", "El", "There is a travel voucher."),
+    ("documento de viaje", "noun phrase", "M", "travel document", 1800, "B1", 0.5, "travel/documents", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "un", "El", "There is a travel document."),
+    ("visado vigente", "noun phrase", "M", "valid visa", 1800, "B1", 0.5, "travel/documents", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "un", "El", "There is a valid visa."),
+    ("paso fronterizo cerrado", "noun phrase", "M", "closed border crossing", 1800, "B1", 0.5, "travel", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "un", "El", "There is a closed border crossing."),
+    ("control fronterizo", "noun phrase", "M", "border control", 1800, "B1", 0.5, "travel", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "un", "El", "There is border control."),
+    ("declaración aduanera", "noun phrase", "F", "customs declaration", 1800, "B1", 0.5, "travel/documents", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "una", "La", "There is a customs declaration."),
+    ("tasa turística", "noun phrase", "F", "tourist tax", 1800, "B1", 0.5, "travel/money", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "una", "La", "There is a tourist tax."),
+    ("cuenta conjunta", "noun phrase", "F", "joint account", 1800, "B1", 0.5, "banking", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "una", "La", "There is a joint account."),
+    ("cuenta nómina", "noun phrase", "F", "payroll account", 1800, "B1", 0.5, "banking", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "una", "La", "There is a payroll account."),
+    ("tarjeta virtual", "noun phrase", "F", "virtual card", 1800, "B1", 0.5, "banking/digital", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "una", "La", "There is a virtual card."),
+    ("tarjeta desactivada", "noun phrase", "F", "deactivated card", 1800, "B1", 0.5, "banking", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "una", "La", "There is a deactivated card."),
+    ("tope de crédito", "noun phrase", "M", "credit cap", 1800, "B1", 0.5, "banking", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "un", "El", "There is a credit cap."),
+    ("importe retenido", "noun phrase", "M", "held amount", 1800, "B1", 0.5, "banking", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "un", "El", "There is a held amount."),
+    ("ingreso recurrente", "noun phrase", "M", "recurring income", 1800, "B1", 0.5, "banking", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "un", "El", "There is recurring income."),
+    ("gasto mensual", "noun phrase", "M", "monthly expense", 1800, "B1", 0.5, "money", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "un", "El", "There is a monthly expense."),
+    ("recibo devuelto", "noun phrase", "M", "returned bill", 1800, "B1", 0.5, "banking", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "un", "El", "There is a returned bill."),
+    ("plan de pagos", "noun phrase", "M", "payment plan", 1800, "B1", 0.5, "money", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "un", "El", "There is a payment plan."),
+    ("interés fijo", "noun phrase", "M", "fixed interest", 1800, "B1", 0.5, "banking", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "un", "El", "There is fixed interest."),
+    ("cuota reducida", "noun phrase", "F", "reduced installment", 1800, "B1", 0.5, "banking", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "una", "La", "There is a reduced installment."),
+    ("financiación aprobada", "noun phrase", "F", "approved financing", 1800, "B1", 0.5, "banking", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "una", "La", "There is approved financing."),
+    ("aval bancario", "noun phrase", "M", "bank guarantee", 1800, "B1", 0.5, "banking/legal", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "un", "El", "There is a bank guarantee."),
+    ("certificado bancario", "noun phrase", "M", "bank certificate", 1800, "B1", 0.5, "banking/documents", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "un", "El", "There is a bank certificate."),
+    ("extracto digital", "noun phrase", "M", "digital statement", 1800, "B1", 0.5, "banking/digital", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "un", "El", "There is a digital statement."),
+    ("autorización bancaria", "noun phrase", "F", "bank authorization", 1800, "B1", 0.5, "banking/legal", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "una", "La", "There is bank authorization."),
+    ("opinión contraria", "noun phrase", "F", "opposing opinion", 1800, "B1", 0.5, "conversation", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "una", "La", "There is an opposing opinion."),
+    ("argumento sólido", "noun phrase", "M", "solid argument", 1800, "B1", 0.5, "conversation", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "un", "El", "There is a solid argument."),
+    ("dato importante", "noun phrase", "M", "important fact", 1800, "B1", 0.5, "conversation", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "un", "El", "There is an important fact."),
+    ("contexto adicional", "noun phrase", "M", "additional context", 1800, "B1", 0.5, "conversation", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "un", "El", "There is additional context."),
+    ("explicación completa", "noun phrase", "F", "complete explanation", 1800, "B1", 0.5, "conversation", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "una", "La", "There is a complete explanation."),
+    ("respuesta evasiva", "noun phrase", "F", "evasive answer", 1800, "B1", 0.5, "conversation", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "una", "La", "There is an evasive answer."),
+    ("registro formal", "noun phrase", "M", "formal register", 1800, "B1", 0.5, "conversation", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "un", "El", "There is a formal register."),
+    ("trato injusto", "noun phrase", "M", "unfair treatment", 1800, "B1", 0.5, "conflict", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "un", "El", "There is unfair treatment."),
+    ("acuerdo firmado", "noun phrase", "M", "signed agreement", 1800, "B1", 0.5, "legal/conversation", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "un", "El", "There is a signed agreement."),
+    ("compromiso claro", "noun phrase", "M", "clear commitment", 1800, "B1", 0.5, "conversation", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "un", "El", "There is a clear commitment."),
+    ("límite personal", "noun phrase", "M", "personal boundary", 1800, "B1", 0.5, "conversation", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "un", "El", "There is a personal boundary."),
+    ("error común", "noun phrase", "M", "common error", 1800, "B1", 0.5, "conversation", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "un", "El", "There is a common error."),
+    ("sospecha razonable", "noun phrase", "F", "reasonable suspicion", 1800, "B1", 0.5, "legal/conversation", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "una", "La", "There is reasonable suspicion."),
+    ("cambio de opinión", "noun phrase", "M", "change of opinion", 1800, "B1", 0.5, "conversation", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "un", "El", "There is a change of opinion."),
+    ("decisión difícil", "noun phrase", "F", "difficult decision", 1800, "B1", 0.5, "conversation", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "una", "La", "There is a difficult decision."),
+    ("preferencia personal", "noun phrase", "F", "personal preference", 1800, "B1", 0.5, "conversation", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "una", "La", "There is a personal preference."),
+    ("comparación justa", "noun phrase", "F", "fair comparison", 1800, "B1", 0.5, "conversation", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "una", "La", "There is a fair comparison."),
+    ("consejo práctico", "noun phrase", "M", "practical advice", 1800, "B1", 0.5, "conversation", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "un", "El", "There is practical advice."),
+    ("propuesta alternativa", "noun phrase", "F", "alternative proposal", 1800, "B1", 0.5, "conversation", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "una", "La", "There is an alternative proposal."),
+    ("plan realista", "noun phrase", "M", "realistic plan", 1800, "B1", 0.5, "conversation", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "un", "El", "There is a realistic plan."),
+    ("enlace seguro", "noun phrase", "M", "secure link", 1800, "B1", 0.5, "digital", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "un", "El", "There is a secure link."),
+    ("fichero adjunto", "noun phrase", "M", "attached file", 1800, "B1", 0.5, "digital", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "un", "El", "There is an attached file."),
+    ("copia local", "noun phrase", "F", "local copy", 1800, "B1", 0.5, "digital", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "una", "La", "There is a local copy."),
+    ("carpeta compartida", "noun phrase", "F", "shared folder", 1800, "B1", 0.5, "digital", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "una", "La", "There is a shared folder."),
+    ("permiso denegado", "noun phrase", "M", "denied permission", 1800, "B1", 0.5, "digital", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "un", "El", "There is denied permission."),
+    ("acceso concedido", "noun phrase", "M", "granted access", 1800, "B1", 0.5, "digital", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "un", "El", "There is granted access."),
+    ("usuario bloqueado", "noun phrase", "M", "blocked user", 1800, "B1", 0.5, "digital", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "un", "El", "There is a blocked user."),
+    ("sesión vencida", "noun phrase", "F", "expired session", 1800, "B1", 0.5, "digital", "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic", "una", "La", "There is an expired session."),
+])
 AI_REVIEWED_SENTENCE_PAIRS.update({
     spanish: english
     for pack in (
@@ -3759,6 +3900,7 @@ AI_REVIEWED_SENTENCE_PAIRS.update({
         AI_ACCELERATED_PACK_A2_022,
         AI_ACCELERATED_PACK_A2_023,
         AI_ACCELERATED_PACK_A2_024,
+        AI_ACCELERATED_PACK_A2_025,
     )
     for item in pack
     for _, _, spanish, english in item["sentences"]
@@ -3890,6 +4032,7 @@ A1_A2_TARGET_LEMMAS.extend([
         AI_ACCELERATED_PACK_A2_022,
         AI_ACCELERATED_PACK_A2_023,
         AI_ACCELERATED_PACK_A2_024,
+        AI_ACCELERATED_PACK_A2_025,
     )
     for item in pack
 ])
@@ -4986,8 +5129,12 @@ def vetted_sample():
         AI_ACCELERATED_PACK_A2_023, "a2-023", next_exercise_id,
         lexemes, sentences, accepted, sentence_lexeme, exercises,
     )
-    append_ai_accelerated_pack(
+    next_exercise_id = append_ai_accelerated_pack(
         AI_ACCELERATED_PACK_A2_024, "a2-024", next_exercise_id,
+        lexemes, sentences, accepted, sentence_lexeme, exercises,
+    )
+    append_ai_accelerated_pack(
+        AI_ACCELERATED_PACK_A2_025, "a2-025", next_exercise_id,
         lexemes, sentences, accepted, sentence_lexeme, exercises,
     )
     return lexemes, sentences, accepted, sentence_lexeme, conj, exercises, nodes
