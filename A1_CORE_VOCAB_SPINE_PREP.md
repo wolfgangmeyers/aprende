@@ -829,6 +829,64 @@ Acceptance result:
   content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
   `autoReviewLedger`.
 
+## A2-022 Accelerated B1/B2 Emergencies, Transport, Shopping, Food, Household, Digital, Planning, and Argument Pack
+
+**Status:** implemented locally after A2-021.
+
+**Goal:** add learner-ready B1/B2 breadth for emergencies and safety, transport disruptions and
+repairs, shopping/delivery/restaurant interactions, household services, digital access and meetings,
+planning, communication tone, and argument language. Rows use the
+`AI_DRAFT -> AUTO_CHECKED -> AUTO_REVIEWED -> REVIEWED` lane with two independent automatic
+reviewers.
+
+**Target lemmas:** `alerta meteorológica`, `aviso de emergencia`, `punto seguro`, `salida
+bloqueada`, `evacuación parcial`, `zona inundada`, `calle cortada`, `desvío temporal`, `atasco
+fuerte`, `carril cerrado`, `peaje obligatorio`, `multa de tráfico`, `permiso de conducir`,
+`seguro del coche`, `revisión del coche`, `taller cercano`, `grúa disponible`, `batería
+descargada`, `rueda pinchada`, `motor averiado`, `compra segura`, `pedido incompleto`,
+`producto defectuoso`, `garantía comercial`, `plazo de devolución`, `etiqueta de devolución`,
+`envío asegurado`, `seguimiento activo`, `entrega fallida`, `paquete dañado`, `repartidor
+asignado`, `recogida programada`, `almacén cercano`, `reserva de mesa`, `mesa disponible`,
+`menú del día`, `plato vegetariano`, `alergia alimentaria`, `cuenta separada`, `propina
+incluida`, `comida para llevar`, `pedido para recoger`, `ingrediente principal`, `receta
+sencilla`, `horno precalentado`, `sartén caliente`, `aceite usado`, `basura orgánica`,
+`reciclaje obligatorio`, `contenedor lleno`, `limpieza pendiente`, `limpiador asignado`,
+`lavadora rota`, `nevera vacía`, `congelador averiado`, `alarma activada`, `alarma falsa`,
+`cámara apagada`, `llamada grabada`, `consentimiento verbal`, `consentimiento digital`,
+`privacidad básica`, `datos actualizados`, `datos incorrectos`, `perfil bloqueado`, `cuenta
+suspendida`, `sesión caducada`, `código temporal`, `clave segura`, `acceso temporal`, `permiso
+de acceso`, `archivo comprimido`, `respaldo digital`, `versión antigua`, `versión nueva`,
+`actualización obligatoria`, `pantalla congelada`, `sonido bajo`, `micrófono apagado`, `cámara
+encendida`, `reunión grabada`, `enlace de reunión`, `invitación enviada`, `calendario
+compartido`, `recordatorio automático`, `agenda llena`, `hueco libre`, `plan alternativo`,
+`opción flexible`, `prioridad media`, `prioridad baja`, `tarea aplazada`, `tarea completada`,
+`lista actualizada`, `resumen breve`, `explicación clara`, `respuesta breve`, `tono amable`,
+`tono formal`, `mensaje confuso`, `mensaje claro`, `mal tono`, `buen trato`, `acuerdo claro`,
+`límite claro`, `consecuencia directa`, `motivo principal`, `causa probable`, `efecto
+inmediato`, `cambio notable`, `mejora clara`, `empeoramiento rápido`, `señal positiva`, `señal
+negativa`, `duda razonable`, `prueba suficiente`, `dato relevante`, `detalle importante`, `nota
+aclaratoria`, `comentario final`.
+
+Implemented content delta:
+
+- 120 reviewed Wiktionary lexeme rows.
+- 240 `AI_DRAFT` sentence rows promoted to `REVIEWED` by two independent automatic reviewers.
+- 240 `AI_DRAFT` accepted-answer rows promoted to `REVIEWED` by the same two-reviewer gate.
+- 240 `sentence_lexeme` joins.
+- 240 derived exercises:
+  - production and recognition exercises for all 120 target lemmas.
+
+Acceptance target:
+
+- `learnerReadyLexemes` increases from 1705 to 1825.
+- `reviewedSentences` increases from 3470 to 3710.
+- `reviewedAcceptedAnswers` increases from 3473 to 3713.
+- `exerciseCount` increases from 3410 to 3650.
+- `missingA1A2GapCount` remains 0.
+- No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 480 generated
+  content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
+  `autoReviewLedger`.
+
 ## A2-021 Accelerated B1/B2 Legal, Medical, Work, Housing, Utilities, and Travel Pack
 
 **Status:** implemented locally after A2-020.
