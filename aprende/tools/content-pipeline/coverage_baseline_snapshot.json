@@ -37,11 +37,11 @@
     "reviewPolicy": "This list is a local source-checked audit target, not shipped learning content. A target lemma only becomes shipped content after the normal lexeme/sentence/accepted-answer provenance and REVIEWED gate pass."
   },
   "summary": {
-    "rawLexemes": 1066,
-    "learnerReadyLexemes": 1065,
-    "reviewedSentences": 2192,
-    "reviewedAcceptedAnswers": 2195,
-    "exerciseCount": 2132,
+    "rawLexemes": 1186,
+    "learnerReadyLexemes": 1185,
+    "reviewedSentences": 2432,
+    "reviewedAcceptedAnswers": 2435,
+    "exerciseCount": 2372,
     "missingA1A2GapCount": 1
   },
   "counts": {
@@ -51,50 +51,50 @@
       "adjective/adverb": 4,
       "adverb": 36,
       "adverb/noun": 1,
-      "adverbial phrase": 91,
+      "adverbial phrase": 114,
       "conjunction": 2,
       "discourse marker": 2,
-      "noun": 292,
-      "noun phrase": 146,
+      "noun": 305,
+      "noun phrase": 211,
       "preposition": 5,
       "prepositional phrase": 10,
-      "question chunk": 6,
-      "sentence chunk": 58,
+      "question chunk": 8,
+      "sentence chunk": 75,
       "verb": 329,
       "verbal phrase": 18
     },
     "lexemesByCefrBand": {
       "A1": 23,
       "A2": 103,
-      "B1": 802,
-      "B2": 138
+      "B1": 883,
+      "B2": 177
     },
     "lexemesByFrequencyBucket": {
       "0001-0500": 69,
-      "0501-1000": 212,
-      "1001-2000": 581,
-      "2001+": 204
+      "0501-1000": 216,
+      "1001-2000": 665,
+      "2001+": 236
     },
     "contentRowsBySource": {
-      "ai_draft": 4184,
+      "ai_draft": 4664,
       "authored": 2,
       "tatoeba": 201,
-      "wiktionary": 1066
+      "wiktionary": 1186
     },
     "contentRowsByLicense": {
       "CC-BY-2.0-FR": 201,
-      "CC-BY-SA-3.0": 1066,
-      "proprietary": 4186
+      "CC-BY-SA-3.0": 1186,
+      "proprietary": 4666
     },
     "contentRowsByVettingStatus": {
-      "REVIEWED": 5453
+      "REVIEWED": 6053
     },
     "exerciseTargetsByType": {
-      "LEXEME": 2132
+      "LEXEME": 2372
     },
     "exerciseTypes": {
-      "TYPED_TRANSLATION": 1066,
-      "WORD_BANK": 1066
+      "TYPED_TRANSLATION": 1186,
+      "WORD_BANK": 1186
     }
   },
   "topMissingA1A2Gaps": [

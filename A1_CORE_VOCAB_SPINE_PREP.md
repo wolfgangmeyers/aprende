@@ -2116,3 +2116,62 @@ Acceptance result:
 - No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 480 generated
   content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
   `autoReviewLedger`.
+
+## A2-017 Accelerated B1/B2 Discourse, Legal/Money, Medical, Work, Travel, and Services Pack
+
+**Status:** implemented locally after A2-016.
+
+**Goal:** add learner-ready B1/B2 breadth for high-frequency fluency chunks, discourse markers,
+conversation repair, legal/money/medical/work/travel/service interactions, lodging, housing
+repairs, and practical full-sentence prompts. Rows use the
+`AI_DRAFT -> AUTO_CHECKED -> AUTO_REVIEWED -> REVIEWED` lane with two independent automatic
+reviewers.
+
+**Target lemmas:** `para que quede claro`, `dicho esto`, `a todo esto`,
+`ahora que lo dices`, `pese a ello`, `a pesar de todo`, `así que`, `por consiguiente`,
+`en consecuencia`, `por si fuera poco`, `ni siquiera`, `al parecer`,
+`con toda seguridad`, `desde mi punto de vista`, `a mi parecer`, `tengo entendido`,
+`por lo que sé`, `que yo sepa`, `si hace falta`, `si te parece`, `si le parece`,
+`cuando quieras`, `cuando pueda`, `me parece bien`, `me parece mal`, `no pasa nada`,
+`da igual`, `más o menos`, `más bien`, `mejor dicho`, `para decirlo claro`,
+`para ser sincero`, `la verdad es que`, `qué quieres decir`, `no te sigo`, `no le sigo`,
+`voy a comprobarlo`, `lo compruebo ahora`, `déjeme comprobarlo`, `me puede ayudar`,
+`necesito aclarar`, `tengo otra duda`, `banca en línea`, `transferencia bancaria`,
+`domiciliación bancaria`, `cuota mensual`, `recibo bancario`, `cargo pendiente`,
+`pago rechazado`, `reclamación bancaria`, `atención telefónica`, `número de atención`,
+`correo certificado`, `notificación oficial`, `sede electrónica`, `formulario en línea`,
+`plazo legal`, `cita judicial`, `asesoría legal`, `contrato indefinido`, `salario bruto`,
+`salario neto`, `permiso retribuido`, `vacaciones pagadas`, `reunión pendiente`,
+`acta de reunión`, `plan de trabajo`, `carga de trabajo`, `horario partido`,
+`guardia médica`, `centro hospitalario`, `urgencias pediátricas`, `dolor abdominal`,
+`dolor de pecho`, `erupción cutánea`, `picor`, `hinchazón`, `herida abierta`,
+`resonancia magnética`, `ecografía`, `consulta de seguimiento`, `tratamiento médico`,
+`dosis diaria`, `efecto secundario`, `alta hospitalaria`, `farmacia cercana`,
+`mostrador de embarque`, `control de pasaportes`, `zona de llegadas`, `zona de salidas`,
+`mostrador de información`, `servicio de equipajes`, `reclamación de equipaje`,
+`cancelación del vuelo`, `cambio de asiento`, `reserva confirmada`,
+`alojamiento temporal`, `habitación individual`, `habitación doble`, `recepción del hotel`,
+`llave de habitación`, `servicio de limpieza`, `salida tardía`, `depósito de seguridad`,
+`caldera`, `termostato`, `regleta`, `ventana corredera`, `fontanero`, `cerrajero`,
+`electricista`, `administrador de finca`, `gastos de comunidad`, `derrame`, `gotera`,
+`moho`, `contrato de suministro`, `alta de luz`, `baja de servicio`, `repartidor`.
+
+Implemented content delta:
+
+- 120 reviewed Wiktionary lexeme rows.
+- 240 `AI_DRAFT` sentence rows promoted to `REVIEWED` by two independent automatic reviewers.
+- 240 `AI_DRAFT` accepted-answer rows promoted to `REVIEWED` by the same two-reviewer gate.
+- 240 `sentence_lexeme` joins.
+- 240 derived exercises:
+  - production and recognition exercises for all 120 target lemmas.
+
+Acceptance result:
+
+- `learnerReadyLexemes` increases from 1066 to 1186.
+- `reviewedSentences` increases from 2192 to 2432.
+- `reviewedAcceptedAnswers` increases from 2195 to 2435.
+- `exerciseCount` increases from 2132 to 2372.
+- `missingA1A2GapCount` remains 0.
+- No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 480 generated
+  content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
+  `autoReviewLedger`.
