@@ -1904,6 +1904,67 @@ Acceptance result:
   content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
   `autoReviewLedger`.
 
+## A2-020 Accelerated B1/B2 Conversation Repair, Documents, Banking, Housing, Medical, Work, and Travel Pack
+
+**Status:** implemented locally after A2-019.
+
+**Goal:** add learner-ready B1/B2 breadth for conversation repair, discourse markers, appointment
+timing, digital documents, banking and billing issues, household repairs, medical/work leave,
+support complaints, legal/work agreements, travel disruptions, and safety phrases. Rows use the
+`AI_DRAFT -> AUTO_CHECKED -> AUTO_REVIEWED -> REVIEWED` lane with two independent automatic
+reviewers.
+
+**Target lemmas:** `aclaración rápida`, `para aclarar`, `no entiendo bien`, `hay
+interferencias`, `la voz se pierde`, `me he equivocado`, `tiene sentido`, `no tiene sentido`,
+`eso me ayuda`, `lo reviso ahora`, `en resumen`, `por cierto`, `en otras palabras`, `para ser
+claro`, `lo digo de otra manera`, `me explico mejor`, `espero su respuesta`, `salvo error`,
+`queda claro`, `queda pendiente`, `a primera hora`, `a última hora`, `lo antes posible`, `como
+muy tarde`, `con tiempo suficiente`, `sin perder tiempo`, `sin cumplir el plazo`, `plazo
+ampliado`, `cita reprogramada`, `turno disponible`, `documentación completa`, `documentación
+pendiente`, `confirmación por escrito`, `comprobante bancario`, `documento legible`, `documento
+escaneado`, `archivo dañado`, `enlace caducado`, `contraseña caducada`, `sesión cerrada`,
+`documento ilegible`, `cargo rechazado`, `sello digital`, `interés aplicado`, `sello oficial`,
+`pago fraccionado`, `ingreso en cuenta`, `devolución aprobada`, `reembolso pendiente`, `factura
+desglosada`, `importe cobrado`, `recargo indebido`, `aviso de corte`, `suministro cortado`,
+`cuota atrasada`, `saldo retenido`, `llave rota`, `cerradura bloqueada`, `calefacción apagada`,
+`ruido constante`, `vecino ruidoso`, `tarifa plana`, `fianza devuelta`, `informe médico`,
+`gastos bancarios`, `cuenta domiciliada`, `apagón repentino`, `agua interrumpida`, `dolor
+leve`, `mareo fuerte`, `puerta atascada`, `presión alta`, `seguro médico`, `ventana rota`,
+`humedad en la pared`, `moho visible`, `medida urgente`, `solución temporal`, `solución
+definitiva`, `problema recurrente`, `error frecuente`, `incidencia abierta`, `incidencia
+resuelta`, `cita telefónica`, `análisis pendiente`, `reclamación formal`, `queja por escrito`,
+`respuesta oficial`, `resultado positivo`, `resultado negativo`, `reposo relativo`, `oferta
+laboral`, `entrevista pendiente`, `turno cambiado`, `jornada partida`, `baja voluntaria`,
+`reunión aplazada`, `tarea urgente`, `prioridad alta`, `viaje retrasado`, `vuelo perdido`,
+`billete cambiado`, `reserva anulada`, `habitación disponible`, `recepción cerrada`, `entrada
+anticipada`, `preaviso laboral`, `dirección exacta`, `punto de encuentro`, `puesto indefinido`,
+`zona restringida`, `acceso principal`, `viaje cancelado`, `tren cancelado`, `mensaje leído`,
+`mensaje borrado`, `correo no deseado`, `notificación nueva`, `aviso leído`, `respuesta leída`,
+`opción recomendada`, `opción descartada`, `decisión tomada`, `decisión pendiente`, `autobús
+sustituido`, `acuerdo escrito`, `trato justo`, `malentendido común`, `situación incómoda`,
+`comentario inapropiado`, `disculpa sincera`, `apoyo necesario`, `ayuda inmediata`, `riesgo
+alto`, `riesgo bajo`, `zona segura`.
+
+Implemented content delta:
+
+- 136 reviewed Wiktionary lexeme rows.
+- 272 `AI_DRAFT` sentence rows promoted to `REVIEWED` by two independent automatic reviewers.
+- 272 `AI_DRAFT` accepted-answer rows promoted to `REVIEWED` by the same two-reviewer gate.
+- 272 `sentence_lexeme` joins.
+- 272 derived exercises:
+  - production and recognition exercises for all 136 target lemmas.
+
+Acceptance target:
+
+- `learnerReadyLexemes` increases from 1449 to 1585.
+- `reviewedSentences` increases from 2958 to 3230.
+- `reviewedAcceptedAnswers` increases from 2961 to 3233.
+- `exerciseCount` increases from 2898 to 3170.
+- `missingA1A2GapCount` remains 0.
+- No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 544 generated
+  content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
+  `autoReviewLedger`.
+
 ## A2-016 Accelerated B1/B2 Repair, Systems, and Services Pack
 
 **Status:** implemented locally after A2-015.
