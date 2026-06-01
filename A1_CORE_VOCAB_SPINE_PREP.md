@@ -3755,3 +3755,39 @@ Acceptance result:
 - No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 480 generated
   content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
   `autoReviewLedger`.
+
+## A2-053 Accelerated B1/B2 Instructions, Directions, and Next Steps Pack
+
+**Status:** implemented locally after A2-052.
+
+**Goal:** add learner-ready B1/B2 breadth for written, verbal, urgent, and clear instructions;
+written and clear directions; and immediate/necessary/final next steps across money, services,
+travel, legal, repairs, health, work, and bureaucracy contexts. Rows use the
+`AI_DRAFT -> AUTO_CHECKED -> AUTO_REVIEWED -> REVIEWED` lane with two independent automatic
+reviewers.
+
+**Target lemma families:** `instrucción escrita para ...`, `instrucción verbal para ...`,
+`instrucción urgente para ...`, `instrucción clara para ...`, `indicaciones escritas para ...`,
+`indicaciones claras para ...`, `paso siguiente para ...`, `paso inmediato para ...`,
+`paso necesario para ...`, and `paso final para ...` across payment, appointments, trips,
+delivery, bookings, contracts, claims, refunds, repairs, treatment, meetings, and applications.
+
+Implemented content delta:
+
+- 120 reviewed Wiktionary lexeme rows.
+- 240 `AI_DRAFT` sentence rows promoted to `REVIEWED` by two independent automatic reviewers.
+- 240 `AI_DRAFT` accepted-answer rows promoted to `REVIEWED` by the same two-reviewer gate.
+- 240 `sentence_lexeme` joins.
+- 240 derived exercises:
+  - production and recognition exercises for all 120 target lemmas.
+
+Acceptance result:
+
+- `learnerReadyLexemes` increases from 5391 to 5511.
+- `reviewedSentences` increases from 10842 to 11082.
+- `reviewedAcceptedAnswers` increases from 10845 to 11085.
+- `exerciseCount` increases from 10782 to 11022.
+- `missingA1A2GapCount` remains 0.
+- No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 480 generated
+  content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
+  `autoReviewLedger`.
