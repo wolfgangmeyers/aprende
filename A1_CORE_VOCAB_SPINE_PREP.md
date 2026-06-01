@@ -3971,3 +3971,39 @@ Acceptance result:
 - No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 480 generated
   content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
   `autoReviewLedger`.
+
+## A2-059 Accelerated B1/B2 Routes, Addresses, Access, and Signs Pack
+
+**Status:** implemented locally after A2-058.
+
+**Goal:** add learner-ready B1/B2 breadth for alternate/direct routes, correct/new addresses,
+exact locations, entrances, exits, permitted/blocked areas, and clear signs across travel, health,
+work, money, legal, repairs, housing, and services contexts. Rows use the
+`AI_DRAFT -> AUTO_CHECKED -> AUTO_REVIEWED -> REVIEWED` lane with two independent automatic
+reviewers.
+
+**Target lemma families:** `ruta alternativa hacia ...`, `ruta directa hacia ...`,
+`dirección correcta hacia ...`, `dirección nueva hacia ...`, `ubicación exacta hacia ...`,
+`entrada principal hacia ...`, `salida cercana hacia ...`, `zona permitida hacia ...`,
+`zona bloqueada hacia ...`, and `señal clara hacia ...` across hotels, airports, stations,
+hospitals, offices, banks, courts, repair shops, housing, reception, support, and pharmacies.
+
+Implemented content delta:
+
+- 120 reviewed Wiktionary lexeme rows.
+- 240 `AI_DRAFT` sentence rows promoted to `REVIEWED` by two independent automatic reviewers.
+- 240 `AI_DRAFT` accepted-answer rows promoted to `REVIEWED` by the same two-reviewer gate.
+- 240 `sentence_lexeme` joins.
+- 240 derived exercises:
+  - production and recognition exercises for all 120 target lemmas.
+
+Acceptance result:
+
+- `learnerReadyLexemes` increases from 6111 to 6231.
+- `reviewedSentences` increases from 12282 to 12522.
+- `reviewedAcceptedAnswers` increases from 12285 to 12525.
+- `exerciseCount` increases from 12222 to 12462.
+- `missingA1A2GapCount` remains 0.
+- No raw or partially reviewed `AI_DRAFT` rows are included in shipped content; all 480 generated
+  content rows are promoted to `REVIEWED` and recorded in `content_manifest.json`'s
+  `autoReviewLedger`.
