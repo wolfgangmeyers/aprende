@@ -9,6 +9,7 @@ import os
 import sys
 import unittest
 from unittest import mock
+import unicodedata
 
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -77,6 +78,29 @@ def sequencing_fixture(build, count=9):
     return lexemes, exercises, nodes, intro_by_target
 
 
+def normalize_free_text(text: str) -> str:
+    normalized = unicodedata.normalize("NFC", text).lower()
+    collapsed = " ".join(normalized.split())
+    return collapsed.strip("¿¡.?!,;:\"'()«»…")
+
+
+def check_free_text(input_text: str, accepted: list[str]) -> bool:
+    return normalize_free_text(input_text) in {normalize_free_text(answer) for answer in accepted}
+
+
+def staged_vetted_sample(build):
+    lexemes, sentences, accepted, sentence_lexeme, conj, exercises, nodes = build.vetted_sample()
+    failures = build.stage_auto_check(lexemes, sentences, accepted)
+    if failures:
+        raise AssertionError("AUTO-CHECK failed: " + "; ".join(failures))
+    failures = build.stage_auto_review(lexemes, sentences, accepted)
+    if failures:
+        raise AssertionError("AUTO-REVIEW failed: " + "; ".join(failures))
+    build.stage_review_gate(lexemes, sentences, accepted)
+    build.stage_publish_gate(lexemes, sentences, accepted)
+    return lexemes, sentences, accepted, sentence_lexeme, conj, exercises, nodes
+
+
 class LemmaCountSanityIntegrationTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -87,12 +111,15 @@ class LemmaCountSanityIntegrationTest(unittest.TestCase):
         self.sanity.assert_current(self.report)
         self.assertEqual(2329, self.report["reviewableItemSummary"]["totalReviewableItems"])
         self.assertEqual(2339, self.report["reviewableItemSummary"]["sourceContentRows"]["rawLexemes"])
-        self.assertEqual(8650, self.report["reviewableItemSummary"]["sourceContentRows"]["totalContentRows"])
+        self.assertEqual(8800, self.report["reviewableItemSummary"]["sourceContentRows"]["totalContentRows"])
         self.assertEqual(
             2329,
             self.report["reviewGate"]["reviewableItems"]["countedReviewedRows"],
         )
-        self.assertEqual(7805, self.report["reviewGate"]["contentRows"]["rowsRequiringIndependentReviews"])
+        self.assertEqual(3154, self.report["reviewableItemSummary"]["sourceContentRows"]["reviewedSentences"])
+        self.assertEqual(3307, self.report["reviewableItemSummary"]["sourceContentRows"]["reviewedAcceptedAnswers"])
+        self.assertEqual(3815, self.report["reviewableItemSummary"]["sourceContentRows"]["exerciseCount"])
+        self.assertEqual(7955, self.report["reviewGate"]["contentRows"]["rowsRequiringIndependentReviews"])
         self.assertEqual(0, self.report["reviewGate"]["contentRows"]["rowsWithInsufficientIndependentReviews"])
 
     def test_target_gate_reports_pilot_stop_phrase_gap_and_recalibrated_b1_count(self):
@@ -945,7 +972,7 @@ class SequencingValidationTest(unittest.TestCase):
         )
 
     def test_real_built_path_has_no_empty_nodes(self):
-        _lexemes, _sentences, _accepted, _sentence_lexeme, _conj, exercises, nodes = self.build.vetted_sample()
+        lexemes, _sentences, _accepted, _sentence_lexeme, _conj, exercises, nodes = self.build.vetted_sample()
         exercise_count_by_node = {}
         for exercise in exercises:
             exercise_count_by_node[exercise["nodeId"]] = exercise_count_by_node.get(exercise["nodeId"], 0) + 1
@@ -957,6 +984,106 @@ class SequencingValidationTest(unittest.TestCase):
         ]
 
         self.assertEqual([], empty_nodes)
+        report = self.build.validate_sequencing(lexemes, exercises, nodes)
+        self.assertEqual(0, report["summary"]["emptyNodeCount"])
+        self.assertEqual([], report["failures"]["emptyNodes"])
+
+    def test_a1_english_to_spanish_typed_production_exists_only_for_a1_targets(self):
+        lexemes, _sentences, _accepted, _sentence_lexeme, _conj, exercises, _nodes = self.build.vetted_sample()
+        lexeme_by_id = {row.data["lexemeId"]: row for row in lexemes}
+
+        en_to_es = [
+            exercise for exercise in exercises
+            if exercise["direction"] == "EN_TO_ES" and exercise["type"] == "TYPED_TRANSLATION"
+        ]
+        a1_es_to_en_targets = {
+            exercise["targetItemId"]
+            for exercise in exercises
+            if exercise["direction"] == "ES_TO_EN"
+            and exercise["type"] == "TYPED_TRANSLATION"
+            and lexeme_by_id[exercise["targetItemId"]].data["cefrBand"] == "A1"
+        }
+        a1_en_to_es_targets = {
+            exercise["targetItemId"]
+            for exercise in en_to_es
+            if lexeme_by_id[exercise["targetItemId"]].data["cefrBand"] == "A1"
+        }
+
+        self.assertGreater(len(en_to_es), 0)
+        self.assertEqual(a1_es_to_en_targets, a1_en_to_es_targets)
+        self.assertEqual(
+            {"A1"},
+            {lexeme_by_id[exercise["targetItemId"]].data["cefrBand"] for exercise in en_to_es},
+        )
+
+    def test_a1_english_to_spanish_answers_are_reviewed_spanish_and_grade_behaviorally(self):
+        lexemes, sentences, accepted, sentence_lexeme, _conj, exercises, _nodes = staged_vetted_sample(self.build)
+        lexeme_by_id = {row.data["lexemeId"]: row for row in lexemes}
+        sentence_by_id = {row.data["sentenceId"]: row for row in sentences}
+        sentence_ids_by_lexeme = {}
+        for sentence_id, lexeme_id in sentence_lexeme:
+            sentence_ids_by_lexeme.setdefault(lexeme_id, set()).add(sentence_id)
+        accepted_by_sentence_direction = {}
+        for row in accepted:
+            key = (row.data["sentenceId"], row.data["direction"])
+            accepted_by_sentence_direction.setdefault(key, []).append(row)
+
+        production = [
+            exercise for exercise in exercises
+            if exercise["direction"] == "EN_TO_ES" and exercise["type"] == "TYPED_TRANSLATION"
+        ]
+        self.assertGreater(len(production), 0)
+
+        for exercise in production:
+            target = lexeme_by_id[exercise["targetItemId"]]
+            self.assertEqual("A1", target.data["cefrBand"])
+            sentence = sentence_by_id[exercise["sentenceId"]]
+            self.assertEqual(self.build.REVIEWED, sentence.vettingStatus)
+            self.assertIn(exercise["sentenceId"], sentence_ids_by_lexeme[exercise["targetItemId"]])
+
+            answers = accepted_by_sentence_direction.get((exercise["sentenceId"], "EN_TO_ES"), [])
+            self.assertGreater(len(answers), 0)
+            reviewed_spanish = {
+                normalize_free_text(candidate.data["spanishText"])
+                for candidate in sentences
+                if candidate.vettingStatus == self.build.REVIEWED
+                and candidate.data["sentenceId"] in sentence_ids_by_lexeme[exercise["targetItemId"]]
+                and candidate.data["englishText"] == sentence.data["englishText"]
+            }
+            for answer in answers:
+                self.assertEqual(self.build.REVIEWED, answer.vettingStatus)
+                self.assertEqual("derived_reviewed_sentence", answer.source)
+                self.assertIn(normalize_free_text(answer.data["answerText"]), reviewed_spanish)
+                self.assertTrue(check_free_text(sentence.data["spanishText"].upper() + "!", [answer.data["answerText"]]))
+            self.assertFalse(check_free_text("el perro bebe cafe", [row.data["answerText"] for row in answers]))
+
+    def test_derived_english_to_spanish_answer_gate_rejects_corrupt_spanish(self):
+        lexemes, sentences, accepted, _sentence_lexeme, _conj, _exercises, _nodes = self.build.vetted_sample()
+        derived = next(row for row in accepted if row.source == self.build.DERIVED_REVIEWED_SENTENCE_SOURCE)
+        derived.data["answerText"] = "respuesta incorrecta"
+
+        failures = self.build.stage_auto_check(lexemes, sentences, accepted)
+        self.assertEqual([], failures)
+        failures = self.build.stage_auto_review(lexemes, sentences, accepted)
+
+        self.assertTrue(
+            any("derived Spanish accepted answer does not match linked reviewed sentence" in failure for failure in failures),
+            failures,
+        )
+
+    def test_a1_english_to_spanish_path_has_no_empty_nodes(self):
+        _lexemes, _sentences, _accepted, _sentence_lexeme, _conj, exercises, nodes = self.build.vetted_sample()
+        exercise_count_by_node = {}
+        for exercise in exercises:
+            exercise_count_by_node[exercise["nodeId"]] = exercise_count_by_node.get(exercise["nodeId"], 0) + 1
+        self.assertEqual(
+            [],
+            [
+                {"nodeId": node_id, "title": title}
+                for node_id, title, _display_order in nodes
+                if exercise_count_by_node.get(node_id, 0) == 0
+            ],
+        )
 
     def test_first_review_node_is_completable_and_unlocks_next_position(self):
         _lexemes, _sentences, _accepted, _sentence_lexeme, _conj, exercises, nodes = self.build.vetted_sample()

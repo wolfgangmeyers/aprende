@@ -245,7 +245,7 @@ class LessonViewModel @Inject constructor(
         val kind = kindOf(exercise.type)
         val accepted = content.acceptedAnswers(exercise.sentenceId, exercise.direction)
         val sentence = content.sentenceText(exercise.sentenceId)
-        val prompt = sentence?.spanishText ?: exercise.promptHint ?: ""
+        val prompt = promptFor(sentence, exercise.direction, exercise.promptHint)
         val target = accepted.firstOrNull() ?: ""
 
         val tiles = if (kind == ExerciseKind.WORD_BANK) tokenize(target).shuffled() else emptyList()
@@ -284,6 +284,12 @@ class LessonViewModel @Inject constructor(
         "MULTIPLE_CHOICE" -> ExerciseKind.MULTIPLE_CHOICE
         else -> ExerciseKind.TYPED_TRANSLATION // typed translation is the Tier-0 default
     }
+
+    private fun promptFor(sentence: com.magicalhippie.aprende.domain.model.SentenceText?, direction: String, fallback: String?): String =
+        when (direction) {
+            "EN_TO_ES" -> sentence?.englishText
+            else -> sentence?.spanishText
+        } ?: fallback ?: ""
 
     private fun instructionFor(kind: ExerciseKind, direction: String): String {
         val dir = if (direction == "ES_TO_EN") "in English" else "in Spanish"

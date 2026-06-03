@@ -72,23 +72,51 @@ class LessonViewModelSavedStateTest {
             assertEquals(false, vm2.uiState.value.prompt == firstPrompt)
         }
 
-    private fun newViewModel(handle: SavedStateHandle): LessonViewModel {
+    @Test
+    fun `english to spanish exercise prompts with English and grades Spanish answer`() =
+        runTest(testDispatcher) {
+            val handle = SavedStateHandle(mapOf(Routes.ARG_NODE_ID to 1L))
+            val vm = newViewModel(
+                handle,
+                exercises = listOf(
+                    exercise(id = 1, targetItemId = 1, type = "TYPED_TRANSLATION")
+                        .copy(sentenceId = 1, direction = "EN_TO_ES"),
+                ),
+                acceptedAnswers = mapOf((1L to "EN_TO_ES") to listOf("tengo un perro")),
+                sentences = mapOf(1L to SentenceText(1, "Tengo un perro.", "I have a dog.")),
+            )
+            runCurrent()
+
+            assertEquals("I have a dog.", vm.uiState.value.prompt)
+            assertEquals("Type this in Spanish", vm.uiState.value.instruction)
+
+            vm.onTypedInputChange("Tengo un perro.")
+            vm.submit()
+            runCurrent()
+
+            assertEquals(Feedback.CORRECT, vm.uiState.value.feedback)
+        }
+
+    private fun newViewModel(
+        handle: SavedStateHandle,
+        exercises: List<com.magicalhippie.aprende.domain.model.Exercise> = listOf(
+            exercise(id = 1, targetItemId = 1, type = "TYPED_TRANSLATION").copy(sentenceId = 1),
+            exercise(id = 2, targetItemId = 2, type = "TYPED_TRANSLATION").copy(sentenceId = 2),
+        ),
+        acceptedAnswers: Map<Pair<Long, String>, List<String>> = mapOf(
+            (1L to "ES_TO_EN") to listOf("i have a dog"),
+            (2L to "ES_TO_EN") to listOf("the water is cold"),
+        ),
+        sentences: Map<Long, SentenceText> = mapOf(
+            1L to SentenceText(1, "Tengo un perro.", "I have a dog."),
+            2L to SentenceText(2, "El agua está fría.", "The water is cold."),
+        ),
+    ): LessonViewModel {
         val clock = MutableClock()
         val content = FakeContentRepository(
-            exercisesByNode = mapOf(
-                1L to listOf(
-                    exercise(id = 1, targetItemId = 1, type = "TYPED_TRANSLATION").copy(sentenceId = 1),
-                    exercise(id = 2, targetItemId = 2, type = "TYPED_TRANSLATION").copy(sentenceId = 2),
-                ),
-            ),
-            acceptedAnswers = mapOf(
-                (1L to "ES_TO_EN") to listOf("i have a dog"),
-                (2L to "ES_TO_EN") to listOf("the water is cold"),
-            ),
-            sentences = mapOf(
-                1L to SentenceText(1, "Tengo un perro.", "I have a dog."),
-                2L to SentenceText(2, "El agua está fría.", "The water is cold."),
-            ),
+            exercisesByNode = mapOf(1L to exercises),
+            acceptedAnswers = acceptedAnswers,
+            sentences = sentences,
         )
         val progress = FakeProgressRepository()
         val settings = FakeSettingsRepository()

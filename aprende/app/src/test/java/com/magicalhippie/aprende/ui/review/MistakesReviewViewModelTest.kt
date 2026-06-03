@@ -51,6 +51,17 @@ class MistakesReviewViewModelTest {
         sentences = mapOf(10L to SentenceText(10, "Tengo un perro.", "I have a dog.")),
     )
 
+    private fun enToEsContent() = FakeContentRepository(
+        exercisesByNode = mapOf(
+            1L to listOf(
+                exercise(id = 10, targetItemId = 1)
+                    .copy(direction = "EN_TO_ES"),
+            ),
+        ),
+        acceptedAnswers = mapOf((10L to "EN_TO_ES") to listOf("tengo un perro")),
+        sentences = mapOf(10L to SentenceText(10, "Tengo un perro.", "I have a dog.")),
+    )
+
     private fun vm(progress: FakeProgressRepository, content: FakeContentRepository): MistakesReviewViewModel {
         val record = RecordAnswerUseCase(progress, ScheduleReviewUseCase(clock, Fsrs()))
         return MistakesReviewViewModel(
@@ -84,6 +95,24 @@ class MistakesReviewViewModelTest {
         val state = viewModel.uiState.value
         assertTrue(state.complete)
         assertEquals(1, state.clearedCount)
+    }
+
+    @Test
+    fun `english to spanish mistake prompts with English and grades Spanish answer`() = runTest(dispatcher) {
+        val progress = FakeProgressRepository()
+        progress.enqueueMistake(exerciseId = 10, itemId = 1, itemType = ItemType.LEXEME, missedAtMillis = 0L)
+        val viewModel = vm(progress, enToEsContent())
+        advanceUntilIdle()
+
+        assertEquals("I have a dog.", viewModel.uiState.value.prompt)
+        assertEquals("Type this in Spanish", viewModel.uiState.value.instruction)
+
+        viewModel.onTypedInputChange("Tengo un perro.")
+        viewModel.submit()
+        advanceUntilIdle()
+
+        assertEquals(Feedback.CORRECT, viewModel.uiState.value.feedback)
+        assertTrue(progress.allMistakes().isEmpty())
     }
 
     @Test

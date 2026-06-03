@@ -173,6 +173,7 @@ EVIDENCE_BASIS_PER_ITEM = "per_item_review"
 EVIDENCE_BASIS_LEGACY = "legacy_pack_attestation"
 APPROVED_VERDICT = "APPROVED"
 FROZEN_LEGACY_REVIEW_EVIDENCE_ITEM_COUNT = 7052
+DERIVED_REVIEWED_SENTENCE_SOURCE = "derived_reviewed_sentence"
 AUTHENTIC_PHRASE_LEDGER = {
     "fuga de agua": "approved by correctness and naturalness subagents on 2026-06-02",
     "llave de agua rota": "approved by correctness, naturalness, and dialect subagents on 2026-06-02",
@@ -7624,56 +7625,7 @@ def review_evidence_cross_checks(table: str, row: Row) -> dict:
     return checks
 
 
-def load_review_evidence_file(path: str, source_label: str | None = None) -> dict[str, dict]:
-    source_label = source_label or os.path.basename(path)
-    with open(path, encoding="utf-8") as f:
-        payload = json.load(f)
-    if payload.get("schemaVersion") != 1:
-        raise ValueError(f"{source_label} must have schemaVersion 1")
-
-    items: dict[str, dict] = {}
-    for include in payload.get("includes", []):
-        include_path = include
-        if not os.path.isabs(include_path):
-            include_path = os.path.join(os.path.dirname(path), include_path)
-        included_items = load_review_evidence_file(include_path, include)
-        for key, item in included_items.items():
-            if key in items and items[key] != item:
-                raise ValueError(f"conflicting review evidence for {key}")
-            items[key] = item
-
-    for key, item in payload.get("items", {}).items():
-        if key in items and items[key] != item:
-            raise ValueError(f"conflicting review evidence for {key}")
-        item = dict(item)
-        item["_evidenceSourceFile"] = source_label
-        items[key] = item
-    return items
-
-
-def load_review_evidence_items(path: str = REVIEW_EVIDENCE_PATH) -> dict[str, dict]:
-    return load_review_evidence_file(path)
-
-
-def review_rationale_boilerplate_signature(rationale: str) -> str:
-    def normalize_quoted(match: re.Match[str]) -> str:
-        quoted = match.group(0)
-        inner = quoted[1:-1]
-        if len(inner) <= 40:
-            return quoted
-        return f"{quoted[0]}<quoted>{quoted[-1]}"
-
-    signature = rationale.lower()
-    signature = re.sub(r"'[^']*'", normalize_quoted, signature)
-    signature = re.sub(r'"[^"]*"', normalize_quoted, signature)
-    signature = re.sub(r"\b(?:lexeme|sentence|accepted_answer):\d+\b", "<stable-key>", signature)
-    signature = re.sub(r"\bsha256:[0-9a-f]+\b", "<hash>", signature)
-    signature = re.sub(r"\b\d+\b", "<number>", signature)
-    signature = re.sub(r"\s+", " ", signature).strip()
-    return signature
-
-
-def validate_review_evidence_catalog(items: dict[str, dict]) -> None:
+def validate_review_evidence_catalog_items(items: dict[str, dict]) -> list[str]:
     allowed_dimensions = {
         AUTO_REVIEW_SPANISH,
         AUTO_REVIEW_PEDAGOGY,
@@ -7731,6 +7683,60 @@ def validate_review_evidence_catalog(items: dict[str, dict]) -> None:
                     f"{review_type} per_item_review rationale boilerplate pattern reused {len(keys)} times "
                     f"(max {max_reused_per_item_rationale}); first keys: {', '.join(keys[:5])}"
                 )
+    return failures
+
+
+def load_review_evidence_file(path: str, source_label: str | None = None) -> dict[str, dict]:
+    source_label = source_label or os.path.basename(path)
+    with open(path, encoding="utf-8") as f:
+        payload = json.load(f)
+    if payload.get("schemaVersion") != 1:
+        raise ValueError(f"{source_label} must have schemaVersion 1")
+
+    items: dict[str, dict] = {}
+    for include in payload.get("includes", []):
+        include_path = include
+        if not os.path.isabs(include_path):
+            include_path = os.path.join(os.path.dirname(path), include_path)
+        included_items = load_review_evidence_file(include_path, include)
+        for key, item in included_items.items():
+            if key in items and items[key] != item:
+                raise ValueError(f"conflicting review evidence for {key}")
+            items[key] = item
+
+    for key, item in payload.get("items", {}).items():
+        if key in items and items[key] != item:
+            raise ValueError(f"conflicting review evidence for {key}")
+        item = dict(item)
+        item["_evidenceSourceFile"] = source_label
+        items[key] = item
+    return items
+
+
+def load_review_evidence_items(path: str = REVIEW_EVIDENCE_PATH) -> dict[str, dict]:
+    return load_review_evidence_file(path)
+
+
+def review_rationale_boilerplate_signature(rationale: str) -> str:
+    def normalize_quoted(match: re.Match[str]) -> str:
+        quoted = match.group(0)
+        inner = quoted[1:-1]
+        if len(inner) <= 40:
+            return quoted
+        return f"{quoted[0]}<quoted>{quoted[-1]}"
+
+    signature = rationale.lower()
+    signature = re.sub(r"'[^']*'", normalize_quoted, signature)
+    signature = re.sub(r'"[^"]*"', normalize_quoted, signature)
+    signature = re.sub(r"\b(?:lexeme|sentence|accepted_answer):\d+\b", "<stable-key>", signature)
+    signature = re.sub(r"\bsha256:[0-9a-f]+\b", "<hash>", signature)
+    signature = re.sub(r"\b\d+\b", "<number>", signature)
+    signature = re.sub(r"\s+", " ", signature).strip()
+    return signature
+
+
+def validate_review_evidence_catalog(items: dict[str, dict]) -> None:
+    failures = validate_review_evidence_catalog_items(items)
     legacy_count = sum(1 for item in items.values() if item.get("_evidenceSourceFile") == "review_evidence_legacy.json")
     if legacy_count != FROZEN_LEGACY_REVIEW_EVIDENCE_ITEM_COUNT:
         failures.append(
@@ -7828,6 +7834,145 @@ def register_per_item_review_evidence(table: str, row: Row, review_types: set[st
             for review_type in review_types
         },
     }
+
+
+def normalize_spanish_answer(text: str) -> str:
+    nfc = unicodedata.normalize("NFC", text)
+    collapsed = re.sub(r"\s+", " ", nfc.lower()).strip()
+    return collapsed.strip("¿¡.?!,;:\"'()«»…")
+
+
+def register_derived_answer_review_evidence(row: Row, sentence: Row, target: Row) -> None:
+    spanish = sentence.data["spanishText"]
+    english = sentence.data["englishText"]
+    target_label = f"{target.data['lemma']} ({target.data['cefrBand']})"
+    rationales = {
+        AUTO_REVIEW_SPANISH: (
+            f"Accepted answer {row.data['acceptedAnswerId']} is the normalized Spanish text "
+            f"{row.data['answerText']!r} derived from reviewed sentence {sentence.data['sentenceId']} "
+            f"{spanish!r} for A1 target {target_label}; grammar and translation were already reviewed "
+            f"with English prompt {english!r}."
+        ),
+        AUTO_REVIEW_AUTHENTICITY: (
+            f"Production answer {row.data['answerText']!r} reuses reviewed learner-facing sentence "
+            f"{sentence.data['sentenceId']} for target {target_label}; it is a natural response to "
+            f"the prompt {english!r} because the full sentence pair is already approved."
+        ),
+        AUTO_REVIEW_DIALECT: (
+            f"Derived answer {row.data['answerText']!r} for sentence {sentence.data['sentenceId']} "
+            f"keeps the reviewed neutral Latin American wording {spanish!r} for A1 target {target_label}."
+        ),
+    }
+    key = review_evidence_key("accepted_answer", row)
+    REVIEW_EVIDENCE_ITEMS[key] = {
+        "itemType": "accepted_answer",
+        "stableKey": key,
+        "contentHash": review_evidence_content_hash("accepted_answer", row),
+        "crossChecks": review_evidence_cross_checks("accepted_answer", row),
+        "_evidenceSourceFile": "in_memory_derived_reviewed_sentence",
+        "dimensions": {
+            review_type: {
+                "verdict": APPROVED_VERDICT,
+                "reviewer": AUTO_REVIEW_REVIEWERS[review_type],
+                "reviewedAt": AUTO_REVIEW_TS,
+                "rationale": rationale,
+                "evidenceBasis": EVIDENCE_BASIS_PER_ITEM,
+                "source": (
+                    f"derived from reviewed sentence {sentence.data['sentenceId']} "
+                    f"sourceId={sentence.sourceId}"
+                ),
+            }
+            for review_type, rationale in rationales.items()
+        },
+    }
+
+
+def append_a1_english_to_spanish_production(lexemes, sentences, accepted, sentence_lexeme, exercises) -> None:
+    lexeme_by_id = {row.data["lexemeId"]: row for row in lexemes}
+    sentence_by_id = {row.data["sentenceId"]: row for row in sentences}
+    sentence_ids_by_lexeme: dict[int, set[int]] = {}
+    for sentence_id, lexeme_id in sentence_lexeme:
+        sentence_ids_by_lexeme.setdefault(lexeme_id, set()).add(sentence_id)
+
+    reviewed_spanish_by_prompt_target: dict[tuple[str, int], list[Row]] = {}
+    for sentence in sentences:
+        if sentence.vettingStatus not in {UNVETTED, AI_DRAFT, AUTO_CHECKED, AUTO_REVIEWED, REVIEWED}:
+            continue
+        sentence_id = sentence.data["sentenceId"]
+        for lexeme_id, linked_sentence_ids in sentence_ids_by_lexeme.items():
+            if sentence_id not in linked_sentence_ids:
+                continue
+            target = lexeme_by_id.get(lexeme_id)
+            if target is None or target.data["cefrBand"] != "A1":
+                continue
+            reviewed_spanish_by_prompt_target.setdefault((sentence.data["englishText"], lexeme_id), []).append(sentence)
+
+    existing_en_to_es = {
+        (exercise["sentenceId"], exercise["targetItemId"])
+        for exercise in exercises
+        if exercise["direction"] == "EN_TO_ES" and exercise["type"] == "TYPED_TRANSLATION"
+    }
+    next_answer_id = max((row.data["acceptedAnswerId"] for row in accepted), default=0) + 1
+    next_exercise_id = max((exercise["exerciseId"] for exercise in exercises), default=0) + 1
+    new_exercises: list[dict] = []
+    for exercise in exercises:
+        new_exercises.append(exercise)
+        target = lexeme_by_id.get(exercise["targetItemId"])
+        sentence = sentence_by_id.get(exercise["sentenceId"])
+        if (
+            target is None
+            or sentence is None
+            or target.data["cefrBand"] != "A1"
+            or exercise["type"] != "TYPED_TRANSLATION"
+            or exercise["direction"] != "ES_TO_EN"
+            or exercise["targetItemType"] != "LEXEME"
+            or exercise["sentenceId"] not in sentence_ids_by_lexeme.get(exercise["targetItemId"], set())
+            or (exercise["sentenceId"], exercise["targetItemId"]) in existing_en_to_es
+        ):
+            continue
+
+        variants = reviewed_spanish_by_prompt_target.get((sentence.data["englishText"], exercise["targetItemId"]), [])
+        seen_answers: set[str] = set()
+        for variant in sorted(variants, key=lambda row: row.data["sentenceId"]):
+            answer_text = normalize_spanish_answer(variant.data["spanishText"])
+            if answer_text in seen_answers:
+                continue
+            seen_answers.add(answer_text)
+            answer = Row(
+                {
+                    "acceptedAnswerId": next_answer_id,
+                    "sentenceId": exercise["sentenceId"],
+                    "derivedFromSentenceId": variant.data["sentenceId"],
+                    "direction": "EN_TO_ES",
+                    "answerText": answer_text,
+                },
+                source=DERIVED_REVIEWED_SENTENCE_SOURCE,
+                sourceId=f"derived:sentence:{variant.data['sentenceId']}:target:{exercise['targetItemId']}:en-to-es",
+                license=variant.license,
+                vettingStatus=UNVETTED,
+            )
+            register_derived_answer_review_evidence(answer, variant, target)
+            accepted.append(answer)
+            next_answer_id += 1
+
+        if not seen_answers:
+            continue
+        new_exercises.append({
+            "exerciseId": next_exercise_id,
+            "nodeId": exercise["nodeId"],
+            "sentenceId": exercise["sentenceId"],
+            "type": "TYPED_TRANSLATION",
+            "direction": "EN_TO_ES",
+            "targetItemId": exercise["targetItemId"],
+            "targetItemType": exercise["targetItemType"],
+            "promptHint": None,
+        })
+        existing_en_to_es.add((exercise["sentenceId"], exercise["targetItemId"]))
+        next_exercise_id += 1
+    exercises[:] = new_exercises
+    failures = validate_review_evidence_catalog_items(REVIEW_EVIDENCE_ITEMS)
+    if failures:
+        raise SystemExit("INVALID DERIVED REVIEW EVIDENCE:\n  " + "\n  ".join(failures))
 
 
 def append_ai_accelerated_pack(pack, pack_slug: str, exercise_id: int,
@@ -8220,12 +8365,17 @@ def validate_sequencing(lexemes: list[Row], exercises: list[dict],
     )
     nodes_by_cefr = count_by(node_cefr_band(title) for _node_id, title, _display_order in nodes)
     checkpoint_nodes = [entry for entry in node_counts if entry["newTargetCount"] == 0]
+    empty_nodes = [
+        entry for entry in node_counts
+        if entry["targetExerciseCount"] == 0
+    ]
     failures = {
         "targetsMissingFirstIntroduction": missing_intro,
         "usesBeforeIntroduction": use_before_intro,
         "introNodesOverTargetCap": overfull_intro_nodes,
         "nonIntroNodesBelowRecycleFloor": recycled_floor_failures,
         "onRampTargetsMissingIntroduction": missing_on_ramp,
+        "emptyNodes": empty_nodes,
     }
     return {
         "status": "failed" if any(failures.values()) else "passed",
@@ -8240,6 +8390,7 @@ def validate_sequencing(lexemes: list[Row], exercises: list[dict],
             "nodeCount": len(nodes),
             "introNodeCount": sum(1 for entry in node_counts if entry["newTargetCount"] > 0),
             "checkpointNodeCount": len(checkpoint_nodes),
+            "emptyNodeCount": len(empty_nodes),
             "maxNewTargetsInIntroNode": max((entry["newTargetCount"] for entry in node_counts), default=0),
             "minRecycleRatioInNonIntroNode": min(
                 (entry["recycleRatio"] for entry in checkpoint_nodes if entry["targetExerciseCount"]),
@@ -9430,6 +9581,7 @@ def vetted_sample():
         )
     prune_unreviewed_phrase_content(lexemes, sentences, accepted, sentence_lexeme, exercises)
     nodes = apply_sequencing_plan(lexemes, exercises)
+    append_a1_english_to_spanish_production(lexemes, sentences, accepted, sentence_lexeme, exercises)
     return lexemes, sentences, accepted, sentence_lexeme, conj, exercises, nodes
 
 
@@ -9453,6 +9605,8 @@ def add_review_evidence(row: Row, review_type: str, decision: str, notes: str, *
 
 
 def required_auto_review_types(row: Row) -> set[str]:
+    if row.source == DERIVED_REVIEWED_SENTENCE_SOURCE:
+        return {AUTO_REVIEW_SPANISH, AUTO_REVIEW_AUTHENTICITY, AUTO_REVIEW_DIALECT}
     if is_phrase_or_chunk_lexeme(row):
         return {AUTO_REVIEW_SPANISH, AUTO_REVIEW_AUTHENTICITY, AUTO_REVIEW_DIALECT}
     if "spanishText" in row.data:
@@ -9495,10 +9649,16 @@ def local_spanish_review(row: Row, sentence_by_id: dict[int, Row]) -> tuple[bool
 
     sentence = row
     if "sentenceId" in row.data and "spanishText" not in row.data:
-        sentence = sentence_by_id.get(row.data["sentenceId"])
+        sentence = sentence_by_id.get(row.data.get("derivedFromSentenceId") or row.data["sentenceId"])
     if sentence is None:
         return False, "missing linked Spanish sentence"
     spanish = sentence.data["spanishText"]
+    if row.source == DERIVED_REVIEWED_SENTENCE_SOURCE:
+        if row.data.get("direction") != "EN_TO_ES":
+            return False, "derived Spanish accepted answer must use EN_TO_ES direction"
+        if normalize_spanish_answer(row.data.get("answerText", "")) != normalize_spanish_answer(spanish):
+            return False, "derived Spanish accepted answer does not match linked reviewed sentence"
+        return True, "derived Spanish accepted answer matches the linked reviewed sentence"
     expected_english = AI_REVIEWED_SENTENCE_PAIRS.get(spanish)
     if expected_english is None and sentence.source == AI_DRAFT_SOURCE:
         return False, "Spanish sentence is not in the local approved pattern ledger"

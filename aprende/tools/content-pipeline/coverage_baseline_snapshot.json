@@ -40,8 +40,8 @@
     "rawLexemes": 2339,
     "learnerReadyLexemes": 2329,
     "reviewedSentences": 3154,
-    "reviewedAcceptedAnswers": 3157,
-    "exerciseCount": 3665,
+    "reviewedAcceptedAnswers": 3307,
+    "exerciseCount": 3815,
     "missingA1A2GapCount": 3333
   },
   "counts": {
@@ -73,22 +73,23 @@
     "contentRowsBySource": {
       "ai_draft": 6359,
       "authored": 2,
+      "derived_reviewed_sentence": 150,
       "tatoeba": 201,
       "wiktionary": 2088
     },
     "contentRowsByLicense": {
-      "CC-BY-2.0-FR": 201,
+      "CC-BY-2.0-FR": 224,
       "CC-BY-SA-3.0": 2088,
-      "proprietary": 6361
+      "proprietary": 6488
     },
     "contentRowsByVettingStatus": {
-      "REVIEWED": 8650
+      "REVIEWED": 8800
     },
     "exerciseTargetsByType": {
-      "LEXEME": 3665
+      "LEXEME": 3815
     },
     "exerciseTypes": {
-      "TYPED_TRANSLATION": 2905,
+      "TYPED_TRANSLATION": 3055,
       "WORD_BANK": 760
     }
   },
@@ -99,6 +100,7 @@
     "nodeCount": 365,
     "introNodeCount": 295,
     "checkpointNodeCount": 70,
+    "emptyNodeCount": 0,
     "maxNewTargetsInIntroNode": 8,
     "minRecycleRatioInNonIntroNode": 1.0,
     "a1A2TargetsWithIntroduction": 706,
@@ -131,7 +133,8 @@
       "usesBeforeIntroduction": 0,
       "introNodesOverTargetCap": 0,
       "nonIntroNodesBelowRecycleFloor": 0,
-      "onRampTargetsMissingIntroduction": 0
+      "onRampTargetsMissingIntroduction": 0,
+      "emptyNodes": 0
     }
   },
   "topMissingA1A2Gaps": [
