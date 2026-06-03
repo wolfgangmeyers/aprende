@@ -1,180 +1,308 @@
-# Aprende — Implementation Plan (Phase 0 + Phase 1 MVP)
+# Aprende Spanish Curriculum Rebalance Plan
 
-**Status:** Draft for review. Decomposes `SPEC.md` v1.1 (accepted) into dev-loop iterations.
-**Date:** 2026-05-30
-**Source of truth:** `SPEC.md`. This plan only sequences *how* we build it; any conflict → SPEC wins. Section refs like (§6) point at SPEC.md.
-**Scope of this plan:** Phase 0 (spikes + scaffold) and Phase 1 (the offline MVP). Phases 2 (audio/speech) and 3 (polish) stay at SPEC §16 granularity and get their own plan when reached — planning them now would be speculative.
+**Status:** Draft for dev-loop review.
+**Source of truth:** `SPEC.md`.
+**Scope:** Implementation plan only. This planning task does not implement code, change curriculum content, commit, or push.
 
-> **Note:** this file previously held the unrelated magical-hippie *subscription* Phase-1 plan; it has been replaced with the Aprende plan on this dedicated branch. The prior content remains in git history.
+## Goals
 
-## How to read this
+Repair Aprende's curriculum shape so a native English speaker can start from zero Spanish, move through a coherent A1/A2 on-ramp, and continue into the existing intermediate phrase-heavy curriculum without the current blanket-B1 noun-phrase mislabeling.
 
-Each iteration is one **dev-loop unit**: plan → implement TDD → robot-review → fix → done, sized to a single reviewable PR. For each I give: **Goal**, **Builds (files/modules)**, **Depends on**, **Contract** (what it exposes to later iterations — the inter-iteration seam), **Tests / AC** (SPEC acceptance criteria it satisfies). Ordering is dependency-driven; the critical path is called out.
+The implementation must handle three separate fixes:
 
-## Open decisions carried into implementation
+1. Replace the noun-phrase blanket-B1 assignment with a deterministic phrase CEFR rubric.
+2. Re-band the existing B1 noun-phrase rows with audit evidence.
+3. Backfill and sequence a 300-500 item A1/A2 beginner on-ramp, including 100-200 phrase/chunk frames.
 
-These are unresolved in SPEC.md and explicitly tracked here so they don't get lost:
+## Design Decisions
 
-- **O1 — frequency-list & licensing choice (owner decision, needed before *full* content authoring).** Which CC-licensed list we ship (hermitdave CC BY-SA vs Leipzig CC BY 4.0 vs Wiktionary) and how ShareAlike is contained so copyleft doesn't reach our authored content (§4.5). **Does not block Phase 0/1 mechanics** — P0.3 de-risks the pipeline with a small sample slice; full authoring waits on this answer. *Owner: project owner.*
-- **O2 — NPC-simulated leaderboard (later-phase decision, NOT v1).** v1 cuts leagues entirely (server-dependent, §2/§9). Whether to add a fidelity-reduced NPC leaderboard + streak-vs-self ghost is a **Phase-3** product decision; it is not a dependency of anything in this plan. Revisit at Phase 3 planning. *Owner: product.*
+### Rubric Shape
 
-Neither decision blocks starting implementation (P0.1 onward).
+Add a rubric function used by `build_phrase_pack_specs` and any future phrase/chunk pack builder. The function should accept the available phrase metadata already present in the content pipeline: lemma/phrase text, POS, English gloss, domain/reason, source basis, frequency rank when available, and optional manually supplied rubric hints. It returns:
 
-## Greenfield note
+- `cefrBand`
+- `difficultyPrior`
+- `rubricReason`
+- `rubricSignals`
 
-This repo currently holds the unrelated magical-hippie storefront. The Aprende app is a **new, self-contained Android project** (new Gradle root, e.g. `aprende/`), not an extension of `/app`. Nothing here touches the storefront code. (The stack choice and RN/Expo rejection are settled in §3 — not relitigated.)
+The rubric should be deterministic and auditable. It should not call an LLM, inspect runtime learner data, or depend on row order.
 
----
+Banding rules:
 
-## Module / package layout (target)
+- A1: one short concrete routine phrase, survival/courtesy/classroom/home/food/place/time topic, high-frequency head noun, no abstract/institutional/formal domain signal, no idiom, no multi-clause structure.
+- A2: concrete daily-life phrase with one common modifier or collocation, routine errands/health/family/travel/shopping/school/work topic, still teachable with A1/A2 grammar and common sentence frames.
+- B1+: formal, institutional, abstract, legal/medical-administrative in a specialized sense, idiomatic, low-frequency, multi-step, multi-modifier, or phrase chains requiring narration, negotiation, explanation, advice, planning, or specialized interpretation.
 
-Single Gradle app module to start (split later only if it earns it — §13). Packages mirror the §12.1 layers:
+Manual overrides are allowed only as explicit data in the pack source, not hidden special cases. Each override must include a reason and still appear in validator/audit output.
 
+### Re-Banding Safety
+
+Re-banding should update CEFR metadata over existing rows, not rebuild identities. Stable IDs, source/license, reviewed status, accepted answers, and exercise links stay intact.
+
+Use a two-pass process:
+
+1. Dry-run report: apply the rubric to existing B1 noun phrases and emit before/after counts, changed-row manifest, rubric signals, and audit buckets.
+2. Apply pass: persist the new `cefrBand`, `difficultyPrior`, and rubric metadata only after the dry-run report passes validation.
+
+The audit sample must include at least 150 changed rows or 5% of changed rows, whichever is larger, covering A1 moves, A2 moves, and B1+ stays. Implementation can satisfy this with a checked-in deterministic sample manifest plus review annotations, or with a generated audit report if the project already has a review-evidence format by then. The gate fails above 10% unresolved sample disagreement.
+
+### On-Ramp Structure
+
+Create the on-ramp as its own content phase. It should use reviewed, source-checked rows and the existing publish gate. Re-banded existing A1/A2 phrase rows may be threaded into beginner nodes when they fit the sequence, but the on-ramp must be deliberately ordered rather than just counted.
+
+Target shape:
+
+| Unit | Focus | Approx. Items | Phrase/Chunk Frames |
+|---|---:|---:|---:|
+| 1 | Greetings, courtesy, classroom/app commands, yes/no, names | 35-55 | 15-25 |
+| 2 | Articles, gender, people, family, basic adjectives | 35-55 | 10-20 |
+| 3 | `ser` for identity/description, subject pronouns | 35-55 | 10-20 |
+| 4 | `estar`, location, home, places, here/there | 35-55 | 15-25 |
+| 5 | `tener`, needs, food, objects, age | 40-60 | 15-25 |
+| 6 | `ir`, places, time, routines, near-future-ready chunks | 40-60 | 15-25 |
+| 7 | `querer`, `poder`, requests, shopping, travel, school/work | 45-70 | 20-30 |
+| 8 | `hacer`, health, weather, routines, mixed A2 review questions | 45-70 | 20-30 |
+
+On-ramp floors:
+
+- At least 300 total A1/A2 on-ramp reviewables.
+- At least 100 A1/A2 on-ramp phrase/chunk items.
+- At least 120 A1 on-ramp reviewables.
+- At least 120 A2 on-ramp reviewables.
+- At least 8 ordered beginner units.
+
+Node sequencing rules:
+
+- No more than 8 new targets per node.
+- At least 30% of non-introductory exercises recycle previously introduced targets.
+- Each unit after Unit 1 includes review coverage for targets introduced in earlier units.
+- Every A1/A2 target has `introducedInUnit`, `introducedInNode`, and subsequent review appearances in reporting.
+- Every introduction node has reviewed exercise coverage for each target it introduces.
+- A node cannot use a target item before its introduction node.
+
+### Distribution Metrics
+
+Keep two separate metric concepts:
+
+- On-ramp floor: the beginner path has enough ordered A1/A2 content to teach a zero-knowledge learner.
+- Post-reband total distribution: the whole reviewable corpus after applying the rubric to existing rows.
+
+The validator should fail if A1+A2 phrase/chunk totals remain below 1,500 after re-banding without reviewed audit justification, or if B1 remains above 6,000 after re-banding. These gates catch the current blanket-B1 failure while allowing actual post-reband totals to reflect the corpus.
+
+The steady-state target remains a product trajectory, not a first milestone gate: roughly 10-15% A1, 15-20% A2, 40-50% B1, 20-30% B2, and 5-10% C1+ once C1+ content exists.
+
+### C1+ Lane
+
+Do not backfill C1+ in the first implementation. Do make C1+ visible in reports so zero is an explicit gap. Reserve future C1+ categories:
+
+- Argumentation, nuance, and stance.
+- Abstract professional/academic vocabulary.
+- Idioms, register, and pragmatic tone.
+- Long-form connectors, discourse markers, and complex clause patterns.
+
+The future sequencing boundary is after B2 reviewables that cover routine narration, explanation, planning, and opinion. C1+ nodes must not appear before B2 bridge content is complete.
+
+## Phased Implementation
+
+### Phase 1 - Validator Baseline And Reporting Contracts
+
+Files likely touched:
+
+- `aprende/tools/content-pipeline/lemma_count_sanity.py`
+- Existing content-pipeline test files or new tests under `aprende/tools/content-pipeline/`
+
+Work:
+
+- Extend the current sanity report to include phrase/chunk counts by CEFR, noun-phrase counts by CEFR, on-ramp counts, path sequencing summary fields, C1+ lane reporting, and post-reband gate placeholders.
+- Preserve the current `--assert-current` reporting contract until the rubric/reband phases intentionally update expected counts.
+- Add an assertion mode for target gates, separate from `--assert-current`, so workers can distinguish "known current skew" from "post-repair required shape."
+- Represent the review-gate contract explicitly: an item counts as reviewed for AI-drafted or AI-re-banded content only when it has at least two independent approved reviews. The Phase 1 validator must report that status and be able to assert it, even before later phases add new drafted/re-banded rows.
+
+Integration tests:
+
+- `lemma_count_sanity` loads `build_content_db.py`, runs the real stage checks/review gate, builds the real coverage report, and asserts the current skew in `--assert-current`.
+- A target-gate test uses the real sanity report object and fails when A1/A2 phrase/chunk counts are zero.
+- A C1+ reporting test verifies the C1+ lane/report section appears even when count is zero and includes the future-lane categories and B2-to-C1 boundary.
+- A review-gate test verifies an AI-drafted or AI-re-banded item with fewer than two independent approved reviews is not counted as reviewed, and that the target assertion fails on insufficient independent reviews.
+
+Spec mapping: Requirements 12-19, 21.
+
+### Phase 2 - Deterministic Phrase CEFR Rubric
+
+Files likely touched:
+
+- `aprende/tools/content-pipeline/build_content_db.py`
+- Content-pipeline tests for phrase pack construction
+- Optional rubric fixture data under the content-pipeline tools directory
+
+Work:
+
+- Add a single rubric helper for phrase/chunk CEFR assignment.
+- Replace the hard-coded `"B1"` in `build_phrase_pack_specs` with the helper.
+- Emit `rubricReason` or equivalent audit data in the pack report if the schema/reporting path supports it. If the schema cannot carry it yet, emit it in a named build-time `phrase_cefr_rubric_report.json` artifact without changing content row identity.
+- Add representative fixture cases:
+  - A1: `entrada principal`, `agua fría`, `mi casa`.
+  - A2: `cita médica`, `mesa reservada`, `billete de ida`, `tienda abierta`.
+  - B1+: `reclamación formal`, `procedimiento administrativo`, `responsabilidad legal`, `informe detallado`.
+
+Integration tests:
+
+- Build a phrase pack through the real pack builder and assert fixture phrases land in expected CEFR bands.
+- Regression test that a mixed phrase pack produces at least two CEFR bands, so blanket-B1 assignment fails.
+- Test manual override requires a reason and appears in rubric audit output.
+
+Spec mapping: Requirements 1-3, 18-19, 21.
+
+### Phase 3 - Existing B1 Noun-Phrase Re-Banding
+
+Files likely touched:
+
+- `aprende/tools/content-pipeline/build_content_db.py`
+- `aprende/tools/content-pipeline/lemma_count_sanity.py`
+- Reband audit manifest/report fixtures
+
+Work:
+
+- AI-assisted drafting/re-banding is allowed for this phase's proposed CEFR updates, but proposed changes remain non-shippable until deterministic checks pass and at least two independent correctness reviews approve the item/re-band decision.
+- Apply the new rubric to existing B1 noun-phrase rows during content construction.
+- Generate a deterministic changed-row manifest with old band, new band, reason, source pack, and rubric signals.
+- Preserve stable IDs and all source/review/exercise linkage.
+- Add the audit sample mechanism and gate.
+- Update `--assert-current` only after the reband phase intentionally changes the known count contract.
+
+Integration tests:
+
+- Full content-pipeline sanity run shows noun phrases no longer all land in B1.
+- Stable identity test compares selected re-banded rows before/after and verifies IDs, source/license, reviewed status, accepted answers, and exercise links are preserved.
+- Audit-gate test injects excessive unresolved sample disagreements and asserts the gate fails.
+- Distribution test fails if B1 remains above 6,000 or A1+A2 phrase/chunk total remains below 1,500 without reviewed audit justification.
+
+Spec mapping: Requirements 4-6, 15, 18-19, 21.
+
+### Phase 4 - A1/A2 On-Ramp Content Backfill
+
+Files likely touched:
+
+- Extracted content pack modules, manifest files, or data files under `aprende/tools/content-pipeline/`.
+- Minimal orchestration hooks in `aprende/tools/content-pipeline/build_content_db.py`.
+- On-ramp manifest/fixture files if introduced.
+- `lemma_count_sanity.py` target thresholds.
+
+Work:
+
+- On-ramp source rows may be AI-drafted, but AI-drafted content remains non-shippable and must not count as reviewed until deterministic checks pass and at least two independent correctness reviews approve the row.
+- Build the 8-unit A1/A2 on-ramp in source-checked batches.
+- Represent each batch in an on-ramp manifest that includes target item, CEFR band, item type, source/review status, unit/node placement, and topic/core-verb category.
+- Prefer reviewed existing/re-banded phrase rows when they fit early units.
+- Add new reviewed rows only through the existing source/license/review gate.
+- Include the required core verbs and topic sequence.
+- Keep batch size reviewable: each pack should be independently source-checkable and manifest-clean before the next pack.
+- Maintain item inventory mix: 300-500 candidate on-ramp reviewables, 100-200 phrase/chunk frames, with at least 120 A1 and 120 A2 items.
+- Do not treat on-ramp inventory counts as final passing on-ramp gates until Phase 5 path-qualified sequencing checks also pass.
+
+Integration tests:
+
+- On-ramp inventory test asserts the required candidate counts and planned unit count from the manifest.
+- Core-verb/topic test asserts each required verb/topic category appears in the on-ramp manifest.
+- Publish-gate test proves unreviewed or sourceless on-ramp rows cannot count toward on-ramp totals.
+- Full sanity assertion fails if A1/A2 phrase/chunk inventory count regresses to zero.
+
+Spec mapping: Requirements 7-11, 14, 18-19, 21.
+
+### Phase 5 - Sequencing And Path Integrity
+
+Files likely touched:
+
+- Path/course construction in the content pipeline.
+- `lemma_count_sanity.py`
+- Path integrity tests.
+
+Work:
+
+- Add introduction metadata for every A1/A2 target item.
+- Add path checks for no future dependencies.
+- Add node checks for max 8 new targets and at least 30% recycle coverage in non-introductory exercises.
+- Add introduction checks that every introduced target has reviewed exercise coverage in its introduction node.
+- Add unit checks that each unit after Unit 1 reviews targets introduced in earlier units.
+- Thread re-banded and newly added on-ramp items into the beginner path before B1 content.
+- Promote Phase 4 on-ramp inventory counts to final on-ramp gate counts only after the items are path-qualified by these sequencing checks.
+
+Integration tests:
+
+- Build the real path and assert every A1/A2 on-ramp target has an introduction unit/node.
+- Introduction-coverage test fails when an introduced target lacks a reviewed exercise in its introduction node.
+- Dependency-order test fails on a fixture node that uses a target before introduction.
+- Node-budget test fails when a node introduces more than 8 new targets.
+- Recycle test fails when a non-introductory node has less than 30% prior-target practice.
+- Prior-unit review test fails when a unit after Unit 1 contains no review coverage for targets introduced in earlier units.
+- Final on-ramp gate test asserts only path-qualified items count toward the 300 total, 100 phrase/chunk, 120 A1, 120 A2, and 8-unit floors.
+
+Spec mapping: Requirements 10-12, 18-19, 21.
+
+### Phase 6 - Final Gate Consolidation
+
+Files likely touched:
+
+- `lemma_count_sanity.py`
+- CI or local validation docs/scripts if present
+
+Work:
+
+- Consolidate `--assert-current` into the new accepted post-repair baseline.
+- Add or document the command sequence future workers must run from `<worktree>/aprende/`.
+- Ensure the report includes total reviewables, item-type breakdown, CEFR distribution, phrase/chunk distribution by CEFR, on-ramp counts, sequencing integrity, re-banding audit result, C1+ lane reporting, and threshold pass/fail summary.
+
+Integration tests:
+
+- End-to-end content sanity command runs the real build module, real review gates, real coverage report, and all target assertions.
+- Regression fixture or monkeypatch test proves the old hard-coded-all-B1 behavior would fail.
+- Snapshot/update test verifies future intentional count changes require updating a reviewed expected baseline.
+
+Spec mapping: Requirements 13-21.
+
+## Requirement Mapping
+
+| Spec Requirement | Plan Coverage |
+|---:|---|
+| 1 | Rubric shape, Phase 2, Phase 4 |
+| 2 | Rubric shape, Phase 2 |
+| 3 | Rubric shape, Phase 2 fixture cases |
+| 4 | Re-banding safety, Phase 3 |
+| 5 | Re-banding safety, Phase 3 audit gate |
+| 6 | Re-banding safety, Phase 3 stable identity test |
+| 7 | On-ramp structure, Phase 4 |
+| 8 | On-ramp structure, Phase 4 |
+| 9 | On-ramp structure, Phase 4 topic/core-verb test |
+| 10 | On-ramp structure, Phase 5 sequencing checks |
+| 11 | On-ramp floors, Phase 4 |
+| 12 | Sequencing rules, Phase 5 |
+| 13 | Distribution metrics, Phase 6 |
+| 14 | On-ramp floors, Phase 4 |
+| 15 | Distribution metrics, Phase 3 |
+| 16 | Distribution metrics, Phase 6 |
+| 17 | C1+ lane, Phase 1 and Phase 6 |
+| 18 | Phase 1 through Phase 6 validator work |
+| 19 | Phase 1 through Phase 6 failing gates |
+| 20 | Phased implementation |
+| 21 | Integration tests listed in every phase |
+
+## Validation Commands
+
+Later implementation workers should confirm the exact test runner names after inspecting the content-pipeline test setup. The intended validation command sequence is:
+
+```bash
+cd /home/wolfgang/code/aprende-spanish-breadth/aprende
+python3 tools/content-pipeline/lemma_count_sanity.py --assert-current
+python3 tools/content-pipeline/lemma_count_sanity.py --assert-target-shape
+python3 -m pytest tools/content-pipeline
 ```
-aprende/
-  app/                      # Android app module (Gradle Kotlin DSL)
-    src/main/assets/database/content.db   # pre-built, from the content pipeline (P0.3)
-    src/main/java/.../
-      ui/          # Compose screens + ViewModels (UiState, StateFlow)
-      domain/      # use-cases + pure logic: srs/, grading/, conjugation/, session/, gamification/  (no Android deps)
-      data/        # Room (content/ + progress/), DataStore, repositories (interfaces + impls)
-      di/          # Hilt modules
-    src/test/      # JVM unit + Robolectric Compose tests
-    src/androidTest/  # instrumented (Espresso, real-DB, offline E2E)
-  tools/content-pipeline/   # dev-time JVM/Kotlin tool that builds content.db (NOT shipped)
-```
 
-**Dependency direction (enforced in review):** `ui → domain → data` interfaces; domain has **no** Android/Room imports (pure Kotlin, testable on JVM); only `data` knows persistence; cross-DB joins live only in repositories (§12.1).
+If the project does not currently use `pytest`, Phase 1 should add the smallest local Python test harness consistent with the repo rather than relying only on manual script output.
 
----
+## Non-Goals
 
-## Phase 0 — Spikes & scaffold (de-risk before building the MVP)
-
-Goal of the phase: prove the two genuinely-novel risks (FSRS correctness, content-DB pipeline + size) and stand up a buildable skeleton. Resolves O4; informs O1; measures the O5 size question.
-
-### P0.1 — Project scaffold + DI + CI
-- **Goal:** a buildable app with the layered skeleton, DI graph, and JVM test harness.
-- **Builds:** Gradle Kotlin DSL (`minSdk 24`, `targetSdk 35`), Compose+Material 3, Hilt, Room, DataStore, coroutines/Flow deps; `@HiltAndroidApp`; one trivial screen + ViewModel; test deps (JUnit4, `kotlinx-coroutines-test`, Turbine, Robolectric, Room-testing); GitHub Actions running JVM tests.
-- **Depends on:** nothing (first).
-- **Contract:** DI boots; `collectAsStateWithLifecycle` wiring pattern established; CI green on a trivial test.
-- **Tests / AC:** a smoke ViewModel `StateFlow` test (Turbine) + a Robolectric Compose render test. No SPEC AC yet (scaffolding).
-
-### P0.2 — FSRS-6 engine spike  ⟵ **critical path / highest risk**
-- **Goal:** correct, fully-local FSRS-6 in pure Kotlin with shipped default weights, proven against reference vectors. Resolves **O4**.
-- **Builds:** `domain/srs/` — FSRS-6 functions (R(t,S), interval for retention r, D/S update, initial D0/S0 per §6.2), the 21-weight default constant vector, and `ScheduleReviewUseCase(itemState, grade, now: via Clock) → newState` with grade derivation (§6.4). No `SrsScheduler` interface (D1). Inject `java.time.Clock`.
-- **Depends on:** P0.1.
-- **Contract:** `ScheduleReviewUseCase` + an `SrsItemState` value type (`D, S, lastReview, dueAt`) — the seam every later SRS consumer uses. Pure domain, no persistence yet.
-- **Tests / AC:** **AC5** (correct→later `dueAt` than wrong; formulas match known FSRS-6 reference vectors within tolerance), plus `Clock.fixed()` determinism. **Timebox:** if reference vectors can't be matched within the spike budget, switch to the Leitner contingency (§6.1) behind the same use-case and record it.
-
-### P0.3 — Content pipeline + two-DB load spike (with the vetting workflow baked in)
-- **Goal:** prove we can assemble a **vetted, source-checked** content slice into a pre-built `content.db` that Room loads via `createFromAsset`, with FTS, and measure AAB size. Establishes the C5 content-vetting workflow (§4.6) as the *only* path into `content.db`. Measures **O5**, informs **O1**.
-- **Builds:** `tools/content-pipeline/` (dev-time, not shipped) implemented as the **staged vetting workflow** below; each content row carries provenance (`source`, `sourceId`, `license`, `vettingStatus`, `reviewedBy/At`). Emits lexemes/sentences/accepted-answers/conjugation-map + course/section/unit/node/lesson/exercise + `sentence_fts`, into a SQLite file whose schema matches the Room `@Database` (schema exported, §10). Wire `createFromAsset("database/content.db")`; build an AAB and record size.
-- **Depends on:** P0.1. (Independent of P0.2 — can run in parallel.)
-- **Contract:** the **content schema (incl. provenance columns)** + the staged pipeline + a working `createFromAsset` load. Later iterations and all future content authoring go through this pipeline — there is no other way to add content.
-- **Tests / AC:** instrumented test loading the bundled `content.db` + FTS `MATCH`; **AC17** (build *fails* on an `UNVETTED`/sourceless row — seed one and assert rejection); recorded AAB size vs the ~200 MB base cap (per §11.0 the v1 Path stays in the base module).
-- **Owner input:** O1 (licensing) needed before *full* content authoring; the spike uses a small **vetted** sample slice to de-risk both mechanics and the gate.
-
-#### Content-vetting workflow (C5 / SPEC §4.6) — the pipeline stages
-This is the multi-stage content pipeline `tools/content-pipeline/` implements; it is the design's answer to "content is a vetted, source-checked risk." **No learning content reaches `content.db` except through these stages**, and the publish step is a hard gate, not advisory.
-
-1. **Ingest (sets `source`/`sourceId`/`license`, status `UNVETTED`)** — pull only from vetted sources (Tatoeba pairs, frequency lists, Wiktionary glosses — §4.5). Fabrication is structurally impossible: a row cannot exist without a source record. *LLM/hand drafting of `authored` rows (e.g. grammar tips, extra accepted variants) is allowed here but lands as `source=authored, status=UNVETTED`.*
-2. **Derive** — filter to short sentences, pick target lemmas, build accepted-answer sets, generate conjugations from the §5.2 rule tables (deterministic, not invented), assemble the Path. Transform-only; never invent facts.
-3. **Auto-check (`AUTO_CHECKED`)** — automated validators: ≥1 accepted answer per prompt; translation bidirectionally consistent with the source pair; accepted sets pass the §5.5 normalizer; conjugations match the generator; no orphans/dupes; license present. Failures bounce the row back, never silently pass.
-4. **Human review gate (`REVIEWED`)** — reviewer sign-off (`reviewedBy`/`reviewedAt`) before ship, with extra scrutiny on `authored` rows and semantic calls (ser/estar, idioms). LLM output stays `UNVETTED` until a human reviews it.
-5. **Publish (the gate)** — the `content.db` build step **fails hard** (CI-level) if any to-be-shipped row is not `REVIEWED` or lacks a `source`. This is AC17 and the mechanical enforcement of C5.
-
-A reviewable **content manifest** (counts by `source`/`vettingStatus`, list of `authored` rows + reviewers) is emitted each build so coverage and the review trail are auditable — and surfaces what's still `UNVETTED` rather than letting it pass silently.
-
----
-
-## Phase 1 — Core offline loop (the MVP)
-
-Goal of the phase: the entire Tier-0 offline loop (§11.0) — take a lesson, get graded, schedule reviews, earn XP/streak, review weak items — fully offline, no audio. Meets **AC1–AC8, AC11–AC15**.
-
-### P1.1 — Data layer: two Room DBs + repositories
-- **Goal:** persistence foundation per D2 — `content.db` (read-only) and `progress.db` (read-write, explicit migrations).
-- **Builds:** `data/content/` DAOs over the P0.3 schema; `data/progress/` entities (`srs_item` with composite PK `(itemId, itemType)`, `node_progress`, `mistake_queue`, `daily_activity`, `user_stats`, `achievement`) + migrations; DataStore (Proto) for settings; repository **interfaces** (in domain) + Room implementations (in data); the conjugation→lemma lookup with **unknown-surface-form fallback** (§12.1); cross-DB join confined to the repo.
-- **Depends on:** P0.1, P0.3 (content schema). P0.2 defines the `SrsItemState` shape stored in `srs_item`.
-- **Contract:** repository interfaces consumed by all domain use-cases (`ContentRepository`, `ProgressRepository`); `progress.db` migration baseline.
-- **Tests / AC:** in-memory DAO tests; **progress.db migration test**; **AC15** (simulated `content.db` version bump leaves `progress.db` intact); unknown-form fallback test (credits target item + logs, never silently drops — §12.1).
-
-### P1.2 — Answer-checking + conjugation (pure domain)
-- **Goal:** the deterministic grading core and form generation.
-- **Builds:** `domain/grading/` — normalize (NFC, lowercase, trim, strip terminal punct), accent-insensitive compare, Damerau-Levenshtein threshold, multi-accepted-answer-set match, and equality for tiles/matching/choice (§5.5); `domain/conjugation/` — regular ending tables (3 classes × 6 tenses) + irregular/stem-change override map → form generator (§5.2).
-- **Depends on:** P0.1. (Pure logic — parallelizable with P1.1.)
-- **Contract:** `GradeAnswerUseCase(input, exercise) → GradeResult{correct, usedHint, typoFlag}` feeding §6.4; `Conjugator`.
-- **Tests / AC:** **AC2** (missing accent accepted/soft-typo; single-char typo accepted; wrong word rejected), **AC3** (any accepted-set member passes), **AC4** (regular verb across six tenses + ser/estar/tener overrides, test vectors).
-
-### P1.3 — SRS integration + strength
-- **Goal:** wire the P0.2 engine to persisted state with lazy decay and the fan-out rule.
-- **Builds:** connect `ScheduleReviewUseCase` to `progress.db.srs_item` via `ProgressRepository`; lazy due-query (`clock.now() ≥ dueAt`); per-exercise→**target item** fan-out (§6.4a); current-`R` strength computation for the Words list (§6.6).
-- **Depends on:** P0.2, P1.1.
-- **Contract:** `DueItemsQuery` (due = `now ≥ dueAt`), a **separate `SeenItemsByStrengthQuery`** (all seen items sorted by ascending current `R`, for the weakest-first review/Words surfaces — §8 weak ≠ §6.5 due), `RecordAnswerUseCase` (applies grade to the target `srs_item`), per-item strength accessor.
-- **Tests / AC:** **AC6** (advance injected `Clock` → items become due with no background job); fan-out test (one exercise updates only its target item, not incidental lexemes).
-
-### P1.4 — Lesson session generator + flow
-- **Goal:** assemble and run a lesson session end-to-end (logic layer).
-- **Builds:** `domain/session/` — `GenerateLessonUseCase` (select new+review items, mix exercise types per §7.3, target ~15–17, interleave review); in-session **mistake re-queue** (dynamic length) + append to persistent `mistake_queue`; on-complete orchestration of XP/streak/SRS updates.
-- **Depends on:** P1.1, P1.2, P1.3.
-- **Contract:** `LessonSession` model + `GenerateLessonUseCase` consumed by the lesson UI (P1.6); **`mistake_queue` enqueue operation** (the drain side is consumed by P1.7); session state kept small (§12.3).
-- **Tests / AC:** session-composition tests; wrong-answer re-queue forces correct-before-complete; **captures the AC7 mistakes (AC7 is closed in P1.7 once the drain/review path exists)**.
-
-### P1.5 — Gamification
-- **Goal:** XP, daily goal, streak, hearts, gems, achievements — all lazy-from-`Clock`, local.
-- **Builds:** `domain/gamification/` — `UpdateStreakUseCase` (epoch-day local-date, grace window, freeze auto-consume — §9/§12.3), hearts (lazy regen via `Clock`, refill on practice, gem spend), XP/daily-goal, gems ledger, achievement evaluation; persisted in `user_stats`/`daily_activity`.
-- **Depends on:** P1.1.
-- **Contract:** use-cases consumed by lesson-complete (P1.4) and the home/profile UI.
-- **Tests / AC:** **AC8** (5 wrong → hearts gate; lazy regen; practice refill), **AC13** (streak survives a missed day iff a freeze was equipped, and the freeze is consumed); achievement-threshold tests.
-
-### P1.6 — UI: Path, lesson, navigation, delight
-- **Goal:** the playable surface — Compose screens + ViewModels + navigation + "whimsy/magic/delight" animations.
-- **Builds:** `ui/` — Path/home (positional unlock), lesson session screen rendering each Tier-0 exercise type + accent bar (§5.4), profile/stats, settings; ViewModels exposing `UiState` via `stateIn(WhileSubscribed)`, collected with `collectAsStateWithLifecycle`; **`SavedStateHandle` session-state rehydration** (current exercise index + small re-queue, §12.3 — the mechanism AC12 verifies); Navigation Compose; spring/`AnimatedContent`/`rememberInfiniteTransition` for feedback + strength crystals (§12.1).
-- **Depends on:** P1.4, P1.5.
-- **Contract:** the runnable app for the offline E2E.
-- **Tests / AC:** Compose UI tests per exercise type; **AC1** (fresh install, **airplane mode**, full Tier-0 lesson → graded → XP → streak, zero TTS/STT); **AC12** (process death mid-lesson resumes/clean-restarts without corrupting progress).
-
-### P1.7 — Review phases UI + session types
-- **Goal:** reinforcement surfaces distinct from learning new (§8).
-- **Builds:** review hub; due-review session (lowest-`R` first), mistakes review (drains `mistake_queue`), vocabulary practice (untimed matching), Words screen (strength, weakest-first).
-- **Depends on:** P1.3, P1.4, P1.6.
-- **Contract:** completes the §8 review loop.
-- **Tests / AC:** **AC7** (lesson mistakes reappear in Mistakes review and leave the queue when answered correctly).
-
-### P1.8 — Backup/restore + attribution
-- **Goal:** satisfy C3 (no-server portability) and C4 (licensing).
-- **Builds:** SAF export/import of `progress.db`↔versioned JSON (`CreateDocument`/`OpenDocument`, §11); `dataExtractionRules` + `allowBackup` for Auto Backup; in-app **credits/attribution** screen listing bundled-content licenses (§4.5).
-- **Depends on:** P1.1, P1.6.
-- **Contract:** MVP complete.
-- **Tests / AC:** **AC11** (export → wipe → import restores streak/XP/SRS), **AC14** (attribution visible).
-
----
-
-## Critical path & parallelism
-
-```
-P0.1 ─┬─► P0.2 (FSRS, riskiest) ─────────────┐
-      └─► P0.3 (content pipeline) ─► P1.1 ────┼─► P1.3 ─► P1.4 ─► P1.6 ─► P1.7 ─► P1.8
-                  P1.2 (grading, parallel) ───┘            P1.5 ─────────┘
-```
-- **Start P0.2 and P0.3 in parallel** after P0.1 — independent, and they de-risk the two unknowns. P0.2 is highest-risk; resolve its timebox/contingency early.
-- P1.2 (pure grading/conjugation) builds in parallel with P1.1.
-- P1.3 needs both P0.2 and P1.1; everything funnels through P1.4 → P1.6.
-
-## Definition of done (Phase 1 / MVP)
-
-All of **AC1–AC8, AC11–AC15** pass (per CLAUDE.md: 100% green, including the airplane-mode E2E AC1 and the content-update-preserves-progress AC15). Tier-0 loop is fully offline. Then Phase 2 (audio/speech, AC9/AC10/AC16) gets its own plan.
-
-## Risks carried from SPEC (planning view)
-
-- **FSRS correctness (P0.2)** — the one real unknown; timeboxed with a Leitner contingency. Front-loaded deliberately.
-- **O1 licensing (P0.3/owner)** — blocks *full* content authoring, not the pipeline mechanics; sample slice de-risks first.
-- **Content size (P0.3)** — measured in the spike; if over the base cap, Play Asset Delivery install-time pack (keeps offline guarantee; §11.0 Path invariant: v1 Path stays in base module).
-- **Content correctness / fabrication (C5, SPEC §4.6 / R4)** — mistranslations or invented content actively mis-teach and can't be hotfixed without an app update. Mitigated by building the **vetting workflow into P0.3 from day one** (provenance on every row, auto-checks, human review gate, publish gate that fails on unvetted/sourceless rows — AC17). The gate exists before any real content is authored, so content can never accrete un-reviewed.
-
----
-
-## Implementation readiness
-
-P0.1 is unblocked and needs no open-question answers — implementation can start immediately on approval. O1 is only required before *full* content authoring (mid-P0.3 → P1.x); O2 is a Phase-3 product decision and blocks nothing here.
-
-*Plan covers Phase 0 + Phase 1. Status: reviewed (plan-consistency + scope); content-vetting workflow (C5) folded into P0.3. P0.1 scaffold built (see `aprende/`). Next: P0.2 (FSRS spike) + P0.3 (content pipeline incl. the vetting gate), parallelizable.*
+- No deletion or deduplication of phrase/chunk content.
+- No runtime-generated learning content.
+- No C1+ content backfill in the first implementation.
+- No app UI redesign as part of the curriculum repair.
+- No commits or pushes from this planning task.

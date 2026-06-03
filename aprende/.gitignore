@@ -24,3 +24,7 @@ app/src/main/assets/database/content.db
 app/src/main/assets/database/content_manifest.json
 app/src/main/assets/database/content_coverage.json
 app/src/main/assets/database/coverage_snapshot.json
+
+# Python test/build cache
+__pycache__/
+*.py[cod]
