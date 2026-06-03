@@ -7845,12 +7845,13 @@ def normalize_spanish_answer(text: str) -> str:
 def register_derived_answer_review_evidence(row: Row, sentence: Row, target: Row) -> None:
     spanish = sentence.data["spanishText"]
     english = sentence.data["englishText"]
-    target_label = f"{target.data['lemma']} ({target.data['cefrBand']})"
+    target_band = target.data["cefrBand"]
+    target_label = f"{target.data['lemma']} ({target_band})"
     rationales = {
         AUTO_REVIEW_SPANISH: (
             f"Accepted answer {row.data['acceptedAnswerId']} is the normalized Spanish text "
             f"{row.data['answerText']!r} derived from reviewed sentence {sentence.data['sentenceId']} "
-            f"{spanish!r} for A1 target {target_label}; grammar and translation were already reviewed "
+            f"{spanish!r} for {target_band} target {target_label}; grammar and translation were already reviewed "
             f"with English prompt {english!r}."
         ),
         AUTO_REVIEW_AUTHENTICITY: (
@@ -7860,7 +7861,7 @@ def register_derived_answer_review_evidence(row: Row, sentence: Row, target: Row
         ),
         AUTO_REVIEW_DIALECT: (
             f"Derived answer {row.data['answerText']!r} for sentence {sentence.data['sentenceId']} "
-            f"keeps the reviewed neutral Latin American wording {spanish!r} for A1 target {target_label}."
+            f"keeps the reviewed neutral Latin American wording {spanish!r} for {target_band} target {target_label}."
         ),
     }
     key = review_evidence_key("accepted_answer", row)
@@ -7887,7 +7888,37 @@ def register_derived_answer_review_evidence(row: Row, sentence: Row, target: Row
     }
 
 
-def append_a1_english_to_spanish_production(lexemes, sentences, accepted, sentence_lexeme, exercises) -> None:
+def sentence_has_reviewed_pair_evidence(sentence: Row) -> bool:
+    required = {AUTO_REVIEW_SPANISH, AUTO_REVIEW_AUTHENTICITY, AUTO_REVIEW_DIALECT}
+    if sentence.source == AI_DRAFT_SOURCE:
+        required.add(AUTO_REVIEW_PEDAGOGY)
+    item = REVIEW_EVIDENCE_ITEMS.get(review_evidence_key("sentence", sentence))
+    if item is None:
+        return False
+    if item.get("contentHash") != review_evidence_content_hash("sentence", sentence):
+        return False
+    actual_checks = item.get("crossChecks") or {}
+    for check_key, expected_value in review_evidence_cross_checks("sentence", sentence).items():
+        if actual_checks.get(check_key) != expected_value:
+            return False
+    dimensions = item.get("dimensions") or {}
+    approved_reviewers = set()
+    for review_type in required:
+        evidence = dimensions.get(review_type)
+        if evidence is None or evidence.get("verdict") != APPROVED_VERDICT:
+            return False
+        if evidence.get("evidenceBasis") == EVIDENCE_BASIS_LEGACY and item.get("_evidenceSourceFile") != "review_evidence_legacy.json":
+            return False
+        reviewer = evidence.get("reviewer")
+        if not reviewer or not evidence.get("reviewedAt"):
+            return False
+        approved_reviewers.add(reviewer)
+    return len(approved_reviewers) >= len(required)
+
+
+def append_english_to_spanish_production_for_bands(
+    lexemes, sentences, accepted, sentence_lexeme, exercises, allowed_bands: set[str]
+) -> None:
     lexeme_by_id = {row.data["lexemeId"]: row for row in lexemes}
     sentence_by_id = {row.data["sentenceId"]: row for row in sentences}
     sentence_ids_by_lexeme: dict[int, set[int]] = {}
@@ -7896,14 +7927,14 @@ def append_a1_english_to_spanish_production(lexemes, sentences, accepted, senten
 
     reviewed_spanish_by_prompt_target: dict[tuple[str, int], list[Row]] = {}
     for sentence in sentences:
-        if sentence.vettingStatus not in {UNVETTED, AI_DRAFT, AUTO_CHECKED, AUTO_REVIEWED, REVIEWED}:
+        if not sentence_has_reviewed_pair_evidence(sentence):
             continue
         sentence_id = sentence.data["sentenceId"]
         for lexeme_id, linked_sentence_ids in sentence_ids_by_lexeme.items():
             if sentence_id not in linked_sentence_ids:
                 continue
             target = lexeme_by_id.get(lexeme_id)
-            if target is None or target.data["cefrBand"] != "A1":
+            if target is None or target.data["cefrBand"] not in allowed_bands:
                 continue
             reviewed_spanish_by_prompt_target.setdefault((sentence.data["englishText"], lexeme_id), []).append(sentence)
 
@@ -7922,7 +7953,7 @@ def append_a1_english_to_spanish_production(lexemes, sentences, accepted, senten
         if (
             target is None
             or sentence is None
-            or target.data["cefrBand"] != "A1"
+            or target.data["cefrBand"] not in allowed_bands
             or exercise["type"] != "TYPED_TRANSLATION"
             or exercise["direction"] != "ES_TO_EN"
             or exercise["targetItemType"] != "LEXEME"
@@ -7973,6 +8004,12 @@ def append_a1_english_to_spanish_production(lexemes, sentences, accepted, senten
     failures = validate_review_evidence_catalog_items(REVIEW_EVIDENCE_ITEMS)
     if failures:
         raise SystemExit("INVALID DERIVED REVIEW EVIDENCE:\n  " + "\n  ".join(failures))
+
+
+def append_a1_english_to_spanish_production(lexemes, sentences, accepted, sentence_lexeme, exercises) -> None:
+    append_english_to_spanish_production_for_bands(
+        lexemes, sentences, accepted, sentence_lexeme, exercises, {"A1"}
+    )
 
 
 def append_ai_accelerated_pack(pack, pack_slug: str, exercise_id: int,
@@ -9581,7 +9618,9 @@ def vetted_sample():
         )
     prune_unreviewed_phrase_content(lexemes, sentences, accepted, sentence_lexeme, exercises)
     nodes = apply_sequencing_plan(lexemes, exercises)
-    append_a1_english_to_spanish_production(lexemes, sentences, accepted, sentence_lexeme, exercises)
+    append_english_to_spanish_production_for_bands(
+        lexemes, sentences, accepted, sentence_lexeme, exercises, {"A1", "A2"}
+    )
     return lexemes, sentences, accepted, sentence_lexeme, conj, exercises, nodes
 
 
