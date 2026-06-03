@@ -47,14 +47,19 @@ only `REVIEWED` rows are allowed to ship.
    license, and `AI_DRAFT` sentence pairs match the local linguistic validation ledger.
    Passing rows are promoted `UNVETTED|AI_DRAFT → AUTO_CHECKED`. Failures abort the build
    (exit 3).
-4. **Independent review** — sourced rows use the recorded sample sign-off. `AI_DRAFT` rows
-   must first pass two independent automatic reviewers:
-   `spanish_correctness_naturalness` and `english_pedagogy_cefr`. Passing generated rows
-   move `AUTO_CHECKED → AUTO_REVIEWED → REVIEWED`, recording reviewer IDs, timestamps, and
+4. **Independent review** — sourced rows use the recorded sample sign-off unless they carry
+   an explicit independent-review marker. `AI_DRAFT` sentence and answer rows must first pass
+   two independent automatic reviewers: `spanish_correctness` and `english_pedagogy_cefr`.
+   Generated phrase/chunk lexemes must pass `spanish_correctness`, a separate
+   `spanish_authenticity` review that asks whether a real speaker would say the phrase and
+   whether it is useful for learners, and `spanish_dialect_neutral_latam` to enforce the
+   neutral Latin American Spanish course target. Passing generated rows move
+   `AUTO_CHECKED → AUTO_REVIEWED → REVIEWED`, recording reviewer IDs, timestamps, and
    approval evidence in `content_manifest.json`.
 5. **Publish gate (AC17)** — refuses to write `content.db` if **any** content-bearing row
    (`lexeme`, `sentence`, `accepted_answer`) lacks a `source` or is not `REVIEWED`. For
-   `source=ai_draft`, it also requires both automatic approvals from distinct reviewers.
+   rows requiring independent review, it also requires the required automatic approvals from
+   distinct reviewers.
    Raises a hard, non-zero exit — a CI-level gate, not a warning. This is the mechanical
    enforcement of C5: no raw-generated or un-reviewed learning material can ship.
 

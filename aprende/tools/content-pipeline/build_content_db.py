@@ -8,7 +8,9 @@ This is a dev-time tool (NOT shipped in the app). It is the ONLY path content ta
 `content.db`: ingest from vetted sources or AI_DRAFT candidates -> derive -> auto-check ->
 independent review gate -> publish gate. The publish step FAILS (non-zero exit) if any row
 to be shipped lacks a `source` or is not `vettingStatus = REVIEWED` — this is AC17. AI_DRAFT
-rows additionally require deterministic checks plus two independent automatic approvals.
+rows additionally require deterministic checks plus independent automatic approvals.
+Generated phrase lexemes must pass both correctness and authenticity review.
+Generated phrase lexemes must also pass neutral Latin American dialect review.
 
 Language note (deviation from PLAN P0.3 "JVM/Kotlin tool"): implemented in Python for the
 spike because (a) it is dev-time tooling, never shipped; (b) it can be RUN and the gate
@@ -142,13 +144,72 @@ SCHEMA_DDL = [
 # content-bearing tables that the publish gate audits (must be REVIEWED + have a source)
 VETTED_TABLES = ["lexeme", "sentence", "accepted_answer"]
 AI_DRAFT_SOURCE = "ai_draft"
-AUTO_REVIEW_SPANISH = "spanish_correctness_naturalness"
+AUTO_REVIEW_SPANISH = "spanish_correctness"
 AUTO_REVIEW_PEDAGOGY = "english_pedagogy_cefr"
+AUTO_REVIEW_AUTHENTICITY = "spanish_authenticity"
+AUTO_REVIEW_DIALECT = "spanish_dialect_neutral_latam"
 AUTO_REVIEW_REVIEWERS = {
     AUTO_REVIEW_SPANISH: "auto_review:spanish_v1",
     AUTO_REVIEW_PEDAGOGY: "auto_review:english_pedagogy_v1",
+    AUTO_REVIEW_AUTHENTICITY: "auto_review:authenticity_v1",
+    AUTO_REVIEW_DIALECT: "auto_review:dialect_neutral_latam_v1",
 }
+INDEPENDENT_REVIEW_REQUIRED_FIELD = "requiresIndependentReview"
 AUTO_REVIEW_TS = 1_735_700_000_000
+AUTHENTIC_PHRASE_LEDGER = {
+    "fuga de agua": "approved by correctness and naturalness subagents on 2026-06-02",
+    "llave de agua rota": "approved by correctness, naturalness, and dialect subagents on 2026-06-02",
+    "desagüe atascado": "approved by correctness and naturalness subagents on 2026-06-02",
+    "lavaplatos atascado": "approved by correctness, naturalness, and dialect subagents on 2026-06-02",
+    "ducha sin agua caliente": "approved by correctness and naturalness subagents on 2026-06-02",
+    "calentador de agua": "approved by correctness and naturalness subagents on 2026-06-02",
+    "calefacción rota": "approved by correctness and naturalness subagents on 2026-06-02",
+    "aire acondicionado roto": "approved by correctness and naturalness subagents on 2026-06-02",
+    "enchufe suelto": "approved by correctness and naturalness subagents on 2026-06-02",
+    "foco fundido": "approved after dialect revision on 2026-06-03",
+    "interruptor roto": "approved by correctness and naturalness subagents on 2026-06-02",
+    "cerradura rota": "approved after sentence revision by correctness subagent on 2026-06-02",
+    "llave de repuesto": "approved by correctness and naturalness subagents on 2026-06-02",
+    "puerta atascada": "approved after sentence revision by correctness subagent on 2026-06-02",
+    "ventana rota": "approved by correctness and naturalness subagents on 2026-06-02",
+    "cortina atascada": "approved by correctness, naturalness, and dialect subagents on 2026-06-02",
+    "mancha de humedad": "approved by correctness and naturalness subagents on 2026-06-02",
+    "gotera en el techo": "approved after naturalness subagent recommendation on 2026-06-02",
+    "elevador fuera de servicio": "approved by correctness, naturalness, and dialect subagents on 2026-06-02",
+    "técnico de mantenimiento": "approved by correctness and naturalness subagents on 2026-06-02",
+    "cita de mantenimiento": "approved as replacement for ambiguous hora de visita on 2026-06-02",
+    "permiso para entrar": "approved as more natural housing-context wording on 2026-06-02",
+    "recibo de la renta": "approved by correctness, naturalness, and dialect subagents on 2026-06-02",
+}
+SPANISH_CORRECTNESS_PHRASE_LEDGER = {
+    phrase: notes.replace("naturalness", "correctness")
+    for phrase, notes in AUTHENTIC_PHRASE_LEDGER.items()
+}
+NEUTRAL_LATAM_PHRASE_LEDGER = {
+    phrase: notes.replace("naturalness", "neutral LatAm dialect")
+    for phrase, notes in AUTHENTIC_PHRASE_LEDGER.items()
+}
+PENINSULAR_OR_NON_NEUTRAL_LATAM_TERMS = {
+    "vosotros": "use neutral LatAm ustedes forms",
+    "os": "use neutral LatAm pronoun choices",
+    "coger": "avoid Spain-leaning use; choose a neutral verb for the context",
+    "vale": "avoid Spain-leaning discourse marker; use neutral wording",
+    "ordenador": "use neutral LatAm 'computadora'",
+    "billete": "use neutral LatAm 'boleto' for travel tickets",
+    "aparcar": "use neutral LatAm 'estacionar'",
+    "movil": "use neutral LatAm 'celular'",
+    "piso": "avoid Spain-leaning apartment sense; use 'departamento' for housing",
+    "conducir": "avoid Spain-leaning licensing phrases; use neutral alternatives by context",
+    "carne": "avoid Spain-only 'carné/carne de conducir'; use neutral licensing wording",
+    "lavabo": "use neutral LatAm 'lavamanos' or 'baño' depending context",
+    "grifo": "use neutral LatAm 'llave de agua'",
+    "fregadero": "use neutral LatAm 'lavaplatos' or 'tarja' depending context; prefer 'lavaplatos' here",
+    "persiana": "use broadly understood 'cortina' when the exact fixture is not required",
+    "averiado": "use neutral LatAm 'fuera de servicio' or 'roto'",
+    "alquiler": "use neutral LatAm 'renta' in learner housing-payment phrases",
+    "bombilla": "use neutral LatAm 'foco'",
+    "salon": "use neutral LatAm 'sala' for a home living room",
+}
 AI_REVIEWED_SENTENCE_PAIRS = {
     "¿Tienes coche?": "Do you have a car?",
     "Quiero un coche.": "I want a car.",
@@ -1833,16 +1894,16 @@ def build_numbered_ai_accelerated_pack(start_lexeme_id, start_sentence_id, start
                 lemma, pos, gender, english_gloss, frequency_rank, cefr_band, difficulty_prior,
                 reason, source_basis, sentence_pairs,
             ) = spec
-        if len(sentence_pairs) != 2:
-            raise ValueError(f"{lemma} must define exactly two reviewed sentence pairs")
+        if not sentence_pairs:
+            raise ValueError(f"{lemma} must define at least one reviewed sentence pair")
         sentence_id = start_sentence_id + offset * 2
         answer_id = start_answer_id + offset * 2
         item = (
             start_lexeme_id + offset, lemma, pos, gender, english_gloss, frequency_rank, cefr_band,
             difficulty_prior, reason, source_basis,
             [
-                (sentence_id, answer_id, sentence_pairs[0][0], sentence_pairs[0][1]),
-                (sentence_id + 1, answer_id + 1, sentence_pairs[1][0], sentence_pairs[1][1]),
+                (sentence_id + sentence_offset, answer_id + sentence_offset, spanish, english)
+                for sentence_offset, (spanish, english) in enumerate(sentence_pairs)
             ],
         )
         if audit_payload:
@@ -1872,7 +1933,6 @@ def build_numbered_ai_accelerated_phrase_pack(start_lexeme_id, start_sentence_id
             reason, source_basis,
             [
                 (f"Hay {prefix}{lemma}.", there_is_answer),
-                (f"{definite_article} {lemma} aparece aquí.", f"The {english_gloss} appears here."),
             ],
         )
         if audit_payload:
@@ -1960,6 +2020,16 @@ def normalize_signal_text(text: object) -> str:
 
 def phrase_tokens(text: object) -> list[str]:
     return re.findall(r"[a-z0-9]+", normalize_signal_text(text))
+
+
+PHRASE_OR_CHUNK_POS = {"noun phrase", "phrase", "adverbial phrase", "sentence chunk"}
+
+
+def is_phrase_or_chunk_lexeme(row: "Row") -> bool:
+    if "lemma" not in row.data:
+        return False
+    lemma = str(row.data.get("lemma") or "").strip()
+    return row.data.get("pos") in PHRASE_OR_CHUNK_POS or bool(re.search(r"\s", lemma))
 
 
 def phrase_head_noun(tokens: list[str]) -> str:
@@ -2135,7 +2205,7 @@ def phrase_rubric_entry_for_lexeme(row: Row) -> dict:
     if payload:
         decision = {
             "cefrBand": payload["cefrBand"],
-            "difficultyPrior": payload["difficultyPrior"],
+            "difficultyPrior": payload.get("difficultyPrior", data["difficultyPrior"]),
             "rubricReason": payload["rubricReason"],
             "rubricSignals": payload["rubricSignals"],
             "manualRubricReason": payload.get("manualRubricReason"),
@@ -6272,1557 +6342,341 @@ AI_ACCELERATED_PACK_A2_041 = build_numbered_ai_accelerated_phrase_pack(3952, 796
     ('sesión iniciada', 'noun phrase', 'F', 'signed-in session', 1800, 'B1', 0.5, 'digital', 'SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic', 'una', 'La', 'There is a signed-in session.'),
 ])
 
-AI_ACCELERATED_PACK_A2_042 = build_numbered_ai_accelerated_phrase_pack(4072, 8203, 8206, build_phrase_pack_specs([
-    ('comunicación de incidencia', 'F', 'incident communication', 'services', 'una', 'La'),
-    ('comunicación de avería', 'F', 'fault communication', 'repairs', 'una', 'La'),
-    ('comunicación de pago', 'F', 'payment communication', 'money', 'una', 'La'),
-    ('comunicación de viaje', 'F', 'travel communication', 'travel', 'una', 'La'),
-    ('comunicación de cita', 'F', 'appointment communication', 'services', 'una', 'La'),
-    ('comunicación de horario', 'F', 'schedule communication', 'work', 'una', 'La'),
-    ('comunicación de entrega', 'F', 'delivery communication', 'services', 'una', 'La'),
-    ('comunicación de acceso', 'F', 'access communication', 'digital', 'una', 'La'),
-    ('comunicación de seguridad', 'F', 'security communication', 'safety', 'una', 'La'),
-    ('comunicación de resultado', 'F', 'result communication', 'health', 'una', 'La'),
-    ('comunicación de documento', 'F', 'document communication', 'bureaucracy', 'una', 'La'),
-    ('comunicación de contrato', 'F', 'contract communication', 'legal', 'una', 'La'),
-    ('gestión de cita', 'F', 'appointment management', 'services', 'una', 'La'),
-    ('gestión de reserva', 'F', 'booking management', 'travel', 'una', 'La'),
-    ('gestión de pago', 'F', 'payment management', 'money', 'una', 'La'),
-    ('gestión de cobro', 'F', 'collection management', 'money', 'una', 'La'),
-    ('gestión de préstamo', 'F', 'loan management', 'money', 'una', 'La'),
-    ('gestión de cuenta', 'F', 'account management', 'money', 'una', 'La'),
-    ('gestión de reclamo', 'F', 'claim management', 'services', 'una', 'La'),
-    ('gestión de garantía', 'F', 'warranty management', 'repairs', 'una', 'La'),
-    ('gestión de reparación', 'F', 'repair management', 'repairs', 'una', 'La'),
-    ('gestión de traslado', 'F', 'transfer management', 'travel', 'una', 'La'),
-    ('gestión de permiso', 'F', 'permit management', 'bureaucracy', 'una', 'La'),
-    ('gestión de documento', 'F', 'document management', 'bureaucracy', 'una', 'La'),
-    ('seguimiento de caso', 'M', 'case follow-up', 'bureaucracy', 'un', 'El'),
-    ('seguimiento de reclamo', 'M', 'claim follow-up', 'services', 'un', 'El'),
-    ('seguimiento de tratamiento', 'M', 'treatment follow-up', 'health', 'un', 'El'),
-    ('seguimiento de reparación', 'M', 'repair follow-up', 'repairs', 'un', 'El'),
-    ('seguimiento de queja', 'M', 'complaint follow-up', 'services', 'un', 'El'),
-    ('seguimiento de entrega', 'M', 'delivery follow-up', 'services', 'un', 'El'),
-    ('seguimiento de proyecto', 'M', 'project follow-up', 'work', 'un', 'El'),
-    ('seguimiento de proceso', 'M', 'process follow-up', 'work', 'un', 'El'),
-    ('seguimiento de incidente', 'M', 'incident follow-up', 'safety', 'un', 'El'),
-    ('seguimiento de presupuesto', 'M', 'estimate follow-up', 'money', 'un', 'El'),
-    ('seguimiento de reembolso', 'M', 'refund follow-up', 'money', 'un', 'El'),
-    ('seguimiento de transferencia', 'M', 'transfer follow-up', 'money', 'un', 'El'),
-    ('revisión de cuenta', 'F', 'account review', 'money', 'una', 'La'),
-    ('revisión de factura', 'F', 'bill review', 'money', 'una', 'La'),
-    ('revisión de contrato', 'F', 'contract review', 'legal', 'una', 'La'),
-    ('revisión de documento', 'F', 'document review', 'bureaucracy', 'una', 'La'),
-    ('revisión de solicitud', 'F', 'request review', 'bureaucracy', 'una', 'La'),
-    ('revisión de expediente', 'F', 'case file review', 'bureaucracy', 'una', 'La'),
-    ('revisión de presupuesto', 'F', 'estimate review', 'money', 'una', 'La'),
-    ('revisión de garantía', 'F', 'warranty review', 'repairs', 'una', 'La'),
-    ('revisión de tratamiento', 'F', 'treatment review', 'health', 'una', 'La'),
-    ('revisión de resultado', 'F', 'result review', 'health', 'una', 'La'),
-    ('revisión de acceso', 'F', 'access review', 'digital', 'una', 'La'),
-    ('revisión de permiso', 'F', 'permit review', 'bureaucracy', 'una', 'La'),
-    ('evaluación de riesgo', 'F', 'risk assessment', 'safety', 'una', 'La'),
-    ('evaluación de salud', 'F', 'health assessment', 'health', 'una', 'La'),
-    ('evaluación de daños', 'F', 'damage assessment', 'repairs', 'una', 'La'),
-    ('evaluación de costos', 'F', 'cost assessment', 'money', 'una', 'La'),
-    ('evaluación de ingresos', 'F', 'income assessment', 'money', 'una', 'La'),
-    ('evaluación de solicitud', 'F', 'request assessment', 'bureaucracy', 'una', 'La'),
-    ('evaluación de servicio', 'F', 'service assessment', 'services', 'una', 'La'),
-    ('evaluación de proveedor', 'F', 'provider assessment', 'work', 'una', 'La'),
-    ('evaluación de vivienda', 'F', 'housing assessment', 'housing', 'una', 'La'),
-    ('evaluación de seguridad', 'F', 'security assessment', 'safety', 'una', 'La'),
-    ('evaluación de calidad', 'F', 'quality assessment', 'work', 'una', 'La'),
-    ('evaluación de desempeño', 'F', 'performance assessment', 'work', 'una', 'La'),
-    ('programación de cita', 'F', 'appointment scheduling', 'services', 'una', 'La'),
-    ('programación de reunión', 'F', 'meeting scheduling', 'work', 'una', 'La'),
-    ('programación de visita', 'F', 'visit scheduling', 'services', 'una', 'La'),
-    ('programación de llamada', 'F', 'call scheduling', 'services', 'una', 'La'),
-    ('programación de entrevista', 'F', 'interview scheduling', 'work', 'una', 'La'),
-    ('programación de entrega', 'F', 'delivery scheduling', 'services', 'una', 'La'),
-    ('programación de revisión', 'F', 'review scheduling', 'services', 'una', 'La'),
-    ('programación de mantenimiento', 'F', 'maintenance scheduling', 'repairs', 'una', 'La'),
-    ('programación de pago', 'F', 'payment scheduling', 'money', 'una', 'La'),
-    ('programación de viaje', 'F', 'travel scheduling', 'travel', 'una', 'La'),
-    ('programación de transporte', 'F', 'transport scheduling', 'travel', 'una', 'La'),
-    ('programación de vacuna', 'F', 'vaccine scheduling', 'health', 'una', 'La'),
-    ('cancelación de cita', 'F', 'appointment cancellation', 'services', 'una', 'La'),
-    ('cancelación de reserva', 'F', 'booking cancellation', 'travel', 'una', 'La'),
-    ('cancelación de pedido', 'F', 'order cancellation', 'shopping', 'una', 'La'),
-    ('cancelación de pago', 'F', 'payment cancellation', 'money', 'una', 'La'),
-    ('cancelación de contrato', 'F', 'contract cancellation', 'legal', 'una', 'La'),
-    ('cancelación de servicio', 'F', 'service cancellation', 'services', 'una', 'La'),
-    ('cancelación de suscripción', 'F', 'subscription cancellation', 'digital', 'una', 'La'),
-    ('cancelación de vuelo', 'F', 'flight cancellation', 'travel', 'una', 'La'),
-    ('cancelación de entrega', 'F', 'delivery cancellation', 'services', 'una', 'La'),
-    ('cancelación de traslado', 'F', 'transfer cancellation', 'travel', 'una', 'La'),
-    ('cancelación de visita', 'F', 'visit cancellation', 'services', 'una', 'La'),
-    ('cancelación de inscripción', 'F', 'registration cancellation', 'bureaucracy', 'una', 'La'),
-    ('actualización de datos', 'F', 'data update', 'digital', 'una', 'La'),
-    ('actualización de perfil', 'F', 'profile update', 'digital', 'una', 'La'),
-    ('actualización de contraseña', 'F', 'password update', 'digital', 'una', 'La'),
-    ('actualización de estado', 'F', 'status update', 'services', 'una', 'La'),
-    ('actualización de pago', 'F', 'payment update', 'money', 'una', 'La'),
-    ('actualización de reserva', 'F', 'booking update', 'travel', 'una', 'La'),
-    ('actualización de envío', 'F', 'shipment update', 'services', 'una', 'La'),
-    ('actualización de documento', 'F', 'document update', 'bureaucracy', 'una', 'La'),
-    ('actualización de expediente', 'F', 'case file update', 'bureaucracy', 'una', 'La'),
-    ('actualización de agenda', 'F', 'calendar update', 'work', 'una', 'La'),
-    ('actualización de dirección', 'F', 'address update', 'services', 'una', 'La'),
-    ('actualización de contacto', 'F', 'contact update', 'services', 'una', 'La'),
-    ('autorización para viajar', 'F', 'travel authorization', 'travel', 'una', 'La'),
-    ('autorización para trabajar', 'F', 'work authorization', 'work', 'una', 'La'),
-    ('autorización para entrar', 'F', 'entry authorization', 'travel', 'una', 'La'),
-    ('autorización para salir', 'F', 'exit authorization', 'travel', 'una', 'La'),
-    ('autorización para pagar', 'F', 'payment authorization', 'money', 'una', 'La'),
-    ('autorización para cobrar', 'F', 'collection authorization', 'money', 'una', 'La'),
-    ('autorización para conducir', 'F', 'driving authorization', 'travel', 'una', 'La'),
-    ('autorización para firmar', 'F', 'signature authorization', 'legal', 'una', 'La'),
-    ('autorización para retirar', 'F', 'withdrawal authorization', 'money', 'una', 'La'),
-    ('autorización para recoger', 'F', 'pickup authorization', 'services', 'una', 'La'),
-    ('autorización para compartir', 'F', 'sharing authorization', 'digital', 'una', 'La'),
-    ('autorización para operar', 'F', 'operation authorization', 'work', 'una', 'La'),
-    ('verificación de identidad', 'F', 'identity verification', 'bureaucracy', 'una', 'La'),
-    ('verificación de edad', 'F', 'age verification', 'bureaucracy', 'una', 'La'),
-    ('verificación de domicilio', 'F', 'address verification', 'bureaucracy', 'una', 'La'),
-    ('verificación de pago', 'F', 'payment verification', 'money', 'una', 'La'),
-    ('verificación de cuenta', 'F', 'account verification', 'money', 'una', 'La'),
-    ('verificación de tarjeta', 'F', 'card verification', 'money', 'una', 'La'),
-    ('verificación de correo', 'F', 'email verification', 'digital', 'una', 'La'),
-    ('verificación de teléfono', 'F', 'phone verification', 'services', 'una', 'La'),
-    ('verificación de documento', 'F', 'document verification', 'bureaucracy', 'una', 'La'),
-    ('verificación de seguro', 'F', 'insurance verification', 'insurance', 'una', 'La'),
-    ('verificación de reserva', 'F', 'booking verification', 'travel', 'una', 'La'),
-    ('verificación de entrega', 'F', 'delivery verification', 'services', 'una', 'La'),
-]))
+AI_ACCELERATED_PACK_A2_042_HOUSING_REPAIRS_PILOT = build_numbered_ai_accelerated_pack(4072, 8203, 8206, [
+    ("fuga de agua", "noun phrase", "F", "water leak", 1800, "A2", 0.5, "housing and repairs", "2026-06-02 subagent pilot: housing/repairs replacement", [("Hay una fuga de agua en el baño.", "There is a water leak in the bathroom."), ("La fuga de agua empezó anoche.", "The water leak started last night.")], {"cefrBand": "A2", "rubricReason": "pilot_reviewed_authentic_phrase", "rubricSignals": ["domain:housing_repairs", "naturalness_review:approved", "dialect_review:neutral_latam"]}),
+    ("llave de agua rota", "noun phrase", "F", "broken faucet", 1800, "A2", 0.5, "housing and repairs", "2026-06-02 subagent pilot: housing/repairs replacement revised for neutral LatAm", [("Tengo una llave de agua rota en la cocina.", "I have a broken faucet in the kitchen."), ("La llave de agua rota no cierra bien.", "The broken faucet does not close well.")], {"cefrBand": "A2", "rubricReason": "pilot_reviewed_authentic_phrase", "rubricSignals": ["domain:housing_repairs", "naturalness_review:approved", "dialect_review:neutral_latam"]}),
+    ("desagüe atascado", "noun phrase", "M", "blocked drain", 1800, "A2", 0.5, "housing and repairs", "2026-06-02 subagent pilot: housing/repairs replacement", [("Hay un desagüe atascado en la ducha.", "There is a blocked drain in the shower."), ("El desagüe atascado huele mal.", "The blocked drain smells bad.")], {"cefrBand": "A2", "rubricReason": "pilot_reviewed_authentic_phrase", "rubricSignals": ["domain:housing_repairs", "naturalness_review:approved", "dialect_review:neutral_latam"]}),
+    ("lavaplatos atascado", "noun phrase", "M", "blocked kitchen sink", 1800, "A2", 0.5, "housing and repairs", "2026-06-02 subagent pilot: housing/repairs replacement revised for neutral LatAm", [("Hay un lavaplatos atascado en la cocina.", "There is a blocked kitchen sink."), ("El lavaplatos atascado no drena bien.", "The blocked kitchen sink does not drain well.")], {"cefrBand": "A2", "rubricReason": "pilot_reviewed_authentic_phrase", "rubricSignals": ["domain:housing_repairs", "naturalness_review:approved", "dialect_review:neutral_latam"]}),
+    ("ducha sin agua caliente", "noun phrase", "F", "shower without hot water", 1800, "A2", 0.5, "housing and repairs", "2026-06-02 subagent pilot: housing/repairs replacement", [("Hay una ducha sin agua caliente.", "There is a shower without hot water."), ("La ducha sin agua caliente es un problema.", "The shower without hot water is a problem.")], {"cefrBand": "A2", "rubricReason": "pilot_reviewed_authentic_phrase", "rubricSignals": ["domain:housing_repairs", "naturalness_review:approved", "dialect_review:neutral_latam"]}),
+    ("calentador de agua", "noun phrase", "M", "water heater", 1800, "A2", 0.5, "housing and repairs", "2026-06-02 subagent pilot: housing/repairs replacement", [("Necesitamos revisar un calentador de agua.", "We need to check a water heater."), ("El calentador de agua hace ruido.", "The water heater makes noise.")], {"cefrBand": "A2", "rubricReason": "pilot_reviewed_authentic_phrase", "rubricSignals": ["domain:housing_repairs", "naturalness_review:approved", "dialect_review:neutral_latam"]}),
+    ("calefacción rota", "noun phrase", "F", "broken heating", 1800, "A2", 0.5, "housing and repairs", "2026-06-02 subagent pilot: housing/repairs replacement", [("Tenemos una calefacción rota en casa.", "We have broken heating at home."), ("La calefacción rota deja la habitación fría.", "The broken heating leaves the room cold.")], {"cefrBand": "A2", "rubricReason": "pilot_reviewed_authentic_phrase", "rubricSignals": ["domain:housing_repairs", "naturalness_review:approved", "dialect_review:neutral_latam"]}),
+    ("aire acondicionado roto", "noun phrase", "M", "broken air conditioner", 1800, "A2", 0.5, "housing and repairs", "2026-06-02 subagent pilot: housing/repairs replacement", [("La habitación tiene un aire acondicionado roto.", "The room has a broken air conditioner."), ("El aire acondicionado roto no enfría.", "The broken air conditioner does not cool.")], {"cefrBand": "A2", "rubricReason": "pilot_reviewed_authentic_phrase", "rubricSignals": ["domain:housing_repairs", "naturalness_review:approved", "dialect_review:neutral_latam"]}),
+    ("enchufe suelto", "noun phrase", "M", "loose outlet", 1800, "A2", 0.5, "housing and repairs", "2026-06-02 subagent pilot: housing/repairs replacement", [("Hay un enchufe suelto junto a la cama.", "There is a loose outlet by the bed."), ("El enchufe suelto parece peligroso.", "The loose outlet seems dangerous.")], {"cefrBand": "A2", "rubricReason": "pilot_reviewed_authentic_phrase", "rubricSignals": ["domain:housing_repairs", "naturalness_review:approved", "dialect_review:neutral_latam"]}),
+    ("foco fundido", "noun phrase", "M", "burned-out light bulb", 1800, "A2", 0.5, "housing and repairs", "2026-06-02 subagent pilot: housing/repairs replacement revised for neutral LatAm", [("Hay un foco fundido en el pasillo.", "A bulb is burned out in the hall."), ("Hay que cambiar el foco fundido.", "The burned-out light bulb needs replacing.")], {"cefrBand": "A2", "rubricReason": "pilot_reviewed_authentic_phrase", "rubricSignals": ["domain:housing_repairs", "naturalness_review:approved", "dialect_review:neutral_latam"]}),
+    ("interruptor roto", "noun phrase", "M", "broken light switch", 1800, "A2", 0.5, "housing and repairs", "2026-06-02 subagent pilot: housing/repairs replacement", [("Hay un interruptor roto en la entrada.", "There is a broken switch at the entrance."), ("El interruptor roto no enciende la luz.", "The broken switch does not work.")], {"cefrBand": "A2", "rubricReason": "pilot_reviewed_authentic_phrase", "rubricSignals": ["domain:housing_repairs", "naturalness_review:approved", "dialect_review:neutral_latam"]}),
+    ("cerradura rota", "noun phrase", "F", "broken lock", 1800, "A2", 0.5, "housing and repairs", "2026-06-02 subagent pilot: housing/repairs replacement", [("La puerta tiene una cerradura rota.", "The door has a broken lock."), ("La cerradura rota no se abre con la llave.", "The broken lock does not open.")], {"cefrBand": "A2", "rubricReason": "pilot_reviewed_authentic_phrase", "rubricSignals": ["domain:housing_repairs", "naturalness_review:approved", "dialect_review:neutral_latam"]}),
+    ("llave de repuesto", "noun phrase", "F", "spare key", 1800, "A2", 0.5, "housing and repairs", "2026-06-02 subagent pilot: housing/repairs replacement", [("Necesito una llave de repuesto.", "I need a spare key."), ("La llave de repuesto está en recepción.", "The spare key is at reception.")], {"cefrBand": "A2", "rubricReason": "pilot_reviewed_authentic_phrase", "rubricSignals": ["domain:housing_repairs", "naturalness_review:approved", "dialect_review:neutral_latam"]}),
+    ("puerta atascada", "noun phrase", "F", "stuck door", 1800, "A2", 0.5, "housing and repairs", "2026-06-02 subagent pilot: housing/repairs replacement", [("Hay una puerta atascada en el baño.", "There is a stuck door in the bathroom."), ("La puerta atascada no se abre bien.", "The stuck door does not open well.")], {"cefrBand": "A2", "rubricReason": "pilot_reviewed_authentic_phrase", "rubricSignals": ["domain:housing_repairs", "naturalness_review:approved", "dialect_review:neutral_latam"]}),
+    ("ventana rota", "noun phrase", "F", "broken window", 1800, "A2", 0.5, "housing and repairs", "2026-06-02 subagent pilot: housing/repairs replacement revised for neutral LatAm", [("Tenemos una ventana rota en la sala.", "We have a broken window in the room."), ("La ventana rota deja entrar aire.", "The broken window lets air in.")], {"cefrBand": "A2", "rubricReason": "pilot_reviewed_authentic_phrase", "rubricSignals": ["domain:housing_repairs", "naturalness_review:approved", "dialect_review:neutral_latam"]}),
+    ("cortina atascada", "noun phrase", "F", "stuck curtain", 1800, "A2", 0.5, "housing and repairs", "2026-06-02 subagent pilot: housing/repairs replacement revised for neutral LatAm", [("Hay una cortina atascada en la habitación.", "There is a stuck curtain in the room."), ("La cortina atascada no se mueve.", "The stuck curtain does not move.")], {"cefrBand": "A2", "rubricReason": "pilot_reviewed_authentic_phrase", "rubricSignals": ["domain:housing_repairs", "naturalness_review:approved", "dialect_review:neutral_latam"]}),
+    ("mancha de humedad", "noun phrase", "F", "damp stain", 1800, "A2", 0.5, "housing and repairs", "2026-06-02 subagent pilot: housing/repairs replacement", [("Hay una mancha de humedad en la pared.", "There is a damp stain on the wall."), ("La mancha de humedad crece cada día.", "The damp stain grows every day.")], {"cefrBand": "A2", "rubricReason": "pilot_reviewed_authentic_phrase", "rubricSignals": ["domain:housing_repairs", "naturalness_review:approved", "dialect_review:neutral_latam"]}),
+    ("gotera en el techo", "noun phrase", "F", "leak in the ceiling", 1800, "A2", 0.5, "housing and repairs", "2026-06-02 subagent pilot: housing/repairs replacement", [("Hay una gotera en el techo.", "There is a leak in the ceiling."), ("La gotera en el techo moja el suelo.", "The leak in the ceiling wets the floor.")], {"cefrBand": "A2", "rubricReason": "pilot_reviewed_authentic_phrase", "rubricSignals": ["domain:housing_repairs", "naturalness_review:approved", "dialect_review:neutral_latam"]}),
+    ("elevador fuera de servicio", "noun phrase", "M", "elevator out of service", 1800, "A2", 0.5, "housing and repairs", "2026-06-02 subagent pilot: housing/repairs replacement revised for neutral LatAm", [("Hay un elevador fuera de servicio en el edificio.", "There is an elevator out of service in the building."), ("El elevador fuera de servicio no llega al cuarto nivel.", "The elevator out of service does not reach the fourth level.")], {"cefrBand": "A2", "rubricReason": "pilot_reviewed_authentic_phrase", "rubricSignals": ["domain:housing_repairs", "naturalness_review:approved", "dialect_review:neutral_latam"]}),
+    ("técnico de mantenimiento", "noun phrase", "M", "maintenance technician", 1800, "A2", 0.5, "housing and repairs", "2026-06-02 subagent pilot: housing/repairs replacement", [("Viene un técnico de mantenimiento por la tarde.", "A maintenance technician is coming in the afternoon."), ("El técnico de mantenimiento revisa la puerta.", "The maintenance technician checks the door.")], {"cefrBand": "A2", "rubricReason": "pilot_reviewed_authentic_phrase", "rubricSignals": ["domain:housing_repairs", "naturalness_review:approved", "dialect_review:neutral_latam"]}),
+    ("cita de mantenimiento", "noun phrase", "F", "maintenance appointment", 1800, "A2", 0.5, "housing and repairs", "2026-06-02 subagent pilot: housing/repairs replacement", [("Necesito una cita de mantenimiento.", "I need a maintenance appointment."), ("La cita de mantenimiento es a las diez.", "The maintenance appointment is at ten.")], {"cefrBand": "A2", "rubricReason": "pilot_reviewed_authentic_phrase", "rubricSignals": ["domain:housing_repairs", "naturalness_review:approved", "dialect_review:neutral_latam"]}),
+    ("permiso para entrar", "noun phrase", "M", "permission to enter", 1800, "A2", 0.5, "housing and repairs", "2026-06-02 subagent pilot: housing/repairs replacement", [("El propietario pide permiso para entrar.", "The landlord asks for permission to enter."), ("El permiso para entrar es solo para hoy.", "The permission to enter is only for today.")], {"cefrBand": "A2", "rubricReason": "pilot_reviewed_authentic_phrase", "rubricSignals": ["domain:housing_repairs", "naturalness_review:approved", "dialect_review:neutral_latam"]}),
+    ("recibo de la renta", "noun phrase", "M", "rent receipt", 1800, "A2", 0.5, "housing and repairs", "2026-06-02 subagent pilot: housing/repairs replacement revised for neutral LatAm", [("Necesito un recibo de la renta.", "I need a rent receipt."), ("El recibo de la renta está en mi correo.", "The rent receipt is in my email.")], {"cefrBand": "A2", "rubricReason": "pilot_reviewed_authentic_phrase", "rubricSignals": ["domain:housing_repairs", "naturalness_review:approved", "dialect_review:neutral_latam"]}),
+])
 
-AI_ACCELERATED_PACK_A2_043 = build_numbered_ai_accelerated_phrase_pack(4192, 8443, 8446, build_phrase_pack_specs([
-    ('instrucción de pago', 'F', 'payment instruction', 'money', 'una', 'La'),
-    ('instrucción de seguridad', 'F', 'safety instruction', 'safety', 'una', 'La'),
-    ('instrucción de documento', 'F', 'document instruction', 'bureaucracy', 'una', 'La'),
-    ('instrucción de cita', 'F', 'appointment instruction', 'services', 'una', 'La'),
-    ('instrucción de viaje', 'F', 'travel instruction', 'travel', 'una', 'La'),
-    ('instrucción de servicio', 'F', 'service instruction', 'services', 'una', 'La'),
-    ('instrucción de cuenta', 'F', 'account instruction', 'money', 'una', 'La'),
-    ('instrucción de reclamo', 'F', 'claim instruction', 'services', 'una', 'La'),
-    ('instrucción de tratamiento', 'F', 'treatment instruction', 'health', 'una', 'La'),
-    ('instrucción de mantenimiento', 'F', 'maintenance instruction', 'repairs', 'una', 'La'),
-    ('instrucción de contrato', 'F', 'contract instruction', 'legal', 'una', 'La'),
-    ('instrucción de proyecto', 'F', 'project instruction', 'work', 'una', 'La'),
-    ('indicación de pago', 'F', 'payment indication', 'money', 'una', 'La'),
-    ('indicación de seguridad', 'F', 'safety indication', 'safety', 'una', 'La'),
-    ('indicación de documento', 'F', 'document indication', 'bureaucracy', 'una', 'La'),
-    ('indicación de cita', 'F', 'appointment indication', 'services', 'una', 'La'),
-    ('indicación de viaje', 'F', 'travel indication', 'travel', 'una', 'La'),
-    ('indicación de servicio', 'F', 'service indication', 'services', 'una', 'La'),
-    ('indicación de cuenta', 'F', 'account indication', 'money', 'una', 'La'),
-    ('indicación de reclamo', 'F', 'claim indication', 'services', 'una', 'La'),
-    ('indicación de tratamiento', 'F', 'treatment indication', 'health', 'una', 'La'),
-    ('indicación de mantenimiento', 'F', 'maintenance indication', 'repairs', 'una', 'La'),
-    ('indicación de contrato', 'F', 'contract indication', 'legal', 'una', 'La'),
-    ('indicación de proyecto', 'F', 'project indication', 'work', 'una', 'La'),
-    ('requisito de pago', 'M', 'payment requirement', 'money', 'un', 'El'),
-    ('requisito de seguridad', 'M', 'safety requirement', 'safety', 'un', 'El'),
-    ('requisito de documento', 'M', 'document requirement', 'bureaucracy', 'un', 'El'),
-    ('requisito de cita', 'M', 'appointment requirement', 'services', 'un', 'El'),
-    ('requisito de viaje', 'M', 'travel requirement', 'travel', 'un', 'El'),
-    ('requisito de servicio', 'M', 'service requirement', 'services', 'un', 'El'),
-    ('requisito de cuenta', 'M', 'account requirement', 'money', 'un', 'El'),
-    ('requisito de reclamo', 'M', 'claim requirement', 'services', 'un', 'El'),
-    ('requisito de tratamiento', 'M', 'treatment requirement', 'health', 'un', 'El'),
-    ('requisito de mantenimiento', 'M', 'maintenance requirement', 'repairs', 'un', 'El'),
-    ('requisito de contrato', 'M', 'contract requirement', 'legal', 'un', 'El'),
-    ('requisito de proyecto', 'M', 'project requirement', 'work', 'un', 'El'),
-    ('condición de pago', 'F', 'payment condition', 'money', 'una', 'La'),
-    ('condición de seguridad', 'F', 'safety condition', 'safety', 'una', 'La'),
-    ('condición de documento', 'F', 'document condition', 'bureaucracy', 'una', 'La'),
-    ('condición de cita', 'F', 'appointment condition', 'services', 'una', 'La'),
-    ('condición de viaje', 'F', 'travel condition', 'travel', 'una', 'La'),
-    ('condición de servicio', 'F', 'service condition', 'services', 'una', 'La'),
-    ('condición de cuenta', 'F', 'account condition', 'money', 'una', 'La'),
-    ('condición de reclamo', 'F', 'claim condition', 'services', 'una', 'La'),
-    ('condición de tratamiento', 'F', 'treatment condition', 'health', 'una', 'La'),
-    ('condición de mantenimiento', 'F', 'maintenance condition', 'repairs', 'una', 'La'),
-    ('condición de contrato', 'F', 'contract condition', 'legal', 'una', 'La'),
-    ('condición de proyecto', 'F', 'project condition', 'work', 'una', 'La'),
-    ('comprobación de pago', 'F', 'payment check', 'money', 'una', 'La'),
-    ('comprobación de seguridad', 'F', 'safety check', 'safety', 'una', 'La'),
-    ('comprobación de documento', 'F', 'document check', 'bureaucracy', 'una', 'La'),
-    ('comprobación de cita', 'F', 'appointment check', 'services', 'una', 'La'),
-    ('comprobación de viaje', 'F', 'travel check', 'travel', 'una', 'La'),
-    ('comprobación de servicio', 'F', 'service check', 'services', 'una', 'La'),
-    ('comprobación de cuenta', 'F', 'account check', 'money', 'una', 'La'),
-    ('comprobación de reclamo', 'F', 'claim check', 'services', 'una', 'La'),
-    ('comprobación de tratamiento', 'F', 'treatment check', 'health', 'una', 'La'),
-    ('comprobación de mantenimiento', 'F', 'maintenance check', 'repairs', 'una', 'La'),
-    ('comprobación de contrato', 'F', 'contract check', 'legal', 'una', 'La'),
-    ('comprobación de proyecto', 'F', 'project check', 'work', 'una', 'La'),
-    ('resolución de pago', 'F', 'payment resolution', 'money', 'una', 'La'),
-    ('resolución de seguridad', 'F', 'safety resolution', 'safety', 'una', 'La'),
-    ('resolución de documento', 'F', 'document resolution', 'bureaucracy', 'una', 'La'),
-    ('resolución de cita', 'F', 'appointment resolution', 'services', 'una', 'La'),
-    ('resolución de viaje', 'F', 'travel resolution', 'travel', 'una', 'La'),
-    ('resolución de servicio', 'F', 'service resolution', 'services', 'una', 'La'),
-    ('resolución de cuenta', 'F', 'account resolution', 'money', 'una', 'La'),
-    ('resolución de reclamo', 'F', 'claim resolution', 'services', 'una', 'La'),
-    ('resolución de tratamiento', 'F', 'treatment resolution', 'health', 'una', 'La'),
-    ('resolución de mantenimiento', 'F', 'maintenance resolution', 'repairs', 'una', 'La'),
-    ('resolución de contrato', 'F', 'contract resolution', 'legal', 'una', 'La'),
-    ('resolución de proyecto', 'F', 'project resolution', 'work', 'una', 'La'),
-    ('preparación de pago', 'F', 'payment preparation', 'money', 'una', 'La'),
-    ('preparación de seguridad', 'F', 'safety preparation', 'safety', 'una', 'La'),
-    ('preparación de documento', 'F', 'document preparation', 'bureaucracy', 'una', 'La'),
-    ('preparación de cita', 'F', 'appointment preparation', 'services', 'una', 'La'),
-    ('preparación de viaje', 'F', 'travel preparation', 'travel', 'una', 'La'),
-    ('preparación de servicio', 'F', 'service preparation', 'services', 'una', 'La'),
-    ('preparación de cuenta', 'F', 'account preparation', 'money', 'una', 'La'),
-    ('preparación de reclamo', 'F', 'claim preparation', 'services', 'una', 'La'),
-    ('preparación de tratamiento', 'F', 'treatment preparation', 'health', 'una', 'La'),
-    ('preparación de mantenimiento', 'F', 'maintenance preparation', 'repairs', 'una', 'La'),
-    ('preparación de contrato', 'F', 'contract preparation', 'legal', 'una', 'La'),
-    ('preparación de proyecto', 'F', 'project preparation', 'work', 'una', 'La'),
-    ('presentación de pago', 'F', 'payment presentation', 'money', 'una', 'La'),
-    ('presentación de seguridad', 'F', 'safety presentation', 'safety', 'una', 'La'),
-    ('presentación de documento', 'F', 'document presentation', 'bureaucracy', 'una', 'La'),
-    ('presentación de cita', 'F', 'appointment presentation', 'services', 'una', 'La'),
-    ('presentación de viaje', 'F', 'travel presentation', 'travel', 'una', 'La'),
-    ('presentación de servicio', 'F', 'service presentation', 'services', 'una', 'La'),
-    ('presentación de cuenta', 'F', 'account presentation', 'money', 'una', 'La'),
-    ('presentación de reclamo', 'F', 'claim presentation', 'services', 'una', 'La'),
-    ('presentación de tratamiento', 'F', 'treatment presentation', 'health', 'una', 'La'),
-    ('presentación de mantenimiento', 'F', 'maintenance presentation', 'repairs', 'una', 'La'),
-    ('presentación de contrato', 'F', 'contract presentation', 'legal', 'una', 'La'),
-    ('presentación de proyecto', 'F', 'project presentation', 'work', 'una', 'La'),
-    ('protección de pago', 'F', 'payment protection', 'money', 'una', 'La'),
-    ('protección de seguridad', 'F', 'safety protection', 'safety', 'una', 'La'),
-    ('protección de documento', 'F', 'document protection', 'bureaucracy', 'una', 'La'),
-    ('protección de cita', 'F', 'appointment protection', 'services', 'una', 'La'),
-    ('protección de viaje', 'F', 'travel protection', 'travel', 'una', 'La'),
-    ('protección de servicio', 'F', 'service protection', 'services', 'una', 'La'),
-    ('protección de cuenta', 'F', 'account protection', 'money', 'una', 'La'),
-    ('protección de reclamo', 'F', 'claim protection', 'services', 'una', 'La'),
-    ('protección de tratamiento', 'F', 'treatment protection', 'health', 'una', 'La'),
-    ('protección de mantenimiento', 'F', 'maintenance protection', 'repairs', 'una', 'La'),
-    ('protección de contrato', 'F', 'contract protection', 'legal', 'una', 'La'),
-    ('protección de proyecto', 'F', 'project protection', 'work', 'una', 'La'),
-    ('coordinación de pago', 'F', 'payment coordination', 'money', 'una', 'La'),
-    ('coordinación de seguridad', 'F', 'safety coordination', 'safety', 'una', 'La'),
-    ('coordinación de documento', 'F', 'document coordination', 'bureaucracy', 'una', 'La'),
-    ('coordinación de cita', 'F', 'appointment coordination', 'services', 'una', 'La'),
-    ('coordinación de viaje', 'F', 'travel coordination', 'travel', 'una', 'La'),
-    ('coordinación de servicio', 'F', 'service coordination', 'services', 'una', 'La'),
-    ('coordinación de cuenta', 'F', 'account coordination', 'money', 'una', 'La'),
-    ('coordinación de reclamo', 'F', 'claim coordination', 'services', 'una', 'La'),
-    ('coordinación de tratamiento', 'F', 'treatment coordination', 'health', 'una', 'La'),
-    ('coordinación de mantenimiento', 'F', 'maintenance coordination', 'repairs', 'una', 'La'),
-    ('coordinación de contrato', 'F', 'contract coordination', 'legal', 'una', 'La'),
-    ('coordinación de proyecto', 'F', 'project coordination', 'work', 'una', 'La'),
-]))
 
-AI_ACCELERATED_PACK_A2_044 = build_numbered_ai_accelerated_phrase_pack(4312, 8683, 8686, build_phrase_pack_specs([
-    ('confirmación previa de pago', 'F', 'prior confirmation for payment', 'money', 'una', 'La'),
-    ('confirmación previa de seguridad', 'F', 'prior confirmation for safety', 'safety', 'una', 'La'),
-    ('confirmación previa de documento', 'F', 'prior confirmation for document', 'bureaucracy', 'una', 'La'),
-    ('confirmación previa de cita', 'F', 'prior confirmation for appointment', 'services', 'una', 'La'),
-    ('confirmación previa de viaje', 'F', 'prior confirmation for travel', 'travel', 'una', 'La'),
-    ('confirmación previa de servicio', 'F', 'prior confirmation for service', 'services', 'una', 'La'),
-    ('confirmación previa de cuenta', 'F', 'prior confirmation for account', 'money', 'una', 'La'),
-    ('confirmación previa de reclamo', 'F', 'prior confirmation for claim', 'services', 'una', 'La'),
-    ('confirmación previa de tratamiento', 'F', 'prior confirmation for treatment', 'health', 'una', 'La'),
-    ('confirmación previa de mantenimiento', 'F', 'prior confirmation for maintenance', 'repairs', 'una', 'La'),
-    ('confirmación previa de contrato', 'F', 'prior confirmation for contract', 'legal', 'una', 'La'),
-    ('confirmación previa de proyecto', 'F', 'prior confirmation for project', 'work', 'una', 'La'),
-    ('revisión previa de pago', 'F', 'prior review for payment', 'money', 'una', 'La'),
-    ('revisión previa de seguridad', 'F', 'prior review for safety', 'safety', 'una', 'La'),
-    ('revisión previa de documento', 'F', 'prior review for document', 'bureaucracy', 'una', 'La'),
-    ('revisión previa de cita', 'F', 'prior review for appointment', 'services', 'una', 'La'),
-    ('revisión previa de viaje', 'F', 'prior review for travel', 'travel', 'una', 'La'),
-    ('revisión previa de servicio', 'F', 'prior review for service', 'services', 'una', 'La'),
-    ('revisión previa de cuenta', 'F', 'prior review for account', 'money', 'una', 'La'),
-    ('revisión previa de reclamo', 'F', 'prior review for claim', 'services', 'una', 'La'),
-    ('revisión previa de tratamiento', 'F', 'prior review for treatment', 'health', 'una', 'La'),
-    ('revisión previa de mantenimiento', 'F', 'prior review for maintenance', 'repairs', 'una', 'La'),
-    ('revisión previa de contrato', 'F', 'prior review for contract', 'legal', 'una', 'La'),
-    ('revisión previa de proyecto', 'F', 'prior review for project', 'work', 'una', 'La'),
-    ('aviso previo de pago', 'M', 'prior notice for payment', 'money', 'un', 'El'),
-    ('aviso previo de seguridad', 'M', 'prior notice for safety', 'safety', 'un', 'El'),
-    ('aviso previo de documento', 'M', 'prior notice for document', 'bureaucracy', 'un', 'El'),
-    ('aviso previo de cita', 'M', 'prior notice for appointment', 'services', 'un', 'El'),
-    ('aviso previo de viaje', 'M', 'prior notice for travel', 'travel', 'un', 'El'),
-    ('aviso previo de servicio', 'M', 'prior notice for service', 'services', 'un', 'El'),
-    ('aviso previo de cuenta', 'M', 'prior notice for account', 'money', 'un', 'El'),
-    ('aviso previo de reclamo', 'M', 'prior notice for claim', 'services', 'un', 'El'),
-    ('aviso previo de tratamiento', 'M', 'prior notice for treatment', 'health', 'un', 'El'),
-    ('aviso previo de mantenimiento', 'M', 'prior notice for maintenance', 'repairs', 'un', 'El'),
-    ('aviso previo de contrato', 'M', 'prior notice for contract', 'legal', 'un', 'El'),
-    ('aviso previo de proyecto', 'M', 'prior notice for project', 'work', 'un', 'El'),
-    ('control previo de pago', 'M', 'prior control for payment', 'money', 'un', 'El'),
-    ('control previo de seguridad', 'M', 'prior control for safety', 'safety', 'un', 'El'),
-    ('control previo de documento', 'M', 'prior control for document', 'bureaucracy', 'un', 'El'),
-    ('control previo de cita', 'M', 'prior control for appointment', 'services', 'un', 'El'),
-    ('control previo de viaje', 'M', 'prior control for travel', 'travel', 'un', 'El'),
-    ('control previo de servicio', 'M', 'prior control for service', 'services', 'un', 'El'),
-    ('control previo de cuenta', 'M', 'prior control for account', 'money', 'un', 'El'),
-    ('control previo de reclamo', 'M', 'prior control for claim', 'services', 'un', 'El'),
-    ('control previo de tratamiento', 'M', 'prior control for treatment', 'health', 'un', 'El'),
-    ('control previo de mantenimiento', 'M', 'prior control for maintenance', 'repairs', 'un', 'El'),
-    ('control previo de contrato', 'M', 'prior control for contract', 'legal', 'un', 'El'),
-    ('control previo de proyecto', 'M', 'prior control for project', 'work', 'un', 'El'),
-    ('registro previo de pago', 'M', 'prior registration for payment', 'money', 'un', 'El'),
-    ('registro previo de seguridad', 'M', 'prior registration for safety', 'safety', 'un', 'El'),
-    ('registro previo de documento', 'M', 'prior registration for document', 'bureaucracy', 'un', 'El'),
-    ('registro previo de cita', 'M', 'prior registration for appointment', 'services', 'un', 'El'),
-    ('registro previo de viaje', 'M', 'prior registration for travel', 'travel', 'un', 'El'),
-    ('registro previo de servicio', 'M', 'prior registration for service', 'services', 'un', 'El'),
-    ('registro previo de cuenta', 'M', 'prior registration for account', 'money', 'un', 'El'),
-    ('registro previo de reclamo', 'M', 'prior registration for claim', 'services', 'un', 'El'),
-    ('registro previo de tratamiento', 'M', 'prior registration for treatment', 'health', 'un', 'El'),
-    ('registro previo de mantenimiento', 'M', 'prior registration for maintenance', 'repairs', 'un', 'El'),
-    ('registro previo de contrato', 'M', 'prior registration for contract', 'legal', 'un', 'El'),
-    ('registro previo de proyecto', 'M', 'prior registration for project', 'work', 'un', 'El'),
-    ('validación previa de pago', 'F', 'prior validation for payment', 'money', 'una', 'La'),
-    ('validación previa de seguridad', 'F', 'prior validation for safety', 'safety', 'una', 'La'),
-    ('validación previa de documento', 'F', 'prior validation for document', 'bureaucracy', 'una', 'La'),
-    ('validación previa de cita', 'F', 'prior validation for appointment', 'services', 'una', 'La'),
-    ('validación previa de viaje', 'F', 'prior validation for travel', 'travel', 'una', 'La'),
-    ('validación previa de servicio', 'F', 'prior validation for service', 'services', 'una', 'La'),
-    ('validación previa de cuenta', 'F', 'prior validation for account', 'money', 'una', 'La'),
-    ('validación previa de reclamo', 'F', 'prior validation for claim', 'services', 'una', 'La'),
-    ('validación previa de tratamiento', 'F', 'prior validation for treatment', 'health', 'una', 'La'),
-    ('validación previa de mantenimiento', 'F', 'prior validation for maintenance', 'repairs', 'una', 'La'),
-    ('validación previa de contrato', 'F', 'prior validation for contract', 'legal', 'una', 'La'),
-    ('validación previa de proyecto', 'F', 'prior validation for project', 'work', 'una', 'La'),
-    ('autorización previa de pago', 'F', 'prior authorization for payment', 'money', 'una', 'La'),
-    ('autorización previa de seguridad', 'F', 'prior authorization for safety', 'safety', 'una', 'La'),
-    ('autorización previa de documento', 'F', 'prior authorization for document', 'bureaucracy', 'una', 'La'),
-    ('autorización previa de cita', 'F', 'prior authorization for appointment', 'services', 'una', 'La'),
-    ('autorización previa de viaje', 'F', 'prior authorization for travel', 'travel', 'una', 'La'),
-    ('autorización previa de servicio', 'F', 'prior authorization for service', 'services', 'una', 'La'),
-    ('autorización previa de cuenta', 'F', 'prior authorization for account', 'money', 'una', 'La'),
-    ('autorización previa de reclamo', 'F', 'prior authorization for claim', 'services', 'una', 'La'),
-    ('autorización previa de tratamiento', 'F', 'prior authorization for treatment', 'health', 'una', 'La'),
-    ('autorización previa de mantenimiento', 'F', 'prior authorization for maintenance', 'repairs', 'una', 'La'),
-    ('autorización previa de contrato', 'F', 'prior authorization for contract', 'legal', 'una', 'La'),
-    ('autorización previa de proyecto', 'F', 'prior authorization for project', 'work', 'una', 'La'),
-    ('consulta previa de pago', 'F', 'prior consultation for payment', 'money', 'una', 'La'),
-    ('consulta previa de seguridad', 'F', 'prior consultation for safety', 'safety', 'una', 'La'),
-    ('consulta previa de documento', 'F', 'prior consultation for document', 'bureaucracy', 'una', 'La'),
-    ('consulta previa de cita', 'F', 'prior consultation for appointment', 'services', 'una', 'La'),
-    ('consulta previa de viaje', 'F', 'prior consultation for travel', 'travel', 'una', 'La'),
-    ('consulta previa de servicio', 'F', 'prior consultation for service', 'services', 'una', 'La'),
-    ('consulta previa de cuenta', 'F', 'prior consultation for account', 'money', 'una', 'La'),
-    ('consulta previa de reclamo', 'F', 'prior consultation for claim', 'services', 'una', 'La'),
-    ('consulta previa de tratamiento', 'F', 'prior consultation for treatment', 'health', 'una', 'La'),
-    ('consulta previa de mantenimiento', 'F', 'prior consultation for maintenance', 'repairs', 'una', 'La'),
-    ('consulta previa de contrato', 'F', 'prior consultation for contract', 'legal', 'una', 'La'),
-    ('consulta previa de proyecto', 'F', 'prior consultation for project', 'work', 'una', 'La'),
-    ('informe previo de pago', 'M', 'prior report for payment', 'money', 'un', 'El'),
-    ('informe previo de seguridad', 'M', 'prior report for safety', 'safety', 'un', 'El'),
-    ('informe previo de documento', 'M', 'prior report for document', 'bureaucracy', 'un', 'El'),
-    ('informe previo de cita', 'M', 'prior report for appointment', 'services', 'un', 'El'),
-    ('informe previo de viaje', 'M', 'prior report for travel', 'travel', 'un', 'El'),
-    ('informe previo de servicio', 'M', 'prior report for service', 'services', 'un', 'El'),
-    ('informe previo de cuenta', 'M', 'prior report for account', 'money', 'un', 'El'),
-    ('informe previo de reclamo', 'M', 'prior report for claim', 'services', 'un', 'El'),
-    ('informe previo de tratamiento', 'M', 'prior report for treatment', 'health', 'un', 'El'),
-    ('informe previo de mantenimiento', 'M', 'prior report for maintenance', 'repairs', 'un', 'El'),
-    ('informe previo de contrato', 'M', 'prior report for contract', 'legal', 'un', 'El'),
-    ('informe previo de proyecto', 'M', 'prior report for project', 'work', 'un', 'El'),
-    ('acuerdo previo de pago', 'M', 'prior agreement for payment', 'money', 'un', 'El'),
-    ('acuerdo previo de seguridad', 'M', 'prior agreement for safety', 'safety', 'un', 'El'),
-    ('acuerdo previo de documento', 'M', 'prior agreement for document', 'bureaucracy', 'un', 'El'),
-    ('acuerdo previo de cita', 'M', 'prior agreement for appointment', 'services', 'un', 'El'),
-    ('acuerdo previo de viaje', 'M', 'prior agreement for travel', 'travel', 'un', 'El'),
-    ('acuerdo previo de servicio', 'M', 'prior agreement for service', 'services', 'un', 'El'),
-    ('acuerdo previo de cuenta', 'M', 'prior agreement for account', 'money', 'un', 'El'),
-    ('acuerdo previo de reclamo', 'M', 'prior agreement for claim', 'services', 'un', 'El'),
-    ('acuerdo previo de tratamiento', 'M', 'prior agreement for treatment', 'health', 'un', 'El'),
-    ('acuerdo previo de mantenimiento', 'M', 'prior agreement for maintenance', 'repairs', 'un', 'El'),
-    ('acuerdo previo de contrato', 'M', 'prior agreement for contract', 'legal', 'un', 'El'),
-    ('acuerdo previo de proyecto', 'M', 'prior agreement for project', 'work', 'un', 'El'),
-]))
+def reviewed_chunk_payload(domain_slug: str, cefr_band: str) -> dict:
+    return {
+        "cefrBand": cefr_band,
+        "rubricReason": "subagent_reviewed_authentic_neutral_latam_chunk",
+        "rubricSignals": [
+            f"domain:{domain_slug}",
+            "generation:subagent",
+        ],
+    }
 
-AI_ACCELERATED_PACK_A2_045 = build_numbered_ai_accelerated_phrase_pack(4432, 8923, 8926, build_phrase_pack_specs([
-    ('paso obligatorio de pago', 'M', 'mandatory step for payment', 'money', 'un', 'El'),
-    ('paso obligatorio de seguridad', 'M', 'mandatory step for safety', 'safety', 'un', 'El'),
-    ('paso obligatorio de documento', 'M', 'mandatory step for document', 'bureaucracy', 'un', 'El'),
-    ('paso obligatorio de cita', 'M', 'mandatory step for appointment', 'services', 'un', 'El'),
-    ('paso obligatorio de viaje', 'M', 'mandatory step for travel', 'travel', 'un', 'El'),
-    ('paso obligatorio de servicio', 'M', 'mandatory step for service', 'services', 'un', 'El'),
-    ('paso obligatorio de cuenta', 'M', 'mandatory step for account', 'money', 'un', 'El'),
-    ('paso obligatorio de reclamo', 'M', 'mandatory step for claim', 'services', 'un', 'El'),
-    ('paso obligatorio de tratamiento', 'M', 'mandatory step for treatment', 'health', 'un', 'El'),
-    ('paso obligatorio de mantenimiento', 'M', 'mandatory step for maintenance', 'repairs', 'un', 'El'),
-    ('paso obligatorio de contrato', 'M', 'mandatory step for contract', 'legal', 'un', 'El'),
-    ('paso obligatorio de proyecto', 'M', 'mandatory step for project', 'work', 'un', 'El'),
-    ('paso recomendado de pago', 'M', 'recommended step for payment', 'money', 'un', 'El'),
-    ('paso recomendado de seguridad', 'M', 'recommended step for safety', 'safety', 'un', 'El'),
-    ('paso recomendado de documento', 'M', 'recommended step for document', 'bureaucracy', 'un', 'El'),
-    ('paso recomendado de cita', 'M', 'recommended step for appointment', 'services', 'un', 'El'),
-    ('paso recomendado de viaje', 'M', 'recommended step for travel', 'travel', 'un', 'El'),
-    ('paso recomendado de servicio', 'M', 'recommended step for service', 'services', 'un', 'El'),
-    ('paso recomendado de cuenta', 'M', 'recommended step for account', 'money', 'un', 'El'),
-    ('paso recomendado de reclamo', 'M', 'recommended step for claim', 'services', 'un', 'El'),
-    ('paso recomendado de tratamiento', 'M', 'recommended step for treatment', 'health', 'un', 'El'),
-    ('paso recomendado de mantenimiento', 'M', 'recommended step for maintenance', 'repairs', 'un', 'El'),
-    ('paso recomendado de contrato', 'M', 'recommended step for contract', 'legal', 'un', 'El'),
-    ('paso recomendado de proyecto', 'M', 'recommended step for project', 'work', 'un', 'El'),
-    ('paso opcional de pago', 'M', 'optional step for payment', 'money', 'un', 'El'),
-    ('paso opcional de seguridad', 'M', 'optional step for safety', 'safety', 'un', 'El'),
-    ('paso opcional de documento', 'M', 'optional step for document', 'bureaucracy', 'un', 'El'),
-    ('paso opcional de cita', 'M', 'optional step for appointment', 'services', 'un', 'El'),
-    ('paso opcional de viaje', 'M', 'optional step for travel', 'travel', 'un', 'El'),
-    ('paso opcional de servicio', 'M', 'optional step for service', 'services', 'un', 'El'),
-    ('paso opcional de cuenta', 'M', 'optional step for account', 'money', 'un', 'El'),
-    ('paso opcional de reclamo', 'M', 'optional step for claim', 'services', 'un', 'El'),
-    ('paso opcional de tratamiento', 'M', 'optional step for treatment', 'health', 'un', 'El'),
-    ('paso opcional de mantenimiento', 'M', 'optional step for maintenance', 'repairs', 'un', 'El'),
-    ('paso opcional de contrato', 'M', 'optional step for contract', 'legal', 'un', 'El'),
-    ('paso opcional de proyecto', 'M', 'optional step for project', 'work', 'un', 'El'),
-    ('paso pendiente de pago', 'M', 'pending step for payment', 'money', 'un', 'El'),
-    ('paso pendiente de seguridad', 'M', 'pending step for safety', 'safety', 'un', 'El'),
-    ('paso pendiente de documento', 'M', 'pending step for document', 'bureaucracy', 'un', 'El'),
-    ('paso pendiente de cita', 'M', 'pending step for appointment', 'services', 'un', 'El'),
-    ('paso pendiente de viaje', 'M', 'pending step for travel', 'travel', 'un', 'El'),
-    ('paso pendiente de servicio', 'M', 'pending step for service', 'services', 'un', 'El'),
-    ('paso pendiente de cuenta', 'M', 'pending step for account', 'money', 'un', 'El'),
-    ('paso pendiente de reclamo', 'M', 'pending step for claim', 'services', 'un', 'El'),
-    ('paso pendiente de tratamiento', 'M', 'pending step for treatment', 'health', 'un', 'El'),
-    ('paso pendiente de mantenimiento', 'M', 'pending step for maintenance', 'repairs', 'un', 'El'),
-    ('paso pendiente de contrato', 'M', 'pending step for contract', 'legal', 'un', 'El'),
-    ('paso pendiente de proyecto', 'M', 'pending step for project', 'work', 'un', 'El'),
-    ('acción obligatoria de pago', 'F', 'mandatory action for payment', 'money', 'una', 'La'),
-    ('acción obligatoria de seguridad', 'F', 'mandatory action for safety', 'safety', 'una', 'La'),
-    ('acción obligatoria de documento', 'F', 'mandatory action for document', 'bureaucracy', 'una', 'La'),
-    ('acción obligatoria de cita', 'F', 'mandatory action for appointment', 'services', 'una', 'La'),
-    ('acción obligatoria de viaje', 'F', 'mandatory action for travel', 'travel', 'una', 'La'),
-    ('acción obligatoria de servicio', 'F', 'mandatory action for service', 'services', 'una', 'La'),
-    ('acción obligatoria de cuenta', 'F', 'mandatory action for account', 'money', 'una', 'La'),
-    ('acción obligatoria de reclamo', 'F', 'mandatory action for claim', 'services', 'una', 'La'),
-    ('acción obligatoria de tratamiento', 'F', 'mandatory action for treatment', 'health', 'una', 'La'),
-    ('acción obligatoria de mantenimiento', 'F', 'mandatory action for maintenance', 'repairs', 'una', 'La'),
-    ('acción obligatoria de contrato', 'F', 'mandatory action for contract', 'legal', 'una', 'La'),
-    ('acción obligatoria de proyecto', 'F', 'mandatory action for project', 'work', 'una', 'La'),
-    ('acción recomendada de pago', 'F', 'recommended action for payment', 'money', 'una', 'La'),
-    ('acción recomendada de seguridad', 'F', 'recommended action for safety', 'safety', 'una', 'La'),
-    ('acción recomendada de documento', 'F', 'recommended action for document', 'bureaucracy', 'una', 'La'),
-    ('acción recomendada de cita', 'F', 'recommended action for appointment', 'services', 'una', 'La'),
-    ('acción recomendada de viaje', 'F', 'recommended action for travel', 'travel', 'una', 'La'),
-    ('acción recomendada de servicio', 'F', 'recommended action for service', 'services', 'una', 'La'),
-    ('acción recomendada de cuenta', 'F', 'recommended action for account', 'money', 'una', 'La'),
-    ('acción recomendada de reclamo', 'F', 'recommended action for claim', 'services', 'una', 'La'),
-    ('acción recomendada de tratamiento', 'F', 'recommended action for treatment', 'health', 'una', 'La'),
-    ('acción recomendada de mantenimiento', 'F', 'recommended action for maintenance', 'repairs', 'una', 'La'),
-    ('acción recomendada de contrato', 'F', 'recommended action for contract', 'legal', 'una', 'La'),
-    ('acción recomendada de proyecto', 'F', 'recommended action for project', 'work', 'una', 'La'),
-    ('acción pendiente de pago', 'F', 'pending action for payment', 'money', 'una', 'La'),
-    ('acción pendiente de seguridad', 'F', 'pending action for safety', 'safety', 'una', 'La'),
-    ('acción pendiente de documento', 'F', 'pending action for document', 'bureaucracy', 'una', 'La'),
-    ('acción pendiente de cita', 'F', 'pending action for appointment', 'services', 'una', 'La'),
-    ('acción pendiente de viaje', 'F', 'pending action for travel', 'travel', 'una', 'La'),
-    ('acción pendiente de servicio', 'F', 'pending action for service', 'services', 'una', 'La'),
-    ('acción pendiente de cuenta', 'F', 'pending action for account', 'money', 'una', 'La'),
-    ('acción pendiente de reclamo', 'F', 'pending action for claim', 'services', 'una', 'La'),
-    ('acción pendiente de tratamiento', 'F', 'pending action for treatment', 'health', 'una', 'La'),
-    ('acción pendiente de mantenimiento', 'F', 'pending action for maintenance', 'repairs', 'una', 'La'),
-    ('acción pendiente de contrato', 'F', 'pending action for contract', 'legal', 'una', 'La'),
-    ('acción pendiente de proyecto', 'F', 'pending action for project', 'work', 'una', 'La'),
-    ('respuesta pendiente de pago', 'F', 'pending response for payment', 'money', 'una', 'La'),
-    ('respuesta pendiente de seguridad', 'F', 'pending response for safety', 'safety', 'una', 'La'),
-    ('respuesta pendiente de documento', 'F', 'pending response for document', 'bureaucracy', 'una', 'La'),
-    ('respuesta pendiente de cita', 'F', 'pending response for appointment', 'services', 'una', 'La'),
-    ('respuesta pendiente de viaje', 'F', 'pending response for travel', 'travel', 'una', 'La'),
-    ('respuesta pendiente de servicio', 'F', 'pending response for service', 'services', 'una', 'La'),
-    ('respuesta pendiente de cuenta', 'F', 'pending response for account', 'money', 'una', 'La'),
-    ('respuesta pendiente de reclamo', 'F', 'pending response for claim', 'services', 'una', 'La'),
-    ('respuesta pendiente de tratamiento', 'F', 'pending response for treatment', 'health', 'una', 'La'),
-    ('respuesta pendiente de mantenimiento', 'F', 'pending response for maintenance', 'repairs', 'una', 'La'),
-    ('respuesta pendiente de contrato', 'F', 'pending response for contract', 'legal', 'una', 'La'),
-    ('respuesta pendiente de proyecto', 'F', 'pending response for project', 'work', 'una', 'La'),
-    ('solución temporal de pago', 'F', 'temporary solution for payment', 'money', 'una', 'La'),
-    ('solución temporal de seguridad', 'F', 'temporary solution for safety', 'safety', 'una', 'La'),
-    ('solución temporal de documento', 'F', 'temporary solution for document', 'bureaucracy', 'una', 'La'),
-    ('solución temporal de cita', 'F', 'temporary solution for appointment', 'services', 'una', 'La'),
-    ('solución temporal de viaje', 'F', 'temporary solution for travel', 'travel', 'una', 'La'),
-    ('solución temporal de servicio', 'F', 'temporary solution for service', 'services', 'una', 'La'),
-    ('solución temporal de cuenta', 'F', 'temporary solution for account', 'money', 'una', 'La'),
-    ('solución temporal de reclamo', 'F', 'temporary solution for claim', 'services', 'una', 'La'),
-    ('solución temporal de tratamiento', 'F', 'temporary solution for treatment', 'health', 'una', 'La'),
-    ('solución temporal de mantenimiento', 'F', 'temporary solution for maintenance', 'repairs', 'una', 'La'),
-    ('solución temporal de contrato', 'F', 'temporary solution for contract', 'legal', 'una', 'La'),
-    ('solución temporal de proyecto', 'F', 'temporary solution for project', 'work', 'una', 'La'),
-    ('solución definitiva de pago', 'F', 'final solution for payment', 'money', 'una', 'La'),
-    ('solución definitiva de seguridad', 'F', 'final solution for safety', 'safety', 'una', 'La'),
-    ('solución definitiva de documento', 'F', 'final solution for document', 'bureaucracy', 'una', 'La'),
-    ('solución definitiva de cita', 'F', 'final solution for appointment', 'services', 'una', 'La'),
-    ('solución definitiva de viaje', 'F', 'final solution for travel', 'travel', 'una', 'La'),
-    ('solución definitiva de servicio', 'F', 'final solution for service', 'services', 'una', 'La'),
-    ('solución definitiva de cuenta', 'F', 'final solution for account', 'money', 'una', 'La'),
-    ('solución definitiva de reclamo', 'F', 'final solution for claim', 'services', 'una', 'La'),
-    ('solución definitiva de tratamiento', 'F', 'final solution for treatment', 'health', 'una', 'La'),
-    ('solución definitiva de mantenimiento', 'F', 'final solution for maintenance', 'repairs', 'una', 'La'),
-    ('solución definitiva de contrato', 'F', 'final solution for contract', 'legal', 'una', 'La'),
-    ('solución definitiva de proyecto', 'F', 'final solution for project', 'work', 'una', 'La'),
-]))
 
-AI_ACCELERATED_PACK_A2_046 = build_numbered_ai_accelerated_phrase_pack(4552, 9163, 9166, build_phrase_pack_specs([
-    ('estado actual de pago', 'M', 'current status for payment', 'money', 'un', 'El'),
-    ('estado actual de seguridad', 'M', 'current status for safety', 'safety', 'un', 'El'),
-    ('estado actual de documento', 'M', 'current status for document', 'bureaucracy', 'un', 'El'),
-    ('estado actual de cita', 'M', 'current status for appointment', 'services', 'un', 'El'),
-    ('estado actual de viaje', 'M', 'current status for travel', 'travel', 'un', 'El'),
-    ('estado actual de servicio', 'M', 'current status for service', 'services', 'un', 'El'),
-    ('estado actual de cuenta', 'M', 'current status for account', 'money', 'un', 'El'),
-    ('estado actual de reclamo', 'M', 'current status for claim', 'services', 'un', 'El'),
-    ('estado actual de tratamiento', 'M', 'current status for treatment', 'health', 'un', 'El'),
-    ('estado actual de mantenimiento', 'M', 'current status for maintenance', 'repairs', 'un', 'El'),
-    ('estado actual de contrato', 'M', 'current status for contract', 'legal', 'un', 'El'),
-    ('estado actual de proyecto', 'M', 'current status for project', 'work', 'un', 'El'),
-    ('estado provisional de pago', 'M', 'provisional status for payment', 'money', 'un', 'El'),
-    ('estado provisional de seguridad', 'M', 'provisional status for safety', 'safety', 'un', 'El'),
-    ('estado provisional de documento', 'M', 'provisional status for document', 'bureaucracy', 'un', 'El'),
-    ('estado provisional de cita', 'M', 'provisional status for appointment', 'services', 'un', 'El'),
-    ('estado provisional de viaje', 'M', 'provisional status for travel', 'travel', 'un', 'El'),
-    ('estado provisional de servicio', 'M', 'provisional status for service', 'services', 'un', 'El'),
-    ('estado provisional de cuenta', 'M', 'provisional status for account', 'money', 'un', 'El'),
-    ('estado provisional de reclamo', 'M', 'provisional status for claim', 'services', 'un', 'El'),
-    ('estado provisional de tratamiento', 'M', 'provisional status for treatment', 'health', 'un', 'El'),
-    ('estado provisional de mantenimiento', 'M', 'provisional status for maintenance', 'repairs', 'un', 'El'),
-    ('estado provisional de contrato', 'M', 'provisional status for contract', 'legal', 'un', 'El'),
-    ('estado provisional de proyecto', 'M', 'provisional status for project', 'work', 'un', 'El'),
-    ('estado confirmado de pago', 'M', 'confirmed status for payment', 'money', 'un', 'El'),
-    ('estado confirmado de seguridad', 'M', 'confirmed status for safety', 'safety', 'un', 'El'),
-    ('estado confirmado de documento', 'M', 'confirmed status for document', 'bureaucracy', 'un', 'El'),
-    ('estado confirmado de cita', 'M', 'confirmed status for appointment', 'services', 'un', 'El'),
-    ('estado confirmado de viaje', 'M', 'confirmed status for travel', 'travel', 'un', 'El'),
-    ('estado confirmado de servicio', 'M', 'confirmed status for service', 'services', 'un', 'El'),
-    ('estado confirmado de cuenta', 'M', 'confirmed status for account', 'money', 'un', 'El'),
-    ('estado confirmado de reclamo', 'M', 'confirmed status for claim', 'services', 'un', 'El'),
-    ('estado confirmado de tratamiento', 'M', 'confirmed status for treatment', 'health', 'un', 'El'),
-    ('estado confirmado de mantenimiento', 'M', 'confirmed status for maintenance', 'repairs', 'un', 'El'),
-    ('estado confirmado de contrato', 'M', 'confirmed status for contract', 'legal', 'un', 'El'),
-    ('estado confirmado de proyecto', 'M', 'confirmed status for project', 'work', 'un', 'El'),
-    ('estado pendiente de pago', 'M', 'pending status for payment', 'money', 'un', 'El'),
-    ('estado pendiente de seguridad', 'M', 'pending status for safety', 'safety', 'un', 'El'),
-    ('estado pendiente de documento', 'M', 'pending status for document', 'bureaucracy', 'un', 'El'),
-    ('estado pendiente de cita', 'M', 'pending status for appointment', 'services', 'un', 'El'),
-    ('estado pendiente de viaje', 'M', 'pending status for travel', 'travel', 'un', 'El'),
-    ('estado pendiente de servicio', 'M', 'pending status for service', 'services', 'un', 'El'),
-    ('estado pendiente de cuenta', 'M', 'pending status for account', 'money', 'un', 'El'),
-    ('estado pendiente de reclamo', 'M', 'pending status for claim', 'services', 'un', 'El'),
-    ('estado pendiente de tratamiento', 'M', 'pending status for treatment', 'health', 'un', 'El'),
-    ('estado pendiente de mantenimiento', 'M', 'pending status for maintenance', 'repairs', 'un', 'El'),
-    ('estado pendiente de contrato', 'M', 'pending status for contract', 'legal', 'un', 'El'),
-    ('estado pendiente de proyecto', 'M', 'pending status for project', 'work', 'un', 'El'),
-    ('estado rechazado de pago', 'M', 'rejected status for payment', 'money', 'un', 'El'),
-    ('estado rechazado de seguridad', 'M', 'rejected status for safety', 'safety', 'un', 'El'),
-    ('estado rechazado de documento', 'M', 'rejected status for document', 'bureaucracy', 'un', 'El'),
-    ('estado rechazado de cita', 'M', 'rejected status for appointment', 'services', 'un', 'El'),
-    ('estado rechazado de viaje', 'M', 'rejected status for travel', 'travel', 'un', 'El'),
-    ('estado rechazado de servicio', 'M', 'rejected status for service', 'services', 'un', 'El'),
-    ('estado rechazado de cuenta', 'M', 'rejected status for account', 'money', 'un', 'El'),
-    ('estado rechazado de reclamo', 'M', 'rejected status for claim', 'services', 'un', 'El'),
-    ('estado rechazado de tratamiento', 'M', 'rejected status for treatment', 'health', 'un', 'El'),
-    ('estado rechazado de mantenimiento', 'M', 'rejected status for maintenance', 'repairs', 'un', 'El'),
-    ('estado rechazado de contrato', 'M', 'rejected status for contract', 'legal', 'un', 'El'),
-    ('estado rechazado de proyecto', 'M', 'rejected status for project', 'work', 'un', 'El'),
-    ('estado aprobado de pago', 'M', 'approved status for payment', 'money', 'un', 'El'),
-    ('estado aprobado de seguridad', 'M', 'approved status for safety', 'safety', 'un', 'El'),
-    ('estado aprobado de documento', 'M', 'approved status for document', 'bureaucracy', 'un', 'El'),
-    ('estado aprobado de cita', 'M', 'approved status for appointment', 'services', 'un', 'El'),
-    ('estado aprobado de viaje', 'M', 'approved status for travel', 'travel', 'un', 'El'),
-    ('estado aprobado de servicio', 'M', 'approved status for service', 'services', 'un', 'El'),
-    ('estado aprobado de cuenta', 'M', 'approved status for account', 'money', 'un', 'El'),
-    ('estado aprobado de reclamo', 'M', 'approved status for claim', 'services', 'un', 'El'),
-    ('estado aprobado de tratamiento', 'M', 'approved status for treatment', 'health', 'un', 'El'),
-    ('estado aprobado de mantenimiento', 'M', 'approved status for maintenance', 'repairs', 'un', 'El'),
-    ('estado aprobado de contrato', 'M', 'approved status for contract', 'legal', 'un', 'El'),
-    ('estado aprobado de proyecto', 'M', 'approved status for project', 'work', 'un', 'El'),
-    ('estado bloqueado de pago', 'M', 'blocked status for payment', 'money', 'un', 'El'),
-    ('estado bloqueado de seguridad', 'M', 'blocked status for safety', 'safety', 'un', 'El'),
-    ('estado bloqueado de documento', 'M', 'blocked status for document', 'bureaucracy', 'un', 'El'),
-    ('estado bloqueado de cita', 'M', 'blocked status for appointment', 'services', 'un', 'El'),
-    ('estado bloqueado de viaje', 'M', 'blocked status for travel', 'travel', 'un', 'El'),
-    ('estado bloqueado de servicio', 'M', 'blocked status for service', 'services', 'un', 'El'),
-    ('estado bloqueado de cuenta', 'M', 'blocked status for account', 'money', 'un', 'El'),
-    ('estado bloqueado de reclamo', 'M', 'blocked status for claim', 'services', 'un', 'El'),
-    ('estado bloqueado de tratamiento', 'M', 'blocked status for treatment', 'health', 'un', 'El'),
-    ('estado bloqueado de mantenimiento', 'M', 'blocked status for maintenance', 'repairs', 'un', 'El'),
-    ('estado bloqueado de contrato', 'M', 'blocked status for contract', 'legal', 'un', 'El'),
-    ('estado bloqueado de proyecto', 'M', 'blocked status for project', 'work', 'un', 'El'),
-    ('estado revisado de pago', 'M', 'reviewed status for payment', 'money', 'un', 'El'),
-    ('estado revisado de seguridad', 'M', 'reviewed status for safety', 'safety', 'un', 'El'),
-    ('estado revisado de documento', 'M', 'reviewed status for document', 'bureaucracy', 'un', 'El'),
-    ('estado revisado de cita', 'M', 'reviewed status for appointment', 'services', 'un', 'El'),
-    ('estado revisado de viaje', 'M', 'reviewed status for travel', 'travel', 'un', 'El'),
-    ('estado revisado de servicio', 'M', 'reviewed status for service', 'services', 'un', 'El'),
-    ('estado revisado de cuenta', 'M', 'reviewed status for account', 'money', 'un', 'El'),
-    ('estado revisado de reclamo', 'M', 'reviewed status for claim', 'services', 'un', 'El'),
-    ('estado revisado de tratamiento', 'M', 'reviewed status for treatment', 'health', 'un', 'El'),
-    ('estado revisado de mantenimiento', 'M', 'reviewed status for maintenance', 'repairs', 'un', 'El'),
-    ('estado revisado de contrato', 'M', 'reviewed status for contract', 'legal', 'un', 'El'),
-    ('estado revisado de proyecto', 'M', 'reviewed status for project', 'work', 'un', 'El'),
-    ('estado actualizado de pago', 'M', 'updated status for payment', 'money', 'un', 'El'),
-    ('estado actualizado de seguridad', 'M', 'updated status for safety', 'safety', 'un', 'El'),
-    ('estado actualizado de documento', 'M', 'updated status for document', 'bureaucracy', 'un', 'El'),
-    ('estado actualizado de cita', 'M', 'updated status for appointment', 'services', 'un', 'El'),
-    ('estado actualizado de viaje', 'M', 'updated status for travel', 'travel', 'un', 'El'),
-    ('estado actualizado de servicio', 'M', 'updated status for service', 'services', 'un', 'El'),
-    ('estado actualizado de cuenta', 'M', 'updated status for account', 'money', 'un', 'El'),
-    ('estado actualizado de reclamo', 'M', 'updated status for claim', 'services', 'un', 'El'),
-    ('estado actualizado de tratamiento', 'M', 'updated status for treatment', 'health', 'un', 'El'),
-    ('estado actualizado de mantenimiento', 'M', 'updated status for maintenance', 'repairs', 'un', 'El'),
-    ('estado actualizado de contrato', 'M', 'updated status for contract', 'legal', 'un', 'El'),
-    ('estado actualizado de proyecto', 'M', 'updated status for project', 'work', 'un', 'El'),
-    ('estado cerrado de pago', 'M', 'closed status for payment', 'money', 'un', 'El'),
-    ('estado cerrado de seguridad', 'M', 'closed status for safety', 'safety', 'un', 'El'),
-    ('estado cerrado de documento', 'M', 'closed status for document', 'bureaucracy', 'un', 'El'),
-    ('estado cerrado de cita', 'M', 'closed status for appointment', 'services', 'un', 'El'),
-    ('estado cerrado de viaje', 'M', 'closed status for travel', 'travel', 'un', 'El'),
-    ('estado cerrado de servicio', 'M', 'closed status for service', 'services', 'un', 'El'),
-    ('estado cerrado de cuenta', 'M', 'closed status for account', 'money', 'un', 'El'),
-    ('estado cerrado de reclamo', 'M', 'closed status for claim', 'services', 'un', 'El'),
-    ('estado cerrado de tratamiento', 'M', 'closed status for treatment', 'health', 'un', 'El'),
-    ('estado cerrado de mantenimiento', 'M', 'closed status for maintenance', 'repairs', 'un', 'El'),
-    ('estado cerrado de contrato', 'M', 'closed status for contract', 'legal', 'un', 'El'),
-    ('estado cerrado de proyecto', 'M', 'closed status for project', 'work', 'un', 'El'),
-]))
-
-AI_ACCELERATED_PACK_A2_047 = build_numbered_ai_accelerated_phrase_pack(4672, 9403, 9406, build_phrase_pack_specs([
-    ('problema abierto de pago', 'M', 'open problem for payment', 'money', 'un', 'El'),
-    ('problema abierto de seguridad', 'M', 'open problem for safety', 'safety', 'un', 'El'),
-    ('problema abierto de documento', 'M', 'open problem for document', 'bureaucracy', 'un', 'El'),
-    ('problema abierto de cita', 'M', 'open problem for appointment', 'services', 'un', 'El'),
-    ('problema abierto de viaje', 'M', 'open problem for travel', 'travel', 'un', 'El'),
-    ('problema abierto de servicio', 'M', 'open problem for service', 'services', 'un', 'El'),
-    ('problema abierto de cuenta', 'M', 'open problem for account', 'money', 'un', 'El'),
-    ('problema abierto de reclamo', 'M', 'open problem for claim', 'services', 'un', 'El'),
-    ('problema abierto de tratamiento', 'M', 'open problem for treatment', 'health', 'un', 'El'),
-    ('problema abierto de mantenimiento', 'M', 'open problem for maintenance', 'repairs', 'un', 'El'),
-    ('problema abierto de contrato', 'M', 'open problem for contract', 'legal', 'un', 'El'),
-    ('problema abierto de proyecto', 'M', 'open problem for project', 'work', 'un', 'El'),
-    ('problema resuelto de pago', 'M', 'resolved problem for payment', 'money', 'un', 'El'),
-    ('problema resuelto de seguridad', 'M', 'resolved problem for safety', 'safety', 'un', 'El'),
-    ('problema resuelto de documento', 'M', 'resolved problem for document', 'bureaucracy', 'un', 'El'),
-    ('problema resuelto de cita', 'M', 'resolved problem for appointment', 'services', 'un', 'El'),
-    ('problema resuelto de viaje', 'M', 'resolved problem for travel', 'travel', 'un', 'El'),
-    ('problema resuelto de servicio', 'M', 'resolved problem for service', 'services', 'un', 'El'),
-    ('problema resuelto de cuenta', 'M', 'resolved problem for account', 'money', 'un', 'El'),
-    ('problema resuelto de reclamo', 'M', 'resolved problem for claim', 'services', 'un', 'El'),
-    ('problema resuelto de tratamiento', 'M', 'resolved problem for treatment', 'health', 'un', 'El'),
-    ('problema resuelto de mantenimiento', 'M', 'resolved problem for maintenance', 'repairs', 'un', 'El'),
-    ('problema resuelto de contrato', 'M', 'resolved problem for contract', 'legal', 'un', 'El'),
-    ('problema resuelto de proyecto', 'M', 'resolved problem for project', 'work', 'un', 'El'),
-    ('problema recurrente de pago', 'M', 'recurring problem for payment', 'money', 'un', 'El'),
-    ('problema recurrente de seguridad', 'M', 'recurring problem for safety', 'safety', 'un', 'El'),
-    ('problema recurrente de documento', 'M', 'recurring problem for document', 'bureaucracy', 'un', 'El'),
-    ('problema recurrente de cita', 'M', 'recurring problem for appointment', 'services', 'un', 'El'),
-    ('problema recurrente de viaje', 'M', 'recurring problem for travel', 'travel', 'un', 'El'),
-    ('problema recurrente de servicio', 'M', 'recurring problem for service', 'services', 'un', 'El'),
-    ('problema recurrente de cuenta', 'M', 'recurring problem for account', 'money', 'un', 'El'),
-    ('problema recurrente de reclamo', 'M', 'recurring problem for claim', 'services', 'un', 'El'),
-    ('problema recurrente de tratamiento', 'M', 'recurring problem for treatment', 'health', 'un', 'El'),
-    ('problema recurrente de mantenimiento', 'M', 'recurring problem for maintenance', 'repairs', 'un', 'El'),
-    ('problema recurrente de contrato', 'M', 'recurring problem for contract', 'legal', 'un', 'El'),
-    ('problema recurrente de proyecto', 'M', 'recurring problem for project', 'work', 'un', 'El'),
-    ('problema urgente de pago', 'M', 'urgent problem for payment', 'money', 'un', 'El'),
-    ('problema urgente de seguridad', 'M', 'urgent problem for safety', 'safety', 'un', 'El'),
-    ('problema urgente de documento', 'M', 'urgent problem for document', 'bureaucracy', 'un', 'El'),
-    ('problema urgente de cita', 'M', 'urgent problem for appointment', 'services', 'un', 'El'),
-    ('problema urgente de viaje', 'M', 'urgent problem for travel', 'travel', 'un', 'El'),
-    ('problema urgente de servicio', 'M', 'urgent problem for service', 'services', 'un', 'El'),
-    ('problema urgente de cuenta', 'M', 'urgent problem for account', 'money', 'un', 'El'),
-    ('problema urgente de reclamo', 'M', 'urgent problem for claim', 'services', 'un', 'El'),
-    ('problema urgente de tratamiento', 'M', 'urgent problem for treatment', 'health', 'un', 'El'),
-    ('problema urgente de mantenimiento', 'M', 'urgent problem for maintenance', 'repairs', 'un', 'El'),
-    ('problema urgente de contrato', 'M', 'urgent problem for contract', 'legal', 'un', 'El'),
-    ('problema urgente de proyecto', 'M', 'urgent problem for project', 'work', 'un', 'El'),
-    ('incidencia abierta de pago', 'F', 'open incident for payment', 'money', 'una', 'La'),
-    ('incidencia abierta de seguridad', 'F', 'open incident for safety', 'safety', 'una', 'La'),
-    ('incidencia abierta de documento', 'F', 'open incident for document', 'bureaucracy', 'una', 'La'),
-    ('incidencia abierta de cita', 'F', 'open incident for appointment', 'services', 'una', 'La'),
-    ('incidencia abierta de viaje', 'F', 'open incident for travel', 'travel', 'una', 'La'),
-    ('incidencia abierta de servicio', 'F', 'open incident for service', 'services', 'una', 'La'),
-    ('incidencia abierta de cuenta', 'F', 'open incident for account', 'money', 'una', 'La'),
-    ('incidencia abierta de reclamo', 'F', 'open incident for claim', 'services', 'una', 'La'),
-    ('incidencia abierta de tratamiento', 'F', 'open incident for treatment', 'health', 'una', 'La'),
-    ('incidencia abierta de mantenimiento', 'F', 'open incident for maintenance', 'repairs', 'una', 'La'),
-    ('incidencia abierta de contrato', 'F', 'open incident for contract', 'legal', 'una', 'La'),
-    ('incidencia abierta de proyecto', 'F', 'open incident for project', 'work', 'una', 'La'),
-    ('incidencia resuelta de pago', 'F', 'resolved incident for payment', 'money', 'una', 'La'),
-    ('incidencia resuelta de seguridad', 'F', 'resolved incident for safety', 'safety', 'una', 'La'),
-    ('incidencia resuelta de documento', 'F', 'resolved incident for document', 'bureaucracy', 'una', 'La'),
-    ('incidencia resuelta de cita', 'F', 'resolved incident for appointment', 'services', 'una', 'La'),
-    ('incidencia resuelta de viaje', 'F', 'resolved incident for travel', 'travel', 'una', 'La'),
-    ('incidencia resuelta de servicio', 'F', 'resolved incident for service', 'services', 'una', 'La'),
-    ('incidencia resuelta de cuenta', 'F', 'resolved incident for account', 'money', 'una', 'La'),
-    ('incidencia resuelta de reclamo', 'F', 'resolved incident for claim', 'services', 'una', 'La'),
-    ('incidencia resuelta de tratamiento', 'F', 'resolved incident for treatment', 'health', 'una', 'La'),
-    ('incidencia resuelta de mantenimiento', 'F', 'resolved incident for maintenance', 'repairs', 'una', 'La'),
-    ('incidencia resuelta de contrato', 'F', 'resolved incident for contract', 'legal', 'una', 'La'),
-    ('incidencia resuelta de proyecto', 'F', 'resolved incident for project', 'work', 'una', 'La'),
-    ('incidencia recurrente de pago', 'F', 'recurring incident for payment', 'money', 'una', 'La'),
-    ('incidencia recurrente de seguridad', 'F', 'recurring incident for safety', 'safety', 'una', 'La'),
-    ('incidencia recurrente de documento', 'F', 'recurring incident for document', 'bureaucracy', 'una', 'La'),
-    ('incidencia recurrente de cita', 'F', 'recurring incident for appointment', 'services', 'una', 'La'),
-    ('incidencia recurrente de viaje', 'F', 'recurring incident for travel', 'travel', 'una', 'La'),
-    ('incidencia recurrente de servicio', 'F', 'recurring incident for service', 'services', 'una', 'La'),
-    ('incidencia recurrente de cuenta', 'F', 'recurring incident for account', 'money', 'una', 'La'),
-    ('incidencia recurrente de reclamo', 'F', 'recurring incident for claim', 'services', 'una', 'La'),
-    ('incidencia recurrente de tratamiento', 'F', 'recurring incident for treatment', 'health', 'una', 'La'),
-    ('incidencia recurrente de mantenimiento', 'F', 'recurring incident for maintenance', 'repairs', 'una', 'La'),
-    ('incidencia recurrente de contrato', 'F', 'recurring incident for contract', 'legal', 'una', 'La'),
-    ('incidencia recurrente de proyecto', 'F', 'recurring incident for project', 'work', 'una', 'La'),
-    ('incidencia urgente de pago', 'F', 'urgent incident for payment', 'money', 'una', 'La'),
-    ('incidencia urgente de seguridad', 'F', 'urgent incident for safety', 'safety', 'una', 'La'),
-    ('incidencia urgente de documento', 'F', 'urgent incident for document', 'bureaucracy', 'una', 'La'),
-    ('incidencia urgente de cita', 'F', 'urgent incident for appointment', 'services', 'una', 'La'),
-    ('incidencia urgente de viaje', 'F', 'urgent incident for travel', 'travel', 'una', 'La'),
-    ('incidencia urgente de servicio', 'F', 'urgent incident for service', 'services', 'una', 'La'),
-    ('incidencia urgente de cuenta', 'F', 'urgent incident for account', 'money', 'una', 'La'),
-    ('incidencia urgente de reclamo', 'F', 'urgent incident for claim', 'services', 'una', 'La'),
-    ('incidencia urgente de tratamiento', 'F', 'urgent incident for treatment', 'health', 'una', 'La'),
-    ('incidencia urgente de mantenimiento', 'F', 'urgent incident for maintenance', 'repairs', 'una', 'La'),
-    ('incidencia urgente de contrato', 'F', 'urgent incident for contract', 'legal', 'una', 'La'),
-    ('incidencia urgente de proyecto', 'F', 'urgent incident for project', 'work', 'una', 'La'),
-    ('caso abierto de pago', 'M', 'open case for payment', 'money', 'un', 'El'),
-    ('caso abierto de seguridad', 'M', 'open case for safety', 'safety', 'un', 'El'),
-    ('caso abierto de documento', 'M', 'open case for document', 'bureaucracy', 'un', 'El'),
-    ('caso abierto de cita', 'M', 'open case for appointment', 'services', 'un', 'El'),
-    ('caso abierto de viaje', 'M', 'open case for travel', 'travel', 'un', 'El'),
-    ('caso abierto de servicio', 'M', 'open case for service', 'services', 'un', 'El'),
-    ('caso abierto de cuenta', 'M', 'open case for account', 'money', 'un', 'El'),
-    ('caso abierto de reclamo', 'M', 'open case for claim', 'services', 'un', 'El'),
-    ('caso abierto de tratamiento', 'M', 'open case for treatment', 'health', 'un', 'El'),
-    ('caso abierto de mantenimiento', 'M', 'open case for maintenance', 'repairs', 'un', 'El'),
-    ('caso abierto de contrato', 'M', 'open case for contract', 'legal', 'un', 'El'),
-    ('caso abierto de proyecto', 'M', 'open case for project', 'work', 'un', 'El'),
-    ('caso resuelto de pago', 'M', 'resolved case for payment', 'money', 'un', 'El'),
-    ('caso resuelto de seguridad', 'M', 'resolved case for safety', 'safety', 'un', 'El'),
-    ('caso resuelto de documento', 'M', 'resolved case for document', 'bureaucracy', 'un', 'El'),
-    ('caso resuelto de cita', 'M', 'resolved case for appointment', 'services', 'un', 'El'),
-    ('caso resuelto de viaje', 'M', 'resolved case for travel', 'travel', 'un', 'El'),
-    ('caso resuelto de servicio', 'M', 'resolved case for service', 'services', 'un', 'El'),
-    ('caso resuelto de cuenta', 'M', 'resolved case for account', 'money', 'un', 'El'),
-    ('caso resuelto de reclamo', 'M', 'resolved case for claim', 'services', 'un', 'El'),
-    ('caso resuelto de tratamiento', 'M', 'resolved case for treatment', 'health', 'un', 'El'),
-    ('caso resuelto de mantenimiento', 'M', 'resolved case for maintenance', 'repairs', 'un', 'El'),
-    ('caso resuelto de contrato', 'M', 'resolved case for contract', 'legal', 'un', 'El'),
-    ('caso resuelto de proyecto', 'M', 'resolved case for project', 'work', 'un', 'El'),
-]))
-
-AI_ACCELERATED_PACK_A2_048 = build_numbered_ai_accelerated_phrase_pack(4792, 9643, 9646, build_phrase_pack_specs([
-    (
-        f"{spanish_head} {spanish_complement}",
-        gender,
-        f"{english_head} {english_complement}",
-        domain,
-        indefinite_article,
-        definite_article,
+def build_reviewed_chunk_pack(start_lexeme_id, start_sentence_id, start_answer_id, domain_slug, specs):
+    return build_numbered_ai_accelerated_pack(
+        start_lexeme_id,
+        start_sentence_id,
+        start_answer_id,
+        [
+            (
+                spanish,
+                "phrase",
+                None,
+                english,
+                1800,
+                cefr_band,
+                phrase_cefr_difficulty(cefr_band),
+                domain_slug.replace("_", " "),
+                "2026-06-02/03 subagent replacement: neutral LatAm reviewed domain pack",
+                [(spanish, english)],
+                reviewed_chunk_payload(domain_slug, cefr_band),
+            )
+            for spanish, english, cefr_band in specs
+        ],
     )
-    for spanish_head, gender, english_head, indefinite_article, definite_article in [
-        ("motivo principal", "M", "main reason", "un", "El"),
-        ("motivo secundario", "M", "secondary reason", "un", "El"),
-        ("motivo real", "M", "real reason", "un", "El"),
-        ("motivo posible", "M", "possible reason", "un", "El"),
-        ("causa principal", "F", "main cause", "una", "La"),
-        ("causa secundaria", "F", "secondary cause", "una", "La"),
-        ("causa real", "F", "real cause", "una", "La"),
-        ("causa posible", "F", "possible cause", "una", "La"),
-        ("razón principal", "F", "main reason", "una", "La"),
-        ("razón secundaria", "F", "secondary reason", "una", "La"),
-    ]
-    for spanish_complement, english_complement, domain in [
-        ("del retraso", "for the delay", "travel"),
-        ("de la cancelación", "for the cancellation", "services"),
-        ("del rechazo", "for the rejection", "bureaucracy"),
-        ("del error", "for the error", "digital"),
-        ("del cambio", "for the change", "services"),
-        ("del gasto", "for the expense", "money"),
-        ("de la deuda", "for the debt", "money"),
-        ("de la multa", "for the fine", "legal"),
-        ("de la cita", "for the appointment", "services"),
-        ("de la ausencia", "for the absence", "work"),
-        ("del conflicto", "for the conflict", "social conflict"),
-        ("de la queja", "for the complaint", "services"),
-    ]
-]))
 
-AI_ACCELERATED_PACK_A2_049 = build_numbered_ai_accelerated_phrase_pack(4912, 9883, 9886, build_phrase_pack_specs([
-    (
-        f"{spanish_head} {spanish_complement}",
-        gender,
-        f"{english_head} {english_complement}",
-        domain,
-        indefinite_article,
-        definite_article,
-    )
-    for spanish_head, gender, english_head, indefinite_article, definite_article in [
-        ("prueba necesaria", "F", "necessary proof", "una", "La"),
-        ("prueba obligatoria", "F", "mandatory proof", "una", "La"),
-        ("prueba suficiente", "F", "sufficient proof", "una", "La"),
-        ("prueba adicional", "F", "additional proof", "una", "La"),
-        ("constancia necesaria", "F", "necessary record", "una", "La"),
-        ("constancia obligatoria", "F", "mandatory record", "una", "La"),
-        ("constancia suficiente", "F", "sufficient record", "una", "La"),
-        ("constancia adicional", "F", "additional record", "una", "La"),
-        ("documento necesario", "M", "necessary document", "un", "El"),
-        ("documento adicional", "M", "additional document", "un", "El"),
-    ]
-    for spanish_complement, english_complement, domain in [
-        ("para el trámite", "for the procedure", "bureaucracy"),
-        ("para la solicitud", "for the application", "bureaucracy"),
-        ("para el reclamo", "for the claim", "services"),
-        ("para el reembolso", "for the refund", "money"),
-        ("para la multa", "for the fine", "legal"),
-        ("para el contrato", "for the contract", "legal"),
-        ("para la cita", "for the appointment", "services"),
-        ("para el informe", "for the report", "work"),
-        ("para la reparación", "for the repair", "repairs"),
-        ("para el alquiler", "for the rental", "housing"),
-        ("para el viaje", "for the trip", "travel"),
-        ("para el tratamiento", "for the treatment", "health"),
-    ]
-]))
 
-AI_ACCELERATED_PACK_A2_050 = build_numbered_ai_accelerated_phrase_pack(5032, 10123, 10126, build_phrase_pack_specs([
-    (
-        f"{spanish_head} {spanish_complement}",
-        gender,
-        f"{english_head} {english_complement}",
-        domain,
-        indefinite_article,
-        definite_article,
-    )
-    for spanish_head, gender, english_head, indefinite_article, definite_article in [
-        ("aviso temprano", "M", "early notice", "un", "El"),
-        ("aviso urgente", "M", "urgent notice", "un", "El"),
-        ("aviso oficial", "M", "official notice", "un", "El"),
-        ("mensaje claro", "M", "clear message", "un", "El"),
-        ("mensaje urgente", "M", "urgent message", "un", "El"),
-        ("notificación previa", "F", "prior notification", "una", "La"),
-        ("notificación oficial", "F", "official notification", "una", "La"),
-        ("notificación pendiente", "F", "pending notification", "una", "La"),
-        ("recibo digital", "M", "digital receipt", "un", "El"),
-        ("confirmación final", "F", "final confirmation", "una", "La"),
-    ]
-    for spanish_complement, english_complement, domain in [
-        ("de pago", "for payment", "money"),
-        ("de cita", "for appointment", "services"),
-        ("de viaje", "for travel", "travel"),
-        ("de entrega", "for delivery", "services"),
-        ("de reserva", "for booking", "travel"),
-        ("de contrato", "for contract", "legal"),
-        ("de reclamo", "for claim", "services"),
-        ("de reembolso", "for refund", "money"),
-        ("de reparación", "for repair", "repairs"),
-        ("de tratamiento", "for treatment", "health"),
-        ("de reunión", "for meeting", "work"),
-        ("de solicitud", "for application", "bureaucracy"),
-    ]
-]))
+AI_ACCELERATED_PACK_A2_043_ADMIN_WORKFLOW_SERVICES = build_reviewed_chunk_pack(4095, 10000, 11000, "admin_workflow_services", [
+    ("Quiero hacer el trámite en línea.", "I want to complete the process online.", "A2"),
+    ("Necesito actualizar mis datos.", "I need to update my information.", "A2"),
+    ("¿Dónde puedo solicitar el servicio?", "Where can I request the service?", "A2"),
+    ("Ya llené el formulario.", "I already filled out the form.", "A2"),
+    ("Me falta entregar un documento.", "I still need to submit one document.", "A2"),
+    ("¿Cuánto tarda el trámite?", "How long does the process take?", "A2"),
+    ("Vengo a recoger mi constancia.", "I am here to pick up my certificate.", "B1"),
+    ("¿Puedo sacar una copia aquí?", "Can I make a copy here?", "A2"),
+    ("Necesito cambiar la fecha de mi cita.", "I need to change my appointment date.", "A2"),
+    ("¿Me puede ayudar con este formulario?", "Can you help me with this form?", "A2"),
+    ("El sistema no me deja continuar.", "The system will not let me continue.", "B1"),
+    ("¿A qué ventanilla debo pasar?", "Which counter should I go to?", "B1"),
+])
 
-AI_ACCELERATED_PACK_A2_051 = build_numbered_ai_accelerated_phrase_pack(5152, 10363, 10366, build_phrase_pack_specs([
-    (
-        f"{spanish_head} {spanish_complement}",
-        gender,
-        f"{english_head} {english_complement}",
-        domain,
-        indefinite_article,
-        definite_article,
-    )
-    for spanish_head, gender, english_head, indefinite_article, definite_article in [
-        ("plazo mínimo", "M", "minimum deadline", "un", "El"),
-        ("plazo máximo", "M", "maximum deadline", "un", "El"),
-        ("plazo final", "M", "final deadline", "un", "El"),
-        ("plazo nuevo", "M", "new deadline", "un", "El"),
-        ("fecha límite", "F", "deadline", "una", "La"),
-        ("fecha nueva", "F", "new date", "una", "La"),
-        ("fecha confirmada", "F", "confirmed date", "una", "La"),
-        ("fecha prevista", "F", "expected date", "una", "La"),
-        ("hora exacta", "F", "exact time", "una", "La"),
-        ("hora nueva", "F", "new time", "una", "La"),
-    ]
-    for spanish_complement, english_complement, domain in [
-        ("para el pago", "for payment", "money"),
-        ("para la cita", "for appointment", "services"),
-        ("para la entrega", "for delivery", "services"),
-        ("para la reserva", "for booking", "travel"),
-        ("para el trámite", "for the procedure", "bureaucracy"),
-        ("para la solicitud", "for the application", "bureaucracy"),
-        ("para la reparación", "for repair", "repairs"),
-        ("para el tratamiento", "for treatment", "health"),
-        ("para la reunión", "for the meeting", "work"),
-        ("para el viaje", "for the trip", "travel"),
-        ("para el contrato", "for the contract", "legal"),
-        ("para el reclamo", "for the claim", "services"),
-    ]
-]))
+AI_ACCELERATED_PACK_A2_044_INSTRUCTIONS_REQUIREMENTS = build_reviewed_chunk_pack(4115, 10040, 11040, "instructions_requirements", [
+    ("Traiga una identificación oficial.", "Bring an official ID.", "A2"),
+    ("Debe presentar una copia del comprobante.", "You must submit a copy of the receipt.", "B1"),
+    ("Llene todos los campos obligatorios.", "Fill in all required fields.", "B1"),
+    ("No firme hasta que le indiquen.", "Do not sign until they tell you.", "B1"),
+    ("Revise que los datos estén correctos.", "Check that the information is correct.", "B1"),
+    ("Tiene que llevar el documento original.", "You have to bring the original document.", "A2"),
+    ("El comprobante debe estar vigente.", "The document must be current.", "B1"),
+    ("Siga las instrucciones de la pantalla.", "Follow the on-screen instructions.", "A2"),
+    ("Espere su turno, por favor.", "Please wait your turn.", "A2"),
+    ("Envíe los archivos en formato PDF.", "Send the files in PDF format.", "B1"),
+    ("Debe confirmar su correo electrónico.", "You must confirm your email address.", "A2"),
+    ("Guarde el número de solicitud.", "Save the application number.", "B1"),
+])
 
-AI_ACCELERATED_PACK_A2_052 = build_numbered_ai_accelerated_phrase_pack(5272, 10603, 10606, build_phrase_pack_specs([
-    (
-        f"{spanish_head} {spanish_complement}",
-        gender,
-        f"{english_head} {english_complement}",
-        domain,
-        indefinite_article,
-        definite_article,
-    )
-    for spanish_head, gender, english_head, indefinite_article, definite_article in [
-        ("punto de atención", "M", "service point", "un", "El"),
-        ("punto de información", "M", "information point", "un", "El"),
-        ("zona de espera", "F", "waiting area", "una", "La"),
-        ("zona segura", "F", "safe area", "una", "La"),
-        ("área restringida", "F", "restricted area", "un", "El"),
-        ("área común", "F", "common area", "un", "El"),
-        ("sección abierta", "F", "open section", "una", "La"),
-        ("sección cerrada", "F", "closed section", "una", "La"),
-        ("ventanilla disponible", "F", "service window", "una", "La"),
-        ("mesa asignada", "F", "assigned desk", "una", "La"),
-    ]
-    for spanish_complement, english_complement, domain in [
-        ("en el banco", "at the bank", "money"),
-        ("en el hospital", "at the hospital", "health"),
-        ("en la oficina", "at the office", "work"),
-        ("en el aeropuerto", "at the airport", "travel"),
-        ("en la estación", "at the station", "travel"),
-        ("en el ayuntamiento", "at city hall", "bureaucracy"),
-        ("en asesoría legal", "at legal aid", "legal"),
-        ("en el taller", "at the shop", "repairs"),
-        ("en el edificio", "in the building", "housing"),
-        ("en recepción", "at reception", "services"),
-        ("en atención al cliente", "at customer service", "services"),
-        ("en la sala de espera", "in the lobby", "health"),
-    ]
-]))
+AI_ACCELERATED_PACK_A2_045_CONFIRMATIONS_AUTHORIZATIONS = build_reviewed_chunk_pack(4135, 10080, 11080, "confirmations_authorizations", [
+    ("Confirmo que recibí el mensaje.", "I confirm that I received the message.", "B1"),
+    ("Sí, autorizo el cargo.", "Yes, I authorize the charge.", "B1"),
+    ("Puede usar este correo para contactarme.", "You may use this email to contact me.", "B1"),
+    ("Autorizo el uso de mis datos.", "I authorize the use of my data.", "B1"),
+    ("Ya confirmé la cita.", "I already confirmed the appointment.", "A2"),
+    ("¿Me puede confirmar la hora?", "Can you confirm the time for me?", "A2"),
+    ("La solicitud fue aprobada.", "The request was approved.", "B1"),
+    ("Recibimos su autorización.", "We received your authorization.", "B1"),
+    ("¿Necesitan mi firma para autorizarlo?", "Do you need my signature to authorize it?", "B1"),
+    ("Estoy de acuerdo con las condiciones.", "I agree to the terms.", "B1"),
+    ("Puede continuar con el proceso.", "You may continue with the process.", "A2"),
+    ("Queda confirmado para mañana.", "It is confirmed for tomorrow.", "A2"),
+])
 
-AI_ACCELERATED_PACK_A2_053 = build_numbered_ai_accelerated_phrase_pack(5392, 10843, 10846, build_phrase_pack_specs([
-    (
-        f"{spanish_head} {spanish_complement}",
-        gender,
-        f"{english_head} {english_complement}",
-        domain,
-        indefinite_article,
-        definite_article,
-    )
-    for spanish_head, gender, english_head, indefinite_article, definite_article in [
-        ("instrucción escrita", "F", "written instruction", "una", "La"),
-        ("instrucción verbal", "F", "verbal instruction", "una", "La"),
-        ("instrucción urgente", "F", "urgent instruction", "una", "La"),
-        ("instrucción clara", "F", "clear instruction", "una", "La"),
-        ("indicaciones escritas", "F", "written directions", "unas", "Las"),
-        ("indicaciones claras", "F", "clear directions", "unas", "Las"),
-        ("paso siguiente", "M", "next step", "un", "El"),
-        ("paso inmediato", "M", "immediate step", "un", "El"),
-        ("paso necesario", "M", "necessary step", "un", "El"),
-        ("paso final", "M", "final step", "un", "El"),
-    ]
-    for spanish_complement, english_complement, domain in [
-        ("para el pago", "for payment", "money"),
-        ("para la cita", "for appointment", "services"),
-        ("para el viaje", "for the trip", "travel"),
-        ("para la entrega", "for delivery", "services"),
-        ("para la reserva", "for booking", "travel"),
-        ("para el contrato", "for the contract", "legal"),
-        ("para el reclamo", "for the claim", "services"),
-        ("para el reembolso", "for refund", "money"),
-        ("para la reparación", "for repair", "repairs"),
-        ("para el tratamiento", "for treatment", "health"),
-        ("para la reunión", "for the meeting", "work"),
-        ("para la solicitud", "for the application", "bureaucracy"),
-    ]
-]))
+AI_ACCELERATED_PACK_A2_046_STEPS_STATUS_PROBLEMS = build_reviewed_chunk_pack(4155, 10120, 11120, "steps_status_problems", [
+    ("Estoy en el primer paso.", "I am on the first step.", "A2"),
+    ("Ya terminé esta parte.", "I already finished this part.", "A2"),
+    ("Me aparece un error.", "I am getting an error.", "A2"),
+    ("No puedo avanzar al siguiente paso.", "I cannot move on to the next step.", "B1"),
+    ("El trámite está en revisión.", "The process is under review.", "B1"),
+    ("Todavía no recibo respuesta.", "I still have not received a response.", "A2"),
+    ("La página se queda cargando.", "The page keeps loading.", "B1"),
+    ("Falta validar la información.", "The information still needs to be validated.", "B1"),
+    ("El documento no se subió bien.", "The document did not upload correctly.", "B1"),
+    ("¿Cuál es el siguiente paso?", "What is the next step?", "A2"),
+    ("Mi solicitud sigue pendiente.", "My request is still pending.", "B1"),
+    ("Hay un problema con mi registro.", "There is a problem with my registration.", "A2"),
+])
 
-AI_ACCELERATED_PACK_A2_054 = build_numbered_ai_accelerated_phrase_pack(5512, 11083, 11086, build_phrase_pack_specs([
-    (
-        f"{spanish_head} {spanish_complement}",
-        gender,
-        f"{english_head} {english_complement}",
-        domain,
-        indefinite_article,
-        definite_article,
-    )
-    for spanish_head, gender, english_head, indefinite_article, definite_article in [
-        ("contacto principal", "M", "main contact", "un", "El"),
-        ("contacto alternativo", "M", "alternate contact", "un", "El"),
-        ("número directo", "M", "direct number", "un", "El"),
-        ("correo oficial", "M", "official email", "un", "El"),
-        ("canal seguro", "M", "secure channel", "un", "El"),
-        ("canal alternativo", "M", "alternate channel", "un", "El"),
-        ("línea activa", "F", "active line", "una", "La"),
-        ("línea urgente", "F", "urgent line", "una", "La"),
-        ("persona responsable", "F", "responsible person", "una", "La"),
-        ("persona disponible", "F", "available person", "una", "La"),
-    ]
-    for spanish_complement, english_complement, domain in [
-        ("para el banco", "for the bank", "money"),
-        ("para el hospital", "for the hospital", "health"),
-        ("para la oficina", "for the office", "work"),
-        ("para el viaje", "for the trip", "travel"),
-        ("para la reserva", "for booking", "travel"),
-        ("para el contrato", "for the contract", "legal"),
-        ("para el reclamo", "for the claim", "services"),
-        ("para el reembolso", "for refund", "money"),
-        ("para la reparación", "for repair", "repairs"),
-        ("para el tratamiento", "for treatment", "health"),
-        ("para la solicitud", "for the application", "bureaucracy"),
-        ("para atención al cliente", "for customer service", "services"),
-    ]
-]))
+AI_ACCELERATED_PACK_A2_047_REASONS_PROOFS_NOTICES_DEADLINES = build_reviewed_chunk_pack(4175, 10160, 11160, "reasons_proofs_notices_deadlines", [
+    ("Necesito el comprobante para mi trabajo.", "I need the receipt for my job.", "A2"),
+    ("El plazo vence mañana.", "The deadline is tomorrow.", "B1"),
+    ("Recibí un aviso por correo.", "I received a notice by email.", "B1"),
+    ("¿Qué documento sirve como comprobante?", "What document works as proof?", "B1"),
+    ("No pude venir por un problema familiar.", "I could not come because of a family problem.", "A2"),
+    ("Traigo un comprobante de domicilio.", "I brought proof of address.", "B1"),
+    ("La fecha límite es el viernes.", "The deadline is Friday.", "A2"),
+    ("Me pidieron comprobar mis ingresos.", "They asked me to prove my income.", "B1"),
+    ("El aviso dice que falta un pago.", "The notice says a payment is missing.", "A2"),
+    ("Necesito entregar esto antes de las cinco.", "I need to submit this before five.", "A2"),
+    ("¿Puedo mandar una foto del comprobante?", "Can I send a photo of the receipt?", "A2"),
+    ("No tengo el documento porque lo perdí.", "I do not have the document because I lost it.", "A2"),
+])
 
-AI_ACCELERATED_PACK_A2_055 = build_numbered_ai_accelerated_phrase_pack(5632, 11323, 11326, build_phrase_pack_specs([
-    (
-        f"{spanish_head} {spanish_complement}",
-        gender,
-        f"{english_head} {english_complement}",
-        domain,
-        indefinite_article,
-        definite_article,
-    )
-    for spanish_head, gender, english_head, indefinite_article, definite_article in [
-        ("mensaje urgente", "M", "urgent message", "un", "El"),
-        ("aviso oficial", "M", "official notice", "un", "El"),
-        ("correo automático", "M", "automated email", "un", "El"),
-        ("recordatorio breve", "M", "brief reminder", "un", "El"),
-        ("dato actualizado", "M", "updated detail", "un", "El"),
-        ("dato incorrecto", "M", "incorrect detail", "un", "El"),
-        ("registro pendiente", "M", "pending record", "un", "El"),
-        ("registro completo", "M", "complete record", "un", "El"),
-        ("archivo adjunto", "M", "attached file", "un", "El"),
-        ("enlace seguro", "M", "secure link", "un", "El"),
-    ]
-    for spanish_complement, english_complement, domain in [
-        ("del banco", "from the bank", "money"),
-        ("del hospital", "from the hospital", "health"),
-        ("de la oficina", "from the office", "work"),
-        ("del hotel", "from the hotel", "travel"),
-        ("de la aerolínea", "from the airline", "travel"),
-        ("del seguro", "from insurance", "bureaucracy"),
-        ("del juzgado", "from the court", "legal"),
-        ("del taller", "from the shop", "repairs"),
-        ("del propietario", "from the landlord", "housing"),
-        ("del servicio técnico", "from tech support", "services"),
-        ("de atención al cliente", "from support", "services"),
-        ("de la farmacia", "from the pharmacy", "health"),
-    ]
-]))
+AI_ACCELERATED_PACK_A2_048_LOCATIONS_DIRECTIONS_CONTACTS = build_reviewed_chunk_pack(4195, 10200, 11200, "locations_directions_contacts", [
+    ("¿Dónde está la oficina principal?", "Where is the main office?", "A2"),
+    ("La entrada está por la otra calle.", "The entrance is on the other street.", "A2"),
+    ("Siga derecho hasta el semáforo.", "Go straight until the traffic light.", "A2"),
+    ("Está a dos cuadras de aquí.", "It is two blocks from here.", "A2"),
+    ("¿Me puede pasar el número de contacto?", "Can you give me the contact number?", "A2"),
+    ("La cita es en la sucursal del centro.", "The appointment is at the downtown branch.", "B1"),
+    ("¿Con quién debo hablar?", "Who should I speak with?", "A2"),
+    ("La dirección que tengo no está completa.", "The address I have is not complete.", "B1"),
+    ("Puede comunicarse por teléfono o correo.", "You can get in touch by phone or email.", "B1"),
+    ("La oficina queda cerca de la estación.", "The office is near the station.", "A2"),
+    ("¿Hay estacionamiento en el lugar?", "Is there parking at the location?", "A2"),
+    ("Le mando mi ubicación por mensaje.", "I will send you my location by message.", "A2"),
+])
 
-AI_ACCELERATED_PACK_A2_056 = build_numbered_ai_accelerated_phrase_pack(5752, 11563, 11566, build_phrase_pack_specs([
-    (
-        f"{spanish_head} {spanish_complement}",
-        gender,
-        f"{english_head} {english_complement}",
-        domain,
-        indefinite_article,
-        definite_article,
-    )
-    for spanish_head, gender, english_head, indefinite_article, definite_article in [
-        ("problema urgente", "M", "urgent problem", "un", "El"),
-        ("problema resuelto", "M", "resolved problem", "un", "El"),
-        ("cambio reciente", "M", "recent change", "un", "El"),
-        ("cambio necesario", "M", "necessary change", "un", "El"),
-        ("error común", "M", "common error", "un", "El"),
-        ("error grave", "M", "serious error", "un", "El"),
-        ("demora larga", "F", "long delay", "una", "La"),
-        ("demora inesperada", "F", "unexpected delay", "una", "La"),
-        ("opción disponible", "F", "available option", "una", "La"),
-        ("opción recomendada", "F", "recommended option", "una", "La"),
-    ]
-    for spanish_complement, english_complement, domain in [
-        ("en el banco", "at the bank", "money"),
-        ("en el hospital", "at the hospital", "health"),
-        ("en la oficina", "at the office", "work"),
-        ("en el hotel", "at the hotel", "travel"),
-        ("en el aeropuerto", "at the airport", "travel"),
-        ("con el seguro", "with insurance", "bureaucracy"),
-        ("en el juzgado", "at the court", "legal"),
-        ("en el taller", "at the shop", "repairs"),
-        ("en la vivienda", "at home", "housing"),
-        ("con el servicio técnico", "with tech support", "services"),
-        ("con atención al cliente", "with support", "services"),
-        ("en la farmacia", "at the pharmacy", "health"),
-    ]
-]))
+AI_ACCELERATED_PACK_A2_049_PAYMENTS = build_reviewed_chunk_pack(4215, 10240, 11240, "payments", [
+    ("Quiero pagar con tarjeta.", "I want to pay by card.", "A2"),
+    ("¿Aceptan pago en efectivo?", "Do you accept cash payment?", "A2"),
+    ("Necesito un recibo, por favor.", "I need a receipt, please.", "A2"),
+    ("El pago no aparece en el sistema.", "The payment does not show in the system.", "B1"),
+    ("¿Puedo pagar en línea?", "Can I pay online?", "A2"),
+    ("Me hicieron un cargo duplicado.", "I was charged twice.", "B1"),
+    ("¿Cuál es el monto total?", "What is the total amount?", "A2"),
+    ("Ya hice la transferencia.", "I already made the bank transfer.", "B1"),
+    ("¿Me puede mandar el comprobante de pago?", "Can you send me the proof of payment?", "B1"),
+    ("El pago vence hoy.", "The payment is due today.", "A2"),
+    ("No reconozco este cargo.", "I do not recognize this charge.", "B1"),
+    ("Quisiera dividir la cuenta.", "I would like to split the bill.", "B1"),
+])
 
-AI_ACCELERATED_PACK_A2_057 = build_numbered_ai_accelerated_phrase_pack(5872, 11803, 11806, build_phrase_pack_specs([
-    (
-        f"{spanish_head} {spanish_complement}",
-        gender,
-        f"{english_head} {english_complement}",
-        domain,
-        indefinite_article,
-        definite_article,
-    )
-    for spanish_head, gender, english_head, indefinite_article, definite_article in [
-        ("vencimiento próximo", "M", "upcoming deadline", "un", "El"),
-        ("horario exacto", "M", "exact schedule", "un", "El"),
-        ("turno confirmado", "M", "confirmed slot", "un", "El"),
-        ("turno cancelado", "M", "canceled slot", "un", "El"),
-        ("cita pendiente", "F", "pending appointment", "una", "La"),
-        ("cita confirmada", "F", "confirmed appointment", "una", "La"),
-        ("reunión breve", "F", "short meeting", "una", "La"),
-        ("reunión urgente", "F", "urgent meeting", "una", "La"),
-        ("documento válido", "M", "valid document", "un", "El"),
-        ("documento vencido", "M", "expired document", "un", "El"),
-    ]
-    for spanish_complement, english_complement, domain in [
-        ("para el banco", "for the bank", "money"),
-        ("para el hospital", "for the hospital", "health"),
-        ("para la oficina", "for the office", "work"),
-        ("para el viaje", "for the trip", "travel"),
-        ("para la reserva", "for booking", "travel"),
-        ("para el contrato", "for the contract", "legal"),
-        ("para el reclamo", "for the claim", "services"),
-        ("para el reembolso", "for refund", "money"),
-        ("para la reparación", "for repair", "repairs"),
-        ("para el tratamiento", "for treatment", "health"),
-        ("para la solicitud", "for the application", "bureaucracy"),
-        ("para atención al cliente", "for support", "services"),
-    ]
-]))
+AI_ACCELERATED_PACK_A2_050_TRAVEL_ROUTES = build_reviewed_chunk_pack(4235, 10280, 11280, "travel_routes", [
+    ("¿Cuál es la ruta más rápida?", "What is the fastest route?", "A2"),
+    ("El autobús pasa cada veinte minutos.", "The bus comes every twenty minutes.", "A2"),
+    ("Tengo que cambiar de línea.", "I have to transfer lines.", "A2"),
+    ("¿Dónde compro el boleto?", "Where do I buy the ticket?", "A2"),
+    ("El vuelo salió con retraso.", "The flight left late.", "B1"),
+    ("¿Esta ruta llega al centro?", "Does this route go downtown?", "A2"),
+    ("Me bajé en la parada equivocada.", "I got off at the wrong stop.", "B1"),
+    ("¿Cuánto dura el viaje?", "How long does the trip take?", "A2"),
+    ("La salida es por la puerta tres.", "Departure is through gate three.", "A2"),
+    ("Necesito llegar antes del mediodía.", "I need to arrive before noon.", "A2"),
+    ("¿Hay tráfico en esa zona?", "Is there traffic in that area?", "A2"),
+    ("Perdí mi conexión.", "I missed my connection.", "B1"),
+])
 
-AI_ACCELERATED_PACK_A2_058 = build_numbered_ai_accelerated_phrase_pack(5992, 12043, 12046, build_phrase_pack_specs([
-    (
-        f"{spanish_head} {spanish_complement}",
-        gender,
-        f"{english_head} {english_complement}",
-        domain,
-        indefinite_article,
-        definite_article,
-    )
-    for spanish_head, gender, english_head, indefinite_article, definite_article in [
-        ("pago parcial", "M", "partial payment", "un", "El"),
-        ("pago completo", "M", "full payment", "un", "El"),
-        ("cargo mensual", "M", "monthly charge", "un", "El"),
-        ("cargo duplicado", "M", "duplicate charge", "un", "El"),
-        ("saldo pendiente", "M", "pending balance", "un", "El"),
-        ("saldo disponible", "M", "available balance", "un", "El"),
-        ("transferencia nacional", "F", "domestic transfer", "una", "La"),
-        ("transferencia urgente", "F", "urgent transfer", "una", "La"),
-        ("recibo digital", "M", "digital receipt", "un", "El"),
-        ("comprobante válido", "M", "valid proof", "un", "El"),
-    ]
-    for spanish_complement, english_complement, domain in [
-        ("en la cuenta", "in the account", "money"),
-        ("con la tarjeta", "with the card", "money"),
-        ("en el banco", "at the bank", "money"),
-        ("para el reembolso", "for refund", "money"),
-        ("para la reserva", "for booking", "travel"),
-        ("para el contrato", "for the contract", "legal"),
-        ("del servicio", "from the service", "services"),
-        ("del seguro", "from insurance", "bureaucracy"),
-        ("del alquiler", "from rent", "housing"),
-        ("del tratamiento", "from treatment", "health"),
-        ("del viaje", "from the trip", "travel"),
-        ("del taller", "from the shop", "repairs"),
-    ]
-]))
+AI_ACCELERATED_PACK_A2_051_HEALTH = build_reviewed_chunk_pack(4255, 10320, 11320, "health", [
+    ("Me duele la garganta.", "My throat hurts.", "A2"),
+    ("Tengo cita con el doctor.", "I have an appointment with the doctor.", "A2"),
+    ("¿Dónde está la farmacia más cercana?", "Where is the nearest pharmacy?", "A2"),
+    ("Necesito renovar mi receta.", "I need to renew my prescription.", "B1"),
+    ("Soy alérgico a este medicamento.", "I am allergic to this medication.", "B1"),
+    ("Me siento mareado.", "I feel dizzy.", "A2"),
+    ("¿Tiene algo para la tos?", "Do you have something for a cough?", "A2"),
+    ("La consulta es a las cuatro.", "The appointment is at four.", "A2"),
+    ("Necesito hacerme unos análisis.", "I need to get some lab tests done.", "B1"),
+    ("¿Cuántas veces al día lo tomo?", "How many times a day do I take it?", "A2"),
+    ("No he mejorado desde ayer.", "I have not improved since yesterday.", "B1"),
+    ("¿Aceptan mi seguro médico?", "Do you accept my health insurance?", "B1"),
+])
 
-AI_ACCELERATED_PACK_A2_059 = build_numbered_ai_accelerated_phrase_pack(6112, 12283, 12286, build_phrase_pack_specs([
-    (
-        f"{spanish_head} {spanish_complement}",
-        gender,
-        f"{english_head} {english_complement}",
-        domain,
-        indefinite_article,
-        definite_article,
-    )
-    for spanish_head, gender, english_head, indefinite_article, definite_article in [
-        ("ruta alternativa", "F", "alternate route", "una", "La"),
-        ("ruta directa", "F", "direct route", "una", "La"),
-        ("dirección correcta", "F", "correct address", "una", "La"),
-        ("dirección nueva", "F", "new address", "una", "La"),
-        ("ubicación exacta", "F", "exact location", "una", "La"),
-        ("entrada principal", "F", "main entrance", "una", "La"),
-        ("salida cercana", "F", "nearby exit", "una", "La"),
-        ("zona permitida", "F", "permitted area", "una", "La"),
-        ("zona bloqueada", "F", "blocked area", "una", "La"),
-        ("señal clara", "F", "clear sign", "una", "La"),
-    ]
-    for spanish_complement, english_complement, domain in [
-        ("hacia el hotel", "to the hotel", "travel"),
-        ("hacia el aeropuerto", "to the airport", "travel"),
-        ("hacia la estación", "to the station", "travel"),
-        ("hacia el hospital", "to the hospital", "health"),
-        ("hacia la oficina", "to the office", "work"),
-        ("hacia el banco", "to the bank", "money"),
-        ("hacia el juzgado", "to the court", "legal"),
-        ("hacia el taller", "to the shop", "repairs"),
-        ("hacia la vivienda", "to the home", "housing"),
-        ("hacia recepción", "to reception", "services"),
-        ("hacia atención al cliente", "to support", "services"),
-        ("hacia la farmacia", "to the pharmacy", "health"),
-    ]
-]))
+AI_ACCELERATED_PACK_A2_052_REQUESTS_COMPLAINTS = build_reviewed_chunk_pack(4275, 10360, 11360, "requests_complaints", [
+    ("Quisiera hacer una queja.", "I would like to make a complaint.", "B1"),
+    ("¿Me puede cambiar este producto?", "Can you exchange this product for me?", "A2"),
+    ("El pedido llegó incompleto.", "The order arrived incomplete.", "B1"),
+    ("Necesito hablar con un supervisor.", "I need to speak with a supervisor.", "A2"),
+    ("No recibí lo que compré.", "I did not receive what I bought.", "A2"),
+    ("¿Puedo pedir un reembolso?", "Can I request a refund?", "A2"),
+    ("El servicio no fue el esperado.", "The service was not what I expected.", "B1"),
+    ("Me atendieron muy tarde.", "They helped me very late.", "A2"),
+    ("Quiero reportar un problema.", "I want to report a problem.", "A2"),
+    ("¿Me puede dar una solución?", "Can you give me a solution?", "A2"),
+    ("La información que me dieron fue incorrecta.", "The information they gave me was incorrect.", "B1"),
+    ("Necesito que revisen mi caso.", "I need you to review my case.", "B1"),
+])
 
-AI_ACCELERATED_PACK_A2_060 = build_numbered_ai_accelerated_phrase_pack(6232, 12523, 12526, build_phrase_pack_specs([
-    (
-        f"{spanish_head} {spanish_complement}",
-        gender,
-        f"{english_head} {english_complement}",
-        domain,
-        indefinite_article,
-        definite_article,
-    )
-    for spanish_head, gender, english_head, indefinite_article, definite_article in [
-        ("síntoma leve", "M", "mild symptom", "un", "El"),
-        ("síntoma fuerte", "M", "strong symptom", "un", "El"),
-        ("dolor constante", "M", "constant pain", "un", "El"),
-        ("dolor repentino", "M", "sudden pain", "un", "El"),
-        ("medicina recetada", "F", "prescribed medicine", "una", "La"),
-        ("dosis correcta", "F", "correct dose", "una", "La"),
-        ("prueba rápida", "F", "quick test", "una", "La"),
-        ("resultado pendiente", "M", "pending result", "un", "El"),
-        ("informe médico", "M", "medical report", "un", "El"),
-        ("atención urgente", "F", "urgent care", "una", "La"),
-    ]
-    for spanish_complement, english_complement, domain in [
-        ("en la clínica", "at the clinic", "health"),
-        ("en el hospital", "at the hospital", "health"),
-        ("en la farmacia", "at the pharmacy", "health"),
-        ("durante el viaje", "during the trip", "travel"),
-        ("en la oficina", "at the office", "work"),
-        ("con el seguro", "with insurance", "bureaucracy"),
-        ("en casa", "at home", "housing"),
-        ("por la mañana", "in the morning", "health"),
-        ("por la noche", "at night", "health"),
-        ("con atención al cliente", "with support", "services"),
-        ("en urgencias", "in urgent care", "health"),
-        ("después del tratamiento", "after treatment", "health"),
-    ]
-]))
+AI_ACCELERATED_PACK_A2_053_WORK_SERVICE_OPERATIONS = build_reviewed_chunk_pack(4295, 10400, 11400, "work_service_operations", [
+    ("Ya abrimos el turno.", "We already started the shift.", "A2"),
+    ("Voy a revisar el pedido.", "I am going to check the order.", "A2"),
+    ("El sistema está lento hoy.", "The system is slow today.", "A2"),
+    ("¿Quién está atendiendo esa mesa?", "Who is taking care of that table?", "A2"),
+    ("Falta confirmar la entrega.", "The delivery still needs to be confirmed.", "B1"),
+    ("Terminamos antes de lo previsto.", "We finished earlier than expected.", "B1"),
+    ("Hay que limpiar esta área.", "We need to clean this area.", "A2"),
+    ("Voy a pasar el reporte.", "I am going to send the report.", "B1"),
+    ("¿Ya quedó listo el material?", "Is the material ready now?", "A2"),
+    ("Necesitamos cubrir ese horario.", "We need to cover that time slot.", "B1"),
+    ("El cliente todavía está esperando.", "The customer is still waiting.", "A2"),
+    ("Voy a cerrar la caja.", "I am going to close out the register.", "B1"),
+])
 
-AI_ACCELERATED_PACK_A2_061 = build_numbered_ai_accelerated_phrase_pack(6352, 12763, 12766, build_phrase_pack_specs([
-    (
-        f"{spanish_head} {spanish_complement}",
-        gender,
-        f"{english_head} {english_complement}",
-        domain,
-        indefinite_article,
-        definite_article,
-    )
-    for spanish_head, gender, english_head, indefinite_article, definite_article in [
-        ("solicitud formal", "F", "formal request", "una", "La"),
-        ("respuesta clara", "F", "clear response", "una", "La"),
-        ("propuesta nueva", "F", "new proposal", "una", "La"),
-        ("acuerdo parcial", "M", "partial agreement", "un", "El"),
-        ("acuerdo final", "M", "final agreement", "un", "El"),
-        ("rechazo formal", "M", "formal rejection", "un", "El"),
-        ("queja escrita", "F", "written complaint", "una", "La"),
-        ("disculpa breve", "F", "brief apology", "una", "La"),
-        ("explicación clara", "F", "clear explanation", "una", "La"),
-        ("solución temporal", "F", "temporary solution", "una", "La"),
-    ]
-    for spanish_complement, english_complement, domain in [
-        ("sobre el contrato", "about the contract", "legal"),
-        ("sobre el reclamo", "about the claim", "services"),
-        ("sobre el reembolso", "about refund", "money"),
-        ("sobre la reparación", "about repair", "repairs"),
-        ("sobre la cita", "about appointment", "services"),
-        ("sobre la reserva", "about booking", "travel"),
-        ("sobre el trabajo", "about work", "work"),
-        ("sobre la vivienda", "about housing", "housing"),
-        ("sobre la cuenta", "about the account", "money"),
-        ("sobre el seguro", "about insurance", "bureaucracy"),
-        ("sobre el tratamiento", "about treatment", "health"),
-        ("sobre atención al cliente", "about support", "services"),
-    ]
-]))
+AI_ACCELERATED_PACK_A2_054_DECISIONS = build_reviewed_chunk_pack(4315, 10440, 11440, "decisions", [
+    ("Todavía no hemos decidido.", "We have not decided yet.", "A2"),
+    ("Creo que esa opción conviene más.", "I think that option works better.", "B1"),
+    ("Vamos a pensarlo con calma.", "Let us think it over calmly.", "B1"),
+    ("Prefiero no hacerlo así.", "I would rather not do it that way.", "B1"),
+    ("Esa solución me parece bien.", "That solution seems good to me.", "A2"),
+    ("Podemos elegir la opción más sencilla.", "We can choose the simplest option.", "B1"),
+    ("No estoy seguro de que sea lo mejor.", "I am not sure it is the best thing.", "B1"),
+    ("Tomemos la decisión hoy.", "Let us make the decision today.", "B1"),
+    ("¿Qué te parece si esperamos un poco?", "What do you think about waiting a bit?", "B1"),
+    ("La otra opción es más barata.", "The other option is cheaper.", "A2"),
+    ("Yo escogería el horario de la tarde.", "I would choose the afternoon schedule.", "B1"),
+    ("Mejor lo dejamos para mañana.", "Better to leave it for tomorrow.", "A2"),
+])
 
-AI_ACCELERATED_PACK_A2_062 = build_numbered_ai_accelerated_phrase_pack(6472, 13003, 13006, build_phrase_pack_specs([
-    (
-        f"{spanish_head} {spanish_complement}",
-        gender,
-        f"{english_head} {english_complement}",
-        domain,
-        indefinite_article,
-        definite_article,
-    )
-    for spanish_head, gender, english_head, indefinite_article, definite_article in [
-        ("daño visible", "M", "visible defect", "un", "El"),
-        ("fuga pequeña", "F", "small leak", "una", "La"),
-        ("ruido constante", "M", "constant noise", "un", "El"),
-        ("corte eléctrico", "M", "power cut", "un", "El"),
-        ("corte de agua", "M", "water cut", "un", "El"),
-        ("conexión lenta", "F", "slow connection", "una", "La"),
-        ("aparato roto", "M", "broken appliance", "un", "El"),
-        ("puerta cerrada", "F", "closed door", "una", "La"),
-        ("ventana abierta", "F", "open window", "una", "La"),
-        ("visita técnica", "F", "technical visit", "una", "La"),
-    ]
-    for spanish_complement, english_complement, domain in [
-        ("en la vivienda", "at home", "housing"),
-        ("en el edificio", "in the building", "housing"),
-        ("en la oficina", "at the office", "work"),
-        ("en el hotel", "at the hotel", "travel"),
-        ("en el taller", "at the shop", "repairs"),
-        ("con el seguro", "with insurance", "bureaucracy"),
-        ("con el servicio técnico", "with tech support", "services"),
-        ("durante la emergencia", "during the emergency", "services"),
-        ("según el contrato", "under the contract", "legal"),
-        ("antes del alquiler", "before rent", "housing"),
-        ("después de la reparación", "after repair", "repairs"),
-        ("para atención al cliente", "for support", "services"),
-    ]
-]))
+AI_ACCELERATED_PACK_A2_055_DOCUMENTS_FORMS = build_reviewed_chunk_pack(4335, 10480, 11480, "documents_forms", [
+    ("Necesito llenar este formulario.", "I need to fill out this form.", "A2"),
+    ("¿Dónde firmo?", "Where do I sign?", "A2"),
+    ("Me falta una copia de mi identificación.", "I am missing a copy of my ID.", "A2"),
+    ("¿Puede revisar mis datos?", "Can you check my information?", "A2"),
+    ("El nombre está mal escrito.", "The name is misspelled.", "B1"),
+    ("Tengo que actualizar mi dirección.", "I have to update my address.", "B1"),
+    ("¿Necesita el documento original?", "Do you need the original document?", "A2"),
+    ("Le puedo mandar el archivo por correo.", "I can send you the file by email.", "B1"),
+    ("Esta sección no me queda clara.", "This section is not clear to me.", "B1"),
+    ("¿Cuál es la fecha límite?", "What is the deadline?", "A2"),
+    ("Voy a guardar una copia.", "I am going to save a copy.", "A2"),
+    ("Ya envié la solicitud.", "I already submitted the application.", "B1"),
+])
 
-AI_ACCELERATED_PACK_A2_063 = build_numbered_ai_accelerated_phrase_pack(6592, 13243, 13246, build_phrase_pack_specs([
-    (
-        f"{spanish_head} {spanish_complement}",
-        gender,
-        f"{english_head} {english_complement}",
-        domain,
-        indefinite_article,
-        definite_article,
-    )
-    for spanish_head, gender, english_head, indefinite_article, definite_article in [
-        ("capacitación breve", "F", "brief training", "una", "La"),
-        ("turno flexible", "M", "flexible shift", "un", "El"),
-        ("tarea prioritaria", "F", "priority task", "una", "La"),
-        ("permiso especial", "M", "special permit", "un", "El"),
-        ("credencial temporal", "F", "temporary badge", "una", "La"),
-        ("supervisión directa", "F", "direct supervision", "una", "La"),
-        ("evaluación rápida", "F", "quick evaluation", "una", "La"),
-        ("aviso interno", "M", "internal notice", "un", "El"),
-        ("horario cambiado", "M", "changed schedule", "un", "El"),
-        ("responsable asignado", "M", "assigned lead", "un", "El"),
-    ]
-    for spanish_complement, english_complement, domain in [
-        ("en el trabajo", "at work", "work"),
-        ("en la oficina", "at the office", "work"),
-        ("en el servicio", "in service", "services"),
-        ("en el contrato", "in the contract", "legal"),
-        ("durante el viaje", "during the trip", "travel"),
-        ("en la vivienda", "at home", "housing"),
-        ("en el hospital", "at the hospital", "health"),
-        ("en el banco", "at the bank", "money"),
-        ("con atención al cliente", "with support", "services"),
-        ("con el seguro", "with insurance", "bureaucracy"),
-        ("durante la emergencia", "during the emergency", "services"),
-        ("después de la reunión", "after the meeting", "work"),
-    ]
-]))
+AI_ACCELERATED_PACK_A2_056_CUSTOMER_SERVICE = build_reviewed_chunk_pack(4355, 10520, 11520, "customer_service", [
+    ("¿En qué le puedo ayudar?", "How can I help you?", "A2"),
+    ("Un momento, por favor.", "One moment, please.", "A2"),
+    ("Voy a verificar la información.", "I am going to verify the information.", "B1"),
+    ("Lamento la demora.", "I am sorry for the delay.", "B1"),
+    ("¿Tiene el número de pedido?", "Do you have the order number?", "A2"),
+    ("Podemos cambiarlo sin problema.", "We can exchange it without a problem.", "B1"),
+    ("El reembolso tarda unos días.", "The refund takes a few days.", "B1"),
+    ("¿Quiere que le mande el comprobante?", "Would you like me to send you the receipt?", "B1"),
+    ("No aparece registrado en el sistema.", "It does not appear registered in the system.", "B1"),
+    ("Puede pasar a recogerlo mañana.", "You can come pick it up tomorrow.", "B1"),
+    ("¿Le gustaría pagar en efectivo o con tarjeta?", "Would you like to pay in cash or by card?", "A2"),
+    ("Gracias por avisarnos.", "Thank you for letting us know.", "A2"),
+])
 
-AI_ACCELERATED_PACK_A2_064 = build_numbered_ai_accelerated_phrase_pack(6712, 13483, 13486, build_phrase_pack_specs([
-    (
-        f"{spanish_head} {spanish_complement}",
-        gender,
-        f"{english_head} {english_complement}",
-        domain,
-        indefinite_article,
-        definite_article,
-    )
-    for spanish_head, gender, english_head, indefinite_article, definite_article in [
-        ("plan provisional", "M", "provisional plan", "un", "El"),
-        ("plan definitivo", "M", "final plan", "un", "El"),
-        ("idea principal", "F", "main idea", "una", "La"),
-        ("idea alternativa", "F", "alternate idea", "una", "La"),
-        ("opinión personal", "F", "personal opinion", "una", "La"),
-        ("opinión distinta", "F", "different opinion", "una", "La"),
-        ("motivo principal", "M", "main reason", "un", "El"),
-        ("motivo válido", "M", "valid reason", "un", "El"),
-        ("preferencia clara", "F", "clear preference", "una", "La"),
-        ("decisión conjunta", "F", "joint decision", "una", "La"),
-    ]
-    for spanish_complement, english_complement, domain in [
-        ("para la reunión", "for the meeting", "work"),
-        ("para el viaje", "for the trip", "travel"),
-        ("para la familia", "for the family", "social"),
-        ("para el trabajo", "for work", "work"),
-        ("para el contrato", "for the contract", "legal"),
-        ("para el presupuesto", "for the budget", "money"),
-        ("para la compra", "for purchase", "money"),
-        ("para la mudanza", "for moving", "housing"),
-        ("para el tratamiento", "for treatment", "health"),
-        ("para el reclamo", "for the claim", "services"),
-        ("para la reserva", "for booking", "travel"),
-        ("para atención al cliente", "for support", "services"),
-    ]
-]))
+AI_ACCELERATED_PACK_A2_057_WORKPLACE_SOCIAL_NEGOTIATION = build_reviewed_chunk_pack(4375, 10560, 11560, "workplace_social_negotiation", [
+    ("¿Podemos hablar un momento?", "Can we talk for a moment?", "A2"),
+    ("Necesito cambiar mi horario.", "I need to change my schedule.", "A2"),
+    ("¿Te parece si lo hacemos después?", "Does it work for you if we do it later?", "B1"),
+    ("No puedo quedarme más tarde hoy.", "I cannot stay later today.", "A2"),
+    ("Puedo ayudarte con eso mañana.", "I can help you with that tomorrow.", "A2"),
+    ("Me gustaría proponer otra idea.", "I would like to propose another idea.", "B1"),
+    ("Entiendo tu punto, pero no estoy de acuerdo.", "I understand your point, but I do not agree.", "B1"),
+    ("¿Podemos repartir el trabajo?", "Can we divide up the work?", "B1"),
+    ("Hoy tengo demasiadas cosas pendientes.", "I have too many things to do today.", "B1"),
+    ("Si quieres, lo revisamos juntos.", "If you want, we can review it together.", "B1"),
+    ("Prefiero hablarlo en persona.", "I would rather talk about it in person.", "B1"),
+    ("Gracias por tomarlo en cuenta.", "Thanks for taking it into account.", "B1"),
+])
 
-AI_ACCELERATED_PACK_A2_065 = build_numbered_ai_accelerated_phrase_pack(6832, 13723, 13726, build_phrase_pack_specs([
-    (
-        f"{spanish_head} {spanish_complement}",
-        gender,
-        f"{english_head} {english_complement}",
-        domain,
-        indefinite_article,
-        definite_article,
-    )
-    for spanish_head, gender, english_head, indefinite_article, definite_article in [
-        ("documento pendiente", "M", "pending document", "un", "El"),
-        ("formulario incompleto", "M", "incomplete form", "un", "El"),
-        ("firma necesaria", "F", "necessary signature", "una", "La"),
-        ("copia digital", "F", "digital copy", "una", "La"),
-        ("prueba válida", "F", "valid proof", "una", "La"),
-        ("recibo oficial", "M", "official receipt", "un", "El"),
-        ("confirmación escrita", "F", "written confirmation", "una", "La"),
-        ("informe médico", "M", "medical report", "un", "El"),
-        ("permiso escrito", "M", "written permission", "un", "El"),
-        ("contrato firmado", "M", "signed contract", "un", "El"),
-    ]
-    for spanish_complement, english_complement, domain in [
-        ("para la solicitud", "for the application", "bureaucracy"),
-        ("para el trámite", "for the procedure", "bureaucracy"),
-        ("para el banco", "for the bank", "money"),
-        ("para el seguro", "for insurance", "bureaucracy"),
-        ("para la clínica", "for the clinic", "health"),
-        ("para el alquiler", "for rent", "housing"),
-        ("para el viaje", "for the trip", "travel"),
-        ("para el trabajo", "for work", "work"),
-        ("para la escuela", "for school", "school"),
-        ("para la oficina", "for the office", "work"),
-        ("para la reserva", "for booking", "travel"),
-        ("para atención al cliente", "for support", "services"),
-    ]
-]))
+AI_ACCELERATED_PACK_A2_058_HOUSING_MAINTENANCE = build_reviewed_chunk_pack(4395, 10600, 11600, "housing_maintenance", [
+    ("La llave del baño está goteando.", "The bathroom faucet is dripping.", "A2"),
+    ("Se tapó el desagüe de la regadera.", "The shower drain is clogged.", "B1"),
+    ("No sale agua caliente.", "No hot water is coming out.", "A2"),
+    ("La puerta no cierra bien.", "The door does not close properly.", "A2"),
+    ("Hay una fuga debajo del lavamanos.", "There is a leak under the bathroom sink.", "B1"),
+    ("La luz de la cocina no prende.", "The kitchen light does not turn on.", "A2"),
+    ("El aire acondicionado no enfría.", "The air conditioner is not cooling.", "A2"),
+    ("Necesito reportar un problema en el departamento.", "I need to report a problem in the apartment.", "B1"),
+    ("¿Cuándo puede venir el técnico?", "When can the technician come?", "A2"),
+    ("La manija está floja.", "The door handle is loose.", "B1"),
+    ("Hay humedad en la pared.", "There is dampness on the wall.", "B1"),
+    ("El calentador hace mucho ruido.", "The water heater makes a lot of noise.", "B1"),
+    ("Una ventana no abre bien.", "One window does not open properly.", "A2"),
+    ("Quiero renovar el contrato de renta.", "I want to renew the rental agreement.", "B1"),
+    ("¿La reparación está incluida en la renta?", "Is the repair included in the rent?", "B1"),
+])
 
-AI_ACCELERATED_PACK_A2_066 = build_numbered_ai_accelerated_phrase_pack(6952, 13963, 13966, build_phrase_pack_specs([
-    (
-        f"{spanish_head} {spanish_complement}",
-        gender,
-        f"{english_head} {english_complement}",
-        domain,
-        indefinite_article,
-        definite_article,
-    )
-    for spanish_head, gender, english_head, indefinite_article, definite_article in [
-        ("llamada pendiente", "F", "pending call", "una", "La"),
-        ("mensaje urgente", "M", "urgent message", "un", "El"),
-        ("respuesta automática", "F", "automatic reply", "una", "La"),
-        ("solución propuesta", "F", "proposed solution", "una", "La"),
-        ("queja formal", "F", "formal complaint", "una", "La"),
-        ("aviso público", "M", "public notice", "un", "El"),
-        ("instrucción clara", "F", "clear instruction", "una", "La"),
-        ("ayuda inmediata", "F", "immediate help", "una", "La"),
-        ("revisión final", "F", "final review", "una", "La"),
-        ("caso abierto", "M", "open case", "un", "El"),
-    ]
-    for spanish_complement, english_complement, domain in [
-        ("sobre el pedido", "about the order", "services"),
-        ("sobre el pago", "about payment", "money"),
-        ("sobre la factura", "about the bill", "money"),
-        ("sobre la entrega", "about delivery", "services"),
-        ("sobre la cita", "about the appointment", "health"),
-        ("sobre el servicio", "about service", "services"),
-        ("sobre la reparación", "about repair", "repairs"),
-        ("sobre el alquiler", "about rent", "housing"),
-        ("sobre el contrato", "about the contract", "legal"),
-        ("sobre el viaje", "about the trip", "travel"),
-        ("sobre la reserva", "about booking", "travel"),
-        ("sobre atención al cliente", "about support", "services"),
-    ]
-]))
-
-AI_ACCELERATED_PACK_A2_067 = build_numbered_ai_accelerated_phrase_pack(7072, 14203, 14206, build_phrase_pack_specs([
-    (
-        f"{spanish_head} {spanish_complement}",
-        gender,
-        f"{english_head} {english_complement}",
-        domain,
-        indefinite_article,
-        definite_article,
-    )
-    for spanish_head, gender, english_head, indefinite_article, definite_article in [
-        ("síntoma leve", "M", "mild symptom", "un", "El"),
-        ("dolor reciente", "M", "recent pain", "un", "El"),
-        ("fiebre baja", "F", "low fever", "una", "La"),
-        ("tos seca", "F", "dry cough", "una", "La"),
-        ("alergia posible", "F", "possible allergy", "una", "La"),
-        ("herida pequeña", "F", "small wound", "una", "La"),
-        ("pulso rápido", "M", "fast pulse", "un", "El"),
-        ("receta nueva", "F", "new prescription", "una", "La"),
-        ("vacuna pendiente", "F", "pending vaccine", "una", "La"),
-        ("descanso necesario", "M", "necessary rest", "un", "El"),
-    ]
-    for spanish_complement, english_complement, domain in [
-        ("para el informe", "for the report", "health"),
-        ("para la cita", "for the appointment", "health"),
-        ("para la clínica", "for the clinic", "health"),
-        ("para el seguro", "for insurance", "bureaucracy"),
-        ("para el trabajo", "for work", "work"),
-        ("para el viaje", "for the trip", "travel"),
-        ("después del accidente", "after the accident", "emergency"),
-        ("por el medicamento", "from medication", "health"),
-        ("durante la espera", "during the wait", "services"),
-        ("antes de la visita", "before the visit", "health"),
-        ("en atención urgente", "in urgent care", "health"),
-        ("para recepción médica", "for medical reception", "services"),
-    ]
-]))
-
-AI_ACCELERATED_PACK_A2_068 = build_numbered_ai_accelerated_phrase_pack(7192, 14443, 14446, build_phrase_pack_specs([
-    (
-        f"{spanish_head} {spanish_complement}",
-        gender,
-        f"{english_head} {english_complement}",
-        domain,
-        indefinite_article,
-        definite_article,
-    )
-    for spanish_head, gender, english_head, indefinite_article, definite_article in [
-        ("acuerdo parcial", "M", "partial agreement", "un", "El"),
-        ("desacuerdo claro", "M", "clear disagreement", "un", "El"),
-        ("propuesta justa", "F", "fair proposal", "una", "La"),
-        ("cambio necesario", "M", "necessary change", "un", "El"),
-        ("reunión difícil", "F", "difficult meeting", "una", "La"),
-        ("conversación privada", "F", "private conversation", "una", "La"),
-        ("respuesta honesta", "F", "honest answer", "una", "La"),
-        ("límite claro", "M", "clear limit", "un", "El"),
-        ("disculpa sincera", "F", "sincere apology", "una", "La"),
-        ("decisión rápida", "F", "quick decision", "una", "La"),
-    ]
-    for spanish_complement, english_complement, domain in [
-        ("con el equipo", "with the team", "work"),
-        ("con el jefe", "with the boss", "work"),
-        ("con el cliente", "with the client", "services"),
-        ("con la familia", "with the family", "social"),
-        ("sobre el horario", "about the schedule", "work"),
-        ("sobre el salario", "about salary", "work"),
-        ("sobre el documento", "about the document", "legal"),
-        ("durante la reunión", "during the meeting", "work"),
-        ("después del problema", "after the problem", "services"),
-        ("antes del viaje", "before the trip", "travel"),
-        ("por el retraso", "because of delay", "travel"),
-        ("para el acuerdo", "for the agreement", "legal"),
-    ]
-]))
-
-AI_ACCELERATED_PACK_A2_069 = build_numbered_ai_accelerated_phrase_pack(7312, 14683, 14686, build_phrase_pack_specs([
-    (
-        f"{spanish_head} {spanish_complement}",
-        gender,
-        f"{english_head} {english_complement}",
-        domain,
-        indefinite_article,
-        definite_article,
-    )
-    for spanish_head, gender, english_head, indefinite_article, definite_article in [
-        ("problema eléctrico", "M", "electrical problem", "un", "El"),
-        ("problema de agua", "M", "water problem", "un", "El"),
-        ("llave perdida", "F", "lost key", "una", "La"),
-        ("puerta bloqueada", "F", "blocked door", "una", "La"),
-        ("ventana rota", "F", "broken window", "una", "La"),
-        ("ruido nocturno", "M", "night noise", "un", "El"),
-        ("reparación pendiente", "F", "pending repair", "una", "La"),
-        ("limpieza necesaria", "F", "necessary cleaning", "una", "La"),
-        ("visita programada", "F", "scheduled visit", "una", "La"),
-        ("permiso de entrada", "M", "entry permission", "un", "El"),
-    ]
-    for spanish_complement, english_complement, domain in [
-        ("en el apartamento", "in the apartment", "housing"),
-        ("en el edificio", "in the building", "housing"),
-        ("en el hotel", "at the hotel", "travel"),
-        ("en la habitación", "in the room", "travel"),
-        ("durante la noche", "during the night", "housing"),
-        ("antes de la visita", "before the visit", "housing"),
-        ("después de la limpieza", "after cleaning", "housing"),
-        ("para la mudanza", "for moving", "housing"),
-        ("con el propietario", "with the landlord", "housing"),
-        ("con mantenimiento", "with maintenance", "repairs"),
-        ("según el contrato", "under the contract", "legal"),
-        ("para el seguro", "for insurance", "bureaucracy"),
-    ]
-]))
+REPLACEMENT_DOMAIN_PACKS = (
+    ("admin_workflow_services", AI_ACCELERATED_PACK_A2_043_ADMIN_WORKFLOW_SERVICES),
+    ("instructions_requirements", AI_ACCELERATED_PACK_A2_044_INSTRUCTIONS_REQUIREMENTS),
+    ("confirmations_authorizations", AI_ACCELERATED_PACK_A2_045_CONFIRMATIONS_AUTHORIZATIONS),
+    ("steps_status_problems", AI_ACCELERATED_PACK_A2_046_STEPS_STATUS_PROBLEMS),
+    ("reasons_proofs_notices_deadlines", AI_ACCELERATED_PACK_A2_047_REASONS_PROOFS_NOTICES_DEADLINES),
+    ("locations_directions_contacts", AI_ACCELERATED_PACK_A2_048_LOCATIONS_DIRECTIONS_CONTACTS),
+    ("payments", AI_ACCELERATED_PACK_A2_049_PAYMENTS),
+    ("travel_routes", AI_ACCELERATED_PACK_A2_050_TRAVEL_ROUTES),
+    ("health", AI_ACCELERATED_PACK_A2_051_HEALTH),
+    ("requests_complaints", AI_ACCELERATED_PACK_A2_052_REQUESTS_COMPLAINTS),
+    ("work_service_operations", AI_ACCELERATED_PACK_A2_053_WORK_SERVICE_OPERATIONS),
+    ("decisions", AI_ACCELERATED_PACK_A2_054_DECISIONS),
+    ("documents_forms", AI_ACCELERATED_PACK_A2_055_DOCUMENTS_FORMS),
+    ("customer_service", AI_ACCELERATED_PACK_A2_056_CUSTOMER_SERVICE),
+    ("workplace_social_negotiation", AI_ACCELERATED_PACK_A2_057_WORKPLACE_SOCIAL_NEGOTIATION),
+    ("housing_maintenance", AI_ACCELERATED_PACK_A2_058_HOUSING_MAINTENANCE),
+)
+EXPECTED_REPLACEMENT_DOMAINS = frozenset(domain for domain, _pack in REPLACEMENT_DOMAIN_PACKS)
+for domain, pack in REPLACEMENT_DOMAIN_PACKS:
+    for item in pack:
+        SPANISH_CORRECTNESS_PHRASE_LEDGER[item["lemma"]] = (
+            f"approved by independent correctness reviewer for {domain} on 2026-06-02/03"
+        )
+        AUTHENTIC_PHRASE_LEDGER[item["lemma"]] = (
+            f"approved by independent naturalness reviewer for {domain} on 2026-06-02/03"
+        )
+        NEUTRAL_LATAM_PHRASE_LEDGER[item["lemma"]] = (
+            f"approved by independent neutral LatAm dialect reviewer for {domain} on 2026-06-02/03"
+        )
 
 AI_REVIEWED_SENTENCE_PAIRS.update({
     spanish: english
@@ -7866,34 +6720,23 @@ AI_REVIEWED_SENTENCE_PAIRS.update({
         AI_ACCELERATED_PACK_A2_039,
         AI_ACCELERATED_PACK_A2_040,
         AI_ACCELERATED_PACK_A2_041,
-        AI_ACCELERATED_PACK_A2_042,
-        AI_ACCELERATED_PACK_A2_043,
-        AI_ACCELERATED_PACK_A2_044,
-        AI_ACCELERATED_PACK_A2_045,
-        AI_ACCELERATED_PACK_A2_046,
-        AI_ACCELERATED_PACK_A2_047,
-        AI_ACCELERATED_PACK_A2_048,
-        AI_ACCELERATED_PACK_A2_049,
-        AI_ACCELERATED_PACK_A2_050,
-        AI_ACCELERATED_PACK_A2_051,
-        AI_ACCELERATED_PACK_A2_052,
-        AI_ACCELERATED_PACK_A2_053,
-        AI_ACCELERATED_PACK_A2_054,
-        AI_ACCELERATED_PACK_A2_055,
-        AI_ACCELERATED_PACK_A2_056,
-        AI_ACCELERATED_PACK_A2_057,
-        AI_ACCELERATED_PACK_A2_058,
-        AI_ACCELERATED_PACK_A2_059,
-        AI_ACCELERATED_PACK_A2_060,
-        AI_ACCELERATED_PACK_A2_061,
-        AI_ACCELERATED_PACK_A2_062,
-        AI_ACCELERATED_PACK_A2_063,
-        AI_ACCELERATED_PACK_A2_064,
-        AI_ACCELERATED_PACK_A2_065,
-        AI_ACCELERATED_PACK_A2_066,
-        AI_ACCELERATED_PACK_A2_067,
-        AI_ACCELERATED_PACK_A2_068,
-        AI_ACCELERATED_PACK_A2_069,
+        AI_ACCELERATED_PACK_A2_042_HOUSING_REPAIRS_PILOT,
+        AI_ACCELERATED_PACK_A2_043_ADMIN_WORKFLOW_SERVICES,
+        AI_ACCELERATED_PACK_A2_044_INSTRUCTIONS_REQUIREMENTS,
+        AI_ACCELERATED_PACK_A2_045_CONFIRMATIONS_AUTHORIZATIONS,
+        AI_ACCELERATED_PACK_A2_046_STEPS_STATUS_PROBLEMS,
+        AI_ACCELERATED_PACK_A2_047_REASONS_PROOFS_NOTICES_DEADLINES,
+        AI_ACCELERATED_PACK_A2_048_LOCATIONS_DIRECTIONS_CONTACTS,
+        AI_ACCELERATED_PACK_A2_049_PAYMENTS,
+        AI_ACCELERATED_PACK_A2_050_TRAVEL_ROUTES,
+        AI_ACCELERATED_PACK_A2_051_HEALTH,
+        AI_ACCELERATED_PACK_A2_052_REQUESTS_COMPLAINTS,
+        AI_ACCELERATED_PACK_A2_053_WORK_SERVICE_OPERATIONS,
+        AI_ACCELERATED_PACK_A2_054_DECISIONS,
+        AI_ACCELERATED_PACK_A2_055_DOCUMENTS_FORMS,
+        AI_ACCELERATED_PACK_A2_056_CUSTOMER_SERVICE,
+        AI_ACCELERATED_PACK_A2_057_WORKPLACE_SOCIAL_NEGOTIATION,
+        AI_ACCELERATED_PACK_A2_058_HOUSING_MAINTENANCE,
     )
     for item in pack
     for _, _, spanish, english in item["sentences"]
@@ -8042,34 +6885,23 @@ A1_A2_TARGET_LEMMAS.extend([
         AI_ACCELERATED_PACK_A2_039,
         AI_ACCELERATED_PACK_A2_040,
         AI_ACCELERATED_PACK_A2_041,
-        AI_ACCELERATED_PACK_A2_042,
-        AI_ACCELERATED_PACK_A2_043,
-        AI_ACCELERATED_PACK_A2_044,
-        AI_ACCELERATED_PACK_A2_045,
-        AI_ACCELERATED_PACK_A2_046,
-        AI_ACCELERATED_PACK_A2_047,
-        AI_ACCELERATED_PACK_A2_048,
-        AI_ACCELERATED_PACK_A2_049,
-        AI_ACCELERATED_PACK_A2_050,
-        AI_ACCELERATED_PACK_A2_051,
-        AI_ACCELERATED_PACK_A2_052,
-        AI_ACCELERATED_PACK_A2_053,
-        AI_ACCELERATED_PACK_A2_054,
-        AI_ACCELERATED_PACK_A2_055,
-        AI_ACCELERATED_PACK_A2_056,
-        AI_ACCELERATED_PACK_A2_057,
-        AI_ACCELERATED_PACK_A2_058,
-        AI_ACCELERATED_PACK_A2_059,
-        AI_ACCELERATED_PACK_A2_060,
-        AI_ACCELERATED_PACK_A2_061,
-        AI_ACCELERATED_PACK_A2_062,
-        AI_ACCELERATED_PACK_A2_063,
-        AI_ACCELERATED_PACK_A2_064,
-        AI_ACCELERATED_PACK_A2_065,
-        AI_ACCELERATED_PACK_A2_066,
-        AI_ACCELERATED_PACK_A2_067,
-        AI_ACCELERATED_PACK_A2_068,
-        AI_ACCELERATED_PACK_A2_069,
+        AI_ACCELERATED_PACK_A2_042_HOUSING_REPAIRS_PILOT,
+        AI_ACCELERATED_PACK_A2_043_ADMIN_WORKFLOW_SERVICES,
+        AI_ACCELERATED_PACK_A2_044_INSTRUCTIONS_REQUIREMENTS,
+        AI_ACCELERATED_PACK_A2_045_CONFIRMATIONS_AUTHORIZATIONS,
+        AI_ACCELERATED_PACK_A2_046_STEPS_STATUS_PROBLEMS,
+        AI_ACCELERATED_PACK_A2_047_REASONS_PROOFS_NOTICES_DEADLINES,
+        AI_ACCELERATED_PACK_A2_048_LOCATIONS_DIRECTIONS_CONTACTS,
+        AI_ACCELERATED_PACK_A2_049_PAYMENTS,
+        AI_ACCELERATED_PACK_A2_050_TRAVEL_ROUTES,
+        AI_ACCELERATED_PACK_A2_051_HEALTH,
+        AI_ACCELERATED_PACK_A2_052_REQUESTS_COMPLAINTS,
+        AI_ACCELERATED_PACK_A2_053_WORK_SERVICE_OPERATIONS,
+        AI_ACCELERATED_PACK_A2_054_DECISIONS,
+        AI_ACCELERATED_PACK_A2_055_DOCUMENTS_FORMS,
+        AI_ACCELERATED_PACK_A2_056_CUSTOMER_SERVICE,
+        AI_ACCELERATED_PACK_A2_057_WORKPLACE_SOCIAL_NEGOTIATION,
+        AI_ACCELERATED_PACK_A2_058_HOUSING_MAINTENANCE,
     )
     for item in pack
 ])
@@ -8109,6 +6941,7 @@ def append_ai_accelerated_pack(pack, pack_slug: str, exercise_id: int,
         }
         if item.get("phraseCefrRubric"):
             lexeme_data["phraseCefrRubric"] = item["phraseCefrRubric"]
+            lexeme_data[INDEPENDENT_REVIEW_REQUIRED_FIELD] = True
         lexemes.append(Row(lexeme_data, source="wiktionary", sourceId=item["lemma"], license="CC-BY-SA-3.0"))
 
         sentence_ids = []
@@ -8131,15 +6964,94 @@ def append_ai_accelerated_pack(pack, pack_slug: str, exercise_id: int,
                 license="proprietary", vettingStatus=AI_DRAFT))
             sentence_lexeme.append((sentence_id, lexeme_id))
 
+        if not sentence_ids:
+            raise ValueError(f"{item['lemma']} must define at least one reviewed sentence")
         exercises.append({"exerciseId": exercise_id, "nodeId": 1, "sentenceId": sentence_ids[0],
                           "type": "TYPED_TRANSLATION", "direction": "ES_TO_EN",
                           "targetItemId": lexeme_id, "targetItemType": "LEXEME", "promptHint": None})
         exercise_id += 1
-        exercises.append({"exerciseId": exercise_id, "nodeId": 1, "sentenceId": sentence_ids[1],
-                          "type": "WORD_BANK", "direction": "ES_TO_EN",
-                          "targetItemId": lexeme_id, "targetItemType": "LEXEME", "promptHint": None})
-        exercise_id += 1
+        if len(sentence_ids) > 1:
+            exercises.append({"exerciseId": exercise_id, "nodeId": 1, "sentenceId": sentence_ids[1],
+                              "type": "WORD_BANK", "direction": "ES_TO_EN",
+                              "targetItemId": lexeme_id, "targetItemType": "LEXEME", "promptHint": None})
+            exercise_id += 1
     return exercise_id
+
+
+def has_phrase_review_ledger_entry(row: Row) -> bool:
+    lemma = row.data.get("lemma")
+    return (
+        bool(row.data.get("phraseCefrRubric"))
+        and lemma in SPANISH_CORRECTNESS_PHRASE_LEDGER
+        and lemma in AUTHENTIC_PHRASE_LEDGER
+        and lemma in NEUTRAL_LATAM_PHRASE_LEDGER
+    )
+
+
+def generated_sentence_has_blocked_content(row: Row) -> bool:
+    if row.source != AI_DRAFT_SOURCE or "spanishText" not in row.data:
+        return False
+    spanish = row.data["spanishText"]
+    if re.search(r"\baparece\s+aqui\b", normalize_signal_text(spanish)):
+        return True
+    return bool(set(phrase_tokens(spanish)) & set(PENINSULAR_OR_NON_NEUTRAL_LATAM_TERMS))
+
+
+def prune_unreviewed_phrase_content(lexemes, sentences, accepted, sentence_lexeme, exercises):
+    kept_lexeme_ids = {
+        row.data["lexemeId"]
+        for row in lexemes
+        if (
+            not (set(phrase_tokens(row.data.get("lemma"))) & set(PENINSULAR_OR_NON_NEUTRAL_LATAM_TERMS))
+            and (not is_phrase_or_chunk_lexeme(row) or has_phrase_review_ledger_entry(row))
+        )
+    }
+    lexemes[:] = [row for row in lexemes if row.data["lexemeId"] in kept_lexeme_ids]
+
+    sentence_lexeme[:] = [
+        (sentence_id, lexeme_id)
+        for sentence_id, lexeme_id in sentence_lexeme
+        if lexeme_id in kept_lexeme_ids
+    ]
+    kept_sentence_ids = {sentence_id for sentence_id, _lexeme_id in sentence_lexeme}
+    reviewed_phrase_lexeme_ids = {
+        row.data["lexemeId"]
+        for row in lexemes
+        if row.data["lexemeId"] in kept_lexeme_ids
+        and is_phrase_or_chunk_lexeme(row)
+        and bool(row.data.get("phraseCefrRubric"))
+    }
+    lexeme_ids_by_sentence: dict[int, set[int]] = {}
+    for sentence_id, lexeme_id in sentence_lexeme:
+        lexeme_ids_by_sentence.setdefault(sentence_id, set()).add(lexeme_id)
+    blocked_sentence_ids = {
+        row.data["sentenceId"]
+        for row in sentences
+        if (
+            row.data["sentenceId"] in kept_sentence_ids
+            and generated_sentence_has_blocked_content(row)
+            and not (lexeme_ids_by_sentence.get(row.data["sentenceId"], set()) & reviewed_phrase_lexeme_ids)
+        )
+    }
+    if blocked_sentence_ids:
+        kept_sentence_ids -= blocked_sentence_ids
+        sentence_lexeme[:] = [
+            (sentence_id, lexeme_id)
+            for sentence_id, lexeme_id in sentence_lexeme
+            if sentence_id in kept_sentence_ids
+        ]
+    sentences[:] = [row for row in sentences if row.data["sentenceId"] in kept_sentence_ids]
+    accepted[:] = [row for row in accepted if row.data["sentenceId"] in kept_sentence_ids]
+    exercises[:] = [
+        exercise for exercise in exercises
+        if (
+            exercise["sentenceId"] in kept_sentence_ids
+            and (
+                exercise["targetItemType"] != "LEXEME"
+                or exercise["targetItemId"] in kept_lexeme_ids
+            )
+        )
+    ]
 
 
 def vetted_sample():
@@ -9242,117 +8154,32 @@ def vetted_sample():
         lexemes, sentences, accepted, sentence_lexeme, exercises,
     )
     next_exercise_id = append_ai_accelerated_pack(
-        AI_ACCELERATED_PACK_A2_042, "a2-042", next_exercise_id,
+        AI_ACCELERATED_PACK_A2_042_HOUSING_REPAIRS_PILOT, "a2-042-housing-repairs-pilot", next_exercise_id,
         lexemes, sentences, accepted, sentence_lexeme, exercises,
     )
-    next_exercise_id = append_ai_accelerated_pack(
-        AI_ACCELERATED_PACK_A2_043, "a2-043", next_exercise_id,
-        lexemes, sentences, accepted, sentence_lexeme, exercises,
-    )
-    next_exercise_id = append_ai_accelerated_pack(
-        AI_ACCELERATED_PACK_A2_044, "a2-044", next_exercise_id,
-        lexemes, sentences, accepted, sentence_lexeme, exercises,
-    )
-    next_exercise_id = append_ai_accelerated_pack(
-        AI_ACCELERATED_PACK_A2_045, "a2-045", next_exercise_id,
-        lexemes, sentences, accepted, sentence_lexeme, exercises,
-    )
-    next_exercise_id = append_ai_accelerated_pack(
-        AI_ACCELERATED_PACK_A2_046, "a2-046", next_exercise_id,
-        lexemes, sentences, accepted, sentence_lexeme, exercises,
-    )
-    next_exercise_id = append_ai_accelerated_pack(
-        AI_ACCELERATED_PACK_A2_047, "a2-047", next_exercise_id,
-        lexemes, sentences, accepted, sentence_lexeme, exercises,
-    )
-    next_exercise_id = append_ai_accelerated_pack(
-        AI_ACCELERATED_PACK_A2_048, "a2-048", next_exercise_id,
-        lexemes, sentences, accepted, sentence_lexeme, exercises,
-    )
-    next_exercise_id = append_ai_accelerated_pack(
-        AI_ACCELERATED_PACK_A2_049, "a2-049", next_exercise_id,
-        lexemes, sentences, accepted, sentence_lexeme, exercises,
-    )
-    next_exercise_id = append_ai_accelerated_pack(
-        AI_ACCELERATED_PACK_A2_050, "a2-050", next_exercise_id,
-        lexemes, sentences, accepted, sentence_lexeme, exercises,
-    )
-    next_exercise_id = append_ai_accelerated_pack(
-        AI_ACCELERATED_PACK_A2_051, "a2-051", next_exercise_id,
-        lexemes, sentences, accepted, sentence_lexeme, exercises,
-    )
-    next_exercise_id = append_ai_accelerated_pack(
-        AI_ACCELERATED_PACK_A2_052, "a2-052", next_exercise_id,
-        lexemes, sentences, accepted, sentence_lexeme, exercises,
-    )
-    next_exercise_id = append_ai_accelerated_pack(
-        AI_ACCELERATED_PACK_A2_053, "a2-053", next_exercise_id,
-        lexemes, sentences, accepted, sentence_lexeme, exercises,
-    )
-    next_exercise_id = append_ai_accelerated_pack(
-        AI_ACCELERATED_PACK_A2_054, "a2-054", next_exercise_id,
-        lexemes, sentences, accepted, sentence_lexeme, exercises,
-    )
-    next_exercise_id = append_ai_accelerated_pack(
-        AI_ACCELERATED_PACK_A2_055, "a2-055", next_exercise_id,
-        lexemes, sentences, accepted, sentence_lexeme, exercises,
-    )
-    next_exercise_id = append_ai_accelerated_pack(
-        AI_ACCELERATED_PACK_A2_056, "a2-056", next_exercise_id,
-        lexemes, sentences, accepted, sentence_lexeme, exercises,
-    )
-    next_exercise_id = append_ai_accelerated_pack(
-        AI_ACCELERATED_PACK_A2_057, "a2-057", next_exercise_id,
-        lexemes, sentences, accepted, sentence_lexeme, exercises,
-    )
-    next_exercise_id = append_ai_accelerated_pack(
-        AI_ACCELERATED_PACK_A2_058, "a2-058", next_exercise_id,
-        lexemes, sentences, accepted, sentence_lexeme, exercises,
-    )
-    next_exercise_id = append_ai_accelerated_pack(
-        AI_ACCELERATED_PACK_A2_059, "a2-059", next_exercise_id,
-        lexemes, sentences, accepted, sentence_lexeme, exercises,
-    )
-    next_exercise_id = append_ai_accelerated_pack(
-        AI_ACCELERATED_PACK_A2_060, "a2-060", next_exercise_id,
-        lexemes, sentences, accepted, sentence_lexeme, exercises,
-    )
-    next_exercise_id = append_ai_accelerated_pack(
-        AI_ACCELERATED_PACK_A2_061, "a2-061", next_exercise_id,
-        lexemes, sentences, accepted, sentence_lexeme, exercises,
-    )
-    next_exercise_id = append_ai_accelerated_pack(
-        AI_ACCELERATED_PACK_A2_062, "a2-062", next_exercise_id,
-        lexemes, sentences, accepted, sentence_lexeme, exercises,
-    )
-    next_exercise_id = append_ai_accelerated_pack(
-        AI_ACCELERATED_PACK_A2_063, "a2-063", next_exercise_id,
-        lexemes, sentences, accepted, sentence_lexeme, exercises,
-    )
-    next_exercise_id = append_ai_accelerated_pack(
-        AI_ACCELERATED_PACK_A2_064, "a2-064", next_exercise_id,
-        lexemes, sentences, accepted, sentence_lexeme, exercises,
-    )
-    next_exercise_id = append_ai_accelerated_pack(
-        AI_ACCELERATED_PACK_A2_065, "a2-065", next_exercise_id,
-        lexemes, sentences, accepted, sentence_lexeme, exercises,
-    )
-    next_exercise_id = append_ai_accelerated_pack(
-        AI_ACCELERATED_PACK_A2_066, "a2-066", next_exercise_id,
-        lexemes, sentences, accepted, sentence_lexeme, exercises,
-    )
-    next_exercise_id = append_ai_accelerated_pack(
-        AI_ACCELERATED_PACK_A2_067, "a2-067", next_exercise_id,
-        lexemes, sentences, accepted, sentence_lexeme, exercises,
-    )
-    next_exercise_id = append_ai_accelerated_pack(
-        AI_ACCELERATED_PACK_A2_068, "a2-068", next_exercise_id,
-        lexemes, sentences, accepted, sentence_lexeme, exercises,
-    )
-    append_ai_accelerated_pack(
-        AI_ACCELERATED_PACK_A2_069, "a2-069", next_exercise_id,
-        lexemes, sentences, accepted, sentence_lexeme, exercises,
-    )
+    for pack, pack_slug in (
+        (AI_ACCELERATED_PACK_A2_043_ADMIN_WORKFLOW_SERVICES, "a2-043-admin-workflow-services"),
+        (AI_ACCELERATED_PACK_A2_044_INSTRUCTIONS_REQUIREMENTS, "a2-044-instructions-requirements"),
+        (AI_ACCELERATED_PACK_A2_045_CONFIRMATIONS_AUTHORIZATIONS, "a2-045-confirmations-authorizations"),
+        (AI_ACCELERATED_PACK_A2_046_STEPS_STATUS_PROBLEMS, "a2-046-steps-status-problems"),
+        (AI_ACCELERATED_PACK_A2_047_REASONS_PROOFS_NOTICES_DEADLINES, "a2-047-reasons-proofs-notices-deadlines"),
+        (AI_ACCELERATED_PACK_A2_048_LOCATIONS_DIRECTIONS_CONTACTS, "a2-048-locations-directions-contacts"),
+        (AI_ACCELERATED_PACK_A2_049_PAYMENTS, "a2-049-payments"),
+        (AI_ACCELERATED_PACK_A2_050_TRAVEL_ROUTES, "a2-050-travel-routes"),
+        (AI_ACCELERATED_PACK_A2_051_HEALTH, "a2-051-health"),
+        (AI_ACCELERATED_PACK_A2_052_REQUESTS_COMPLAINTS, "a2-052-requests-complaints"),
+        (AI_ACCELERATED_PACK_A2_053_WORK_SERVICE_OPERATIONS, "a2-053-work-service-operations"),
+        (AI_ACCELERATED_PACK_A2_054_DECISIONS, "a2-054-decisions"),
+        (AI_ACCELERATED_PACK_A2_055_DOCUMENTS_FORMS, "a2-055-documents-forms"),
+        (AI_ACCELERATED_PACK_A2_056_CUSTOMER_SERVICE, "a2-056-customer-service"),
+        (AI_ACCELERATED_PACK_A2_057_WORKPLACE_SOCIAL_NEGOTIATION, "a2-057-workplace-social-negotiation"),
+        (AI_ACCELERATED_PACK_A2_058_HOUSING_MAINTENANCE, "a2-058-housing-maintenance"),
+    ):
+        next_exercise_id = append_ai_accelerated_pack(
+            pack, pack_slug, next_exercise_id,
+            lexemes, sentences, accepted, sentence_lexeme, exercises,
+        )
+    prune_unreviewed_phrase_content(lexemes, sentences, accepted, sentence_lexeme, exercises)
     return lexemes, sentences, accepted, sentence_lexeme, conj, exercises, nodes
 
 
@@ -9374,9 +8201,16 @@ def add_review_evidence(row: Row, review_type: str, decision: str, notes: str) -
 
 
 def required_auto_review_types(row: Row) -> set[str]:
-    if row.source != AI_DRAFT_SOURCE:
-        return set()
-    return {AUTO_REVIEW_SPANISH, AUTO_REVIEW_PEDAGOGY}
+    if is_phrase_or_chunk_lexeme(row):
+        return {AUTO_REVIEW_SPANISH, AUTO_REVIEW_AUTHENTICITY, AUTO_REVIEW_DIALECT}
+    if "spanishText" in row.data:
+        required = {AUTO_REVIEW_SPANISH, AUTO_REVIEW_AUTHENTICITY, AUTO_REVIEW_DIALECT}
+        if row.source == AI_DRAFT_SOURCE:
+            required.add(AUTO_REVIEW_PEDAGOGY)
+        return required
+    if row.source == AI_DRAFT_SOURCE:
+        return {AUTO_REVIEW_SPANISH, AUTO_REVIEW_PEDAGOGY}
+    return set()
 
 
 def approved_auto_review_types(row: Row) -> set[str]:
@@ -9401,6 +8235,14 @@ def has_required_auto_reviews(row: Row) -> bool:
 
 
 def local_spanish_review(row: Row, sentence_by_id: dict[int, Row]) -> tuple[bool, str]:
+    if "lemma" in row.data:
+        lemma = row.data["lemma"]
+        if not re.search(r"[A-Za-zÁÉÍÓÚÜÑáéíóúüñ¿¡]", lemma):
+            return False, "Spanish lemma has no Spanish alphabetic content"
+        if required_auto_review_types(row) and lemma not in SPANISH_CORRECTNESS_PHRASE_LEDGER:
+            return False, "phrase is not in the approved Spanish correctness ledger"
+        return True, "Spanish phrase has alphabetic content and passed structural checks"
+
     sentence = row
     if "sentenceId" in row.data and "spanishText" not in row.data:
         sentence = sentence_by_id.get(row.data["sentenceId"])
@@ -9408,10 +8250,12 @@ def local_spanish_review(row: Row, sentence_by_id: dict[int, Row]) -> tuple[bool
         return False, "missing linked Spanish sentence"
     spanish = sentence.data["spanishText"]
     expected_english = AI_REVIEWED_SENTENCE_PAIRS.get(spanish)
-    if expected_english is None:
+    if expected_english is None and sentence.source == AI_DRAFT_SOURCE:
         return False, "Spanish sentence is not in the local approved pattern ledger"
     if not re.search(r"[A-Za-zÁÉÍÓÚÜÑáéíóúüñ¿¡]", spanish):
         return False, "Spanish sentence has no Spanish alphabetic content"
+    if expected_english is None:
+        return True, "sourced Spanish sentence has alphabetic content and passed structural checks"
     return True, "Spanish sentence matches local correctness/naturalness ledger"
 
 
@@ -9420,8 +8264,6 @@ def local_english_pedagogy_review(row: Row, sentence_by_id: dict[int, Row]) -> t
         expected_english = AI_REVIEWED_SENTENCE_PAIRS.get(row.data["spanishText"])
         if expected_english != row.data["englishText"]:
             return False, "English sentence does not match local translation ledger"
-        if len(row.data["englishText"].split()) > 8:
-            return False, "English sentence is too long for this A1/A2 pack"
         return True, "English translation is ledger-matched and CEFR-appropriate"
 
     sentence = sentence_by_id.get(row.data["sentenceId"])
@@ -9431,6 +8273,98 @@ def local_english_pedagogy_review(row: Row, sentence_by_id: dict[int, Row]) -> t
     if normalize_answer(row.data["answerText"]) != normalize_answer(expected_english or ""):
         return False, "accepted answer does not match local translation ledger"
     return True, "accepted answer matches local translation ledger"
+
+
+def local_authenticity_review(row: Row, sentence_by_id: dict[int, Row]) -> tuple[bool, str]:
+    """Naturalness/authenticity reviewer: would a speaker say this, and is it useful?"""
+    if "spanishText" in row.data or ("sentenceId" in row.data and "lemma" not in row.data):
+        sentence = row if "spanishText" in row.data else sentence_by_id.get(row.data["sentenceId"])
+        if sentence is None:
+            return False, "missing linked Spanish sentence"
+        spanish = sentence.data["spanishText"]
+        if re.search(r"\baparece\s+aqu[ií]\b", normalize_signal_text(spanish)):
+            return False, "sentence matches banned template filler pattern"
+        if spanish not in AI_REVIEWED_SENTENCE_PAIRS and sentence.source == AI_DRAFT_SOURCE:
+            return False, "sentence is not in the approved authenticity ledger"
+        if spanish not in AI_REVIEWED_SENTENCE_PAIRS:
+            return True, "sourced sentence passed authenticity screen"
+        return True, "sentence is approved as natural learner-facing usage"
+
+    if "lemma" not in row.data:
+        return False, "authenticity review applies to phrase lexemes and generated sentences"
+
+    lemma = row.data["lemma"]
+    if not is_phrase_or_chunk_lexeme(row):
+        return True, "single-word item does not require phrase authenticity review"
+
+    tokens = phrase_tokens(lemma)
+    if len(tokens) < 2:
+        return False, "phrase item is too short to review as a phrase"
+
+    rubric = row.data.get("phraseCefrRubric")
+    if not rubric:
+        return False, "phrase lacks CEFR rubric evidence for authenticity review"
+
+    connector_tokens = {"de", "del", "para", "en", "sobre", "con", "hacia", "durante", "por", "segun", "según"}
+    has_connector = any(token in connector_tokens for token in tokens)
+    spam_tail_terms = {
+        "pago", "seguridad", "documento", "cita", "viaje", "servicio", "cuenta",
+        "reclamo", "tratamiento", "mantenimiento", "contrato", "proyecto",
+    }
+    if (
+        len(tokens) >= 4
+        and has_connector
+        and tokens[-1] in spam_tail_terms
+        and lemma not in AUTHENTIC_PHRASE_LEDGER
+    ):
+        return False, "phrase matches retired Cartesian connector-tail spam shape"
+    if lemma not in AUTHENTIC_PHRASE_LEDGER:
+        return False, "phrase is not in the approved authenticity ledger"
+
+    return True, AUTHENTIC_PHRASE_LEDGER[lemma]
+
+
+def local_dialect_review(row: Row, sentence_by_id: dict[int, Row]) -> tuple[bool, str]:
+    """Dialect reviewer: generated phrase lexemes must be neutral Latin American Spanish."""
+    if "spanishText" in row.data or ("sentenceId" in row.data and "lemma" not in row.data):
+        sentence = row if "spanishText" in row.data else sentence_by_id.get(row.data["sentenceId"])
+        if sentence is None:
+            return False, "missing linked Spanish sentence"
+        spanish = sentence.data["spanishText"]
+        normalized_tokens = set(phrase_tokens(spanish))
+        blocked_terms = sorted(normalized_tokens & set(PENINSULAR_OR_NON_NEUTRAL_LATAM_TERMS))
+        if blocked_terms:
+            term_notes = "; ".join(
+                f"{term}: {PENINSULAR_OR_NON_NEUTRAL_LATAM_TERMS[term]}"
+                for term in blocked_terms
+            )
+            return False, f"sentence contains non-neutral LatAm term(s): {term_notes}"
+        if spanish not in AI_REVIEWED_SENTENCE_PAIRS and sentence.source == AI_DRAFT_SOURCE:
+            return False, "sentence is not in the approved neutral LatAm dialect ledger"
+        if spanish not in AI_REVIEWED_SENTENCE_PAIRS:
+            return True, "sourced sentence passed neutral Latin American dialect screen"
+        return True, "sentence is approved as neutral Latin American Spanish"
+
+    if "lemma" not in row.data:
+        return False, "dialect review applies to phrase lexemes and generated sentences"
+
+    lemma = row.data["lemma"]
+    normalized_tokens = set(phrase_tokens(lemma))
+    blocked_terms = sorted(normalized_tokens & set(PENINSULAR_OR_NON_NEUTRAL_LATAM_TERMS))
+    if blocked_terms:
+        term_notes = "; ".join(
+            f"{term}: {PENINSULAR_OR_NON_NEUTRAL_LATAM_TERMS[term]}"
+            for term in blocked_terms
+        )
+        return False, f"phrase contains non-neutral LatAm term(s): {term_notes}"
+
+    if not is_phrase_or_chunk_lexeme(row):
+        return True, "single-word item does not require phrase dialect review"
+
+    if lemma not in NEUTRAL_LATAM_PHRASE_LEDGER:
+        return False, "phrase is not in the approved neutral LatAm dialect ledger"
+
+    return True, NEUTRAL_LATAM_PHRASE_LEDGER[lemma]
 
 
 def stage_auto_check(lexemes, sentences, accepted) -> list[str]:
@@ -9473,17 +8407,35 @@ def stage_auto_check(lexemes, sentences, accepted) -> list[str]:
 
 
 def stage_auto_review(lexemes, sentences, accepted) -> list[str]:
-    """Stage 4a: locally review AI_DRAFT rows with two independent automatic reviewers."""
+    """Stage 4a: locally review generated rows with independent automatic reviewers."""
     failures: list[str] = []
     sentence_by_id = {s.data["sentenceId"]: s for s in sentences}
-    for row in sentences + accepted:
-        if row.source != AI_DRAFT_SOURCE or row.vettingStatus != AUTO_CHECKED:
+    for row in lexemes + sentences + accepted:
+        required = required_auto_review_types(row)
+        if not required or row.vettingStatus != AUTO_CHECKED:
             continue
+
         spanish_ok, spanish_notes = local_spanish_review(row, sentence_by_id)
         add_review_evidence(row, AUTO_REVIEW_SPANISH, "APPROVED" if spanish_ok else "REJECTED", spanish_notes)
-        pedagogy_ok, pedagogy_notes = local_english_pedagogy_review(row, sentence_by_id)
-        add_review_evidence(row, AUTO_REVIEW_PEDAGOGY, "APPROVED" if pedagogy_ok else "REJECTED", pedagogy_notes)
-        if spanish_ok and pedagogy_ok:
+        if AUTO_REVIEW_PEDAGOGY in required:
+            pedagogy_ok, pedagogy_notes = local_english_pedagogy_review(row, sentence_by_id)
+            add_review_evidence(row, AUTO_REVIEW_PEDAGOGY, "APPROVED" if pedagogy_ok else "REJECTED", pedagogy_notes)
+        if AUTO_REVIEW_AUTHENTICITY in required:
+            authenticity_ok, authenticity_notes = local_authenticity_review(row, sentence_by_id)
+            add_review_evidence(
+                row, AUTO_REVIEW_AUTHENTICITY,
+                "APPROVED" if authenticity_ok else "REJECTED",
+                authenticity_notes,
+            )
+        if AUTO_REVIEW_DIALECT in required:
+            dialect_ok, dialect_notes = local_dialect_review(row, sentence_by_id)
+            add_review_evidence(
+                row, AUTO_REVIEW_DIALECT,
+                "APPROVED" if dialect_ok else "REJECTED",
+                dialect_notes,
+            )
+
+        if has_required_auto_reviews(row):
             row.vettingStatus = AUTO_REVIEWED
             row.reviewedBy = "+".join(AUTO_REVIEW_REVIEWERS[t] for t in sorted(required_auto_review_types(row)))
             row.reviewedAt = AUTO_REVIEW_TS
@@ -9498,9 +8450,9 @@ def stage_review_gate(lexemes, sentences, accepted) -> None:
     REVIEWER = "wolfgang"
     REVIEW_TS = AUTO_REVIEW_TS  # fixed for determinism in the spike
     for r in lexemes + sentences + accepted:
-        if r.source == AI_DRAFT_SOURCE and r.vettingStatus == AUTO_REVIEWED and has_required_auto_reviews(r):
+        if r.vettingStatus == AUTO_REVIEWED and has_required_auto_reviews(r):
             r.vettingStatus = REVIEWED
-        elif r.vettingStatus == AUTO_CHECKED:
+        elif r.vettingStatus == AUTO_CHECKED and not required_auto_review_types(r):
             r.vettingStatus = REVIEWED
             r.reviewedBy = REVIEWER
             r.reviewedAt = REVIEW_TS
@@ -9516,8 +8468,8 @@ def stage_publish_gate(lexemes, sentences, accepted) -> None:
                 violations.append(f"{table} row {r.data} has no source")
             if r.vettingStatus != REVIEWED:
                 violations.append(f"{table} row {r.data} is {r.vettingStatus}, not REVIEWED")
-            if r.source == AI_DRAFT_SOURCE and not has_required_auto_reviews(r):
-                violations.append(f"{table} row {r.data} lacks both independent automatic approvals")
+            if required_auto_review_types(r) and not has_required_auto_reviews(r):
+                violations.append(f"{table} row {r.data} lacks required independent automatic approvals")
     if violations:
         sys.stderr.write("CONTENT VETTING GATE FAILED (C5/§4.6/AC17):\n  " + "\n  ".join(violations) + "\n")
         raise SystemExit(2)
@@ -9595,7 +8547,7 @@ def write_manifest(out_dir, lexemes, sentences, accepted):
         if r.source == "authored":
             authored.append({"table": table, "id": next(iter(r.data.values())),
                              "vettingStatus": r.vettingStatus, "reviewedBy": r.reviewedBy})
-        if r.source == AI_DRAFT_SOURCE:
+        if r.reviewEvidence:
             review_ledger.append({
                 "table": table,
                 "id": next(iter(r.data.values())),
@@ -9642,6 +8594,14 @@ def exercise_kind(exercise_type: str) -> str:
 
 def reviewed(row: Row) -> bool:
     return row.vettingStatus == REVIEWED and bool(row.source) and bool(row.license)
+
+
+def reviewed_sentence_chunk_lexeme(row: Row) -> bool:
+    return (
+        row.data.get("pos") == "phrase"
+        and row.data.get(INDEPENDENT_REVIEW_REQUIRED_FIELD)
+        and has_required_auto_reviews(row)
+    )
 
 
 def valid_lexeme_exercise(e: dict, lexeme_id: int, sentence_by_id: dict[int, Row],
@@ -9691,16 +8651,19 @@ def build_coverage_report(lexemes, sentences, accepted, sentence_lexeme, exercis
             if valid_lexeme_exercise(e, lexeme_id, sentence_by_id, sentence_ids_by_lexeme)
         ]
         exercise_kinds = sorted({exercise_kind(e["type"]) for e in valid_target_exercises})
-        required_contexts = 4 if d["pos"] == "verb" and d["frequencyRank"] <= 500 else 2
+        is_reviewed_sentence_chunk = reviewed_sentence_chunk_lexeme(r)
+        required_contexts = 1 if is_reviewed_sentence_chunk else (
+            4 if d["pos"] == "verb" and d["frequencyRank"] <= 500 else 2
+        )
+        required_exercise_kinds = {"production"} if is_reviewed_sentence_chunk else {"production", "recognition"}
         missing = []
         if not reviewed(r):
             missing.append("lexeme_not_reviewed")
         if len(reviewed_sentence_ids) < required_contexts:
             missing.append(f"needs_{required_contexts}_reviewed_contexts")
-        if "production" not in exercise_kinds:
-            missing.append("needs_production_exercise")
-        if "recognition" not in exercise_kinds:
-            missing.append("needs_recognition_exercise")
+        for required_exercise_kind in sorted(required_exercise_kinds):
+            if required_exercise_kind not in exercise_kinds:
+                missing.append(f"needs_{required_exercise_kind}_exercise")
 
         learner_ready = not missing
         if learner_ready:

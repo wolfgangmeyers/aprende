@@ -41,20 +41,22 @@ class LemmaCountSanityIntegrationTest(unittest.TestCase):
 
     def test_current_assertion_uses_real_pipeline_report(self):
         self.sanity.assert_current(self.report)
-        self.assertEqual(7431, self.report["reviewableItemSummary"]["totalReviewableItems"])
-        self.assertEqual(7431, self.report["reviewableItemSummary"]["sourceContentRows"]["rawLexemes"])
-        self.assertEqual(37278, self.report["reviewableItemSummary"]["sourceContentRows"]["totalContentRows"])
+        self.assertEqual(950, self.report["reviewableItemSummary"]["totalReviewableItems"])
+        self.assertEqual(960, self.report["reviewableItemSummary"]["sourceContentRows"]["rawLexemes"])
+        self.assertEqual(4513, self.report["reviewableItemSummary"]["sourceContentRows"]["totalContentRows"])
         self.assertEqual(
-            7431,
+            950,
             self.report["reviewGate"]["reviewableItems"]["countedReviewedRows"],
         )
+        self.assertEqual(3668, self.report["reviewGate"]["contentRows"]["rowsRequiringIndependentReviews"])
+        self.assertEqual(0, self.report["reviewGate"]["contentRows"]["rowsWithInsufficientIndependentReviews"])
 
-    def test_target_gate_passes_recalibrated_phrase_and_b1_counts(self):
-        self.assertEqual(2050, self.report["postRebandGate"]["a1A2PhraseOrChunkItems"])
-        self.assertEqual(5007, self.report["postRebandGate"]["b1ReviewableItems"])
+    def test_target_gate_reports_pilot_stop_phrase_gap_and_recalibrated_b1_count(self):
+        self.assertEqual(126, self.report["postRebandGate"]["a1A2PhraseOrChunkItems"])
+        self.assertEqual(648, self.report["postRebandGate"]["b1ReviewableItems"])
         failures = self.sanity.target_shape_failures(self.report)
-        self.assertNotIn("A1+A2 phrase/chunk total 2050 < 1500", failures)
-        self.assertNotIn("B1 reviewable total 5007 > 6000", failures)
+        self.assertIn("A1+A2 phrase/chunk total 126 < 1500", failures)
+        self.assertNotIn("B1 reviewable total 648 > 6000", failures)
         self.assertIn("on-ramp total reviewables below floor", failures)
 
     def test_target_shape_still_reports_phrase_gap_when_under_floor(self):
@@ -99,6 +101,353 @@ class LemmaCountSanityIntegrationTest(unittest.TestCase):
         self.assertTrue(status["requiresIndependentReviews"])
         self.assertEqual(1, status["approvedIndependentReviewCount"])
         self.assertFalse(status["countsAsReviewed"])
+
+    def test_generated_phrase_requires_authenticity_review_to_count_as_reviewed(self):
+        build = self.sanity.load_build_module()
+        row = build.Row(
+            {
+                "lexemeId": 999997,
+                "lemma": "fuga de agua",
+                "pos": "noun phrase",
+                "phraseCefrRubric": {"cefrBand": "A2"},
+                build.INDEPENDENT_REVIEW_REQUIRED_FIELD: True,
+            },
+            source="wiktionary",
+            sourceId="fuga de agua",
+            license="CC-BY-SA-3.0",
+            vettingStatus=build.REVIEWED,
+            reviewedBy=build.AUTO_REVIEW_REVIEWERS[build.AUTO_REVIEW_SPANISH],
+            reviewedAt=build.AUTO_REVIEW_TS,
+            reviewEvidence=[
+                {
+                    "reviewType": build.AUTO_REVIEW_SPANISH,
+                    "reviewer": build.AUTO_REVIEW_REVIEWERS[build.AUTO_REVIEW_SPANISH],
+                    "reviewedAt": build.AUTO_REVIEW_TS,
+                    "decision": "APPROVED",
+                    "notes": "correctness-only fixture",
+                }
+            ],
+        )
+
+        self.assertEqual(
+            {build.AUTO_REVIEW_SPANISH, build.AUTO_REVIEW_AUTHENTICITY, build.AUTO_REVIEW_DIALECT},
+            build.required_auto_review_types(row),
+        )
+        status = self.sanity.review_gate_status(row, build)
+        self.assertTrue(status["requiresIndependentReviews"])
+        self.assertEqual(1, status["approvedIndependentReviewCount"])
+        self.assertFalse(status["countsAsReviewed"])
+
+    def test_ai_draft_phrase_requires_authenticity_not_pedagogy_review(self):
+        build = self.sanity.load_build_module()
+        row = build.Row(
+            {
+                "lexemeId": 999995,
+                "lemma": "fuga de agua",
+                "pos": "noun phrase",
+            },
+            source=build.AI_DRAFT_SOURCE,
+            sourceId="ai_draft:fuga-de-agua",
+            license="proprietary",
+            vettingStatus=build.REVIEWED,
+            reviewedBy="+".join([
+                build.AUTO_REVIEW_REVIEWERS[build.AUTO_REVIEW_SPANISH],
+                build.AUTO_REVIEW_REVIEWERS[build.AUTO_REVIEW_PEDAGOGY],
+            ]),
+            reviewedAt=build.AUTO_REVIEW_TS,
+            reviewEvidence=[
+                {
+                    "reviewType": build.AUTO_REVIEW_SPANISH,
+                    "reviewer": build.AUTO_REVIEW_REVIEWERS[build.AUTO_REVIEW_SPANISH],
+                    "reviewedAt": build.AUTO_REVIEW_TS,
+                    "decision": "APPROVED",
+                    "notes": "correctness fixture",
+                },
+                {
+                    "reviewType": build.AUTO_REVIEW_PEDAGOGY,
+                    "reviewer": build.AUTO_REVIEW_REVIEWERS[build.AUTO_REVIEW_PEDAGOGY],
+                    "reviewedAt": build.AUTO_REVIEW_TS,
+                    "decision": "APPROVED",
+                    "notes": "pedagogy fixture",
+                },
+            ],
+        )
+
+        self.assertEqual(
+            {build.AUTO_REVIEW_SPANISH, build.AUTO_REVIEW_AUTHENTICITY, build.AUTO_REVIEW_DIALECT},
+            build.required_auto_review_types(row),
+        )
+        status = self.sanity.review_gate_status(row, build)
+        self.assertEqual(
+            [build.AUTO_REVIEW_AUTHENTICITY, build.AUTO_REVIEW_DIALECT],
+            status["missingRequiredReviewTypes"],
+        )
+        self.assertFalse(status["countsAsReviewed"])
+
+    def test_any_multiword_lexeme_requires_three_spanish_review_dimensions(self):
+        build = self.sanity.load_build_module()
+        row = build.Row(
+            {
+                "lexemeId": 999992,
+                "lemma": "mesa reservada",
+                "pos": "noun phrase",
+            },
+            source="wiktionary",
+            sourceId="mesa reservada",
+            license="CC-BY-SA-3.0",
+            vettingStatus=build.AUTO_CHECKED,
+        )
+
+        self.assertEqual(
+            {build.AUTO_REVIEW_SPANISH, build.AUTO_REVIEW_AUTHENTICITY, build.AUTO_REVIEW_DIALECT},
+            build.required_auto_review_types(row),
+        )
+
+    def test_generated_sentence_dialect_review_scans_spanish_text(self):
+        build = self.sanity.load_build_module()
+        row = build.Row(
+            {
+                "sentenceId": 999991,
+                "spanishText": "El grifo gotea.",
+                "englishText": "The faucet drips.",
+            },
+            source=build.AI_DRAFT_SOURCE,
+            sourceId="ai_draft:fixture-grifo",
+            license="proprietary",
+            vettingStatus=build.AUTO_CHECKED,
+        )
+
+        ok, notes = build.local_dialect_review(row, {})
+        self.assertFalse(ok)
+        self.assertIn("grifo", notes)
+
+    def test_sourced_sentence_requires_spanish_authenticity_and_dialect_reviews(self):
+        build = self.sanity.load_build_module()
+        row = build.Row(
+            {
+                "sentenceId": 999989,
+                "spanishText": "Tengo un perro.",
+                "englishText": "I have a dog.",
+            },
+            source="tatoeba",
+            sourceId="tatoeba:fixture",
+            license="CC-BY-2.0-FR",
+            vettingStatus=build.AUTO_CHECKED,
+        )
+
+        self.assertEqual(
+            {build.AUTO_REVIEW_SPANISH, build.AUTO_REVIEW_AUTHENTICITY, build.AUTO_REVIEW_DIALECT},
+            build.required_auto_review_types(row),
+        )
+
+    def test_generated_sentence_authenticity_rejects_aparece_aqui_filler(self):
+        build = self.sanity.load_build_module()
+        row = build.Row(
+            {
+                "sentenceId": 999990,
+                "spanishText": "La promesa cumplida aparece aquí.",
+                "englishText": "The kept promise appears here.",
+            },
+            source=build.AI_DRAFT_SOURCE,
+            sourceId="ai_draft:fixture-filler",
+            license="proprietary",
+            vettingStatus=build.AUTO_CHECKED,
+        )
+
+        ok, notes = build.local_authenticity_review(row, {})
+        self.assertFalse(ok)
+        self.assertIn("template filler", notes)
+
+    def test_built_content_has_no_shippable_blocklist_or_filler_hits(self):
+        build = self.sanity.load_build_module()
+        lexemes, sentences, _accepted, _sentence_lexeme, _conj, _exercises, _nodes = build.vetted_sample()
+        blocked_terms = set(build.PENINSULAR_OR_NON_NEUTRAL_LATAM_TERMS)
+        lexeme_hits = [
+            row.data["lemma"]
+            for row in lexemes
+            if set(build.phrase_tokens(row.data["lemma"])) & blocked_terms
+        ]
+        sentence_hits = [
+            row.data["spanishText"]
+            for row in sentences
+            if (
+                set(build.phrase_tokens(row.data["spanishText"])) & blocked_terms
+                or "aparece aqui" in build.normalize_signal_text(row.data["spanishText"])
+            )
+        ]
+
+        self.assertEqual([], lexeme_hits)
+        self.assertEqual([], sentence_hits)
+
+    def test_reviewed_phrase_sentence_violation_fails_instead_of_pruning(self):
+        build = self.sanity.load_build_module()
+        lexemes = []
+        sentences = []
+        accepted = []
+        sentence_lexeme = []
+        exercises = []
+        pack = build.build_numbered_ai_accelerated_pack(999980, 999980, 999980, [
+            (
+                "llave de agua rota",
+                "noun phrase",
+                "F",
+                "broken faucet",
+                1800,
+                "A2",
+                0.5,
+                "housing and repairs",
+                "fixture",
+                [("El grifo gotea.", "The faucet drips.")],
+                {"cefrBand": "A2", "rubricReason": "fixture", "rubricSignals": ["domain:test"]},
+            ),
+        ])
+        build.append_ai_accelerated_pack(
+            pack, "fixture-reviewed-bad-sentence", 999980,
+            lexemes, sentences, accepted, sentence_lexeme, exercises,
+        )
+        build.prune_unreviewed_phrase_content(lexemes, sentences, accepted, sentence_lexeme, exercises)
+
+        self.assertEqual(["El grifo gotea."], [row.data["spanishText"] for row in sentences])
+        failures = build.stage_auto_check(lexemes, sentences, accepted)
+        self.assertEqual([], failures)
+        failures = build.stage_auto_review(lexemes, sentences, accepted)
+        self.assertTrue(failures)
+        self.assertIn("failed automatic review", failures[0])
+
+    def test_authenticity_review_rejects_retired_connector_tail_spam_shape(self):
+        build = self.sanity.load_build_module()
+        row = build.Row(
+            {
+                "lexemeId": 999996,
+                "lemma": "paso pendiente de cuenta",
+                "pos": "noun phrase",
+                "phraseCefrRubric": {"cefrBand": "B1"},
+                build.INDEPENDENT_REVIEW_REQUIRED_FIELD: True,
+            },
+            source="wiktionary",
+            sourceId="paso pendiente de cuenta",
+            license="CC-BY-SA-3.0",
+            vettingStatus=build.AUTO_CHECKED,
+        )
+
+        ok, notes = build.local_authenticity_review(row, {})
+        self.assertFalse(ok)
+        self.assertIn("Cartesian", notes)
+
+    def test_authenticity_review_rejects_unapproved_phrase_even_when_shape_is_plausible(self):
+        build = self.sanity.load_build_module()
+        row = build.Row(
+            {
+                "lexemeId": 999994,
+                "lemma": "revisión de cuenta",
+                "pos": "noun phrase",
+                "phraseCefrRubric": {"cefrBand": "B1"},
+                build.INDEPENDENT_REVIEW_REQUIRED_FIELD: True,
+            },
+            source="wiktionary",
+            sourceId="revisión de cuenta",
+            license="CC-BY-SA-3.0",
+            vettingStatus=build.AUTO_CHECKED,
+        )
+
+        ok, notes = build.local_authenticity_review(row, {})
+        self.assertFalse(ok)
+        self.assertIn("approved authenticity ledger", notes)
+
+    def test_payload_review_flags_do_not_bypass_review_ledgers(self):
+        build = self.sanity.load_build_module()
+        row = build.Row(
+            {
+                "lexemeId": 999993,
+                "lemma": "frase inventada amable",
+                "pos": "phrase",
+                "phraseCefrRubric": {
+                    "cefrBand": "B1",
+                    "rubricSignals": [
+                        "correctness_review:approved",
+                        "naturalness_review:approved",
+                        "dialect_review:neutral_latam",
+                        "generation:subagent",
+                    ],
+                },
+                build.INDEPENDENT_REVIEW_REQUIRED_FIELD: True,
+            },
+            source="wiktionary",
+            sourceId="frase inventada amable",
+            license="CC-BY-SA-3.0",
+            vettingStatus=build.AUTO_CHECKED,
+        )
+
+        spanish_ok, spanish_notes = build.local_spanish_review(row, {})
+        authenticity_ok, authenticity_notes = build.local_authenticity_review(row, {})
+        dialect_ok, dialect_notes = build.local_dialect_review(row, {})
+        self.assertFalse(spanish_ok)
+        self.assertIn("correctness ledger", spanish_notes)
+        self.assertFalse(authenticity_ok)
+        self.assertIn("authenticity ledger", authenticity_notes)
+        self.assertFalse(dialect_ok)
+        self.assertIn("dialect ledger", dialect_notes)
+
+    def test_retired_spam_pack_constants_are_absent(self):
+        build = self.sanity.load_build_module()
+        for pack_number in range(42, 70):
+            self.assertFalse(
+                hasattr(build, f"AI_ACCELERATED_PACK_A2_{pack_number:03d}"),
+                f"retired spam pack A2_{pack_number:03d} should not remain",
+            )
+
+    def test_replacement_domain_registry_covers_required_domains(self):
+        build = self.sanity.load_build_module()
+        expected_domains = {
+            "admin_workflow_services",
+            "instructions_requirements",
+            "confirmations_authorizations",
+            "steps_status_problems",
+            "reasons_proofs_notices_deadlines",
+            "locations_directions_contacts",
+            "payments",
+            "travel_routes",
+            "health",
+            "requests_complaints",
+            "work_service_operations",
+            "decisions",
+            "documents_forms",
+            "customer_service",
+            "workplace_social_negotiation",
+            "housing_maintenance",
+        }
+        self.assertEqual(expected_domains, build.EXPECTED_REPLACEMENT_DOMAINS)
+        self.assertEqual(expected_domains, {domain for domain, _pack in build.REPLACEMENT_DOMAIN_PACKS})
+        for domain, pack in build.REPLACEMENT_DOMAIN_PACKS:
+            self.assertGreaterEqual(len(pack), 12, domain)
+
+    def test_manifest_includes_generated_phrase_lexeme_review_evidence(self):
+        build = self.sanity.load_build_module()
+        lexemes, sentences, accepted, _sentence_lexeme, _conj, _exercises, _nodes = build.vetted_sample()
+        failures = build.stage_auto_check(lexemes, sentences, accepted)
+        self.assertEqual([], failures)
+        failures = build.stage_auto_review(lexemes, sentences, accepted)
+        self.assertEqual([], failures)
+        build.stage_review_gate(lexemes, sentences, accepted)
+
+        with tempfile.TemporaryDirectory() as tmp:
+            manifest = build.write_manifest(tmp, lexemes, sentences, accepted)
+
+        pilot_lexeme_reviews = [
+            entry for entry in manifest["autoReviewLedger"]
+            if entry["table"] == "lexeme"
+            and entry["sourceId"] == "fuga de agua"
+        ]
+        self.assertEqual(1, len(pilot_lexeme_reviews))
+        review_types = {
+            evidence["reviewType"]
+            for evidence in pilot_lexeme_reviews[0]["reviewEvidence"]
+            if evidence["decision"] == "APPROVED"
+        }
+        self.assertEqual(
+            {build.AUTO_REVIEW_SPANISH, build.AUTO_REVIEW_AUTHENTICITY, build.AUTO_REVIEW_DIALECT},
+            review_types,
+        )
 
     def test_rebanded_source_item_with_less_than_two_reviews_is_not_reviewed(self):
         build = self.sanity.load_build_module()
@@ -314,14 +663,14 @@ class PhraseCefrRubricIntegrationTest(unittest.TestCase):
         )
 
         self.assertEqual(phrase_or_chunk_count, report["itemCount"])
-        self.assertEqual(3360, report["helperAssignedItemCount"])
-        self.assertEqual(3316, report["legacyExplicitBandAssessedItemCount"])
-        self.assertEqual(6676, report["itemCount"])
+        self.assertEqual(218, report["helperAssignedItemCount"])
+        self.assertEqual(0, report["legacyExplicitBandAssessedItemCount"])
+        self.assertEqual(218, report["itemCount"])
         self.assertEqual(
-            3360,
+            218,
             report["itemsByAssignmentSource"]["phrase_pack_rubric"],
         )
-        self.assertIn("legacy_explicit_band_assessed_not_rebanded", report["itemsByAssignmentSource"])
+        self.assertNotIn("legacy_explicit_band_assessed_not_rebanded", report["itemsByAssignmentSource"])
         self.assertEqual(
             phrase_or_chunk_count,
             len({entry["lexemeId"] for entry in report["items"]}),

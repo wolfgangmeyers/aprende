@@ -37,65 +37,360 @@
     "reviewPolicy": "This list is a local source-checked audit target, not shipped learning content. A target lemma only becomes shipped content after the normal lexeme/sentence/accepted-answer provenance and REVIEWED gate pass."
   },
   "summary": {
-    "rawLexemes": 7431,
-    "learnerReadyLexemes": 7431,
-    "reviewedSentences": 14922,
-    "reviewedAcceptedAnswers": 14925,
-    "exerciseCount": 14862,
-    "missingA1A2GapCount": 0
+    "rawLexemes": 960,
+    "learnerReadyLexemes": 950,
+    "reviewedSentences": 1775,
+    "reviewedAcceptedAnswers": 1778,
+    "exerciseCount": 1715,
+    "missingA1A2GapCount": 3333
   },
   "counts": {
     "lexemesByPos": {
       "adjective": 63,
-      "adjective phrase": 3,
       "adjective/adverb": 4,
       "adverb": 36,
       "adverb/noun": 1,
-      "adverbial phrase": 178,
       "conjunction": 2,
-      "discourse marker": 5,
-      "noun": 310,
-      "noun phrase": 6339,
+      "noun": 303,
+      "noun phrase": 23,
+      "phrase": 195,
       "preposition": 5,
-      "prepositional phrase": 10,
-      "question chunk": 10,
-      "sentence chunk": 117,
-      "verb": 329,
-      "verbal phrase": 19
+      "verb": 328
     },
     "lexemesByCefrBand": {
       "A1": 23,
-      "A2": 2153,
-      "B1": 5007,
-      "B2": 248
+      "A2": 229,
+      "B1": 656,
+      "B2": 52
     },
     "lexemesByFrequencyBucket": {
-      "0001-0500": 69,
-      "0501-1000": 220,
-      "1001-2000": 6867,
-      "2001+": 275
+      "0001-0500": 68,
+      "0501-1000": 171,
+      "1001-2000": 592,
+      "2001+": 129
     },
     "contentRowsBySource": {
-      "ai_draft": 29644,
+      "ai_draft": 3350,
       "authored": 2,
       "tatoeba": 201,
-      "wiktionary": 7431
+      "wiktionary": 960
     },
     "contentRowsByLicense": {
       "CC-BY-2.0-FR": 201,
-      "CC-BY-SA-3.0": 7431,
-      "proprietary": 29646
+      "CC-BY-SA-3.0": 960,
+      "proprietary": 3352
     },
     "contentRowsByVettingStatus": {
-      "REVIEWED": 37278
+      "REVIEWED": 4513
     },
     "exerciseTargetsByType": {
-      "LEXEME": 14862
+      "LEXEME": 1715
     },
     "exerciseTypes": {
-      "TYPED_TRANSLATION": 7431,
-      "WORD_BANK": 7431
+      "TYPED_TRANSLATION": 955,
+      "WORD_BANK": 760
     }
   },
-  "topMissingA1A2Gaps": []
+  "topMissingA1A2Gaps": [
+    {
+      "lemma": "a cargo de",
+      "cefrBand": "B1",
+      "pos": "prepositional phrase",
+      "priority": 5,
+      "reason": "work and responsibility",
+      "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 workplace topic",
+      "status": "missing_lexeme",
+      "blockers": [
+        "add_reviewed_lexeme",
+        "add_reviewed_contexts",
+        "add_exercises"
+      ],
+      "currentLexemeId": null
+    },
+    {
+      "lemma": "a continuaci\u00f3n",
+      "cefrBand": "B1",
+      "pos": "adverbial phrase",
+      "priority": 5,
+      "reason": "instructions and bureaucracy",
+      "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 public services topic",
+      "status": "missing_lexeme",
+      "blockers": [
+        "add_reviewed_lexeme",
+        "add_reviewed_contexts",
+        "add_exercises"
+      ],
+      "currentLexemeId": null
+    },
+    {
+      "lemma": "a distancia",
+      "cefrBand": "B1",
+      "pos": "adverbial phrase",
+      "priority": 5,
+      "reason": "work and services",
+      "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 work/services topic",
+      "status": "missing_lexeme",
+      "blockers": [
+        "add_reviewed_lexeme",
+        "add_reviewed_contexts",
+        "add_exercises"
+      ],
+      "currentLexemeId": null
+    },
+    {
+      "lemma": "a domicilio",
+      "cefrBand": "B1",
+      "pos": "adverbial phrase",
+      "priority": 5,
+      "reason": "services and household",
+      "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 services topic",
+      "status": "missing_lexeme",
+      "blockers": [
+        "add_reviewed_lexeme",
+        "add_reviewed_contexts",
+        "add_exercises"
+      ],
+      "currentLexemeId": null
+    },
+    {
+      "lemma": "a la vez",
+      "cefrBand": "B1",
+      "pos": "adverbial phrase",
+      "priority": 5,
+      "reason": "coordination and work",
+      "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 workplace chunks topic",
+      "status": "missing_lexeme",
+      "blockers": [
+        "add_reviewed_lexeme",
+        "add_reviewed_contexts",
+        "add_exercises"
+      ],
+      "currentLexemeId": null
+    },
+    {
+      "lemma": "a lo mejor",
+      "cefrBand": "B1",
+      "pos": "adverbial phrase",
+      "priority": 5,
+      "reason": "uncertainty",
+      "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 conversation chunks topic",
+      "status": "missing_lexeme",
+      "blockers": [
+        "add_reviewed_lexeme",
+        "add_reviewed_contexts",
+        "add_exercises"
+      ],
+      "currentLexemeId": null
+    },
+    {
+      "lemma": "a mano",
+      "cefrBand": "B1",
+      "pos": "adverbial phrase",
+      "priority": 5,
+      "reason": "forms and household",
+      "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 public services topic",
+      "status": "missing_lexeme",
+      "blockers": [
+        "add_reviewed_lexeme",
+        "add_reviewed_contexts",
+        "add_exercises"
+      ],
+      "currentLexemeId": null
+    },
+    {
+      "lemma": "a menudo",
+      "cefrBand": "B1",
+      "pos": "adverbial phrase",
+      "priority": 5,
+      "reason": "narration and routine",
+      "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 narration/routine topic",
+      "status": "missing_lexeme",
+      "blockers": [
+        "add_reviewed_lexeme",
+        "add_reviewed_contexts",
+        "add_exercises"
+      ],
+      "currentLexemeId": null
+    },
+    {
+      "lemma": "a nombre de",
+      "cefrBand": "B1",
+      "pos": "prepositional phrase",
+      "priority": 5,
+      "reason": "forms and money",
+      "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 forms/money topic",
+      "status": "missing_lexeme",
+      "blockers": [
+        "add_reviewed_lexeme",
+        "add_reviewed_contexts",
+        "add_exercises"
+      ],
+      "currentLexemeId": null
+    },
+    {
+      "lemma": "a partir de ahora",
+      "cefrBand": "B1",
+      "pos": "adverbial phrase",
+      "priority": 5,
+      "reason": "time and planning",
+      "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 planning chunks topic",
+      "status": "missing_lexeme",
+      "blockers": [
+        "add_reviewed_lexeme",
+        "add_reviewed_contexts",
+        "add_exercises"
+      ],
+      "currentLexemeId": null
+    },
+    {
+      "lemma": "a pesar de",
+      "cefrBand": "B1",
+      "pos": "prepositional phrase",
+      "priority": 5,
+      "reason": "connectors and narration",
+      "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 connectors topic",
+      "status": "missing_lexeme",
+      "blockers": [
+        "add_reviewed_lexeme",
+        "add_reviewed_contexts",
+        "add_exercises"
+      ],
+      "currentLexemeId": null
+    },
+    {
+      "lemma": "a pesar de todo",
+      "cefrBand": "B1",
+      "pos": "adverbial phrase",
+      "priority": 5,
+      "reason": "contrast",
+      "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 discourse markers topic",
+      "status": "missing_lexeme",
+      "blockers": [
+        "add_reviewed_lexeme",
+        "add_reviewed_contexts",
+        "add_exercises"
+      ],
+      "currentLexemeId": null
+    },
+    {
+      "lemma": "a primera hora",
+      "cefrBand": "B1",
+      "pos": "adverbial phrase",
+      "priority": 5,
+      "reason": "scheduling",
+      "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 planning topic",
+      "status": "missing_lexeme",
+      "blockers": [
+        "add_reviewed_lexeme",
+        "add_reviewed_contexts",
+        "add_exercises"
+      ],
+      "currentLexemeId": null
+    },
+    {
+      "lemma": "a prop\u00f3sito",
+      "cefrBand": "B1",
+      "pos": "adverbial phrase",
+      "priority": 5,
+      "reason": "conversation and intent",
+      "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 conversation chunks topic",
+      "status": "missing_lexeme",
+      "blockers": [
+        "add_reviewed_lexeme",
+        "add_reviewed_contexts",
+        "add_exercises"
+      ],
+      "currentLexemeId": null
+    },
+    {
+      "lemma": "a tiempo",
+      "cefrBand": "B1",
+      "pos": "adverbial phrase",
+      "priority": 5,
+      "reason": "appointments and travel",
+      "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 common chunks topic",
+      "status": "missing_lexeme",
+      "blockers": [
+        "add_reviewed_lexeme",
+        "add_reviewed_contexts",
+        "add_exercises"
+      ],
+      "currentLexemeId": null
+    },
+    {
+      "lemma": "a ver",
+      "cefrBand": "B1",
+      "pos": "discourse marker",
+      "priority": 5,
+      "reason": "conversation repair",
+      "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 conversation repair topic",
+      "status": "missing_lexeme",
+      "blockers": [
+        "add_reviewed_lexeme",
+        "add_reviewed_contexts",
+        "add_exercises"
+      ],
+      "currentLexemeId": null
+    },
+    {
+      "lemma": "a \u00faltima hora",
+      "cefrBand": "B1",
+      "pos": "adverbial phrase",
+      "priority": 5,
+      "reason": "scheduling",
+      "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 planning topic",
+      "status": "missing_lexeme",
+      "blockers": [
+        "add_reviewed_lexeme",
+        "add_reviewed_contexts",
+        "add_exercises"
+      ],
+      "currentLexemeId": null
+    },
+    {
+      "lemma": "abono diferido",
+      "cefrBand": "B1",
+      "pos": "noun phrase",
+      "priority": 5,
+      "reason": "taxes/money",
+      "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 taxes topic",
+      "status": "missing_lexeme",
+      "blockers": [
+        "add_reviewed_lexeme",
+        "add_reviewed_contexts",
+        "add_exercises"
+      ],
+      "currentLexemeId": null
+    },
+    {
+      "lemma": "abono joven",
+      "cefrBand": "B1",
+      "pos": "noun phrase",
+      "priority": 5,
+      "reason": "transport",
+      "sourceBasis": "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic",
+      "status": "missing_lexeme",
+      "blockers": [
+        "add_reviewed_lexeme",
+        "add_reviewed_contexts",
+        "add_exercises"
+      ],
+      "currentLexemeId": null
+    },
+    {
+      "lemma": "abono mensual",
+      "cefrBand": "B1",
+      "pos": "noun phrase",
+      "priority": 5,
+      "reason": "transport and money",
+      "sourceBasis": "SPANISH_BREADTH_PLAN.md B1 transport topic",
+      "status": "missing_lexeme",
+      "blockers": [
+        "add_reviewed_lexeme",
+        "add_reviewed_contexts",
+        "add_exercises"
+      ],
+      "currentLexemeId": null
+    }
+  ]
 }

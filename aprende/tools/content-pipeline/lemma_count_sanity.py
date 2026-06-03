@@ -13,13 +13,13 @@ from collections import Counter
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 BUILD_SCRIPT = os.path.join(SCRIPT_DIR, "build_content_db.py")
 CURRENT_EXPECTED = {
-    "totalReviewableItems": 7431,
-    "singleWord": 755,
-    "phraseOrChunk": 6676,
+    "totalReviewableItems": 950,
+    "singleWord": 732,
+    "phraseOrChunk": 218,
     "A1": 23,
-    "A2": 2153,
-    "B1": 5007,
-    "B2": 248,
+    "A2": 229,
+    "B1": 648,
+    "B2": 50,
     "C1": 0,
 }
 CEFR_BANDS = ("A1", "A2", "B1", "B2", "C1")
@@ -79,16 +79,22 @@ def approved_independent_reviewers(row) -> set[str]:
     }
 
 
+def approved_review_types(row) -> set[str]:
+    return {
+        evidence.get("reviewType")
+        for evidence in getattr(row, "reviewEvidence", [])
+        if evidence.get("decision") == "APPROVED" and evidence.get("reviewType")
+    }
+
+
 def requires_independent_reviews(row, build) -> bool:
-    return (
-        row.source == build.AI_DRAFT_SOURCE
-        or bool(row.data.get(INDEPENDENT_REVIEW_REQUIRED_FIELD))
-        or bool(getattr(row, "reviewEvidence", []))
-    )
+    return bool(build.required_auto_review_types(row))
 
 
 def review_gate_status(row, build):
     approved_reviewers = approved_independent_reviewers(row)
+    required_review_types = build.required_auto_review_types(row)
+    missing_review_types = sorted(required_review_types - approved_review_types(row))
     independent_review_count = len(approved_reviewers)
     needs_independent_reviews = requires_independent_reviews(row, build)
     base_reviewed = row.vettingStatus == build.REVIEWED and bool(row.source) and bool(row.license)
@@ -96,13 +102,20 @@ def review_gate_status(row, build):
         not needs_independent_reviews
         or independent_review_count >= REQUIRED_INDEPENDENT_REVIEWS
     )
+    passes_required_review_type_gate = not missing_review_types
     return {
         "source": row.source,
         "vettingStatus": row.vettingStatus,
         "requiresIndependentReviews": needs_independent_reviews,
+        "requiredReviewTypes": sorted(required_review_types),
+        "missingRequiredReviewTypes": missing_review_types,
         "approvedIndependentReviewCount": independent_review_count,
         "minimumIndependentReviews": REQUIRED_INDEPENDENT_REVIEWS if needs_independent_reviews else 0,
-        "countsAsReviewed": base_reviewed and passes_independent_review_gate,
+        "countsAsReviewed": (
+            base_reviewed
+            and passes_independent_review_gate
+            and passes_required_review_type_gate
+        ),
     }
 
 
@@ -111,7 +124,10 @@ def review_gate_summary(rows, build):
     rows_requiring_reviews = [status for status in statuses if status["requiresIndependentReviews"]]
     insufficient = [
         status for status in rows_requiring_reviews
-        if status["approvedIndependentReviewCount"] < REQUIRED_INDEPENDENT_REVIEWS
+        if (
+            status["approvedIndependentReviewCount"] < REQUIRED_INDEPENDENT_REVIEWS
+            or status["missingRequiredReviewTypes"]
+        )
     ]
     return {
         "minimumIndependentReviewsForAiDraftedOrRebandedItems": REQUIRED_INDEPENDENT_REVIEWS,
