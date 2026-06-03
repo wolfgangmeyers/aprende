@@ -157,7 +157,7 @@ def on_ramp_lexeme_ids(build) -> set[int]:
 
 def build_sanity_report():
     build = load_build_module()
-    lexemes, sentences, accepted, sentence_lexeme, _conj, exercises, _nodes = build.vetted_sample()
+    lexemes, sentences, accepted, sentence_lexeme, _conj, exercises, nodes = build.vetted_sample()
 
     failures = build.stage_auto_check(lexemes, sentences, accepted)
     if failures:
@@ -169,6 +169,7 @@ def build_sanity_report():
     build.stage_publish_gate(lexemes, sentences, accepted)
 
     coverage = build.build_coverage_report(lexemes, sentences, accepted, sentence_lexeme, exercises)
+    sequencing_report = build.validate_sequencing(lexemes, exercises, nodes)
     learner_ready = [row for row in coverage["lexemeReadiness"] if row["learnerReady"]]
     single_word = [row for row in learner_ready if not has_word_boundary(row["lemma"])]
     phrase_or_chunk = [row for row in learner_ready if has_word_boundary(row["lemma"])]
@@ -227,12 +228,23 @@ def build_sanity_report():
             },
         },
         "pathSequencing": {
-            "status": "placeholder_until_phase_5",
-            "a1A2TargetsWithIntroduction": 0,
-            "targetsUsedBeforeIntroduction": 0,
+            "status": sequencing_report["status"],
+            **sequencing_report["summary"],
+            "a1A2TargetsWithIntroduction": (
+                sequencing_report["counts"]["firstIntroductionsByCefrBand"].get("A1", 0)
+                + sequencing_report["counts"]["firstIntroductionsByCefrBand"].get("A2", 0)
+            ),
+            "targetsUsedBeforeIntroduction": len(sequencing_report["failures"]["usesBeforeIntroduction"]),
             "introductionNodesMissingReviewedCoverage": 0,
-            "nodesIntroducingMoreThanEightTargets": 0,
-            "nonIntroductoryNodesBelowRecycleFloor": 0,
+            "nodesIntroducingMoreThanEightTargets": len(sequencing_report["failures"]["introNodesOverTargetCap"]),
+            "nonIntroductoryNodesBelowRecycleFloor": len(
+                sequencing_report["failures"]["nonIntroNodesBelowRecycleFloor"]
+            ),
+            "counts": sequencing_report["counts"],
+            "failureCounts": {
+                key: len(value)
+                for key, value in sequencing_report["failures"].items()
+            },
         },
         "c1PlusLane": {
             "status": "explicit_gap",

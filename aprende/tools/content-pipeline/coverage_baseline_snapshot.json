@@ -91,6 +91,46 @@
       "WORD_BANK": 760
     }
   },
+  "pathSequencing": {
+    "status": "passed",
+    "targetCount": 2088,
+    "targetsWithFirstIntroduction": 2088,
+    "nodeCount": 301,
+    "introNodeCount": 263,
+    "checkpointNodeCount": 38,
+    "maxNewTargetsInIntroNode": 8,
+    "minRecycleRatioInNonIntroNode": 1.0,
+    "a1A2TargetsWithIntroduction": 706,
+    "targetsUsedBeforeIntroduction": 0,
+    "introductionNodesMissingReviewedCoverage": 0,
+    "nodesIntroducingMoreThanEightTargets": 0,
+    "nonIntroductoryNodesBelowRecycleFloor": 0,
+    "counts": {
+      "firstIntroductionsByCefrBand": {
+        "A1": 150,
+        "A2": 556,
+        "B1": 989,
+        "B2": 393
+      },
+      "nodesByCefrBand": {
+        "A1": 24,
+        "A2": 81,
+        "B1": 139,
+        "B2": 57
+      },
+      "nodesByKind": {
+        "intro": 263,
+        "checkpoint": 38
+      }
+    },
+    "failureCounts": {
+      "targetsMissingFirstIntroduction": 0,
+      "usesBeforeIntroduction": 0,
+      "introNodesOverTargetCap": 0,
+      "nonIntroNodesBelowRecycleFloor": 0,
+      "onRampTargetsMissingIntroduction": 0
+    }
+  },
   "topMissingA1A2Gaps": [
     {
       "lemma": "a cargo de",

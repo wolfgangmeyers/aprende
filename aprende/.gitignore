@@ -25,6 +25,7 @@ app/src/main/assets/database/content_manifest.json
 app/src/main/assets/database/content_coverage.json
 app/src/main/assets/database/coverage_snapshot.json
 app/src/main/assets/database/phrase_cefr_rubric_report.json
+app/src/main/assets/database/sequencing_report.json
 
 # Python test/build cache
 __pycache__/

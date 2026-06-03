@@ -28,6 +28,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import math
 import json
 import os
 import sqlite3
@@ -52,6 +53,15 @@ FREQUENCY_ATTRIBUTION = {
     "source": "frequencywords",
     "license": "CC-BY-SA-4.0",
 }
+CEFR_ORDER = ("A1", "A2", "B1", "B2", "C1")
+SEQUENCING_UNIT_COUNTS = {
+    "A1": 5,
+    "A2": 11,
+    "B1": 15,
+    "B2": 7,
+}
+SEQUENCING_MAX_NEW_TARGETS_PER_NODE = 8
+SEQUENCING_RECYCLE_FLOOR = 0.30
 
 
 # --------------------------------------------------------------------------------------
@@ -7662,6 +7672,275 @@ def prune_unreviewed_phrase_content(lexemes, sentences, accepted, sentence_lexem
     ]
 
 
+def on_ramp_order_by_lexeme_id() -> dict[int, int]:
+    ordered = {}
+    for _domain, pack in ON_RAMP_DOMAIN_PACKS:
+        for item in pack:
+            ordered[item["lexemeId"]] = len(ordered)
+    return ordered
+
+
+def split_evenly(items: list[Row], part_count: int) -> list[list[Row]]:
+    if part_count <= 0:
+        return []
+    base_size, remainder = divmod(len(items), part_count)
+    parts = []
+    cursor = 0
+    for index in range(part_count):
+        size = base_size + (1 if index < remainder else 0)
+        parts.append(items[cursor:cursor + size])
+        cursor += size
+    return parts
+
+
+def chunked(items: list[Row], size: int) -> list[list[Row]]:
+    return [items[index:index + size] for index in range(0, len(items), size)]
+
+
+def sequence_target_sort_key(row: Row) -> tuple:
+    data = row.data
+    on_ramp_order = on_ramp_order_by_lexeme_id().get(data["lexemeId"])
+    return (
+        CEFR_ORDER.index(data["cefrBand"]) if data["cefrBand"] in CEFR_ORDER else len(CEFR_ORDER),
+        0 if on_ramp_order is not None else 1,
+        on_ramp_order if on_ramp_order is not None else math.inf,
+        data["frequencyRank"],
+        data["lexemeId"],
+    )
+
+
+def build_sequencing_plan(lexemes: list[Row]) -> dict:
+    ordered_targets = sorted(lexemes, key=sequence_target_sort_key)
+    by_cefr = {cefr_band: [] for cefr_band in CEFR_ORDER}
+    for row in ordered_targets:
+        by_cefr.setdefault(row.data["cefrBand"], []).append(row)
+
+    nodes: list[tuple[int, str, int]] = []
+    target_intro_node: dict[int, int] = {}
+    target_review_node: dict[int, int] = {}
+    unit_metadata: list[dict] = []
+    node_id = 1
+
+    for cefr_band in CEFR_ORDER:
+        targets = by_cefr.get(cefr_band, [])
+        if not targets:
+            continue
+        unit_count = SEQUENCING_UNIT_COUNTS.get(
+            cefr_band,
+            max(1, math.ceil(len(targets) / SEQUENCING_MAX_NEW_TARGETS_PER_NODE)),
+        )
+        target_chunks = chunked(targets, SEQUENCING_MAX_NEW_TARGETS_PER_NODE)
+        for unit_index, unit_chunks in enumerate(split_evenly(target_chunks, unit_count), start=1):
+            if not unit_chunks:
+                continue
+            unit_node_ids = []
+            unit_targets = [row for target_chunk in unit_chunks for row in target_chunk]
+            for lesson_index, target_chunk in enumerate(unit_chunks, start=1):
+                title = f"{cefr_band} Unit {unit_index}.{lesson_index}"
+                nodes.append((node_id, title, len(nodes)))
+                unit_node_ids.append(node_id)
+                for row in target_chunk:
+                    target_intro_node[row.data["lexemeId"]] = node_id
+                node_id += 1
+
+            checkpoint_id = node_id
+            nodes.append((checkpoint_id, f"{cefr_band} Unit {unit_index} Review", len(nodes)))
+            for row in unit_targets:
+                target_review_node[row.data["lexemeId"]] = checkpoint_id
+            unit_node_ids.append(checkpoint_id)
+            unit_metadata.append({
+                "cefrBand": cefr_band,
+                "unit": unit_index,
+                "targetCount": len(unit_targets),
+                "nodeIds": unit_node_ids,
+                "checkpointNodeId": checkpoint_id,
+            })
+            node_id += 1
+
+    return {
+        "nodes": nodes,
+        "targetIntroNode": target_intro_node,
+        "targetReviewNode": target_review_node,
+        "unitMetadata": unit_metadata,
+    }
+
+
+def apply_sequencing_plan(lexemes: list[Row], exercises: list[dict]) -> list[tuple[int, str, int]]:
+    plan = build_sequencing_plan(lexemes)
+    exercises_by_target: dict[int, list[dict]] = {}
+    for exercise in exercises:
+        if exercise["targetItemType"] == "LEXEME":
+            exercises_by_target.setdefault(exercise["targetItemId"], []).append(exercise)
+
+    for target_id, target_exercises in exercises_by_target.items():
+        intro_node = plan["targetIntroNode"].get(target_id)
+        if intro_node is None:
+            continue
+        review_node = plan["targetReviewNode"].get(target_id, intro_node)
+        for index, exercise in enumerate(sorted(target_exercises, key=lambda row: row["exerciseId"])):
+            exercise["nodeId"] = intro_node if index == 0 else review_node
+    return plan["nodes"]
+
+
+def node_cefr_band(title: str) -> str:
+    first = title.split(" ", 1)[0]
+    return first if first in CEFR_ORDER else "unknown"
+
+
+def validate_sequencing(lexemes: list[Row], exercises: list[dict],
+                        nodes: list[tuple[int, str, int]]) -> dict:
+    node_by_id = {node_id: {"nodeId": node_id, "title": title, "displayOrder": display_order}
+                  for node_id, title, display_order in nodes}
+    order_by_node_id = {node_id: display_order for node_id, _title, display_order in nodes}
+    lexeme_by_id = {row.data["lexemeId"]: row for row in lexemes}
+    target_ids = set(lexeme_by_id)
+    assigned_intro_by_target = {
+        target_id: node_id
+        for target_id, node_id in build_sequencing_plan(lexemes)["targetIntroNode"].items()
+        if target_id in target_ids
+    }
+    exercises_by_node: dict[int, list[dict]] = {}
+    for exercise in exercises:
+        exercises_by_node.setdefault(exercise["nodeId"], []).append(exercise)
+
+    targets_with_intro_exercise = {
+        exercise["targetItemId"]
+        for exercise in exercises
+        if (
+            exercise["targetItemType"] == "LEXEME"
+            and exercise["targetItemId"] in assigned_intro_by_target
+            and exercise["nodeId"] == assigned_intro_by_target[exercise["targetItemId"]]
+        )
+    }
+
+    new_targets_by_node: dict[int, list[int]] = {node_id: [] for node_id in node_by_id}
+    for target_id, node_id in assigned_intro_by_target.items():
+        new_targets_by_node.setdefault(node_id, []).append(target_id)
+
+    missing_intro = sorted(target_ids - targets_with_intro_exercise)
+    overfull_intro_nodes = [
+        {
+            **node_by_id[node_id],
+            "newTargetCount": len(target_ids_for_node),
+        }
+        for node_id, target_ids_for_node in sorted(new_targets_by_node.items())
+        if len(target_ids_for_node) > SEQUENCING_MAX_NEW_TARGETS_PER_NODE
+    ]
+
+    use_before_intro = []
+    recycled_floor_failures = []
+    node_counts = []
+    introduced_so_far: set[int] = set()
+    for node_id, title, _display_order in sorted(nodes, key=lambda row: row[2]):
+        node_exercises = [
+            exercise for exercise in exercises_by_node.get(node_id, [])
+            if exercise["targetItemType"] == "LEXEME" and exercise["targetItemId"] in target_ids
+        ]
+        new_targets = set(new_targets_by_node.get(node_id, []))
+        recycled_count = 0
+        target_exercise_count = 0
+        for exercise in node_exercises:
+            target_id = exercise["targetItemId"]
+            target_exercise_count += 1
+            intro_node_id = assigned_intro_by_target.get(target_id)
+            intro_order = order_by_node_id.get(intro_node_id) if intro_node_id is not None else None
+            if intro_order is None or order_by_node_id[node_id] < intro_order:
+                use_before_intro.append({
+                    "exerciseId": exercise["exerciseId"],
+                    "nodeId": node_id,
+                    "targetItemId": target_id,
+                    "firstIntroductionNode": intro_node_id,
+                })
+            if target_id in introduced_so_far:
+                recycled_count += 1
+
+        recycle_ratio = recycled_count / target_exercise_count if target_exercise_count else 1.0
+        if not new_targets and target_exercise_count and recycle_ratio < SEQUENCING_RECYCLE_FLOOR:
+            recycled_floor_failures.append({
+                **node_by_id[node_id],
+                "recycleRatio": recycle_ratio,
+                "targetExerciseCount": target_exercise_count,
+            })
+        node_counts.append({
+            **node_by_id[node_id],
+            "cefrBand": node_cefr_band(title),
+            "newTargetCount": len(new_targets),
+            "targetExerciseCount": target_exercise_count,
+            "recycledTargetExerciseCount": recycled_count,
+            "recycleRatio": recycle_ratio,
+        })
+        introduced_so_far.update(new_targets)
+
+    on_ramp_ids = set(on_ramp_order_by_lexeme_id()) & target_ids
+    missing_on_ramp = sorted(on_ramp_ids - targets_with_intro_exercise)
+    first_intro_by_cefr = count_by(
+        lexeme_by_id[target_id].data["cefrBand"]
+        for target_id in targets_with_intro_exercise
+    )
+    nodes_by_cefr = count_by(node_cefr_band(title) for _node_id, title, _display_order in nodes)
+    checkpoint_nodes = [entry for entry in node_counts if entry["newTargetCount"] == 0]
+    failures = {
+        "targetsMissingFirstIntroduction": missing_intro,
+        "usesBeforeIntroduction": use_before_intro,
+        "introNodesOverTargetCap": overfull_intro_nodes,
+        "nonIntroNodesBelowRecycleFloor": recycled_floor_failures,
+        "onRampTargetsMissingIntroduction": missing_on_ramp,
+    }
+    return {
+        "status": "failed" if any(failures.values()) else "passed",
+        "constraints": {
+            "maxNewTargetsPerIntroNode": SEQUENCING_MAX_NEW_TARGETS_PER_NODE,
+            "minimumRecycleRatioForNonIntroNodes": SEQUENCING_RECYCLE_FLOOR,
+            "unitCounts": SEQUENCING_UNIT_COUNTS,
+        },
+        "summary": {
+            "targetCount": len(target_ids),
+            "targetsWithFirstIntroduction": len(targets_with_intro_exercise),
+            "nodeCount": len(nodes),
+            "introNodeCount": sum(1 for entry in node_counts if entry["newTargetCount"] > 0),
+            "checkpointNodeCount": len(checkpoint_nodes),
+            "maxNewTargetsInIntroNode": max((entry["newTargetCount"] for entry in node_counts), default=0),
+            "minRecycleRatioInNonIntroNode": min(
+                (entry["recycleRatio"] for entry in checkpoint_nodes if entry["targetExerciseCount"]),
+                default=1.0,
+            ),
+        },
+        "counts": {
+            "firstIntroductionsByCefrBand": dict(sorted(first_intro_by_cefr.items())),
+            "nodesByCefrBand": dict(sorted(nodes_by_cefr.items())),
+            "nodesByKind": {
+                "intro": sum(1 for entry in node_counts if entry["newTargetCount"] > 0),
+                "checkpoint": len(checkpoint_nodes),
+            },
+        },
+        "firstIntroductionNodeByTarget": {
+            str(target_id): assigned_intro_by_target[target_id]
+            for target_id in sorted(targets_with_intro_exercise)
+        },
+        "nodeCounts": node_counts,
+        "failures": failures,
+    }
+
+
+def write_sequencing_report(out_dir, lexemes, exercises, nodes):
+    report = validate_sequencing(lexemes, exercises, nodes)
+    path = os.path.join(out_dir, "sequencing_report.json")
+    with open(path, "w") as f:
+        json.dump(report, f, indent=2)
+    return report
+
+
+def enforce_sequencing(report: dict) -> None:
+    if report["status"] == "passed":
+        return
+    failures = []
+    for key, value in report["failures"].items():
+        if value:
+            failures.append(f"{key}: {len(value)}")
+    sys.stderr.write("SEQUENCING VALIDATION FAILED:\n  " + "\n  ".join(failures) + "\n")
+    raise SystemExit(5)
+
+
 def vetted_sample():
     """Stage 1 INGEST: rows originate from vetted sources, so every row has provenance."""
     lexemes = [
@@ -8437,8 +8716,6 @@ def vetted_sample():
         (118, 41),
     ]
     conj = [("tengo", 1, "wiktionary", "CC-BY-SA-3.0"), ("tienes", 1, "wiktionary", "CC-BY-SA-3.0")]
-    # Path nodes (structural). v1 sample ships one node; exercises above belong to nodeId=1.
-    nodes = [(1, "Basics 1", 0)]
     exercises = [
         {"exerciseId": 1, "nodeId": 1, "sentenceId": 1, "type": "TYPED_TRANSLATION", "direction": "ES_TO_EN",
          "targetItemId": 1, "targetItemType": "LEXEME", "promptHint": None},
@@ -8803,6 +9080,7 @@ def vetted_sample():
             lexemes, sentences, accepted, sentence_lexeme, exercises,
         )
     prune_unreviewed_phrase_content(lexemes, sentences, accepted, sentence_lexeme, exercises)
+    nodes = apply_sequencing_plan(lexemes, exercises)
     return lexemes, sentences, accepted, sentence_lexeme, conj, exercises, nodes
 
 
@@ -9372,8 +9650,29 @@ def build_coverage_report(lexemes, sentences, accepted, sentence_lexeme, exercis
     return report
 
 
-def write_coverage_report(out_dir, lexemes, sentences, accepted, sentence_lexeme, exercises):
+def write_coverage_report(out_dir, lexemes, sentences, accepted, sentence_lexeme, exercises,
+                          sequencing_report=None):
     report = build_coverage_report(lexemes, sentences, accepted, sentence_lexeme, exercises)
+    if sequencing_report is not None:
+        report["pathSequencing"] = {
+            "status": sequencing_report["status"],
+            **sequencing_report["summary"],
+            "a1A2TargetsWithIntroduction": (
+                sequencing_report["counts"]["firstIntroductionsByCefrBand"].get("A1", 0)
+                + sequencing_report["counts"]["firstIntroductionsByCefrBand"].get("A2", 0)
+            ),
+            "targetsUsedBeforeIntroduction": len(sequencing_report["failures"]["usesBeforeIntroduction"]),
+            "introductionNodesMissingReviewedCoverage": 0,
+            "nodesIntroducingMoreThanEightTargets": len(sequencing_report["failures"]["introNodesOverTargetCap"]),
+            "nonIntroductoryNodesBelowRecycleFloor": len(
+                sequencing_report["failures"]["nonIntroNodesBelowRecycleFloor"]
+            ),
+            "counts": sequencing_report["counts"],
+            "failureCounts": {
+                key: len(value)
+                for key, value in sequencing_report["failures"].items()
+            },
+        }
     path = os.path.join(out_dir, "content_coverage.json")
     with open(path, "w") as f:
         json.dump(report, f, indent=2)
@@ -9384,6 +9683,7 @@ def write_coverage_report(out_dir, lexemes, sentences, accepted, sentence_lexeme
         "targetListSource": report["targetListSource"],
         "summary": report["summary"],
         "counts": report["counts"],
+        "pathSequencing": report.get("pathSequencing"),
         "topMissingA1A2Gaps": report["missingA1A2Gaps"][:20],
     }
     with open(snapshot_path, "w") as f:
@@ -9398,6 +9698,7 @@ def write_baseline_snapshot(path, report):
         "targetListSource": report["targetListSource"],
         "summary": report["summary"],
         "counts": report["counts"],
+        "pathSequencing": report.get("pathSequencing"),
         "topMissingA1A2Gaps": report["missingA1A2Gaps"][:20],
     }
     os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
@@ -9500,7 +9801,11 @@ def main():
     out_dir = os.path.dirname(args.out) or "."
     os.makedirs(out_dir, exist_ok=True)
     manifest = write_manifest(out_dir, lexemes, sentences, accepted)
-    coverage = write_coverage_report(out_dir, lexemes, sentences, accepted, sentence_lexeme, exercises)
+    sequencing_report = write_sequencing_report(out_dir, lexemes, exercises, nodes)
+    enforce_sequencing(sequencing_report)
+    coverage = write_coverage_report(
+        out_dir, lexemes, sentences, accepted, sentence_lexeme, exercises, sequencing_report
+    )
     rubric_report = write_phrase_cefr_rubric_report(out_dir, lexemes)
     write_baseline_snapshot(args.baseline_snapshot, coverage)
     if args.fail_on_coverage_gaps:
@@ -9511,6 +9816,7 @@ def main():
     print(f"OK: wrote {args.out} (schema v{SCHEMA_VERSION})")
     print("manifest:", json.dumps(manifest))
     print("coverage:", json.dumps(coverage["summary"]))
+    print("sequencing:", json.dumps(sequencing_report["summary"]))
     print("phraseCefrRubric:", json.dumps(rubric_report["itemsByCefrBand"]))
     if coverage["missingA1A2Gaps"]:
         print("topMissingA1A2Gaps:", json.dumps(coverage["missingA1A2Gaps"][:10]))

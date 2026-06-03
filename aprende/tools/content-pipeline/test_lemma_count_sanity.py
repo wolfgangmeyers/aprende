@@ -8,6 +8,7 @@ import tempfile
 import os
 import sys
 import unittest
+from unittest import mock
 
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -32,6 +33,48 @@ def load_build_module():
     sys.modules[spec.name] = module
     spec.loader.exec_module(module)
     return module
+
+
+def sequencing_lexeme(build, lexeme_id, cefr_band="A1", frequency_rank=None):
+    return build.Row(
+        {
+            "lexemeId": lexeme_id,
+            "lemma": f"fixture {lexeme_id}",
+            "pos": "noun",
+            "gender": "M",
+            "englishGloss": f"fixture {lexeme_id}",
+            "frequencyRank": frequency_rank or lexeme_id,
+            "cefrBand": cefr_band,
+            "difficultyPrior": 0.5,
+        },
+        source="fixture",
+        sourceId=f"fixture:{lexeme_id}",
+        license="CC-BY-SA-3.0",
+    )
+
+
+def sequencing_exercise(exercise_id, node_id, target_id):
+    return {
+        "exerciseId": exercise_id,
+        "nodeId": node_id,
+        "sentenceId": exercise_id,
+        "type": "TYPED_TRANSLATION",
+        "direction": "ES_TO_EN",
+        "targetItemId": target_id,
+        "targetItemType": "LEXEME",
+        "promptHint": None,
+    }
+
+
+def sequencing_fixture(build, count=9):
+    lexemes = [sequencing_lexeme(build, lexeme_id) for lexeme_id in range(1, count + 1)]
+    nodes = build.build_sequencing_plan(lexemes)["nodes"]
+    intro_by_target = build.build_sequencing_plan(lexemes)["targetIntroNode"]
+    exercises = [
+        sequencing_exercise(exercise_id, intro_by_target[exercise_id], exercise_id)
+        for exercise_id in range(1, count + 1)
+    ]
+    return lexemes, exercises, nodes, intro_by_target
 
 
 class LemmaCountSanityIntegrationTest(unittest.TestCase):
@@ -576,6 +619,101 @@ class LemmaCountSanityIntegrationTest(unittest.TestCase):
         report["postRebandGate"]["reviewedAuditJustificationPresent"] = True
         failures = self.sanity.target_shape_failures(report)
         self.assertNotIn("A1+A2 phrase/chunk total 44 < 1500", failures)
+
+
+class SequencingValidationTest(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.build = load_build_module()
+
+    def test_validate_sequencing_rejects_use_before_assigned_intro_node(self):
+        lexemes, exercises, nodes, intro_by_target = sequencing_fixture(self.build, count=9)
+        late_target = 9
+        self.assertGreater(intro_by_target[late_target], 1)
+        exercises = [
+            {**exercise, "nodeId": 1}
+            if exercise["targetItemId"] == late_target else exercise
+            for exercise in exercises
+        ]
+
+        report = self.build.validate_sequencing(lexemes, exercises, nodes)
+
+        self.assertEqual("failed", report["status"])
+        self.assertEqual(1, len(report["failures"]["usesBeforeIntroduction"]))
+        violation = report["failures"]["usesBeforeIntroduction"][0]
+        self.assertEqual(late_target, violation["targetItemId"])
+        self.assertEqual(1, violation["nodeId"])
+        self.assertEqual(intro_by_target[late_target], violation["firstIntroductionNode"])
+        with self.assertRaises(SystemExit) as raised:
+            self.build.enforce_sequencing(report)
+        self.assertEqual(5, raised.exception.code)
+
+    def test_validate_sequencing_rejects_intro_node_over_target_cap(self):
+        lexemes = [sequencing_lexeme(self.build, lexeme_id) for lexeme_id in range(1, 10)]
+        with mock.patch.object(self.build, "chunked", lambda items, _size: [items]):
+            nodes = self.build.build_sequencing_plan(lexemes)["nodes"]
+            intro_by_target = self.build.build_sequencing_plan(lexemes)["targetIntroNode"]
+            exercises = [
+                sequencing_exercise(exercise_id, intro_by_target[exercise_id], exercise_id)
+                for exercise_id in range(1, 10)
+            ]
+            report = self.build.validate_sequencing(lexemes, exercises, nodes)
+
+        self.assertEqual("failed", report["status"])
+        self.assertEqual(1, len(report["failures"]["introNodesOverTargetCap"]))
+        self.assertEqual(9, report["failures"]["introNodesOverTargetCap"][0]["newTargetCount"])
+        with self.assertRaises(SystemExit) as raised:
+            self.build.enforce_sequencing(report)
+        self.assertEqual(5, raised.exception.code)
+
+    def test_validate_sequencing_rejects_target_without_intro_exercise(self):
+        lexemes, exercises, nodes, _intro_by_target = sequencing_fixture(self.build, count=2)
+        missing_target = 2
+        exercises = [
+            exercise for exercise in exercises
+            if exercise["targetItemId"] != missing_target
+        ]
+
+        report = self.build.validate_sequencing(lexemes, exercises, nodes)
+
+        self.assertEqual("failed", report["status"])
+        self.assertEqual([missing_target], report["failures"]["targetsMissingFirstIntroduction"])
+        self.assertNotIn(str(missing_target), report["firstIntroductionNodeByTarget"])
+        with self.assertRaises(SystemExit) as raised:
+            self.build.enforce_sequencing(report)
+        self.assertEqual(5, raised.exception.code)
+
+    def test_real_built_path_is_well_formed(self):
+        lexemes, sentences, accepted, sentence_lexeme, _conj, exercises, nodes = self.build.vetted_sample()
+        coverage = self.build.build_coverage_report(lexemes, sentences, accepted, sentence_lexeme, exercises)
+        learner_ready_ids = {
+            entry["lexemeId"]
+            for entry in coverage["lexemeReadiness"]
+            if entry["learnerReady"]
+        }
+
+        report = self.build.validate_sequencing(lexemes, exercises, nodes)
+
+        self.assertEqual("passed", report["status"])
+        self.assertEqual(
+            report["summary"]["nodeCount"],
+            report["counts"]["nodesByKind"]["intro"] + report["counts"]["nodesByKind"]["checkpoint"],
+        )
+        self.assertEqual(list(range(len(nodes))), [display_order for _node_id, _title, display_order in nodes])
+        self.assertTrue(learner_ready_ids <= {int(target_id) for target_id in report["firstIntroductionNodeByTarget"]})
+        self.assertEqual([], report["failures"]["usesBeforeIntroduction"])
+        self.assertLessEqual(
+            report["summary"]["maxNewTargetsInIntroNode"],
+            self.build.SEQUENCING_MAX_NEW_TARGETS_PER_NODE,
+        )
+        self.assertEqual(
+            [],
+            [entry for entry in report["nodeCounts"] if entry["title"].endswith("Review") and entry["newTargetCount"]],
+        )
+        self.assertEqual(
+            [],
+            [entry for entry in report["nodeCounts"] if not entry["title"].endswith("Review") and not entry["newTargetCount"]],
+        )
 
 
 class PhraseCefrRubricIntegrationTest(unittest.TestCase):
