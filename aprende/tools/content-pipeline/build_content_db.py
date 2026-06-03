@@ -64,6 +64,7 @@ SEQUENCING_UNIT_COUNTS = {
 }
 SEQUENCING_MAX_NEW_TARGETS_PER_NODE = 8
 SEQUENCING_RECYCLE_FLOOR = 0.30
+CHECKPOINT_REVIEW_TARGET_LENGTH = 16
 
 
 # --------------------------------------------------------------------------------------
@@ -8056,6 +8057,7 @@ def build_sequencing_plan(lexemes: list[Row]) -> dict:
                 "cefrBand": cefr_band,
                 "unit": unit_index,
                 "targetCount": len(unit_targets),
+                "targetIds": [row.data["lexemeId"] for row in unit_targets],
                 "nodeIds": unit_node_ids,
                 "checkpointNodeId": checkpoint_id,
             })
@@ -8083,7 +8085,42 @@ def apply_sequencing_plan(lexemes: list[Row], exercises: list[dict]) -> list[tup
         review_node = plan["targetReviewNode"].get(target_id, intro_node)
         for index, exercise in enumerate(sorted(target_exercises, key=lambda row: row["exerciseId"])):
             exercise["nodeId"] = intro_node if index == 0 else review_node
+    add_checkpoint_review_exercises(plan, exercises, exercises_by_target)
     return plan["nodes"]
+
+
+def add_checkpoint_review_exercises(plan: dict, exercises: list[dict],
+                                    exercises_by_target: dict[int, list[dict]]) -> None:
+    """Make checkpoint nodes completable using previously introduced unit exercises."""
+    exercises_by_node: dict[int, int] = {}
+    for exercise in exercises:
+        exercises_by_node[exercise["nodeId"]] = exercises_by_node.get(exercise["nodeId"], 0) + 1
+    next_exercise_id = max((exercise["exerciseId"] for exercise in exercises), default=0) + 1
+
+    for unit in plan["unitMetadata"]:
+        checkpoint_id = unit["checkpointNodeId"]
+        if exercises_by_node.get(checkpoint_id, 0) > 0:
+            continue
+
+        review_candidates = []
+        for target_id in unit["targetIds"]:
+            target_exercises = sorted(
+                exercises_by_target.get(target_id, []),
+                key=lambda row: row["exerciseId"],
+            )
+            if target_exercises:
+                review_candidates.append(target_exercises[0])
+
+        if not review_candidates:
+            raise RuntimeError(f"checkpoint node {checkpoint_id} has no eligible review exercises")
+
+        for candidate in review_candidates[:CHECKPOINT_REVIEW_TARGET_LENGTH]:
+            exercises.append({
+                **candidate,
+                "exerciseId": next_exercise_id,
+                "nodeId": checkpoint_id,
+            })
+            next_exercise_id += 1
 
 
 def node_cefr_band(title: str) -> str:

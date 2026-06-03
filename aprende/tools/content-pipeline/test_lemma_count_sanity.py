@@ -944,6 +944,45 @@ class SequencingValidationTest(unittest.TestCase):
             [entry for entry in report["nodeCounts"] if not entry["title"].endswith("Review") and not entry["newTargetCount"]],
         )
 
+    def test_real_built_path_has_no_empty_nodes(self):
+        _lexemes, _sentences, _accepted, _sentence_lexeme, _conj, exercises, nodes = self.build.vetted_sample()
+        exercise_count_by_node = {}
+        for exercise in exercises:
+            exercise_count_by_node[exercise["nodeId"]] = exercise_count_by_node.get(exercise["nodeId"], 0) + 1
+
+        empty_nodes = [
+            {"nodeId": node_id, "title": title}
+            for node_id, title, _display_order in nodes
+            if exercise_count_by_node.get(node_id, 0) == 0
+        ]
+
+        self.assertEqual([], empty_nodes)
+
+    def test_first_review_node_is_completable_and_unlocks_next_position(self):
+        _lexemes, _sentences, _accepted, _sentence_lexeme, _conj, exercises, nodes = self.build.vetted_sample()
+        exercise_count_by_node = {}
+        for exercise in exercises:
+            exercise_count_by_node[exercise["nodeId"]] = exercise_count_by_node.get(exercise["nodeId"], 0) + 1
+        ordered_nodes = sorted(nodes, key=lambda row: row[2])
+        review_index = next(
+            index for index, (_node_id, title, _display_order) in enumerate(ordered_nodes)
+            if title == "A1 Unit 1 Review"
+        )
+        review_node_id, _review_title, _review_order = ordered_nodes[review_index]
+        next_node_id, _next_title, _next_order = ordered_nodes[review_index + 1]
+
+        self.assertGreater(exercise_count_by_node.get(review_node_id, 0), 0)
+
+        completed_nodes = {node_id for node_id, _title, _order in ordered_nodes[:review_index + 1]}
+        prev_completed = True
+        unlocked_by_node = {}
+        for node_id, _title, _display_order in ordered_nodes:
+            completed = node_id in completed_nodes
+            unlocked_by_node[node_id] = prev_completed or completed
+            prev_completed = completed
+
+        self.assertTrue(unlocked_by_node[next_node_id])
+
 
 class PhraseCefrRubricIntegrationTest(unittest.TestCase):
     @classmethod
