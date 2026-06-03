@@ -17,8 +17,8 @@ CURRENT_EXPECTED = {
     "singleWord": 755,
     "phraseOrChunk": 6676,
     "A1": 23,
-    "A2": 103,
-    "B1": 7057,
+    "A2": 2153,
+    "B1": 5007,
     "B2": 248,
     "C1": 0,
 }

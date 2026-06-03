@@ -77,6 +77,12 @@ The build emits generated artifacts next to `content.db`:
 
 - `content_coverage.json` — full breadth report.
 - `coverage_snapshot.json` — compact summary intended for review diffs.
+- `phrase_cefr_rubric_report.json` — deterministic phrase/chunk CEFR rubric audit,
+  including per-phrase signals, reasons, manual override reasons, and counts by band.
+  The rubric intentionally keeps B1+ term-set matching conservative: when new domains
+  or intermediate vocabulary are added, audit the B1+ domain/head/term sets instead of
+  relying on broad morphology alone, because routine A2 terms such as repair,
+  confirmation, and notification can share abstract-looking endings.
 
 It also updates the committed, stable review baseline:
 

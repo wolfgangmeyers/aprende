@@ -31,6 +31,7 @@ import os
 import sqlite3
 import re
 import sys
+import unicodedata
 from dataclasses import dataclass, field
 
 PIPELINE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -1786,8 +1787,20 @@ AI_ACCELERATED_PACK_A2_007 = [
 
 
 def build_ai_accelerated_pack(items):
-    return [
-        {
+    pack = []
+    for item in items:
+        audit_payload = None
+        if len(item) == 12:
+            (
+                lexeme_id, lemma, pos, gender, english_gloss, frequency_rank, cefr_band,
+                difficulty_prior, reason, source_basis, sentences, audit_payload,
+            ) = item
+        else:
+            (
+                lexeme_id, lemma, pos, gender, english_gloss, frequency_rank, cefr_band,
+                difficulty_prior, reason, source_basis, sentences,
+            ) = item
+        entry = {
             "lexemeId": lexeme_id,
             "lemma": lemma,
             "pos": pos,
@@ -1800,60 +1813,498 @@ def build_ai_accelerated_pack(items):
             "sourceBasis": source_basis,
             "sentences": sentences,
         }
-        for (
-            lexeme_id, lemma, pos, gender, english_gloss, frequency_rank, cefr_band,
-            difficulty_prior, reason, source_basis, sentences,
-        ) in items
-    ]
+        if audit_payload:
+            entry["phraseCefrRubric"] = audit_payload
+        pack.append(entry)
+    return pack
 
 
 def build_numbered_ai_accelerated_pack(start_lexeme_id, start_sentence_id, start_answer_id, specs):
     items = []
-    for offset, (
-        lemma, pos, gender, english_gloss, frequency_rank, cefr_band, difficulty_prior,
-        reason, source_basis, sentence_pairs,
-    ) in enumerate(specs):
+    for offset, spec in enumerate(specs):
+        audit_payload = None
+        if len(spec) == 11:
+            (
+                lemma, pos, gender, english_gloss, frequency_rank, cefr_band, difficulty_prior,
+                reason, source_basis, sentence_pairs, audit_payload,
+            ) = spec
+        else:
+            (
+                lemma, pos, gender, english_gloss, frequency_rank, cefr_band, difficulty_prior,
+                reason, source_basis, sentence_pairs,
+            ) = spec
         if len(sentence_pairs) != 2:
             raise ValueError(f"{lemma} must define exactly two reviewed sentence pairs")
         sentence_id = start_sentence_id + offset * 2
         answer_id = start_answer_id + offset * 2
-        items.append((
+        item = (
             start_lexeme_id + offset, lemma, pos, gender, english_gloss, frequency_rank, cefr_band,
             difficulty_prior, reason, source_basis,
             [
                 (sentence_id, answer_id, sentence_pairs[0][0], sentence_pairs[0][1]),
                 (sentence_id + 1, answer_id + 1, sentence_pairs[1][0], sentence_pairs[1][1]),
             ],
-        ))
+        )
+        if audit_payload:
+            item = (*item, audit_payload)
+        items.append(item)
     return build_ai_accelerated_pack(items)
 
 
 def build_numbered_ai_accelerated_phrase_pack(start_lexeme_id, start_sentence_id, start_answer_id, specs):
     expanded = []
-    for (
-        lemma, pos, gender, english_gloss, frequency_rank, cefr_band, difficulty_prior,
-        reason, source_basis, indefinite_article, definite_article, there_is_answer,
-    ) in specs:
+    for spec in specs:
+        audit_payload = None
+        if len(spec) == 13:
+            (
+                lemma, pos, gender, english_gloss, frequency_rank, cefr_band, difficulty_prior,
+                reason, source_basis, indefinite_article, definite_article, there_is_answer,
+                audit_payload,
+            ) = spec
+        else:
+            (
+                lemma, pos, gender, english_gloss, frequency_rank, cefr_band, difficulty_prior,
+                reason, source_basis, indefinite_article, definite_article, there_is_answer,
+            ) = spec
         prefix = f"{indefinite_article} " if indefinite_article else ""
-        expanded.append((
+        item = (
             lemma, pos, gender, english_gloss, frequency_rank, cefr_band, difficulty_prior,
             reason, source_basis,
             [
                 (f"Hay {prefix}{lemma}.", there_is_answer),
                 (f"{definite_article} {lemma} aparece aquí.", f"The {english_gloss} appears here."),
             ],
-        ))
+        )
+        if audit_payload:
+            item = (*item, audit_payload)
+        expanded.append(item)
     return build_numbered_ai_accelerated_pack(start_lexeme_id, start_sentence_id, start_answer_id, expanded)
+
+
+PHRASE_CEFR_RUBRIC_REPORT_FILENAME = "phrase_cefr_rubric_report.json"
+PHRASE_CEFR_RUBRIC_AUDIT: list[dict] = []
+
+A1_ROUTINE_DOMAINS = {
+    "survival", "courtesy", "classroom", "home", "food", "drink", "place", "time",
+    "routine place",
+}
+A2_ROUTINE_DOMAINS = {
+    "errand", "errands", "health", "family", "travel", "shopping", "school", "work",
+    "restaurant", "booking", "routine health", "routine health errand", "routine travel",
+    "office", "account", "payment", "product", "logistics", "home", "money",
+    "banking", "services", "repairs", "housing", "household", "delivery", "digital",
+    "safety", "bureaucracy", "forms", "addresses", "phone", "transport", "lodging",
+    "social",
+}
+B1_PLUS_DOMAIN_SIGNALS = {
+    "formal", "institutional", "administrative", "legal", "abstract", "specialized",
+    "medical-administrative", "documentation", "explanation", "complaint", "complaints",
+    "negotiation", "planning",
+}
+A1_HEAD_NOUNS = {
+    "agua", "casa", "entrada", "puerta", "clase", "comida", "pan", "leche", "cafe",
+    "hora", "dia", "noche", "mesa", "silla", "calle", "bano", "habitacion",
+}
+A2_HEAD_NOUNS = {
+    "cita", "mesa", "billete", "tienda", "doctor", "hotel", "tren", "autobus",
+    "escuela", "trabajo", "familia", "precio", "tarjeta", "receta", "farmacia",
+    "carpeta", "producto", "numero", "pago", "zona", "cuenta", "archivo",
+    "documento", "formulario", "firma", "copia", "recibo", "factura", "importe",
+    "saldo", "cargo", "transferencia", "tarjeta", "cajero", "aviso", "mensaje",
+    "correo", "llamada", "telefono", "contacto", "direccion", "codigo", "fecha",
+    "hora", "plazo", "turno", "horario", "reserva", "entrada", "salida", "puerta",
+    "ventana", "area", "seccion", "linea", "canal", "punto", "ruta", "estacion",
+    "vuelo", "equipaje", "maleta", "alojamiento", "habitacion", "vivienda", "piso",
+    "alquiler", "luz", "agua", "averia", "fuga", "corte", "ruido", "pieza",
+    "aparato", "taller", "reparacion", "entrega", "envio", "paquete", "dosis",
+    "medicina", "dolor", "sintoma", "tos", "fiebre", "centro", "sala", "consulta",
+    "atencion", "persona", "dato", "error", "problema", "incidencia", "caso",
+    "estado", "paso", "opcion", "motivo", "causa", "respuesta", "solucion",
+    "prueba", "resultado", "constancia", "notificacion", "confirmacion", "registro",
+    "cambio", "demora", "visita", "reunion", "tarea", "credencial", "preferencia",
+}
+B1_PLUS_HEAD_NOUNS = {
+    "comunicacion", "gestion", "seguimiento", "revision", "evaluacion", "programacion",
+    "cancelacion", "actualizacion", "autorizacion", "verificacion", "instruccion",
+    "indicacion", "requisito", "condicion", "comprobacion", "resolucion",
+    "preparacion", "presentacion", "proteccion", "coordinacion", "validacion",
+    "supervision", "capacitacion", "responsable", "propuesta", "opinion", "decision",
+    "explicacion", "solicitud", "rechazo", "permiso", "control", "acuerdo",
+}
+B1_PLUS_TERMS = {
+    "administrativo", "administrativa", "administrativos", "administrativas",
+    "procedimiento", "responsabilidad", "legal", "legales", "formal", "formales",
+    "reclamacion", "reclamo", "informe", "detallado", "detallada", "solicitud",
+    "contrato", "documentacion", "institucional", "abstracto", "abstracta",
+    "especializado", "especializada", "diagnostico", "tratamiento", "seguro",
+    "denuncia", "hipoteca", "multa", "policial", "trafico",
+}
+IDIOMATIC_TERMS = {"idiom", "idiomatic", "modismo"}
+IDIOMATIC_PHRASES = {"frase hecha"}
+ROUTINE_HEALTH_TERMS = {"cita", "medica", "medico", "doctor", "farmacia", "receta"}
+LOW_SIGNAL_TOKENS = {
+    "mi", "mis", "tu", "tus", "su", "sus", "de", "del", "la", "el", "lo", "los",
+    "las", "un", "una", "unos", "unas", "a", "al", "con", "sin", "por", "para",
+    "en", "sobre",
+}
+SPECIALIZED_MEDICAL_ADMIN_TERMS = {
+    "administrativo", "administrativa", "procedimiento", "seguro", "reclamacion",
+    "responsabilidad", "legal", "informe", "diagnostico", "tratamiento",
+}
+
+
+def normalize_signal_text(text: object) -> str:
+    normalized = unicodedata.normalize("NFKD", str(text or "").lower())
+    return "".join(char for char in normalized if not unicodedata.combining(char))
+
+
+def phrase_tokens(text: object) -> list[str]:
+    return re.findall(r"[a-z0-9]+", normalize_signal_text(text))
+
+
+def phrase_head_noun(tokens: list[str]) -> str:
+    for token in tokens:
+        if token not in LOW_SIGNAL_TOKENS:
+            return token
+    return tokens[0] if tokens else ""
+
+
+def phrase_domain_tokens(domain: object, reason: object, source_basis: object) -> set[str]:
+    return set(phrase_tokens(" ".join(str(value or "") for value in (domain, reason, source_basis))))
+
+
+def phrase_cefr_difficulty(cefr_band: str) -> float:
+    return {"A1": 0.35, "A2": 0.5, "B1": 0.65}.get(cefr_band, 0.65)
+
+
+def phrase_source_value(row: dict, camel_name: str, snake_name: str, default=None):
+    if camel_name in row:
+        return row[camel_name]
+    if snake_name in row:
+        return row[snake_name]
+    return default
+
+
+def phrase_cefr_rubric(metadata: dict) -> dict:
+    """Deterministically assign phrase/chunk CEFR.
+
+    Routine health phrases such as "cita medica" are A2 when the phrase is an everyday
+    appointment/errand. Medical-administrative phrases become B1 when administrative,
+    legal, insurance, diagnostic, treatment, report, or specialized interpretation signals
+    are present in the phrase text, gloss, domain/reason, or source basis.
+    """
+    lemma = str(metadata.get("lemma") or "")
+    english_gloss = str(metadata.get("englishGloss") or "")
+    domain = str(metadata.get("domain") or metadata.get("reason") or "")
+    reason = str(metadata.get("reason") or domain)
+    source_basis = str(metadata.get("sourceBasis") or "")
+    frequency_rank = metadata.get("frequencyRank")
+    manual_band = metadata.get("manualCefrBand")
+    manual_reason = metadata.get("manualRubricReason")
+    if manual_band and not manual_reason:
+        raise ValueError(f"{lemma} manualCefrBand requires a manualRubricReason")
+    if manual_band:
+        if manual_band not in {"A1", "A2", "B1"}:
+            raise ValueError(f"{lemma} manualCefrBand must be A1, A2, or B1")
+        return {
+            "cefrBand": manual_band,
+            "difficultyPrior": phrase_cefr_difficulty(manual_band),
+            "rubricReason": "manual_override",
+            "rubricSignals": [f"manual_override:{manual_band}", f"manual_reason:{manual_reason}"],
+            "manualRubricReason": manual_reason,
+        }
+
+    tokens = phrase_tokens(lemma)
+    gloss_tokens = set(phrase_tokens(english_gloss))
+    domain_tokens = phrase_domain_tokens(domain, reason, source_basis)
+    normalized_metadata_text = normalize_signal_text(
+        " ".join(str(value or "") for value in (lemma, english_gloss, domain, reason, source_basis))
+    )
+    all_signals = set(tokens) | gloss_tokens | domain_tokens
+    head = phrase_head_noun(tokens)
+    content_token_count = len([token for token in tokens if token not in LOW_SIGNAL_TOKENS])
+    signals: list[str] = [f"head:{head}", f"content_tokens:{content_token_count}"]
+    if frequency_rank is not None:
+        signals.append(f"frequency_rank:{frequency_rank}")
+
+    b1_matches = sorted((all_signals & B1_PLUS_DOMAIN_SIGNALS) | (set(tokens) & B1_PLUS_TERMS))
+    b1_process_head = head in B1_PLUS_HEAD_NOUNS
+    low_frequency = frequency_rank is not None and frequency_rank > 2500
+    idiomatic = bool(all_signals & IDIOMATIC_TERMS) or any(
+        phrase in normalized_metadata_text for phrase in IDIOMATIC_PHRASES
+    )
+    specialized_medical_admin = bool(all_signals & SPECIALIZED_MEDICAL_ADMIN_TERMS) and (
+        "medical" in all_signals or "medica" in all_signals or "medico" in all_signals
+        or "health" in all_signals or "administrative" in all_signals
+    )
+    if b1_matches or b1_process_head or specialized_medical_admin or low_frequency or idiomatic:
+        signals.extend(f"b1_plus:{signal}" for signal in b1_matches)
+        if b1_process_head:
+            signals.append("b1_plus:abstract_process_head")
+        if specialized_medical_admin:
+            signals.append("b1_plus:specialized_medical_administrative")
+        if low_frequency:
+            signals.append("b1_plus:low_frequency")
+        if idiomatic:
+            signals.append("b1_plus:idiomatic")
+        return {
+            "cefrBand": "B1",
+            "difficultyPrior": 0.65,
+            "rubricReason": "b1_plus_formal_abstract_institutional_or_complex",
+            "rubricSignals": sorted(set(signals)),
+        }
+
+    routine_health = bool(set(tokens) & ROUTINE_HEALTH_TERMS) and (
+        "health" in all_signals or "medical" in all_signals or "medica" in all_signals
+        or "medico" in all_signals
+    )
+    if routine_health:
+        signals.append("a2:routine_health_not_specialized_medical_administrative")
+
+    if (
+        content_token_count <= 2
+        and head in A1_HEAD_NOUNS
+        and domain_tokens & A1_ROUTINE_DOMAINS
+        and not (all_signals & B1_PLUS_DOMAIN_SIGNALS)
+    ):
+        signals.append("a1:short_concrete_routine_high_frequency_head")
+        return {
+            "cefrBand": "A1",
+            "difficultyPrior": 0.35,
+            "rubricReason": "a1_short_concrete_routine_phrase",
+            "rubricSignals": sorted(set(signals)),
+        }
+
+    if (
+        routine_health
+        or (content_token_count <= 3 and head in A2_HEAD_NOUNS)
+        or domain_tokens & A2_ROUTINE_DOMAINS
+        or gloss_tokens & {"appointment", "reserved", "ticket", "store", "shop", "travel", "booking"}
+    ):
+        signals.append("a2:concrete_daily_life_collocation")
+        return {
+            "cefrBand": "A2",
+            "difficultyPrior": 0.5,
+            "rubricReason": "a2_concrete_daily_life_collocation",
+            "rubricSignals": sorted(set(signals)),
+        }
+
+    signals.append("b1_plus:default_unknown_phrase_requires_intermediate_interpretation")
+    return {
+        "cefrBand": "B1",
+        "difficultyPrior": 0.65,
+        "rubricReason": "b1_plus_default_intermediate_phrase",
+        "rubricSignals": sorted(set(signals)),
+    }
+
+
+def reset_phrase_cefr_rubric_audit() -> None:
+    PHRASE_CEFR_RUBRIC_AUDIT.clear()
+
+
+def record_phrase_cefr_rubric_audit(metadata: dict, decision: dict) -> None:
+    PHRASE_CEFR_RUBRIC_AUDIT.append(phrase_cefr_rubric_audit_payload(metadata, decision))
+
+
+def phrase_cefr_rubric_audit_payload(metadata: dict, decision: dict) -> dict:
+    entry = {
+        "lemma": metadata["lemma"],
+        "pos": metadata.get("pos", "noun phrase"),
+        "englishGloss": metadata["englishGloss"],
+        "domain": metadata.get("domain") or metadata.get("reason"),
+        "sourceBasis": metadata.get("sourceBasis"),
+        "frequencyRank": metadata.get("frequencyRank"),
+        "cefrBand": decision["cefrBand"],
+        "difficultyPrior": decision["difficultyPrior"],
+        "rubricReason": decision["rubricReason"],
+        "rubricSignals": decision["rubricSignals"],
+        "assignmentSource": "phrase_pack_rubric",
+    }
+    if decision.get("manualRubricReason"):
+        entry["manualRubricReason"] = decision["manualRubricReason"]
+    return entry
+
+
+def has_phrase_boundary(lemma: str) -> bool:
+    return any(char.isspace() for char in lemma.strip())
+
+
+def phrase_rubric_entry_for_lexeme(row: Row) -> dict:
+    data = row.data
+    payload = data.get("phraseCefrRubric")
+    if payload:
+        decision = {
+            "cefrBand": payload["cefrBand"],
+            "difficultyPrior": payload["difficultyPrior"],
+            "rubricReason": payload["rubricReason"],
+            "rubricSignals": payload["rubricSignals"],
+            "manualRubricReason": payload.get("manualRubricReason"),
+        }
+        domain = payload.get("domain")
+        source_basis = payload.get("sourceBasis")
+        assignment_source = "phrase_pack_rubric"
+    else:
+        metadata = {
+            "lemma": data["lemma"],
+            "pos": data["pos"],
+            "englishGloss": data["englishGloss"],
+            "domain": None,
+            "reason": None,
+            "sourceBasis": row.sourceId,
+            "frequencyRank": data["frequencyRank"],
+        }
+        decision = phrase_cefr_rubric(metadata)
+        domain = None
+        source_basis = row.sourceId
+        assignment_source = "legacy_explicit_band_assessed_not_rebanded"
+
+    entry = {
+        "lexemeId": data["lexemeId"],
+        "sourceId": row.sourceId,
+        "source": row.source,
+        "lemma": data["lemma"],
+        "pos": data["pos"],
+        "englishGloss": data["englishGloss"],
+        "domain": domain,
+        "sourceBasis": source_basis,
+        "frequencyRank": data["frequencyRank"],
+        "cefrBand": data["cefrBand"],
+        "difficultyPrior": data["difficultyPrior"],
+        "rubricCefrBand": decision["cefrBand"],
+        "rubricDifficultyPrior": decision["difficultyPrior"],
+        "rubricReason": decision["rubricReason"],
+        "rubricSignals": decision["rubricSignals"],
+        "assignmentSource": assignment_source,
+    }
+    if decision.get("manualRubricReason"):
+        entry["manualRubricReason"] = decision["manualRubricReason"]
+    return entry
+
+
+def phrase_cefr_rubric_report_items(lexemes=None) -> list[dict]:
+    if lexemes is None:
+        return list(PHRASE_CEFR_RUBRIC_AUDIT)
+
+    items = []
+    for row in lexemes:
+        data = row.data
+        if data["pos"] != "noun phrase" and not has_phrase_boundary(data["lemma"]):
+            continue
+        items.append(phrase_rubric_entry_for_lexeme(row))
+    return items
+
+
+def build_phrase_cefr_rubric_report(lexemes=None) -> dict:
+    items = phrase_cefr_rubric_report_items(lexemes)
+    by_band = count_by(entry["cefrBand"] for entry in items)
+    by_rubric_band = count_by(entry.get("rubricCefrBand", entry["cefrBand"]) for entry in items)
+    by_reason = count_by(entry["rubricReason"] for entry in items)
+    by_assignment_source = count_by(entry["assignmentSource"] for entry in items)
+    for band in ("A1", "A2", "B1"):
+        by_band.setdefault(band, 0)
+        by_rubric_band.setdefault(band, 0)
+    return {
+        "schemaVersion": SCHEMA_VERSION,
+        "rubric": {
+            "bands": {
+                "A1": (
+                    "one short concrete routine survival/courtesy/classroom/home/food/"
+                    "place/time phrase with a high-frequency head noun and no B1+ signals"
+                ),
+                "A2": (
+                    "concrete daily-life phrase with one common modifier/collocation in "
+                    "routine errands, health, family, travel, shopping, school, work, or booking"
+                ),
+                "B1": (
+                    "B1+ in the existing schema: formal, institutional, abstract, legal, "
+                    "specialized medical-administrative, idiomatic, low-frequency, multi-step, "
+                    "or explanation/planning/interpretation phrase chains"
+                ),
+            },
+            "medicalBoundary": (
+                "Routine health errands such as cita medica are A2; specialized medical-"
+                "administrative/legal/insurance/diagnostic/report contexts are B1+."
+            ),
+        },
+        "itemCount": len(items),
+        "helperAssignedItemCount": by_assignment_source.get("phrase_pack_rubric", 0),
+        "legacyExplicitBandAssessedItemCount": by_assignment_source.get(
+            "legacy_explicit_band_assessed_not_rebanded", 0,
+        ),
+        "itemsByCefrBand": dict(sorted(by_band.items())),
+        "itemsByRubricCefrBand": dict(sorted(by_rubric_band.items())),
+        "itemsByRubricReason": by_reason,
+        "itemsByAssignmentSource": by_assignment_source,
+        "items": items,
+    }
+
+
+def write_phrase_cefr_rubric_report(out_dir: str, lexemes=None) -> dict:
+    report = build_phrase_cefr_rubric_report(lexemes)
+    path = os.path.join(out_dir, PHRASE_CEFR_RUBRIC_REPORT_FILENAME)
+    with open(path, "w") as f:
+        json.dump(report, f, indent=2, ensure_ascii=False)
+        f.write("\n")
+    return report
+
+
+def normalize_phrase_pack_row(row):
+    if isinstance(row, dict):
+        lemma = row["lemma"]
+        gender = row.get("gender")
+        english_gloss = phrase_source_value(row, "englishGloss", "english_gloss")
+        domain = row.get("domain", row.get("reason"))
+        indefinite_article = phrase_source_value(row, "indefiniteArticle", "indefinite_article")
+        definite_article = phrase_source_value(row, "definiteArticle", "definite_article")
+        frequency_rank = phrase_source_value(row, "frequencyRank", "frequency_rank", 1800)
+        source_basis = phrase_source_value(
+            row, "sourceBasis", "source_basis",
+            "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic",
+        )
+        metadata = {
+            "lemma": lemma,
+            "pos": row.get("pos", "noun phrase"),
+            "englishGloss": english_gloss,
+            "domain": domain,
+            "reason": row.get("reason", domain),
+            "sourceBasis": source_basis,
+            "frequencyRank": frequency_rank,
+            "manualCefrBand": phrase_source_value(row, "manualCefrBand", "manual_cefr_band"),
+            "manualRubricReason": phrase_source_value(row, "manualRubricReason", "manual_rubric_reason"),
+        }
+        return lemma, gender, english_gloss, domain, indefinite_article, definite_article, frequency_rank, source_basis, metadata
+
+    lemma, gender, english_gloss, domain, indefinite_article, definite_article = row
+    frequency_rank = 1800
+    source_basis = "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic"
+    metadata = {
+        "lemma": lemma,
+        "pos": "noun phrase",
+        "englishGloss": english_gloss,
+        "domain": domain,
+        "reason": domain,
+        "sourceBasis": source_basis,
+        "frequencyRank": frequency_rank,
+    }
+    return lemma, gender, english_gloss, domain, indefinite_article, definite_article, frequency_rank, source_basis, metadata
 
 
 def build_phrase_pack_specs(rows):
     specs = []
-    for lemma, gender, english_gloss, domain, indefinite_article, definite_article in rows:
+    for row in rows:
+        (
+            lemma, gender, english_gloss, domain, indefinite_article, definite_article,
+            frequency_rank, source_basis, metadata,
+        ) = normalize_phrase_pack_row(row)
+        decision = phrase_cefr_rubric(metadata)
+        audit_payload = phrase_cefr_rubric_audit_payload(metadata, decision)
+        PHRASE_CEFR_RUBRIC_AUDIT.append(audit_payload)
         article = "an" if english_gloss[0].lower() in "aeiou" else "a"
         specs.append((
-            lemma, "noun phrase", gender, english_gloss, 1800, "B1", 0.5, domain,
-            "SPANISH_BREADTH_PLAN.md B1/B2 practical fluency topic",
+            lemma, "noun phrase", gender, english_gloss, frequency_rank,
+            decision["cefrBand"], decision["difficultyPrior"], domain, source_basis,
             indefinite_article, definite_article, f"There is {article} {english_gloss}.",
+            audit_payload,
         ))
     return specs
 
@@ -7646,7 +8097,7 @@ def append_ai_accelerated_pack(pack, pack_slug: str, exercise_id: int,
                                lexemes, sentences, accepted, sentence_lexeme, exercises) -> int:
     for item in pack:
         lexeme_id = item["lexemeId"]
-        lexemes.append(Row({
+        lexeme_data = {
             "lexemeId": lexeme_id,
             "lemma": item["lemma"],
             "pos": item["pos"],
@@ -7655,7 +8106,10 @@ def append_ai_accelerated_pack(pack, pack_slug: str, exercise_id: int,
             "frequencyRank": item["frequencyRank"],
             "cefrBand": item["cefrBand"],
             "difficultyPrior": item["difficultyPrior"],
-        }, source="wiktionary", sourceId=item["lemma"], license="CC-BY-SA-3.0"))
+        }
+        if item.get("phraseCefrRubric"):
+            lexeme_data["phraseCefrRubric"] = item["phraseCefrRubric"]
+        lexemes.append(Row(lexeme_data, source="wiktionary", sourceId=item["lemma"], license="CC-BY-SA-3.0"))
 
         sentence_ids = []
         for sentence_id, accepted_id, spanish, english in item["sentences"]:
@@ -9461,6 +9915,7 @@ def main():
     os.makedirs(out_dir, exist_ok=True)
     manifest = write_manifest(out_dir, lexemes, sentences, accepted)
     coverage = write_coverage_report(out_dir, lexemes, sentences, accepted, sentence_lexeme, exercises)
+    rubric_report = write_phrase_cefr_rubric_report(out_dir, lexemes)
     write_baseline_snapshot(args.baseline_snapshot, coverage)
     if args.fail_on_coverage_gaps:
         if os.path.exists(args.out):
@@ -9470,6 +9925,7 @@ def main():
     print(f"OK: wrote {args.out} (schema v{SCHEMA_VERSION})")
     print("manifest:", json.dumps(manifest))
     print("coverage:", json.dumps(coverage["summary"]))
+    print("phraseCefrRubric:", json.dumps(rubric_report["itemsByCefrBand"]))
     if coverage["missingA1A2Gaps"]:
         print("topMissingA1A2Gaps:", json.dumps(coverage["missingA1A2Gaps"][:10]))
 
