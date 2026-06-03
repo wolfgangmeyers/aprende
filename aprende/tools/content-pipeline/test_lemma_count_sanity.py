@@ -406,14 +406,27 @@ class LemmaCountSanityIntegrationTest(unittest.TestCase):
             pack, "fixture-reviewed-bad-sentence", 999980,
             lexemes, sentences, accepted, sentence_lexeme, exercises,
         )
-        build.prune_unreviewed_phrase_content(lexemes, sentences, accepted, sentence_lexeme, exercises)
+        evidence = copy.deepcopy(build.REVIEW_EVIDENCE_ITEMS)
+        build.register_per_item_review_evidence(
+            "lexeme",
+            lexemes[0],
+            {build.AUTO_REVIEW_SPANISH, build.AUTO_REVIEW_AUTHENTICITY, build.AUTO_REVIEW_DIALECT},
+            "Fixture per-item review evidence for a reviewed phrase with a bad generated sentence.",
+        )
+        evidence.update({
+            build.review_evidence_key("lexeme", lexemes[0]): build.REVIEW_EVIDENCE_ITEMS[
+                build.review_evidence_key("lexeme", lexemes[0])
+            ]
+        })
+        with mock.patch.object(build, "REVIEW_EVIDENCE_ITEMS", evidence):
+            build.prune_unreviewed_phrase_content(lexemes, sentences, accepted, sentence_lexeme, exercises)
 
-        self.assertEqual(["El grifo gotea."], [row.data["spanishText"] for row in sentences])
-        failures = build.stage_auto_check(lexemes, sentences, accepted)
-        self.assertEqual([], failures)
-        failures = build.stage_auto_review(lexemes, sentences, accepted)
+            self.assertEqual(["El grifo gotea."], [row.data["spanishText"] for row in sentences])
+            failures = build.stage_auto_check(lexemes, sentences, accepted)
+            self.assertEqual([], failures)
+            failures = build.stage_auto_review(lexemes, sentences, accepted)
         self.assertTrue(failures)
-        self.assertIn("failed automatic review", failures[0])
+        self.assertIn("failed explicit review evidence", failures[0])
 
     def test_authenticity_review_rejects_retired_connector_tail_spam_shape(self):
         build = self.sanity.load_build_module()
@@ -451,11 +464,11 @@ class LemmaCountSanityIntegrationTest(unittest.TestCase):
             vettingStatus=build.AUTO_CHECKED,
         )
 
-        ok, notes = build.local_authenticity_review(row, {})
-        self.assertFalse(ok)
-        self.assertIn("approved authenticity ledger", notes)
+        failures = build.stage_auto_review([row], [], [])
+        self.assertTrue(failures)
+        self.assertIn("missing explicit review evidence", failures[0])
 
-    def test_payload_review_flags_do_not_bypass_review_ledgers(self):
+    def test_payload_review_flags_do_not_bypass_explicit_review_evidence(self):
         build = self.sanity.load_build_module()
         row = build.Row(
             {
@@ -482,12 +495,12 @@ class LemmaCountSanityIntegrationTest(unittest.TestCase):
         spanish_ok, spanish_notes = build.local_spanish_review(row, {})
         authenticity_ok, authenticity_notes = build.local_authenticity_review(row, {})
         dialect_ok, dialect_notes = build.local_dialect_review(row, {})
-        self.assertFalse(spanish_ok)
-        self.assertIn("correctness ledger", spanish_notes)
-        self.assertFalse(authenticity_ok)
-        self.assertIn("authenticity ledger", authenticity_notes)
-        self.assertFalse(dialect_ok)
-        self.assertIn("dialect ledger", dialect_notes)
+        self.assertTrue(spanish_ok, spanish_notes)
+        self.assertTrue(authenticity_ok, authenticity_notes)
+        self.assertTrue(dialect_ok, dialect_notes)
+        failures = build.stage_auto_review([row], [], [])
+        self.assertTrue(failures)
+        self.assertIn("missing explicit review evidence", failures[0])
 
     def test_retired_spam_pack_constants_are_absent(self):
         build = self.sanity.load_build_module()
@@ -573,6 +586,127 @@ class LemmaCountSanityIntegrationTest(unittest.TestCase):
             {build.AUTO_REVIEW_SPANISH, build.AUTO_REVIEW_AUTHENTICITY, build.AUTO_REVIEW_DIALECT},
             review_types,
         )
+        evidence_bases = {
+            evidence["evidenceBasis"]
+            for evidence in pilot_lexeme_reviews[0]["reviewEvidence"]
+        }
+        self.assertEqual({build.EVIDENCE_BASIS_LEGACY}, evidence_bases)
+
+    def test_existing_reviewable_items_pass_with_legacy_pack_attestation(self):
+        build = self.sanity.load_build_module()
+        lexemes, sentences, accepted, sentence_lexeme, _conj, exercises, _nodes = build.vetted_sample()
+        self.assertEqual([], build.stage_auto_check(lexemes, sentences, accepted))
+        self.assertEqual([], build.stage_auto_review(lexemes, sentences, accepted))
+        build.stage_review_gate(lexemes, sentences, accepted)
+        build.stage_publish_gate(lexemes, sentences, accepted)
+
+        coverage = build.build_coverage_report(lexemes, sentences, accepted, sentence_lexeme, exercises)
+        self.assertEqual(2078, coverage["summary"]["learnerReadyLexemes"])
+        legacy_lexeme_reviews = [
+            row for row in lexemes
+            if build.required_auto_review_types(row)
+            and all(
+                evidence.get("evidenceBasis") == build.EVIDENCE_BASIS_LEGACY
+                for evidence in row.reviewEvidence
+            )
+        ]
+        self.assertEqual(1346, len(legacy_lexeme_reviews))
+
+    def review_evidence_failure_for_known_lexeme(self, mutate):
+        build = self.sanity.load_build_module()
+        lexemes, sentences, accepted, _sentence_lexeme, _conj, _exercises, _nodes = build.vetted_sample()
+        evidence = copy.deepcopy(build.REVIEW_EVIDENCE_ITEMS)
+        mutate(evidence["lexeme:4072"])
+        with mock.patch.object(build, "REVIEW_EVIDENCE_ITEMS", evidence):
+            self.assertEqual([], build.stage_auto_check(lexemes, sentences, accepted))
+            failures = build.stage_auto_review(lexemes, sentences, accepted)
+        return failures
+
+    def test_missing_required_review_evidence_hard_fails(self):
+        build = self.sanity.load_build_module()
+        lexemes, sentences, accepted, _sentence_lexeme, _conj, _exercises, _nodes = build.vetted_sample()
+        evidence = copy.deepcopy(build.REVIEW_EVIDENCE_ITEMS)
+        del evidence["lexeme:4072"]["dimensions"][build.AUTO_REVIEW_AUTHENTICITY]
+        with mock.patch.object(build, "REVIEW_EVIDENCE_ITEMS", evidence):
+            self.assertEqual([], build.stage_auto_check(lexemes, sentences, accepted))
+            failures = build.stage_auto_review(lexemes, sentences, accepted)
+        self.assertTrue(any("missing evidence for spanish_authenticity" in failure for failure in failures))
+
+    def test_mismatched_review_evidence_hash_hard_fails(self):
+        failures = self.review_evidence_failure_for_known_lexeme(
+            lambda item: item.update({"contentHash": "sha256:bad"})
+        )
+        self.assertTrue(any("mismatched content hash" in failure for failure in failures))
+
+    def test_mismatched_review_evidence_source_id_hard_fails(self):
+        def mutate(item):
+            item["crossChecks"]["sourceId"] = "different-source"
+
+        failures = self.review_evidence_failure_for_known_lexeme(mutate)
+        self.assertTrue(any("cross-check sourceId mismatch" in failure for failure in failures))
+
+    def test_mismatched_review_evidence_text_hard_fails(self):
+        def mutate(item):
+            item["crossChecks"]["text"] = "texto cambiado"
+
+        failures = self.review_evidence_failure_for_known_lexeme(mutate)
+        self.assertTrue(any("cross-check text mismatch" in failure for failure in failures))
+
+    def test_non_approved_review_evidence_hard_fails(self):
+        def mutate(item):
+            item["dimensions"]["spanish_authenticity"]["verdict"] = "REJECTED"
+
+        failures = self.review_evidence_failure_for_known_lexeme(mutate)
+        self.assertTrue(any("verdict is 'REJECTED', not APPROVED" in failure for failure in failures))
+
+    def test_legacy_pack_attestation_on_new_item_hard_fails(self):
+        build = self.sanity.load_build_module()
+        row = build.Row(
+            {
+                "lexemeId": 999996,
+                "lemma": "frase nueva revisada",
+                "pos": "phrase",
+                "gender": None,
+                "englishGloss": "new reviewed phrase",
+                "frequencyRank": 1800,
+                "cefrBand": "A2",
+                "difficultyPrior": 0.5,
+                "phraseCefrRubric": {"cefrBand": "A2", "rubricReason": "fixture", "rubricSignals": ["fixture"]},
+                build.INDEPENDENT_REVIEW_REQUIRED_FIELD: True,
+            },
+            source="wiktionary",
+            sourceId="frase nueva revisada",
+            license="CC-BY-SA-3.0",
+        )
+        evidence = copy.deepcopy(build.REVIEW_EVIDENCE_ITEMS)
+        key = build.review_evidence_key("lexeme", row)
+        evidence[key] = {
+            "itemType": "lexeme",
+            "stableKey": key,
+            "contentHash": build.review_evidence_content_hash("lexeme", row),
+            "crossChecks": build.review_evidence_cross_checks("lexeme", row),
+            "_evidenceSourceFile": "in_memory_fixture",
+            "dimensions": {
+                review_type: {
+                    "verdict": build.APPROVED_VERDICT,
+                    "reviewer": build.AUTO_REVIEW_REVIEWERS[review_type],
+                    "reviewedAt": build.AUTO_REVIEW_TS,
+                    "rationale": "fixture incorrectly using legacy attestation for new content",
+                    "evidenceBasis": build.EVIDENCE_BASIS_LEGACY,
+                    "source": "fixture",
+                }
+                for review_type in {
+                    build.AUTO_REVIEW_SPANISH,
+                    build.AUTO_REVIEW_AUTHENTICITY,
+                    build.AUTO_REVIEW_DIALECT,
+                }
+            },
+        }
+        lexemes, sentences, accepted = [row], [], []
+        with mock.patch.object(build, "REVIEW_EVIDENCE_ITEMS", evidence):
+            self.assertEqual([], build.stage_auto_check(lexemes, sentences, accepted))
+            failures = build.stage_auto_review(lexemes, sentences, accepted)
+        self.assertTrue(any("legacy_pack_attestation is not allowed" in failure for failure in failures))
 
     def test_rebanded_source_item_with_less_than_two_reviews_is_not_reviewed(self):
         build = self.sanity.load_build_module()

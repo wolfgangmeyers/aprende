@@ -28,6 +28,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import hashlib
 import math
 import json
 import os
@@ -39,6 +40,7 @@ from dataclasses import dataclass, field
 
 PIPELINE_DIR = os.path.dirname(os.path.abspath(__file__))
 DEFAULT_BASELINE_SNAPSHOT_PATH = os.path.join(PIPELINE_DIR, "coverage_baseline_snapshot.json")
+REVIEW_EVIDENCE_PATH = os.path.join(PIPELINE_DIR, "review_evidence.json")
 
 # --- vetting status lifecycle (SPEC §4.6) ---
 UNVETTED = "UNVETTED"
@@ -166,6 +168,10 @@ AUTO_REVIEW_REVIEWERS = {
 }
 INDEPENDENT_REVIEW_REQUIRED_FIELD = "requiresIndependentReview"
 AUTO_REVIEW_TS = 1_735_700_000_000
+EVIDENCE_BASIS_PER_ITEM = "per_item_review"
+EVIDENCE_BASIS_LEGACY = "legacy_pack_attestation"
+APPROVED_VERDICT = "APPROVED"
+FROZEN_LEGACY_REVIEW_EVIDENCE_ITEM_COUNT = 7052
 AUTHENTIC_PHRASE_LEDGER = {
     "fuga de agua": "approved by correctness and naturalness subagents on 2026-06-02",
     "llave de agua rota": "approved by correctness, naturalness, and dialect subagents on 2026-06-02",
@@ -7543,6 +7549,220 @@ class Row:
     reviewEvidence: list[dict] = field(default_factory=list)
 
 
+def row_table_id(table: str, row: Row) -> int:
+    if table == "lexeme":
+        return row.data["lexemeId"]
+    if table == "sentence":
+        return row.data["sentenceId"]
+    if table == "accepted_answer":
+        return row.data["acceptedAnswerId"]
+    raise ValueError(f"unknown evidence table {table}")
+
+
+def review_evidence_key(table: str, row: Row) -> str:
+    return f"{table}:{row_table_id(table, row)}"
+
+
+def review_evidence_content_payload(table: str, row: Row) -> dict:
+    return {
+        "table": table,
+        "id": row_table_id(table, row),
+        "source": row.source,
+        "sourceId": row.sourceId,
+        "license": row.license,
+        "data": row.data,
+    }
+
+
+def review_evidence_content_hash(table: str, row: Row) -> str:
+    payload = json.dumps(
+        review_evidence_content_payload(table, row),
+        sort_keys=True,
+        ensure_ascii=False,
+        separators=(",", ":"),
+    )
+    return "sha256:" + hashlib.sha256(payload.encode("utf-8")).hexdigest()
+
+
+def review_evidence_cross_checks(table: str, row: Row) -> dict:
+    checks = {"sourceId": row.sourceId}
+    if table == "lexeme":
+        checks.update({
+            "text": row.data.get("lemma"),
+            "english": row.data.get("englishGloss"),
+            "cefrBand": row.data.get("cefrBand"),
+        })
+    elif table == "sentence":
+        checks.update({
+            "text": row.data.get("spanishText"),
+            "english": row.data.get("englishText"),
+        })
+    elif table == "accepted_answer":
+        checks.update({
+            "text": row.data.get("answerText"),
+            "sentenceId": row.data.get("sentenceId"),
+            "direction": row.data.get("direction"),
+        })
+    else:
+        raise ValueError(f"unknown evidence table {table}")
+    return checks
+
+
+def load_review_evidence_file(path: str, source_label: str | None = None) -> dict[str, dict]:
+    source_label = source_label or os.path.basename(path)
+    with open(path, encoding="utf-8") as f:
+        payload = json.load(f)
+    if payload.get("schemaVersion") != 1:
+        raise ValueError(f"{source_label} must have schemaVersion 1")
+
+    items: dict[str, dict] = {}
+    for include in payload.get("includes", []):
+        include_path = include
+        if not os.path.isabs(include_path):
+            include_path = os.path.join(os.path.dirname(path), include_path)
+        included_items = load_review_evidence_file(include_path, include)
+        for key, item in included_items.items():
+            if key in items and items[key] != item:
+                raise ValueError(f"conflicting review evidence for {key}")
+            items[key] = item
+
+    for key, item in payload.get("items", {}).items():
+        if key in items and items[key] != item:
+            raise ValueError(f"conflicting review evidence for {key}")
+        item = dict(item)
+        item["_evidenceSourceFile"] = source_label
+        items[key] = item
+    return items
+
+
+def load_review_evidence_items(path: str = REVIEW_EVIDENCE_PATH) -> dict[str, dict]:
+    return load_review_evidence_file(path)
+
+
+def validate_review_evidence_catalog(items: dict[str, dict]) -> None:
+    allowed_dimensions = {
+        AUTO_REVIEW_SPANISH,
+        AUTO_REVIEW_PEDAGOGY,
+        AUTO_REVIEW_AUTHENTICITY,
+        AUTO_REVIEW_DIALECT,
+    }
+    allowed_bases = {EVIDENCE_BASIS_PER_ITEM, EVIDENCE_BASIS_LEGACY}
+    failures: list[str] = []
+    for key, item in items.items():
+        if item.get("stableKey") != key:
+            failures.append(f"{key} stableKey mismatch")
+        dimensions = item.get("dimensions")
+        if not isinstance(dimensions, dict):
+            failures.append(f"{key} dimensions must be an object")
+            continue
+        unknown_dimensions = sorted(set(dimensions) - allowed_dimensions)
+        if unknown_dimensions:
+            failures.append(f"{key} has unknown review dimension(s): {', '.join(unknown_dimensions)}")
+        for review_type, evidence in dimensions.items():
+            basis = evidence.get("evidenceBasis")
+            if basis not in allowed_bases:
+                failures.append(f"{key} {review_type} has invalid evidenceBasis {basis!r}")
+            if basis == EVIDENCE_BASIS_LEGACY and item.get("_evidenceSourceFile") != "review_evidence_legacy.json":
+                failures.append(f"{key} {review_type} uses legacy_pack_attestation outside review_evidence_legacy.json")
+    legacy_count = sum(1 for item in items.values() if item.get("_evidenceSourceFile") == "review_evidence_legacy.json")
+    if legacy_count != FROZEN_LEGACY_REVIEW_EVIDENCE_ITEM_COUNT:
+        failures.append(
+            f"review_evidence_legacy.json item count {legacy_count} != "
+            f"frozen count {FROZEN_LEGACY_REVIEW_EVIDENCE_ITEM_COUNT}"
+        )
+    if failures:
+        raise ValueError("INVALID REVIEW EVIDENCE:\n  " + "\n  ".join(failures))
+
+
+REVIEW_EVIDENCE_ITEMS = load_review_evidence_items()
+validate_review_evidence_catalog(REVIEW_EVIDENCE_ITEMS)
+
+
+def validate_explicit_review_evidence(table: str, row: Row, required: set[str]) -> tuple[list[dict], list[str]]:
+    key = review_evidence_key(table, row)
+    item = REVIEW_EVIDENCE_ITEMS.get(key)
+    failures: list[str] = []
+    if item is None:
+        return [], [f"{key} is missing explicit review evidence"]
+
+    if item.get("itemType") != table:
+        failures.append(f"{key} itemType mismatch: {item.get('itemType')!r} != {table!r}")
+    expected_hash = review_evidence_content_hash(table, row)
+    if item.get("contentHash") != expected_hash:
+        failures.append(f"{key} has stale or mismatched content hash")
+    expected_checks = review_evidence_cross_checks(table, row)
+    actual_checks = item.get("crossChecks") or {}
+    for check_key, expected_value in expected_checks.items():
+        if actual_checks.get(check_key) != expected_value:
+            failures.append(
+                f"{key} cross-check {check_key} mismatch: "
+                f"{actual_checks.get(check_key)!r} != {expected_value!r}"
+            )
+
+    dimensions = item.get("dimensions") or {}
+    approved_records: list[dict] = []
+    for review_type in sorted(required):
+        evidence = dimensions.get(review_type)
+        if evidence is None:
+            failures.append(f"{key} missing evidence for {review_type}")
+            continue
+        if evidence.get("verdict") != APPROVED_VERDICT:
+            failures.append(f"{key} {review_type} verdict is {evidence.get('verdict')!r}, not APPROVED")
+        if not evidence.get("reviewer"):
+            failures.append(f"{key} {review_type} missing reviewer")
+        if not evidence.get("reviewedAt"):
+            failures.append(f"{key} {review_type} missing reviewedAt")
+        if evidence.get("evidenceBasis") == EVIDENCE_BASIS_LEGACY and item.get("_evidenceSourceFile") != "review_evidence_legacy.json":
+            failures.append(f"{key} {review_type} legacy_pack_attestation is not allowed for new evidence")
+        approved_records.append({
+            "reviewType": review_type,
+            "reviewer": evidence.get("reviewer"),
+            "reviewedAt": evidence.get("reviewedAt"),
+            "decision": evidence.get("verdict"),
+            "notes": evidence.get("rationale", ""),
+            "evidenceBasis": evidence.get("evidenceBasis"),
+            "evidenceSource": evidence.get("source"),
+            "contentHash": item.get("contentHash"),
+            "evidenceSourceFile": item.get("_evidenceSourceFile"),
+        })
+
+    reviewers = {
+        record.get("reviewer")
+        for record in approved_records
+        if record.get("decision") == APPROVED_VERDICT and record.get("reviewer")
+    }
+    if len(reviewers) < len(required):
+        failures.append(f"{key} lacks distinct reviewer identities for required dimensions")
+    return approved_records, failures
+
+
+def has_explicit_review_evidence(table: str, row: Row, required: set[str]) -> bool:
+    _records, failures = validate_explicit_review_evidence(table, row, required)
+    return not failures
+
+
+def register_per_item_review_evidence(table: str, row: Row, review_types: set[str], rationale: str) -> None:
+    key = review_evidence_key(table, row)
+    REVIEW_EVIDENCE_ITEMS[key] = {
+        "itemType": table,
+        "stableKey": key,
+        "contentHash": review_evidence_content_hash(table, row),
+        "crossChecks": review_evidence_cross_checks(table, row),
+        "_evidenceSourceFile": "in_memory_fixture",
+        "dimensions": {
+            review_type: {
+                "verdict": APPROVED_VERDICT,
+                "reviewer": AUTO_REVIEW_REVIEWERS[review_type],
+                "reviewedAt": AUTO_REVIEW_TS,
+                "rationale": rationale,
+                "evidenceBasis": EVIDENCE_BASIS_PER_ITEM,
+                "source": "in-memory test fixture",
+            }
+            for review_type in review_types
+        },
+    }
+
+
 def append_ai_accelerated_pack(pack, pack_slug: str, exercise_id: int,
                                lexemes, sentences, accepted, sentence_lexeme, exercises) -> int:
     for item in pack:
@@ -7597,12 +7817,13 @@ def append_ai_accelerated_pack(pack, pack_slug: str, exercise_id: int,
 
 
 def has_phrase_review_ledger_entry(row: Row) -> bool:
-    lemma = row.data.get("lemma")
     return (
         bool(row.data.get("phraseCefrRubric"))
-        and lemma in SPANISH_CORRECTNESS_PHRASE_LEDGER
-        and lemma in AUTHENTIC_PHRASE_LEDGER
-        and lemma in NEUTRAL_LATAM_PHRASE_LEDGER
+        and has_explicit_review_evidence(
+            "lexeme",
+            row,
+            {AUTO_REVIEW_SPANISH, AUTO_REVIEW_AUTHENTICITY, AUTO_REVIEW_DIALECT},
+        )
     )
 
 
@@ -9091,14 +9312,16 @@ def normalize_answer(text: str) -> str:
     return re.sub(r"[^a-z0-9']+", " ", text.lower()).strip()
 
 
-def add_review_evidence(row: Row, review_type: str, decision: str, notes: str) -> None:
-    row.reviewEvidence.append({
+def add_review_evidence(row: Row, review_type: str, decision: str, notes: str, **extra) -> None:
+    evidence = {
         "reviewType": review_type,
         "reviewer": AUTO_REVIEW_REVIEWERS[review_type],
         "reviewedAt": AUTO_REVIEW_TS,
         "decision": decision,
         "notes": notes,
-    })
+    }
+    evidence.update(extra)
+    row.reviewEvidence.append(evidence)
 
 
 def required_auto_review_types(row: Row) -> set[str]:
@@ -9140,8 +9363,6 @@ def local_spanish_review(row: Row, sentence_by_id: dict[int, Row]) -> tuple[bool
         lemma = row.data["lemma"]
         if not re.search(r"[A-Za-zÁÉÍÓÚÜÑáéíóúüñ¿¡]", lemma):
             return False, "Spanish lemma has no Spanish alphabetic content"
-        if required_auto_review_types(row) and lemma not in SPANISH_CORRECTNESS_PHRASE_LEDGER:
-            return False, "phrase is not in the approved Spanish correctness ledger"
         return True, "Spanish phrase has alphabetic content and passed structural checks"
 
     sentence = row
@@ -9216,13 +9437,11 @@ def local_authenticity_review(row: Row, sentence_by_id: dict[int, Row]) -> tuple
         len(tokens) >= 4
         and has_connector
         and tokens[-1] in spam_tail_terms
-        and lemma not in AUTHENTIC_PHRASE_LEDGER
+        and not has_explicit_review_evidence("lexeme", row, {AUTO_REVIEW_AUTHENTICITY})
     ):
         return False, "phrase matches retired Cartesian connector-tail spam shape"
-    if lemma not in AUTHENTIC_PHRASE_LEDGER:
-        return False, "phrase is not in the approved authenticity ledger"
 
-    return True, AUTHENTIC_PHRASE_LEDGER[lemma]
+    return True, "phrase passed deterministic authenticity checks; explicit evidence required separately"
 
 
 def local_dialect_review(row: Row, sentence_by_id: dict[int, Row]) -> tuple[bool, str]:
@@ -9262,10 +9481,7 @@ def local_dialect_review(row: Row, sentence_by_id: dict[int, Row]) -> tuple[bool
     if not is_phrase_or_chunk_lexeme(row):
         return True, "single-word item does not require phrase dialect review"
 
-    if lemma not in NEUTRAL_LATAM_PHRASE_LEDGER:
-        return False, "phrase is not in the approved neutral LatAm dialect ledger"
-
-    return True, NEUTRAL_LATAM_PHRASE_LEDGER[lemma]
+    return True, "phrase passed deterministic neutral Latin American dialect checks; explicit evidence required separately"
 
 
 def stage_auto_check(lexemes, sentences, accepted) -> list[str]:
@@ -9311,37 +9527,53 @@ def stage_auto_review(lexemes, sentences, accepted) -> list[str]:
     """Stage 4a: locally review generated rows with independent automatic reviewers."""
     failures: list[str] = []
     sentence_by_id = {s.data["sentenceId"]: s for s in sentences}
-    for row in lexemes + sentences + accepted:
-        required = required_auto_review_types(row)
-        if not required or row.vettingStatus != AUTO_CHECKED:
-            continue
+    rows_by_table = (
+        ("lexeme", lexemes),
+        ("sentence", sentences),
+        ("accepted_answer", accepted),
+    )
+    for table, rows in rows_by_table:
+        for row in rows:
+            required = required_auto_review_types(row)
+            if not required or row.vettingStatus != AUTO_CHECKED:
+                continue
 
-        spanish_ok, spanish_notes = local_spanish_review(row, sentence_by_id)
-        add_review_evidence(row, AUTO_REVIEW_SPANISH, "APPROVED" if spanish_ok else "REJECTED", spanish_notes)
-        if AUTO_REVIEW_PEDAGOGY in required:
-            pedagogy_ok, pedagogy_notes = local_english_pedagogy_review(row, sentence_by_id)
-            add_review_evidence(row, AUTO_REVIEW_PEDAGOGY, "APPROVED" if pedagogy_ok else "REJECTED", pedagogy_notes)
-        if AUTO_REVIEW_AUTHENTICITY in required:
-            authenticity_ok, authenticity_notes = local_authenticity_review(row, sentence_by_id)
-            add_review_evidence(
-                row, AUTO_REVIEW_AUTHENTICITY,
-                "APPROVED" if authenticity_ok else "REJECTED",
-                authenticity_notes,
-            )
-        if AUTO_REVIEW_DIALECT in required:
-            dialect_ok, dialect_notes = local_dialect_review(row, sentence_by_id)
-            add_review_evidence(
-                row, AUTO_REVIEW_DIALECT,
-                "APPROVED" if dialect_ok else "REJECTED",
-                dialect_notes,
-            )
+            row.reviewEvidence.clear()
+            row_failures: list[str] = []
+            spanish_ok, spanish_notes = local_spanish_review(row, sentence_by_id)
+            if not spanish_ok:
+                add_review_evidence(row, AUTO_REVIEW_SPANISH, "REJECTED", spanish_notes)
+                row_failures.append(spanish_notes)
+            if AUTO_REVIEW_PEDAGOGY in required:
+                pedagogy_ok, pedagogy_notes = local_english_pedagogy_review(row, sentence_by_id)
+                if not pedagogy_ok:
+                    add_review_evidence(row, AUTO_REVIEW_PEDAGOGY, "REJECTED", pedagogy_notes)
+                    row_failures.append(pedagogy_notes)
+            if AUTO_REVIEW_AUTHENTICITY in required:
+                authenticity_ok, authenticity_notes = local_authenticity_review(row, sentence_by_id)
+                if not authenticity_ok:
+                    add_review_evidence(row, AUTO_REVIEW_AUTHENTICITY, "REJECTED", authenticity_notes)
+                    row_failures.append(authenticity_notes)
+            if AUTO_REVIEW_DIALECT in required:
+                dialect_ok, dialect_notes = local_dialect_review(row, sentence_by_id)
+                if not dialect_ok:
+                    add_review_evidence(row, AUTO_REVIEW_DIALECT, "REJECTED", dialect_notes)
+                    row_failures.append(dialect_notes)
 
-        if has_required_auto_reviews(row):
-            row.vettingStatus = AUTO_REVIEWED
-            row.reviewedBy = "+".join(AUTO_REVIEW_REVIEWERS[t] for t in sorted(required_auto_review_types(row)))
-            row.reviewedAt = AUTO_REVIEW_TS
-        else:
-            failures.append(f"AI_DRAFT row {row.data} failed automatic review")
+            explicit_records, evidence_failures = validate_explicit_review_evidence(table, row, required)
+            row_failures.extend(evidence_failures)
+            if not row_failures:
+                row.reviewEvidence.extend(explicit_records)
+
+            if has_required_auto_reviews(row):
+                row.vettingStatus = AUTO_REVIEWED
+                row.reviewedBy = "+".join(AUTO_REVIEW_REVIEWERS[t] for t in sorted(required_auto_review_types(row)))
+                row.reviewedAt = AUTO_REVIEW_TS
+            else:
+                if row_failures:
+                    failures.append(f"{table} row {row.data} failed explicit review evidence: {'; '.join(row_failures)}")
+                else:
+                    failures.append(f"{table} row {row.data} failed automatic review")
     return failures
 
 
@@ -9365,12 +9597,16 @@ def stage_publish_gate(lexemes, sentences, accepted) -> None:
     violations: list[str] = []
     for table, rows in (("lexeme", lexemes), ("sentence", sentences), ("accepted_answer", accepted)):
         for r in rows:
+            required = required_auto_review_types(r)
             if not r.source:
                 violations.append(f"{table} row {r.data} has no source")
             if r.vettingStatus != REVIEWED:
                 violations.append(f"{table} row {r.data} is {r.vettingStatus}, not REVIEWED")
-            if required_auto_review_types(r) and not has_required_auto_reviews(r):
+            if required and not has_required_auto_reviews(r):
                 violations.append(f"{table} row {r.data} lacks required independent automatic approvals")
+            if required:
+                _records, evidence_failures = validate_explicit_review_evidence(table, r, required)
+                violations.extend(f"{table} row {r.data}: {failure}" for failure in evidence_failures)
     if violations:
         sys.stderr.write("CONTENT VETTING GATE FAILED (C5/§4.6/AC17):\n  " + "\n  ".join(violations) + "\n")
         raise SystemExit(2)
@@ -9743,13 +9979,27 @@ def main():
 
     lexemes, sentences, accepted, sentence_lexeme, conj, exercises, nodes = vetted_sample()
     if args.inject_ai_draft_reviewed:
-        sentences.append(Row({"sentenceId": 999901, "spanishText": "Necesito ayuda.", "englishText": "I need help."},
-                             source=AI_DRAFT_SOURCE, sourceId="ai_draft:fixture-reviewed-sentence",
-                             license="proprietary", vettingStatus=AI_DRAFT))
-        accepted.append(Row({"acceptedAnswerId": 999901, "sentenceId": 999901, "direction": "ES_TO_EN",
-                             "answerText": "i need help"},
-                            source=AI_DRAFT_SOURCE, sourceId="ai_draft:fixture-reviewed-answer",
-                            license="proprietary", vettingStatus=AI_DRAFT))
+        sentence = Row({"sentenceId": 999901, "spanishText": "Necesito ayuda.", "englishText": "I need help."},
+                       source=AI_DRAFT_SOURCE, sourceId="ai_draft:fixture-reviewed-sentence",
+                       license="proprietary", vettingStatus=AI_DRAFT)
+        answer = Row({"acceptedAnswerId": 999901, "sentenceId": 999901, "direction": "ES_TO_EN",
+                      "answerText": "i need help"},
+                     source=AI_DRAFT_SOURCE, sourceId="ai_draft:fixture-reviewed-answer",
+                     license="proprietary", vettingStatus=AI_DRAFT)
+        register_per_item_review_evidence(
+            "sentence",
+            sentence,
+            {AUTO_REVIEW_SPANISH, AUTO_REVIEW_PEDAGOGY, AUTO_REVIEW_AUTHENTICITY, AUTO_REVIEW_DIALECT},
+            "Fixture per-item review evidence for an injected AI_DRAFT sentence.",
+        )
+        register_per_item_review_evidence(
+            "accepted_answer",
+            answer,
+            {AUTO_REVIEW_SPANISH, AUTO_REVIEW_PEDAGOGY},
+            "Fixture per-item review evidence for an injected AI_DRAFT accepted answer.",
+        )
+        sentences.append(sentence)
+        accepted.append(answer)
 
     # Stage 3: auto-check
     failures = stage_auto_check(lexemes, sentences, accepted)

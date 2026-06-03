@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "description": "Authoritative review evidence manifest. Legacy entries are split into review_evidence_legacy.json; future new/changed generated content must use per_item_review evidence, not legacy_pack_attestation.",
+  "includes": [
+    "review_evidence_legacy.json"
+  ],
+  "items": {}
+}
