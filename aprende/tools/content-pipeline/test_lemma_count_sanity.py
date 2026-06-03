@@ -42,22 +42,22 @@ class LemmaCountSanityIntegrationTest(unittest.TestCase):
 
     def test_current_assertion_uses_real_pipeline_report(self):
         self.sanity.assert_current(self.report)
-        self.assertEqual(1401, self.report["reviewableItemSummary"]["totalReviewableItems"])
-        self.assertEqual(1411, self.report["reviewableItemSummary"]["sourceContentRows"]["rawLexemes"])
-        self.assertEqual(5866, self.report["reviewableItemSummary"]["sourceContentRows"]["totalContentRows"])
+        self.assertEqual(1737, self.report["reviewableItemSummary"]["totalReviewableItems"])
+        self.assertEqual(1747, self.report["reviewableItemSummary"]["sourceContentRows"]["rawLexemes"])
+        self.assertEqual(6874, self.report["reviewableItemSummary"]["sourceContentRows"]["totalContentRows"])
         self.assertEqual(
-            1401,
+            1737,
             self.report["reviewGate"]["reviewableItems"]["countedReviewedRows"],
         )
-        self.assertEqual(5021, self.report["reviewGate"]["contentRows"]["rowsRequiringIndependentReviews"])
+        self.assertEqual(6029, self.report["reviewGate"]["contentRows"]["rowsRequiringIndependentReviews"])
         self.assertEqual(0, self.report["reviewGate"]["contentRows"]["rowsWithInsufficientIndependentReviews"])
 
     def test_target_gate_reports_pilot_stop_phrase_gap_and_recalibrated_b1_count(self):
-        self.assertEqual(577, self.report["postRebandGate"]["a1A2PhraseOrChunkItems"])
-        self.assertEqual(648, self.report["postRebandGate"]["b1ReviewableItems"])
+        self.assertEqual(580, self.report["postRebandGate"]["a1A2PhraseOrChunkItems"])
+        self.assertEqual(981, self.report["postRebandGate"]["b1ReviewableItems"])
         failures = self.sanity.target_shape_failures(self.report)
-        self.assertIn("A1+A2 phrase/chunk total 577 < 1500", failures)
-        self.assertNotIn("B1 reviewable total 648 > 6000", failures)
+        self.assertIn("A1+A2 phrase/chunk total 580 < 1500", failures)
+        self.assertNotIn("B1 reviewable total 981 > 6000", failures)
         self.assertNotIn("on-ramp total reviewables below floor", failures)
 
     def test_on_ramp_report_counts_reviewed_pack_items(self):
@@ -721,11 +721,11 @@ class PhraseCefrRubricIntegrationTest(unittest.TestCase):
         )
 
         self.assertEqual(phrase_or_chunk_count, report["itemCount"])
-        self.assertEqual(669, report["helperAssignedItemCount"])
+        self.assertEqual(1005, report["helperAssignedItemCount"])
         self.assertEqual(0, report["legacyExplicitBandAssessedItemCount"])
-        self.assertEqual(669, report["itemCount"])
+        self.assertEqual(1005, report["itemCount"])
         self.assertEqual(
-            669,
+            1005,
             report["itemsByAssignmentSource"]["phrase_pack_rubric"],
         )
         self.assertNotIn("legacy_explicit_band_assessed_not_rebanded", report["itemsByAssignmentSource"])

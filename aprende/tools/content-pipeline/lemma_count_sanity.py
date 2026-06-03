@@ -13,12 +13,12 @@ from collections import Counter
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 BUILD_SCRIPT = os.path.join(SCRIPT_DIR, "build_content_db.py")
 CURRENT_EXPECTED = {
-    "totalReviewableItems": 1401,
+    "totalReviewableItems": 1737,
     "singleWord": 732,
-    "phraseOrChunk": 669,
+    "phraseOrChunk": 1005,
     "A1": 150,
-    "A2": 553,
-    "B1": 648,
+    "A2": 556,
+    "B1": 981,
     "B2": 50,
     "C1": 0,
 }

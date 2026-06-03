@@ -6647,6 +6647,26 @@ AI_ACCELERATED_PACK_A2_058_HOUSING_MAINTENANCE = build_reviewed_chunk_pack(4395,
     ("¿La reparación está incluida en la renta?", "Is the repair included in the rent?", "B1"),
 ])
 
+
+def load_reviewed_batch_pack_specs(filename: str):
+    with open(os.path.join(PIPELINE_DIR, filename), encoding="utf-8") as f:
+        return json.load(f)
+
+
+AI_ACCELERATED_PACK_B1_BATCH_2_PACKS = tuple(
+    (
+        spec["domain"],
+        build_reviewed_chunk_pack(
+            spec["startLexemeId"],
+            spec["startSentenceId"],
+            spec["startAnswerId"],
+            spec["domain"],
+            [tuple(item) for item in spec["items"]],
+        ),
+    )
+    for spec in load_reviewed_batch_pack_specs("b1_batch2_reviewed_packs.json")
+)
+
 AI_ON_RAMP_PACK_A1_001_SURVIVAL_CLASSROOM = build_reviewed_chunk_pack(4410, 10640, 11640, "on_ramp_a1_survival_classroom", [
     ("Hola, ¿cómo estás?", "Hi, how are you?", "A1"),
     ("Buenas tardes.", "Good afternoon.", "A1"),
@@ -7232,7 +7252,7 @@ REPLACEMENT_DOMAIN_PACKS = (
     ("housing_maintenance", AI_ACCELERATED_PACK_A2_058_HOUSING_MAINTENANCE),
 )
 EXPECTED_REPLACEMENT_DOMAINS = frozenset(domain for domain, _pack in REPLACEMENT_DOMAIN_PACKS)
-for domain, pack in (*REPLACEMENT_DOMAIN_PACKS, *ON_RAMP_DOMAIN_PACKS):
+for domain, pack in (*REPLACEMENT_DOMAIN_PACKS, *AI_ACCELERATED_PACK_B1_BATCH_2_PACKS, *ON_RAMP_DOMAIN_PACKS):
     for item in pack:
         SPANISH_CORRECTNESS_PHRASE_LEDGER[item["lemma"]] = (
             f"approved by independent correctness reviewer for {domain} on 2026-06-02/03"
@@ -7303,6 +7323,7 @@ AI_REVIEWED_SENTENCE_PAIRS.update({
         AI_ACCELERATED_PACK_A2_056_CUSTOMER_SERVICE,
         AI_ACCELERATED_PACK_A2_057_WORKPLACE_SOCIAL_NEGOTIATION,
         AI_ACCELERATED_PACK_A2_058_HOUSING_MAINTENANCE,
+        *(pack for _domain, pack in AI_ACCELERATED_PACK_B1_BATCH_2_PACKS),
     )
     for item in pack
     for _, _, spanish, english in item["sentences"]
@@ -8749,6 +8770,11 @@ def vetted_sample():
     ):
         next_exercise_id = append_ai_accelerated_pack(
             pack, pack_slug, next_exercise_id,
+            lexemes, sentences, accepted, sentence_lexeme, exercises,
+        )
+    for domain, pack in AI_ACCELERATED_PACK_B1_BATCH_2_PACKS:
+        next_exercise_id = append_ai_accelerated_pack(
+            pack, domain.replace("_", "-"), next_exercise_id,
             lexemes, sentences, accepted, sentence_lexeme, exercises,
         )
     for domain, pack in ON_RAMP_DOMAIN_PACKS:
