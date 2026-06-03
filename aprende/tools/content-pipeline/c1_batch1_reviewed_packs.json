@@ -1,0 +1,1281 @@
+[
+  {
+    "domain": "c1_nuanced_argumentation_policy",
+    "startLexemeId": 6000,
+    "startSentenceId": 14000,
+    "startAnswerId": 15000,
+    "items": [
+      [
+        "Aunque la medida parezca impopular a corto plazo, podría evitar costos sociales mucho mayores en el futuro.",
+        "Although the measure may seem unpopular in the short term, it could prevent much greater social costs in the future.",
+        "C1"
+      ],
+      [
+        "La pregunta de fondo no es si el Estado puede intervenir, sino bajo qué condiciones esa intervención resulta legítima.",
+        "The deeper question is not whether the state can intervene, but under what conditions that intervention is legitimate.",
+        "C1"
+      ],
+      [
+        "Si aceptáramos esa premisa sin matices, terminaríamos justificando decisiones que afectan derechos básicos.",
+        "If we accepted that premise without nuance, we would end up justifying decisions that affect basic rights.",
+        "C1"
+      ],
+      [
+        "Conviene distinguir entre correlación estadística y una relación causal suficientemente demostrada.",
+        "It is worth distinguishing between statistical correlation and a sufficiently proven causal relationship.",
+        "C1"
+      ],
+      [
+        "Aun concediendo que el presupuesto es limitado, la falta de inversión preventiva puede salir más cara.",
+        "Even granting that the budget is limited, the lack of preventive investment may end up costing more.",
+        "C1"
+      ],
+      [
+        "El comité no debería confundir prudencia con inacción.",
+        "The committee should not confuse prudence with inaction.",
+        "C1"
+      ],
+      [
+        "La evidencia disponible inclina la balanza a favor de una regulación gradual, no de una prohibición absoluta.",
+        "The available evidence tips the balance in favor of gradual regulation, not an absolute ban.",
+        "C1"
+      ],
+      [
+        "No se trata de castigar a un sector, sino de corregir incentivos que hoy producen daños evitables.",
+        "This is not about punishing a sector, but about correcting incentives that currently cause preventable harm.",
+        "C1"
+      ],
+      [
+        "Antes de legislar, habría que preguntar quién asume el riesgo si la política fracasa.",
+        "Before legislating, we would need to ask who bears the risk if the policy fails.",
+        "C1"
+      ],
+      [
+        "Una política pública seria debe anticipar no solo sus beneficios, sino también sus efectos secundarios.",
+        "A serious public policy must anticipate not only its benefits, but also its side effects.",
+        "C1"
+      ],
+      [
+        "El argumento pierde fuerza cuando omite deliberadamente a los grupos más afectados.",
+        "The argument loses force when it deliberately leaves out the most affected groups.",
+        "C1"
+      ],
+      [
+        "En términos éticos, la eficiencia no puede ser el único criterio para asignar recursos escasos.",
+        "In ethical terms, efficiency cannot be the only criterion for allocating scarce resources.",
+        "C1"
+      ],
+      [
+        "Si el objetivo declarado es reducir la desigualdad, los indicadores elegidos deben reflejar esa prioridad.",
+        "If the stated goal is to reduce inequality, the chosen indicators must reflect that priority.",
+        "C1"
+      ],
+      [
+        "La transparencia no garantiza legitimidad, pero sin transparencia la legitimidad se vuelve difícil de defender.",
+        "Transparency does not guarantee legitimacy, but without transparency legitimacy becomes hard to defend.",
+        "C1"
+      ],
+      [
+        "Puede ser legal y aun así resultar cuestionable desde el punto de vista institucional.",
+        "It may be legal and still be questionable from an institutional standpoint.",
+        "C1"
+      ],
+      [
+        "El costo político de posponer la decisión no debería pesar más que el daño de decidir mal.",
+        "The political cost of postponing the decision should not outweigh the harm of deciding poorly.",
+        "C1"
+      ],
+      [
+        "El problema no es la falta de datos, sino la forma selectiva en que se interpretan.",
+        "The problem is not the lack of data, but the selective way in which it is interpreted.",
+        "C1"
+      ],
+      [
+        "Habrá que justificar por qué se prioriza la rapidez sobre la deliberación pública.",
+        "It will be necessary to justify why speed is being prioritized over public deliberation.",
+        "C1"
+      ],
+      [
+        "Una excepción puede ser razonable, siempre que no termine vaciando de contenido la norma general.",
+        "An exception can be reasonable, as long as it does not end up hollowing out the general rule.",
+        "C1"
+      ],
+      [
+        "La institución debe explicar no solo qué decidió, sino qué alternativas descartó y por qué.",
+        "The institution must explain not only what it decided, but which alternatives it rejected and why.",
+        "C1"
+      ],
+      [
+        "El principio de precaución no autoriza cualquier medida, pero sí exige tomar en serio riesgos plausibles.",
+        "The precautionary principle does not authorize any measure whatsoever, but it does require taking plausible risks seriously.",
+        "C1"
+      ],
+      [
+        "Si la carga recae siempre en los mismos sectores, la política difícilmente será sostenible.",
+        "If the burden always falls on the same sectors, the policy will hardly be sustainable.",
+        "C1"
+      ],
+      [
+        "Hay una diferencia sustancial entre consultar a la ciudadanía y trasladarle toda la responsabilidad.",
+        "There is a substantial difference between consulting citizens and shifting all responsibility onto them.",
+        "C1"
+      ],
+      [
+        "La evaluación debería incorporar evidencia cuantitativa sin descartar testimonios cualitativamente relevantes.",
+        "The evaluation should incorporate quantitative evidence without dismissing qualitatively relevant testimony.",
+        "C1"
+      ],
+      [
+        "El informe acierta en el diagnóstico, pero subestima los obstáculos de implementación.",
+        "The report gets the diagnosis right, but underestimates the implementation obstacles.",
+        "C1"
+      ],
+      [
+        "Cuando una política promete resolverlo todo, conviene revisar con cuidado qué está dejando fuera.",
+        "When a policy promises to solve everything, it is worth carefully reviewing what it is leaving out.",
+        "C1"
+      ],
+      [
+        "La autonomía individual merece protección, aunque no sea absoluta frente a daños colectivos comprobables.",
+        "Individual autonomy deserves protection, although it is not absolute in the face of demonstrable collective harms.",
+        "C1"
+      ],
+      [
+        "La decisión sería más defendible si incluyera un mecanismo independiente de revisión.",
+        "The decision would be more defensible if it included an independent review mechanism.",
+        "C1"
+      ],
+      [
+        "No basta con invocar la ciencia; hay que explicar cómo se traduce la evidencia en una regla concreta.",
+        "It is not enough to invoke science; one must explain how the evidence translates into a concrete rule.",
+        "C1"
+      ],
+      [
+        "La neutralidad institucional se pone a prueba cuando todas las opciones tienen costos morales.",
+        "Institutional neutrality is tested when all options carry moral costs.",
+        "C1"
+      ],
+      [
+        "El debate se empobrece cuando se presenta como una falsa elección entre libertad y seguridad.",
+        "The debate is impoverished when it is presented as a false choice between freedom and security.",
+        "C1"
+      ],
+      [
+        "Si se hubiera consultado antes a las comunidades afectadas, la resistencia actual quizá sería menor.",
+        "If the affected communities had been consulted earlier, the current resistance might be lower.",
+        "C1"
+      ],
+      [
+        "La evidencia comparada sugiere cautela, no parálisis.",
+        "Comparative evidence suggests caution, not paralysis.",
+        "C1"
+      ],
+      [
+        "Una reforma ambiciosa requiere metas verificables, plazos realistas y responsabilidades claras.",
+        "An ambitious reform requires verifiable goals, realistic timelines, and clear responsibilities.",
+        "C1"
+      ],
+      [
+        "El lenguaje técnico puede aportar precisión, pero también puede ocultar decisiones de valor.",
+        "Technical language can provide precision, but it can also hide value judgments.",
+        "C1"
+      ],
+      [
+        "La confianza pública se erosiona cuando las reglas cambian sin una explicación convincente.",
+        "Public trust erodes when rules change without a convincing explanation.",
+        "C1"
+      ],
+      [
+        "Aunque la urgencia sea real, no debería usarse para cancelar todo escrutinio democrático.",
+        "Even if the urgency is real, it should not be used to cancel all democratic scrutiny.",
+        "C1"
+      ],
+      [
+        "El impacto distributivo de la medida es tan importante como su eficacia promedio.",
+        "The distributive impact of the measure is as important as its average effectiveness.",
+        "C1"
+      ],
+      [
+        "La objeción no invalida la propuesta, pero obliga a formularla con mayor precisión.",
+        "The objection does not invalidate the proposal, but it requires formulating it more precisely.",
+        "C1"
+      ],
+      [
+        "Sería irresponsable ignorar los datos solo porque contradicen una postura políticamente cómoda.",
+        "It would be irresponsible to ignore the data simply because it contradicts a politically convenient position.",
+        "C1"
+      ],
+      [
+        "El consenso no debe confundirse con unanimidad ni con ausencia de conflicto.",
+        "Consensus should not be confused with unanimity or with the absence of conflict.",
+        "C1"
+      ],
+      [
+        "La agencia tiene margen de discreción, pero no carta blanca para actuar sin rendir cuentas.",
+        "The agency has room for discretion, but not a blank check to act without accountability.",
+        "C1"
+      ],
+      [
+        "Si la norma se aplica de manera desigual, su justificación moral se debilita.",
+        "If the rule is applied unevenly, its moral justification weakens.",
+        "C1"
+      ],
+      [
+        "La política puede ser imperfecta y aun así representar una mejora respecto del escenario actual.",
+        "The policy may be imperfect and still represent an improvement over the current situation.",
+        "C1"
+      ],
+      [
+        "La deliberación pública exige escuchar objeciones razonables, no solo contar apoyos.",
+        "Public deliberation requires listening to reasonable objections, not just counting support.",
+        "C1"
+      ],
+      [
+        "Un indicador mal diseñado puede incentivar exactamente la conducta que se intenta evitar.",
+        "A poorly designed indicator can incentivize exactly the behavior one is trying to prevent.",
+        "C1"
+      ],
+      [
+        "La pregunta ética es quién queda protegido y quién queda expuesto por esta decisión.",
+        "The ethical question is who is protected and who is left exposed by this decision.",
+        "C1"
+      ],
+      [
+        "No toda desigualdad es injusta, pero esta parece derivarse de reglas institucionales corregibles.",
+        "Not every inequality is unjust, but this one seems to stem from correctable institutional rules.",
+        "C1"
+      ],
+      [
+        "El análisis costo-beneficio debe incluir costos que no aparecen fácilmente en una hoja de cálculo.",
+        "Cost-benefit analysis must include costs that do not easily appear in a spreadsheet.",
+        "C1"
+      ],
+      [
+        "La solución propuesta atiende el síntoma inmediato, pero no modifica las causas estructurales.",
+        "The proposed solution addresses the immediate symptom, but does not change the structural causes.",
+        "C1"
+      ],
+      [
+        "Si se exige evidencia perfecta antes de actuar, muchas políticas preventivas quedarían descartadas.",
+        "If perfect evidence is required before acting, many preventive policies would be ruled out.",
+        "C1"
+      ],
+      [
+        "La legitimidad de una institución depende también de cómo corrige sus propios errores.",
+        "The legitimacy of an institution also depends on how it corrects its own mistakes.",
+        "C1"
+      ],
+      [
+        "La excepción humanitaria debe definirse con cuidado para evitar arbitrariedad.",
+        "The humanitarian exception must be defined carefully to avoid arbitrariness.",
+        "C1"
+      ],
+      [
+        "El argumento es persuasivo en lo abstracto, pero necesita pruebas en contextos reales.",
+        "The argument is persuasive in the abstract, but it needs evidence in real-world contexts.",
+        "C1"
+      ],
+      [
+        "La autoridad no puede pedir confianza mientras se reserva información crucial.",
+        "The authority cannot ask for trust while withholding crucial information.",
+        "C1"
+      ],
+      [
+        "Una medida proporcional limita derechos solo en la medida necesaria para alcanzar un fin legítimo.",
+        "A proportional measure limits rights only to the extent necessary to achieve a legitimate aim.",
+        "C1"
+      ],
+      [
+        "El desacuerdo no surge de los hechos básicos, sino del peso que se asigna a cada valor.",
+        "The disagreement does not arise from the basic facts, but from the weight assigned to each value.",
+        "C1"
+      ],
+      [
+        "La propuesta sería más sólida si contemplara escenarios de abuso o captura institucional.",
+        "The proposal would be stronger if it considered scenarios of abuse or institutional capture.",
+        "C1"
+      ],
+      [
+        "No podemos evaluar la medida solo por sus intenciones declaradas.",
+        "We cannot evaluate the measure only by its stated intentions.",
+        "C1"
+      ],
+      [
+        "La evidencia anecdótica puede orientar preguntas, pero no debería cerrar el debate.",
+        "Anecdotal evidence can guide questions, but it should not settle the debate.",
+        "C1"
+      ],
+      [
+        "Cuando los incentivos están mal alineados, apelar únicamente a la responsabilidad individual resulta insuficiente.",
+        "When incentives are poorly aligned, appealing only to individual responsibility is insufficient.",
+        "C1"
+      ],
+      [
+        "La decisión obliga a ponderar igualdad de trato y atención diferenciada a quienes enfrentan mayores barreras.",
+        "The decision requires weighing equal treatment against differentiated attention to those facing greater barriers.",
+        "C1"
+      ],
+      [
+        "Si el diseño institucional depende de personas excepcionales, probablemente es demasiado frágil.",
+        "If the institutional design depends on exceptional people, it is probably too fragile.",
+        "C1"
+      ],
+      [
+        "La urgencia climática no elimina la necesidad de justicia en la transición.",
+        "Climate urgency does not eliminate the need for justice in the transition.",
+        "C1"
+      ],
+      [
+        "El comité debería explicar qué nivel de incertidumbre considera aceptable.",
+        "The committee should explain what level of uncertainty it considers acceptable.",
+        "C1"
+      ],
+      [
+        "Una política focalizada puede ser más justa, aunque administrativamente sea más compleja.",
+        "A targeted policy may be fairer, even if it is administratively more complex.",
+        "C1"
+      ],
+      [
+        "El riesgo de discriminación indirecta exige revisar los efectos, no solo la intención formal.",
+        "The risk of indirect discrimination requires reviewing the effects, not only the formal intention.",
+        "C1"
+      ],
+      [
+        "Si mañana cambiara la mayoría política, esta regla seguiría necesitando límites claros.",
+        "If the political majority changed tomorrow, this rule would still need clear limits.",
+        "C1"
+      ],
+      [
+        "El debate debería centrarse en evidencia verificable, no en sospechas difíciles de refutar.",
+        "The debate should center on verifiable evidence, not on suspicions that are hard to refute.",
+        "C1"
+      ],
+      [
+        "La medida parece razonable, siempre y cuando exista una vía efectiva de apelación.",
+        "The measure seems reasonable, provided there is an effective path for appeal.",
+        "C1"
+      ],
+      [
+        "Una institución madura reconoce tensiones legítimas en lugar de reducirlas a mala fe.",
+        "A mature institution recognizes legitimate tensions instead of reducing them to bad faith.",
+        "C1"
+      ],
+      [
+        "El informe confunde viabilidad administrativa con conveniencia ética.",
+        "The report confuses administrative feasibility with ethical desirability.",
+        "C1"
+      ],
+      [
+        "La rendición de cuentas no termina con publicar un documento técnico.",
+        "Accountability does not end with publishing a technical document.",
+        "C1"
+      ],
+      [
+        "Si el beneficio es difuso y el costo concentrado, la compensación debe discutirse explícitamente.",
+        "If the benefit is diffuse and the cost concentrated, compensation must be discussed explicitly.",
+        "C1"
+      ],
+      [
+        "La falta de evidencia concluyente no equivale a evidencia de que no exista daño.",
+        "The lack of conclusive evidence is not the same as evidence that no harm exists.",
+        "C1"
+      ],
+      [
+        "El diseño de la política debería reducir oportunidades de favoritismo desde el inicio.",
+        "The design of the policy should reduce opportunities for favoritism from the outset.",
+        "C1"
+      ],
+      [
+        "La decisión puede ser técnicamente correcta y políticamente insostenible si ignora la percepción pública.",
+        "The decision may be technically correct and politically unsustainable if it ignores public perception.",
+        "C1"
+      ],
+      [
+        "El argumento de eficiencia debe confrontarse con la pregunta de quién paga el precio.",
+        "The efficiency argument must be confronted with the question of who pays the price.",
+        "C1"
+      ],
+      [
+        "Una consulta simbólica puede ser peor que no consultar, porque crea expectativas falsas.",
+        "A symbolic consultation can be worse than not consulting, because it creates false expectations.",
+        "C1"
+      ],
+      [
+        "El organismo actuó dentro de sus competencias, pero con una justificación demasiado escueta.",
+        "The agency acted within its powers, but with an overly brief justification.",
+        "C1"
+      ],
+      [
+        "Si la política se evalúa solo por resultados agregados, se invisibilizan daños graves en minorías.",
+        "If the policy is evaluated only by aggregate outcomes, serious harms to minorities are made invisible.",
+        "C1"
+      ],
+      [
+        "La coherencia institucional exige aplicar criterios similares a casos comparables.",
+        "Institutional consistency requires applying similar criteria to comparable cases.",
+        "C1"
+      ],
+      [
+        "La carga de la prueba debería recaer en quien propone restringir un derecho.",
+        "The burden of proof should fall on whoever proposes restricting a right.",
+        "C1"
+      ],
+      [
+        "El debate sería más honesto si se reconocieran los costos inevitables de cada opción.",
+        "The debate would be more honest if the unavoidable costs of each option were acknowledged.",
+        "C1"
+      ],
+      [
+        "La política no falla por falta de ambición, sino por una teoría de cambio poco convincente.",
+        "The policy does not fail for lack of ambition, but because of an unconvincing theory of change.",
+        "C1"
+      ],
+      [
+        "Si se normaliza esta excepción, mañana será difícil defender el límite original.",
+        "If this exception becomes normalized, tomorrow it will be difficult to defend the original limit.",
+        "C1"
+      ],
+      [
+        "La equidad no siempre exige tratar a todos igual, sino justificar cualquier trato diferenciado.",
+        "Equity does not always require treating everyone the same, but rather justifying any differential treatment.",
+        "C1"
+      ],
+      [
+        "El análisis debe separar lo que sabemos, lo que inferimos y lo que simplemente tememos.",
+        "The analysis must separate what we know, what we infer, and what we merely fear.",
+        "C1"
+      ],
+      [
+        "Una institución confiable no solo evita conflictos de interés; también evita la apariencia de favoritismo.",
+        "A trustworthy institution not only avoids conflicts of interest; it also avoids the appearance of favoritism.",
+        "C1"
+      ],
+      [
+        "La medida tiene sentido como piloto, pero sería prematuro convertirla en política permanente.",
+        "The measure makes sense as a pilot, but it would be premature to turn it into permanent policy.",
+        "C1"
+      ],
+      [
+        "El desacuerdo razonable no impide decidir, pero sí obliga a decidir con humildad.",
+        "Reasonable disagreement does not prevent decision-making, but it does require deciding with humility.",
+        "C1"
+      ],
+      [
+        "Si los datos se recopilaron con sesgos, el modelo reproducirá esos sesgos con apariencia de objetividad.",
+        "If the data were collected with biases, the model will reproduce those biases with an appearance of objectivity.",
+        "C1"
+      ],
+      [
+        "La evidencia internacional es útil, siempre que se adapte al contexto institucional local.",
+        "International evidence is useful, as long as it is adapted to the local institutional context.",
+        "C1"
+      ],
+      [
+        "Una sanción desproporcionada puede debilitar la norma que pretende defender.",
+        "A disproportionate sanction can weaken the rule it seeks to defend.",
+        "C1"
+      ],
+      [
+        "La participación ciudadana debe influir en la decisión, no funcionar como simple trámite.",
+        "Citizen participation must influence the decision, not function as a mere formality.",
+        "C1"
+      ],
+      [
+        "El dilema no desaparece por nombrarlo en términos técnicos.",
+        "The dilemma does not disappear by naming it in technical terms.",
+        "C1"
+      ],
+      [
+        "Si la institución admite incertidumbre, no pierde autoridad; gana credibilidad.",
+        "If the institution admits uncertainty, it does not lose authority; it gains credibility.",
+        "C1"
+      ],
+      [
+        "La pregunta no es si habrá efectos no deseados, sino si existen mecanismos para detectarlos y corregirlos.",
+        "The question is not whether there will be unintended effects, but whether there are mechanisms to detect and correct them.",
+        "C1"
+      ],
+      [
+        "El enfoque preventivo resulta más convincente cuando incluye límites temporales y revisión periódica.",
+        "The preventive approach is more convincing when it includes time limits and periodic review.",
+        "C1"
+      ],
+      [
+        "La política debería evitar que la conveniencia administrativa se disfrace de neutralidad.",
+        "The policy should prevent administrative convenience from being disguised as neutrality.",
+        "C1"
+      ]
+    ]
+  },
+  {
+    "domain": "c1_register_negotiation_mediation",
+    "startLexemeId": 6200,
+    "startSentenceId": 14300,
+    "startAnswerId": 15300,
+    "items": [
+      [
+        "Antes de fijar una postura definitiva, convendría escuchar qué margen de maniobra tiene la otra parte.",
+        "Before taking a definitive position, it would be advisable to hear how much room for maneuver the other side has.",
+        "C1"
+      ],
+      [
+        "Si cedemos en este punto, tendríamos que asegurar una contrapartida proporcional.",
+        "If we give ground on this point, we would need to secure a proportional concession in return.",
+        "C1"
+      ],
+      [
+        "No cuestiono la intención de la propuesta; me preocupa, más bien, el precedente que podría sentar.",
+        "I am not questioning the intention behind the proposal; rather, I am concerned about the precedent it could set.",
+        "C1"
+      ],
+      [
+        "Para que el acuerdo sea sostenible, ambas partes deben poder defenderlo ante sus propios equipos.",
+        "For the agreement to be sustainable, both parties must be able to defend it to their own teams.",
+        "C1"
+      ],
+      [
+        "Entiendo la urgencia, pero tomar una decisión bajo presión podría salirnos caro.",
+        "I understand the urgency, but making a decision under pressure could cost us dearly.",
+        "C1"
+      ],
+      [
+        "Sería imprudente presentar esto como un consenso cuando todavía hay reservas de fondo.",
+        "It would be unwise to present this as a consensus when there are still substantive reservations.",
+        "C1"
+      ],
+      [
+        "Podemos suavizar el lenguaje sin diluir el mensaje central.",
+        "We can soften the wording without watering down the central message.",
+        "C1"
+      ],
+      [
+        "Si lo planteamos como una imposición, perderemos aliados antes de empezar la negociación.",
+        "If we frame it as an imposition, we will lose allies before the negotiation even begins.",
+        "C1"
+      ],
+      [
+        "Me parece razonable explorar esa vía, siempre que no comprometa nuestra credibilidad institucional.",
+        "I think it is reasonable to explore that route, provided it does not compromise our institutional credibility.",
+        "C1"
+      ],
+      [
+        "Hay que distinguir entre hacer una concesión táctica y renunciar a un principio.",
+        "We need to distinguish between making a tactical concession and giving up a principle.",
+        "C1"
+      ],
+      [
+        "Con todo respeto, creo que esa lectura pasa por alto un factor político clave.",
+        "With all due respect, I think that interpretation overlooks a key political factor.",
+        "C1"
+      ],
+      [
+        "No descartaría esa opción, aunque necesitaría garantías más claras antes de respaldarla.",
+        "I would not rule out that option, although I would need clearer assurances before supporting it.",
+        "C1"
+      ],
+      [
+        "La pregunta no es quién tiene razón, sino qué solución puede preservar la relación.",
+        "The question is not who is right, but what solution can preserve the relationship.",
+        "C1"
+      ],
+      [
+        "Conviene dejar constancia de los desacuerdos sin convertirlos en una ruptura pública.",
+        "It is advisable to record the disagreements without turning them into a public rupture.",
+        "C1"
+      ],
+      [
+        "Si bajamos el tono ahora, tal vez podamos recuperar una conversación más productiva.",
+        "If we lower the tone now, we may be able to recover a more productive conversation.",
+        "C1"
+      ],
+      [
+        "No quisiera que una diferencia legítima de criterio se interpretara como falta de compromiso.",
+        "I would not want a legitimate difference in judgment to be interpreted as a lack of commitment.",
+        "C1"
+      ],
+      [
+        "La propuesta tiene méritos, pero todavía no resuelve el problema de implementación.",
+        "The proposal has merit, but it still does not solve the implementation problem.",
+        "C1"
+      ],
+      [
+        "Sería útil separar los hechos verificables de las percepciones que se han ido acumulando.",
+        "It would be useful to separate verifiable facts from the perceptions that have accumulated.",
+        "C1"
+      ],
+      [
+        "Si aceptamos esa formulación, deberíamos aclarar que no implica reconocimiento de responsabilidad.",
+        "If we accept that wording, we should clarify that it does not imply an admission of responsibility.",
+        "C1"
+      ],
+      [
+        "Prefiero abordar la tensión de frente antes que dejar que se traduzca en resistencia pasiva.",
+        "I would rather address the tension directly than let it turn into passive resistance.",
+        "C1"
+      ],
+      [
+        "La manera en que comuniquemos el cambio será casi tan importante como el cambio mismo.",
+        "The way we communicate the change will be almost as important as the change itself.",
+        "C1"
+      ],
+      [
+        "No basta con tener una buena razón; también hay que elegir el momento adecuado para presentarla.",
+        "It is not enough to have a good reason; we also need to choose the right moment to present it.",
+        "C1"
+      ],
+      [
+        "Si el objetivo es reconstruir confianza, empezar con acusaciones sería contraproducente.",
+        "If the goal is to rebuild trust, starting with accusations would be counterproductive.",
+        "C1"
+      ],
+      [
+        "Podríamos conceder el plazo, siempre y cuando quede claro que el alcance no se reabre.",
+        "We could concede the deadline, as long as it is clear that the scope is not being reopened.",
+        "C1"
+      ],
+      [
+        "Me preocupa que estemos resolviendo el síntoma sin atender la causa estructural.",
+        "I am concerned that we are solving the symptom without addressing the structural cause.",
+        "C1"
+      ],
+      [
+        "Aun si la crítica es incómoda, conviene preguntarnos qué parte de ella es válida.",
+        "Even if the criticism is uncomfortable, we should ask ourselves what part of it is valid.",
+        "C1"
+      ],
+      [
+        "No me opondría a un piloto limitado, siempre que haya criterios claros de evaluación.",
+        "I would not oppose a limited pilot, provided there are clear evaluation criteria.",
+        "C1"
+      ],
+      [
+        "El reto es corregir el rumbo sin desautorizar a quienes defendieron la decisión inicial.",
+        "The challenge is to change course without undermining those who defended the initial decision.",
+        "C1"
+      ],
+      [
+        "En términos más directos, necesitamos saber qué están dispuestos a poner sobre la mesa.",
+        "In more direct terms, we need to know what they are willing to put on the table.",
+        "C1"
+      ],
+      [
+        "Dicho de manera más diplomática, todavía falta construir una base mínima de confianza.",
+        "To put it more diplomatically, a minimum basis of trust still needs to be built.",
+        "C1"
+      ],
+      [
+        "No veo viable avanzar mientras las expectativas sigan formuladas de manera tan ambigua.",
+        "I do not see a viable way forward while expectations remain so ambiguously stated.",
+        "C1"
+      ],
+      [
+        "Si cedemos demasiado pronto, podríamos transmitir una urgencia que debilite nuestra posición.",
+        "If we concede too early, we could signal urgency in a way that weakens our position.",
+        "C1"
+      ],
+      [
+        "El desacuerdo no me preocupa tanto como la falta de un mecanismo para procesarlo.",
+        "The disagreement concerns me less than the lack of a mechanism for handling it.",
+        "C1"
+      ],
+      [
+        "Propongo que reformulemos el punto para que sea firme, pero no confrontativo.",
+        "I propose that we rephrase the point so that it is firm but not confrontational.",
+        "C1"
+      ],
+      [
+        "Sería más estratégico reconocer parcialmente la objeción que descartarla de entrada.",
+        "It would be more strategic to partially acknowledge the objection than to dismiss it outright.",
+        "C1"
+      ],
+      [
+        "Necesitamos una salida que les permita ajustar su postura sin perder legitimidad.",
+        "We need an off-ramp that allows them to adjust their position without losing legitimacy.",
+        "C1"
+      ],
+      [
+        "No conviene confundir discreción con falta de transparencia.",
+        "It is unwise to confuse discretion with a lack of transparency.",
+        "C1"
+      ],
+      [
+        "Si la conversación se vuelve personal, perdemos de vista el interés común.",
+        "If the conversation becomes personal, we lose sight of the shared interest.",
+        "C1"
+      ],
+      [
+        "Acepto que el proceso no fue ideal, pero eso no invalida necesariamente el resultado.",
+        "I accept that the process was not ideal, but that does not necessarily invalidate the result.",
+        "C1"
+      ],
+      [
+        "Podríamos presentar la medida como una transición gradual, no como un cambio abrupto.",
+        "We could present the measure as a gradual transition, not as an abrupt change.",
+        "C1"
+      ],
+      [
+        "Me parece importante no prometer más de lo que podamos cumplir de manera verificable.",
+        "I think it is important not to promise more than we can verifiably deliver.",
+        "C1"
+      ],
+      [
+        "El silencio de algunos actores no debe interpretarse automáticamente como respaldo.",
+        "The silence of some stakeholders should not automatically be interpreted as support.",
+        "C1"
+      ],
+      [
+        "Si buscamos adhesión real, tendremos que incorporar al menos parte de sus preocupaciones.",
+        "If we want genuine buy-in, we will have to incorporate at least some of their concerns.",
+        "C1"
+      ],
+      [
+        "La reunión no debería cerrar con vencedores y vencidos, sino con próximos pasos claros.",
+        "The meeting should not end with winners and losers, but with clear next steps.",
+        "C1"
+      ],
+      [
+        "No niego el avance logrado; simplemente creo que aún no alcanza para anunciarlo.",
+        "I am not denying the progress made; I simply think it is still not enough to announce.",
+        "C1"
+      ],
+      [
+        "Para evitar malentendidos, conviene precisar qué significa apoyo en este contexto.",
+        "To avoid misunderstandings, it is advisable to clarify what support means in this context.",
+        "C1"
+      ],
+      [
+        "Si lo comunicamos mal, una decisión razonable puede percibirse como una provocación.",
+        "If we communicate it poorly, a reasonable decision can be perceived as a provocation.",
+        "C1"
+      ],
+      [
+        "La clave será mantener la firmeza sin cerrar canales de diálogo.",
+        "The key will be to remain firm without closing channels of dialogue.",
+        "C1"
+      ],
+      [
+        "Me gustaría entender qué condición tendría que cumplirse para que reconsideraran su postura.",
+        "I would like to understand what condition would need to be met for you to reconsider your position.",
+        "C1"
+      ],
+      [
+        "No estamos ante un problema técnico, sino ante una diferencia de prioridades.",
+        "We are not facing a technical problem, but a difference in priorities.",
+        "C1"
+      ],
+      [
+        "Si queremos persuadirlos, debemos partir de sus incentivos, no de nuestras certezas.",
+        "If we want to persuade them, we need to start from their incentives, not from our certainties.",
+        "C1"
+      ],
+      [
+        "La propuesta sería más sólida si anticipara las objeciones que inevitablemente surgirán.",
+        "The proposal would be stronger if it anticipated the objections that will inevitably arise.",
+        "C1"
+      ],
+      [
+        "No conviene forzar una votación si todavía podemos construir un acuerdo más amplio.",
+        "It is not advisable to force a vote if we can still build a broader agreement.",
+        "C1"
+      ],
+      [
+        "La cortesía no exige aceptar una premisa que consideramos equivocada.",
+        "Courtesy does not require accepting a premise we consider mistaken.",
+        "C1"
+      ],
+      [
+        "Tal vez podamos reconocer el impacto sin coincidir plenamente con el diagnóstico.",
+        "Perhaps we can acknowledge the impact without fully agreeing with the diagnosis.",
+        "C1"
+      ],
+      [
+        "Si dejamos ese punto sin responder, otros lo llenarán con su propia interpretación.",
+        "If we leave that point unanswered, others will fill it with their own interpretation.",
+        "C1"
+      ],
+      [
+        "La prioridad ahora es contener el conflicto antes de entrar en atribuciones de culpa.",
+        "The priority now is to contain the conflict before assigning blame.",
+        "C1"
+      ],
+      [
+        "No me parece prudente convertir una conversación exploratoria en un compromiso formal.",
+        "I do not think it is prudent to turn an exploratory conversation into a formal commitment.",
+        "C1"
+      ],
+      [
+        "Podemos defender nuestra posición sin descalificar las preocupaciones de la otra parte.",
+        "We can defend our position without dismissing the other party's concerns.",
+        "C1"
+      ],
+      [
+        "Si hubiera habido más consulta previa, probablemente la reacción habría sido distinta.",
+        "If there had been more prior consultation, the reaction would probably have been different.",
+        "C1"
+      ],
+      [
+        "Lo que está en juego no es solo el resultado, sino la confianza en el proceso.",
+        "What is at stake is not only the outcome, but trust in the process.",
+        "C1"
+      ],
+      [
+        "Me inclino por una respuesta breve, serena y centrada en hechos comprobables.",
+        "I lean toward a brief, calm response focused on verifiable facts.",
+        "C1"
+      ],
+      [
+        "No sería conveniente sobrerreaccionar a una señal que todavía puede ser táctica.",
+        "It would not be advisable to overreact to a signal that may still be tactical.",
+        "C1"
+      ],
+      [
+        "La negociación avanzará si logramos convertir posiciones rígidas en intereses negociables.",
+        "The negotiation will move forward if we manage to turn rigid positions into negotiable interests.",
+        "C1"
+      ],
+      [
+        "Antes de responder, deberíamos evaluar si la crítica busca diálogo o solo presión pública.",
+        "Before responding, we should assess whether the criticism seeks dialogue or merely public pressure.",
+        "C1"
+      ],
+      [
+        "Si aceptan ese principio, el resto de los detalles puede discutirse con más flexibilidad.",
+        "If they accept that principle, the remaining details can be discussed with greater flexibility.",
+        "C1"
+      ],
+      [
+        "No quisiera endurecer el tono sin medir primero las consecuencias diplomáticas.",
+        "I would not want to harden the tone without first weighing the diplomatic consequences.",
+        "C1"
+      ],
+      [
+        "Hay que evitar que una concesión limitada se interprete como una renuncia general.",
+        "We need to prevent a limited concession from being interpreted as a general surrender.",
+        "C1"
+      ],
+      [
+        "El liderazgo también consiste en absorber parte de la tensión para que el equipo pueda avanzar.",
+        "Leadership also involves absorbing some of the tension so the team can move forward.",
+        "C1"
+      ],
+      [
+        "Si no explicamos el razonamiento, la decisión parecerá arbitraria aunque no lo sea.",
+        "If we do not explain the reasoning, the decision will seem arbitrary even if it is not.",
+        "C1"
+      ],
+      [
+        "Me parece legítimo exigir resultados, pero no a costa de deteriorar la colaboración.",
+        "I think it is legitimate to demand results, but not at the cost of damaging collaboration.",
+        "C1"
+      ],
+      [
+        "Podríamos abrir la conversación reconociendo el malestar antes de pasar a las soluciones.",
+        "We could open the conversation by acknowledging the discomfort before moving to solutions.",
+        "C1"
+      ],
+      [
+        "No todo desacuerdo requiere una respuesta inmediata; algunos necesitan espacio para madurar.",
+        "Not every disagreement requires an immediate response; some need space to mature.",
+        "C1"
+      ],
+      [
+        "Si la contraparte percibe que ya decidimos, difícilmente se sentirá invitada a negociar.",
+        "If the other side perceives that we have already decided, it will hardly feel invited to negotiate.",
+        "C1"
+      ],
+      [
+        "La forma más persuasiva de presentarlo sería vincularlo con objetivos que ya comparten.",
+        "The most persuasive way to present it would be to link it to goals they already share.",
+        "C1"
+      ],
+      [
+        "No estoy en desacuerdo con el objetivo, sino con el camino propuesto para alcanzarlo.",
+        "I do not disagree with the objective, but with the proposed path to achieve it.",
+        "C1"
+      ],
+      [
+        "Si queremos mantener autoridad moral, debemos aplicar el mismo criterio hacia adentro.",
+        "If we want to maintain moral authority, we must apply the same standard internally.",
+        "C1"
+      ],
+      [
+        "No podemos pedir flexibilidad sin ofrecer alguna señal concreta de reciprocidad.",
+        "We cannot ask for flexibility without offering some concrete sign of reciprocity.",
+        "C1"
+      ],
+      [
+        "La decisión sería más defendible si quedara acompañada de una revisión periódica.",
+        "The decision would be more defensible if it were accompanied by periodic review.",
+        "C1"
+      ],
+      [
+        "Me preocupa menos la objeción en sí que la desconfianza que revela.",
+        "I am less concerned about the objection itself than about the distrust it reveals.",
+        "C1"
+      ],
+      [
+        "Si planteamos la propuesta como un ajuste, será más fácil evitar una reacción defensiva.",
+        "If we present the proposal as an adjustment, it will be easier to avoid a defensive reaction.",
+        "C1"
+      ],
+      [
+        "Conviene agradecer la franqueza sin aceptar automáticamente todas las conclusiones.",
+        "It is advisable to thank them for their candor without automatically accepting all the conclusions.",
+        "C1"
+      ],
+      [
+        "No deberíamos cerrar la conversación solo porque el primer intercambio fue tenso.",
+        "We should not close the conversation just because the first exchange was tense.",
+        "C1"
+      ],
+      [
+        "La ambigüedad puede ser útil al inicio, pero peligrosa cuando llega el momento de ejecutar.",
+        "Ambiguity can be useful at the beginning, but dangerous when it is time to execute.",
+        "C1"
+      ],
+      [
+        "Si el equipo no entiende el porqué, cumplirá la instrucción sin asumirla como propia.",
+        "If the team does not understand the reason, it will follow the instruction without taking ownership of it.",
+        "C1"
+      ],
+      [
+        "No me parece justo atribuir mala fe donde puede haber simplemente información incompleta.",
+        "I do not think it is fair to attribute bad faith where there may simply be incomplete information.",
+        "C1"
+      ],
+      [
+        "Podemos ser más explícitos en privado y más cuidadosos en el comunicado público.",
+        "We can be more explicit in private and more careful in the public statement.",
+        "C1"
+      ],
+      [
+        "El acuerdo perdería valor si se percibe como resultado de presión y no de convicción.",
+        "The agreement would lose value if it is perceived as the result of pressure rather than conviction.",
+        "C1"
+      ],
+      [
+        "Si no cuidamos las formas, el fondo quedará eclipsado por la controversia.",
+        "If we do not handle the tone and manners carefully, the substance will be overshadowed by the controversy.",
+        "C1"
+      ],
+      [
+        "La mediación solo funcionará si ambas partes sienten que pueden ceder sin humillarse.",
+        "Mediation will only work if both parties feel they can give ground without being humiliated.",
+        "C1"
+      ],
+      [
+        "No se trata de evitar el conflicto, sino de impedir que se vuelva improductivo.",
+        "It is not about avoiding conflict, but about preventing it from becoming unproductive.",
+        "C1"
+      ],
+      [
+        "Sería conveniente validar el malestar antes de explicar por qué la decisión se mantiene.",
+        "It would be advisable to validate the frustration before explaining why the decision stands.",
+        "C1"
+      ],
+      [
+        "Si el mensaje suena defensivo, reforzará precisamente la crítica que queremos disipar.",
+        "If the message sounds defensive, it will reinforce precisely the criticism we want to dispel.",
+        "C1"
+      ],
+      [
+        "La autoridad se ejerce mejor cuando deja espacio para objeciones bien fundadas.",
+        "Authority is exercised best when it leaves room for well-founded objections.",
+        "C1"
+      ],
+      [
+        "No podemos exigir confidencialidad si no ofrecemos una razón convincente para preservarla.",
+        "We cannot demand confidentiality if we do not offer a convincing reason to preserve it.",
+        "C1"
+      ],
+      [
+        "Me parece que estamos mezclando una preocupación legítima con una conclusión apresurada.",
+        "It seems to me that we are mixing a legitimate concern with a hasty conclusion.",
+        "C1"
+      ],
+      [
+        "Si hubiera que sintetizarlo, diría que el desacuerdo es de alcance, no de principio.",
+        "If I had to summarize it, I would say the disagreement is about scope, not principle.",
+        "C1"
+      ],
+      [
+        "La salida más elegante sería aceptar la revisión sin presentar el cambio como una derrota.",
+        "The most graceful way out would be to accept the review without presenting the change as a defeat.",
+        "C1"
+      ],
+      [
+        "No conviene hablar de consenso mientras haya actores clave que se sientan excluidos.",
+        "It is not advisable to speak of consensus while key stakeholders feel excluded.",
+        "C1"
+      ],
+      [
+        "Podemos elevar el nivel de exigencia sin convertirlo en una reprimenda.",
+        "We can raise the level of expectations without turning it into a reprimand.",
+        "C1"
+      ],
+      [
+        "Si queremos que la otra parte escuche, debemos formular la crítica de modo que pueda recibirla.",
+        "If we want the other side to listen, we must frame the criticism in a way they can receive.",
+        "C1"
+      ]
+    ]
+  },
+  {
+    "domain": "c1_academic_methodology_reasoning",
+    "startLexemeId": 6400,
+    "startSentenceId": 14600,
+    "startAnswerId": 15600,
+    "items": [
+      [
+        "A la luz de los resultados, la explicación más convincente no es lineal, sino acumulativa.",
+        "In light of the results, the most convincing explanation is not linear, but cumulative.",
+        "C1"
+      ],
+      [
+        "Si bien la muestra es limitada, el patrón observado merece una discusión más detenida.",
+        "Although the sample is limited, the observed pattern deserves a more careful discussion.",
+        "C1"
+      ],
+      [
+        "Los datos apuntan a una asociación relevante, pero no permiten establecer causalidad por sí solos.",
+        "The data point to a relevant association, but they do not by themselves establish causality.",
+        "C1"
+      ],
+      [
+        "No conviene inferir más de lo que el diseño del estudio puede sostener.",
+        "It is not advisable to infer more than the study design can support.",
+        "C1"
+      ],
+      [
+        "El diseño metodológico privilegia la profundidad interpretativa por encima de la representatividad estadística.",
+        "The methodological design favors interpretive depth over statistical representativeness.",
+        "C1"
+      ],
+      [
+        "Aun cuando la hipótesis inicial se confirma parcialmente, quedan zonas de ambigüedad.",
+        "Even though the initial hypothesis is partially confirmed, areas of ambiguity remain.",
+        "C1"
+      ],
+      [
+        "Cabe preguntarse hasta qué punto el contexto institucional condicionó las respuestas.",
+        "It is worth asking to what extent the institutional context shaped the responses.",
+        "C1"
+      ],
+      [
+        "La hipótesis resulta plausible, siempre que se acepten ciertos supuestos sobre el entorno analizado.",
+        "The hypothesis is plausible, provided that certain assumptions about the context analyzed are accepted.",
+        "C1"
+      ],
+      [
+        "Más que confirmar una tendencia estable, el estudio revela una tensión aún no resuelta.",
+        "Rather than confirming a stable trend, the study reveals an unresolved tension.",
+        "C1"
+      ],
+      [
+        "El hallazgo debe interpretarse con cautela, sobre todo por la heterogeneidad de los participantes.",
+        "The finding should be interpreted cautiously, especially because of the heterogeneity of the participants.",
+        "C1"
+      ],
+      [
+        "En ausencia de datos longitudinales, cualquier explicación sobre cambios en el tiempo sigue siendo tentativa.",
+        "In the absence of longitudinal data, any explanation of changes over time remains tentative.",
+        "C1"
+      ],
+      [
+        "El principal aporte del análisis es haber puesto en relación variables que suelen estudiarse por separado.",
+        "The main contribution of the analysis is that it connects variables that are usually studied separately.",
+        "C1"
+      ],
+      [
+        "La muestra permite explorar el fenómeno, aunque no justificar generalizaciones demasiado amplias.",
+        "The sample allows the phenomenon to be explored, although it does not justify overly broad generalizations.",
+        "C1"
+      ],
+      [
+        "Aunque el modelo explica una parte sustancial de la variación, deja fuera factores contextuales importantes.",
+        "Although the model explains a substantial part of the variation, it leaves out important contextual factors.",
+        "C1"
+      ],
+      [
+        "La relación observada podría ser consecuencia de una variable intermedia no considerada en el análisis.",
+        "The observed relationship could be the result of an intermediate variable not considered in the analysis.",
+        "C1"
+      ],
+      [
+        "El marco teórico ayuda a ordenar la evidencia, pero no agota las posibles interpretaciones.",
+        "The theoretical framework helps organize the evidence, but it does not exhaust the possible interpretations.",
+        "C1"
+      ],
+      [
+        "Conviene distinguir entre una correlación estadísticamente significativa y una relación sustantivamente relevante.",
+        "It is important to distinguish between a statistically significant correlation and a substantively meaningful relationship.",
+        "C1"
+      ],
+      [
+        "Dicho de otro modo, el problema no radica en la falta de datos, sino en cómo se interpretan.",
+        "Put another way, the problem lies not in the lack of data, but in how they are interpreted.",
+        "C1"
+      ],
+      [
+        "La evidencia disponible respalda una lectura moderada, no una afirmación categórica.",
+        "The available evidence supports a moderate reading, not a categorical claim.",
+        "C1"
+      ],
+      [
+        "El análisis cualitativo permite captar matices que habrían pasado inadvertidos en una medición agregada.",
+        "The qualitative analysis makes it possible to capture nuances that would have gone unnoticed in an aggregate measurement.",
+        "C1"
+      ],
+      [
+        "No se trata simplemente de medir el efecto, sino de entender las condiciones que lo hacen posible.",
+        "It is not simply a matter of measuring the effect, but of understanding the conditions that make it possible.",
+        "C1"
+      ],
+      [
+        "La interpretación más prudente reconoce avances importantes sin perder de vista las restricciones del estudio.",
+        "The most prudent interpretation recognizes important advances while keeping the study's constraints in view.",
+        "C1"
+      ],
+      [
+        "El informe evita atribuir el cambio a un solo factor, porque la evidencia sugiere una dinámica más compleja.",
+        "The report avoids attributing the change to a single factor because the evidence suggests a more complex dynamic.",
+        "C1"
+      ],
+      [
+        "Si el supuesto de partida fuera incorrecto, la conclusión tendría que reformularse de manera sustancial.",
+        "If the starting assumption were incorrect, the conclusion would have to be substantially reformulated.",
+        "C1"
+      ],
+      [
+        "La tendencia podría deberse tanto a cambios reales como a diferencias en la forma de medición.",
+        "The trend could be due both to real changes and to differences in the method of measurement.",
+        "C1"
+      ],
+      [
+        "Este resultado no invalida la hipótesis, pero sí obliga a precisarla con mayor rigor.",
+        "This result does not invalidate the hypothesis, but it does require defining it more rigorously.",
+        "C1"
+      ],
+      [
+        "La variable de control modifica la magnitud del efecto, aunque no altera su dirección general.",
+        "The control variable changes the size of the effect, although it does not alter its overall direction.",
+        "C1"
+      ],
+      [
+        "El contraste entre ambos casos permite identificar mecanismos que no serían visibles de manera aislada.",
+        "The comparison between the two cases makes it possible to identify mechanisms that would not be visible in isolation.",
+        "C1"
+      ],
+      [
+        "La conclusión depende en buena medida de cómo se definan los criterios de inclusión.",
+        "The conclusion depends largely on how the inclusion criteria are defined.",
+        "C1"
+      ],
+      [
+        "La lectura conjunta de los estudios muestra coincidencias, pero también desacuerdos metodológicos relevantes.",
+        "A combined reading of the studies shows points of agreement, but also relevant methodological disagreements.",
+        "C1"
+      ],
+      [
+        "Pese a las limitaciones señaladas, el análisis ofrece una base razonable para investigaciones futuras.",
+        "Despite the limitations noted, the analysis offers a reasonable basis for future research.",
+        "C1"
+      ],
+      [
+        "La explicación causal exige demostrar no solo asociación, sino también secuencia temporal y plausibilidad del mecanismo.",
+        "A causal explanation requires showing not only association, but also temporal sequence and plausibility of the mechanism.",
+        "C1"
+      ],
+      [
+        "En términos prácticos, el hallazgo sugiere revisar los criterios con los que se evalúa el desempeño.",
+        "In practical terms, the finding suggests revising the criteria used to evaluate performance.",
+        "C1"
+      ],
+      [
+        "La aparente contradicción se resuelve cuando se separan los efectos de corto y largo plazo.",
+        "The apparent contradiction is resolved when short-term and long-term effects are separated.",
+        "C1"
+      ],
+      [
+        "El estudio aporta evidencia indirecta, pero no una prueba concluyente del mecanismo propuesto.",
+        "The study provides indirect evidence, but not conclusive proof of the proposed mechanism.",
+        "C1"
+      ],
+      [
+        "Una lectura apresurada podría pasar por alto el peso de las condiciones iniciales.",
+        "A rushed reading could overlook the weight of the initial conditions.",
+        "C1"
+      ],
+      [
+        "La solidez del argumento depende de la coherencia entre pregunta, método y evidencia.",
+        "The strength of the argument depends on the coherence among the question, method, and evidence.",
+        "C1"
+      ],
+      [
+        "El resultado es consistente con estudios previos, aunque introduce una salvedad importante.",
+        "The result is consistent with previous studies, although it introduces an important caveat.",
+        "C1"
+      ],
+      [
+        "La categoría analítica resulta útil, siempre y cuando no se use de forma demasiado rígida.",
+        "The analytical category is useful, as long as it is not used too rigidly.",
+        "C1"
+      ],
+      [
+        "La evidencia empírica obliga a matizar una explicación que, en teoría, parecía más directa.",
+        "The empirical evidence requires qualifying an explanation that, in theory, seemed more straightforward.",
+        "C1"
+      ],
+      [
+        "El fenómeno no puede entenderse al margen de las prácticas institucionales que lo sostienen.",
+        "The phenomenon cannot be understood apart from the institutional practices that sustain it.",
+        "C1"
+      ],
+      [
+        "La comparación internacional es sugerente, pero debe tomar en cuenta diferencias normativas y culturales.",
+        "The international comparison is suggestive, but it must take regulatory and cultural differences into account.",
+        "C1"
+      ],
+      [
+        "El uso de indicadores agregados simplifica el análisis, aunque puede ocultar desigualdades internas.",
+        "The use of aggregate indicators simplifies the analysis, although it can conceal internal inequalities.",
+        "C1"
+      ],
+      [
+        "La explicación alternativa no contradice los datos; más bien los reubica dentro de otro marco interpretativo.",
+        "The alternative explanation does not contradict the data; rather, it places them within another interpretive framework.",
+        "C1"
+      ],
+      [
+        "De ser correcta esta interpretación, las implicaciones para la política pública serían considerables.",
+        "If this interpretation is correct, the implications for public policy would be considerable.",
+        "C1"
+      ],
+      [
+        "La ausencia de diferencias significativas también constituye un resultado que requiere explicación.",
+        "The absence of significant differences is also a result that requires explanation.",
+        "C1"
+      ],
+      [
+        "El análisis no descarta el efecto, pero sugiere que opera bajo condiciones más específicas.",
+        "The analysis does not rule out the effect, but suggests that it operates under more specific conditions.",
+        "C1"
+      ],
+      [
+        "La discusión gana precisión cuando se separan los niveles individual, organizacional y estructural.",
+        "The discussion gains precision when the individual, organizational, and structural levels are separated.",
+        "C1"
+      ],
+      [
+        "El argumento sería más sólido si incorporara evidencia sobre los casos que no siguieron la tendencia esperada.",
+        "The argument would be stronger if it incorporated evidence about the cases that did not follow the expected trend.",
+        "C1"
+      ],
+      [
+        "No basta con identificar una brecha; también hay que explicar por qué persiste.",
+        "It is not enough to identify a gap; it is also necessary to explain why it persists.",
+        "C1"
+      ]
+    ]
+  }
+]

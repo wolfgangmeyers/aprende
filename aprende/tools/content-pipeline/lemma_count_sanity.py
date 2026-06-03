@@ -13,14 +13,14 @@ from collections import Counter
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 BUILD_SCRIPT = os.path.join(SCRIPT_DIR, "build_content_db.py")
 CURRENT_EXPECTED = {
-    "totalReviewableItems": 2078,
+    "totalReviewableItems": 2329,
     "singleWord": 732,
-    "phraseOrChunk": 1346,
+    "phraseOrChunk": 1597,
     "A1": 150,
     "A2": 556,
     "B1": 981,
     "B2": 391,
-    "C1": 0,
+    "C1": 251,
 }
 CEFR_BANDS = ("A1", "A2", "B1", "B2", "C1")
 REQUIRED_INDEPENDENT_REVIEWS = 2
@@ -247,7 +247,7 @@ def build_sanity_report():
             },
         },
         "c1PlusLane": {
-            "status": "explicit_gap",
+            "status": "active_initial_lane" if cefr_distribution["C1"] else "explicit_gap",
             "reviewableItems": cefr_distribution["C1"],
             "futureCategories": C1_FUTURE_CATEGORIES,
             "b2ToC1Boundary": C1_B2_BOUNDARY,

@@ -6697,6 +6697,20 @@ AI_ACCELERATED_PACK_B2_BATCH_3_PACKS = tuple(
     for spec in load_reviewed_batch_pack_specs("b2_batch3_reviewed_packs.json")
 )
 
+AI_ACCELERATED_PACK_C1_BATCH_1_PACKS = tuple(
+    (
+        spec["domain"],
+        build_reviewed_chunk_pack(
+            spec["startLexemeId"],
+            spec["startSentenceId"],
+            spec["startAnswerId"],
+            spec["domain"],
+            [tuple(item) for item in spec["items"]],
+        ),
+    )
+    for spec in load_reviewed_batch_pack_specs("c1_batch1_reviewed_packs.json")
+)
+
 AI_ON_RAMP_PACK_A1_001_SURVIVAL_CLASSROOM = build_reviewed_chunk_pack(4410, 10640, 11640, "on_ramp_a1_survival_classroom", [
     ("Hola, ¿cómo estás?", "Hi, how are you?", "A1"),
     ("Buenas tardes.", "Good afternoon.", "A1"),
@@ -7282,7 +7296,7 @@ REPLACEMENT_DOMAIN_PACKS = (
     ("housing_maintenance", AI_ACCELERATED_PACK_A2_058_HOUSING_MAINTENANCE),
 )
 EXPECTED_REPLACEMENT_DOMAINS = frozenset(domain for domain, _pack in REPLACEMENT_DOMAIN_PACKS)
-for domain, pack in (*REPLACEMENT_DOMAIN_PACKS, *AI_ACCELERATED_PACK_B1_BATCH_2_PACKS, *AI_ACCELERATED_PACK_B2_BATCH_3_PACKS, *ON_RAMP_DOMAIN_PACKS):
+for domain, pack in (*REPLACEMENT_DOMAIN_PACKS, *AI_ACCELERATED_PACK_B1_BATCH_2_PACKS, *AI_ACCELERATED_PACK_B2_BATCH_3_PACKS, *AI_ACCELERATED_PACK_C1_BATCH_1_PACKS, *ON_RAMP_DOMAIN_PACKS):
     for item in pack:
         SPANISH_CORRECTNESS_PHRASE_LEDGER[item["lemma"]] = (
             f"approved by independent correctness reviewer for {domain} on 2026-06-02/03"
@@ -7355,6 +7369,7 @@ AI_REVIEWED_SENTENCE_PAIRS.update({
         AI_ACCELERATED_PACK_A2_058_HOUSING_MAINTENANCE,
         *(pack for _domain, pack in AI_ACCELERATED_PACK_B1_BATCH_2_PACKS),
         *(pack for _domain, pack in AI_ACCELERATED_PACK_B2_BATCH_3_PACKS),
+        *(pack for _domain, pack in AI_ACCELERATED_PACK_C1_BATCH_1_PACKS),
     )
     for item in pack
     for _, _, spanish, english in item["sentences"]
@@ -7639,6 +7654,24 @@ def load_review_evidence_items(path: str = REVIEW_EVIDENCE_PATH) -> dict[str, di
     return load_review_evidence_file(path)
 
 
+def review_rationale_boilerplate_signature(rationale: str) -> str:
+    def normalize_quoted(match: re.Match[str]) -> str:
+        quoted = match.group(0)
+        inner = quoted[1:-1]
+        if len(inner) <= 40:
+            return quoted
+        return f"{quoted[0]}<quoted>{quoted[-1]}"
+
+    signature = rationale.lower()
+    signature = re.sub(r"'[^']*'", normalize_quoted, signature)
+    signature = re.sub(r'"[^"]*"', normalize_quoted, signature)
+    signature = re.sub(r"\b(?:lexeme|sentence|accepted_answer):\d+\b", "<stable-key>", signature)
+    signature = re.sub(r"\bsha256:[0-9a-f]+\b", "<hash>", signature)
+    signature = re.sub(r"\b\d+\b", "<number>", signature)
+    signature = re.sub(r"\s+", " ", signature).strip()
+    return signature
+
+
 def validate_review_evidence_catalog(items: dict[str, dict]) -> None:
     allowed_dimensions = {
         AUTO_REVIEW_SPANISH,
@@ -7647,7 +7680,10 @@ def validate_review_evidence_catalog(items: dict[str, dict]) -> None:
         AUTO_REVIEW_DIALECT,
     }
     allowed_bases = {EVIDENCE_BASIS_PER_ITEM, EVIDENCE_BASIS_LEGACY}
+    max_reused_per_item_rationale = 5
     failures: list[str] = []
+    per_item_rationales_by_dimension: dict[str, list[tuple[str, str]]] = {}
+    per_item_signatures_by_dimension: dict[str, list[tuple[str, str]]] = {}
     for key, item in items.items():
         if item.get("stableKey") != key:
             failures.append(f"{key} stableKey mismatch")
@@ -7664,6 +7700,36 @@ def validate_review_evidence_catalog(items: dict[str, dict]) -> None:
                 failures.append(f"{key} {review_type} has invalid evidenceBasis {basis!r}")
             if basis == EVIDENCE_BASIS_LEGACY and item.get("_evidenceSourceFile") != "review_evidence_legacy.json":
                 failures.append(f"{key} {review_type} uses legacy_pack_attestation outside review_evidence_legacy.json")
+            if basis == EVIDENCE_BASIS_PER_ITEM:
+                rationale = (evidence.get("rationale") or "").strip()
+                if not rationale:
+                    failures.append(f"{key} {review_type} per_item_review missing rationale")
+                else:
+                    per_item_rationales_by_dimension.setdefault(review_type, []).append((rationale, key))
+                    per_item_signatures_by_dimension.setdefault(review_type, []).append((
+                        review_rationale_boilerplate_signature(rationale),
+                        key,
+                    ))
+    for review_type, rationale_entries in sorted(per_item_rationales_by_dimension.items()):
+        repeated: dict[str, list[str]] = {}
+        for rationale, key in rationale_entries:
+            repeated.setdefault(rationale, []).append(key)
+        for rationale, keys in sorted(repeated.items(), key=lambda entry: (-len(entry[1]), entry[0])):
+            if len(keys) > max_reused_per_item_rationale:
+                failures.append(
+                    f"{review_type} per_item_review rationale reused {len(keys)} times "
+                    f"(max {max_reused_per_item_rationale}); first keys: {', '.join(keys[:5])}"
+                )
+    for review_type, signature_entries in sorted(per_item_signatures_by_dimension.items()):
+        repeated: dict[str, list[str]] = {}
+        for signature, key in signature_entries:
+            repeated.setdefault(signature, []).append(key)
+        for signature, keys in sorted(repeated.items(), key=lambda entry: (-len(entry[1]), entry[0])):
+            if len(keys) > max_reused_per_item_rationale:
+                failures.append(
+                    f"{review_type} per_item_review rationale boilerplate pattern reused {len(keys)} times "
+                    f"(max {max_reused_per_item_rationale}); first keys: {', '.join(keys[:5])}"
+                )
     legacy_count = sum(1 for item in items.values() if item.get("_evidenceSourceFile") == "review_evidence_legacy.json")
     if legacy_count != FROZEN_LEGACY_REVIEW_EVIDENCE_ITEM_COUNT:
         failures.append(
@@ -7671,7 +7737,7 @@ def validate_review_evidence_catalog(items: dict[str, dict]) -> None:
             f"frozen count {FROZEN_LEGACY_REVIEW_EVIDENCE_ITEM_COUNT}"
         )
     if failures:
-        raise ValueError("INVALID REVIEW EVIDENCE:\n  " + "\n  ".join(failures))
+        raise SystemExit("INVALID REVIEW EVIDENCE:\n  " + "\n  ".join(failures))
 
 
 REVIEW_EVIDENCE_ITEMS = load_review_evidence_items()
@@ -7764,7 +7830,10 @@ def register_per_item_review_evidence(table: str, row: Row, review_types: set[st
 
 
 def append_ai_accelerated_pack(pack, pack_slug: str, exercise_id: int,
-                               lexemes, sentences, accepted, sentence_lexeme, exercises) -> int:
+                               lexemes, sentences, accepted, sentence_lexeme, exercises,
+                               lexeme_source: str = "wiktionary",
+                               lexeme_license: str = "CC-BY-SA-3.0",
+                               lexeme_vetting_status: str = UNVETTED) -> int:
     for item in pack:
         lexeme_id = item["lexemeId"]
         lexeme_data = {
@@ -7780,7 +7849,16 @@ def append_ai_accelerated_pack(pack, pack_slug: str, exercise_id: int,
         if item.get("phraseCefrRubric"):
             lexeme_data["phraseCefrRubric"] = item["phraseCefrRubric"]
             lexeme_data[INDEPENDENT_REVIEW_REQUIRED_FIELD] = True
-        lexemes.append(Row(lexeme_data, source="wiktionary", sourceId=item["lemma"], license="CC-BY-SA-3.0"))
+        lexeme_source_id = item["lemma"]
+        if lexeme_source == AI_DRAFT_SOURCE:
+            lexeme_source_id = f"ai_draft:{pack_slug}-{item['lemma']}-lexeme"
+        lexemes.append(Row(
+            lexeme_data,
+            source=lexeme_source,
+            sourceId=lexeme_source_id,
+            license=lexeme_license,
+            vettingStatus=lexeme_vetting_status,
+        ))
 
         sentence_ids = []
         for sentence_id, accepted_id, spanish, english in item["sentences"]:
@@ -7817,14 +7895,19 @@ def append_ai_accelerated_pack(pack, pack_slug: str, exercise_id: int,
 
 
 def has_phrase_review_ledger_entry(row: Row) -> bool:
-    return (
-        bool(row.data.get("phraseCefrRubric"))
-        and has_explicit_review_evidence(
-            "lexeme",
-            row,
-            {AUTO_REVIEW_SPANISH, AUTO_REVIEW_AUTHENTICITY, AUTO_REVIEW_DIALECT},
-        )
+    if not row.data.get("phraseCefrRubric"):
+        return False
+    _records, failures = validate_explicit_review_evidence(
+        "lexeme",
+        row,
+        {AUTO_REVIEW_SPANISH, AUTO_REVIEW_AUTHENTICITY, AUTO_REVIEW_DIALECT},
     )
+    if failures:
+        raise SystemExit(
+            "CORRUPT REVIEW EVIDENCE for generated phrase/chunk content:\n  "
+            + "\n  ".join(failures)
+        )
+    return True
 
 
 def generated_sentence_has_blocked_content(row: Row) -> bool:
@@ -9294,6 +9377,14 @@ def vetted_sample():
         next_exercise_id = append_ai_accelerated_pack(
             pack, domain.replace("_", "-"), next_exercise_id,
             lexemes, sentences, accepted, sentence_lexeme, exercises,
+        )
+    for domain, pack in AI_ACCELERATED_PACK_C1_BATCH_1_PACKS:
+        next_exercise_id = append_ai_accelerated_pack(
+            pack, domain.replace("_", "-"), next_exercise_id,
+            lexemes, sentences, accepted, sentence_lexeme, exercises,
+            lexeme_source=AI_DRAFT_SOURCE,
+            lexeme_license="proprietary",
+            lexeme_vetting_status=AI_DRAFT,
         )
     for domain, pack in ON_RAMP_DOMAIN_PACKS:
         next_exercise_id = append_ai_accelerated_pack(

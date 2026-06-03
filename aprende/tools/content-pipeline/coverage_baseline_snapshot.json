@@ -37,11 +37,11 @@
     "reviewPolicy": "This list is a local source-checked audit target, not shipped learning content. A target lemma only becomes shipped content after the normal lexeme/sentence/accepted-answer provenance and REVIEWED gate pass."
   },
   "summary": {
-    "rawLexemes": 2088,
-    "learnerReadyLexemes": 2078,
-    "reviewedSentences": 2903,
-    "reviewedAcceptedAnswers": 2906,
-    "exerciseCount": 2843,
+    "rawLexemes": 2339,
+    "learnerReadyLexemes": 2329,
+    "reviewedSentences": 3154,
+    "reviewedAcceptedAnswers": 3157,
+    "exerciseCount": 3094,
     "missingA1A2GapCount": 3333
   },
   "counts": {
@@ -53,7 +53,7 @@
       "conjunction": 2,
       "noun": 303,
       "noun phrase": 23,
-      "phrase": 1323,
+      "phrase": 1574,
       "preposition": 5,
       "verb": 328
     },
@@ -61,16 +61,17 @@
       "A1": 150,
       "A2": 556,
       "B1": 989,
-      "B2": 393
+      "B2": 393,
+      "C1": 251
     },
     "lexemesByFrequencyBucket": {
       "0001-0500": 68,
       "0501-1000": 171,
-      "1001-2000": 1720,
+      "1001-2000": 1971,
       "2001+": 129
     },
     "contentRowsBySource": {
-      "ai_draft": 5606,
+      "ai_draft": 6359,
       "authored": 2,
       "tatoeba": 201,
       "wiktionary": 2088
@@ -78,26 +79,26 @@
     "contentRowsByLicense": {
       "CC-BY-2.0-FR": 201,
       "CC-BY-SA-3.0": 2088,
-      "proprietary": 5608
+      "proprietary": 6361
     },
     "contentRowsByVettingStatus": {
-      "REVIEWED": 7897
+      "REVIEWED": 8650
     },
     "exerciseTargetsByType": {
-      "LEXEME": 2843
+      "LEXEME": 3094
     },
     "exerciseTypes": {
-      "TYPED_TRANSLATION": 2083,
+      "TYPED_TRANSLATION": 2334,
       "WORD_BANK": 760
     }
   },
   "pathSequencing": {
     "status": "passed",
-    "targetCount": 2088,
-    "targetsWithFirstIntroduction": 2088,
-    "nodeCount": 301,
-    "introNodeCount": 263,
-    "checkpointNodeCount": 38,
+    "targetCount": 2339,
+    "targetsWithFirstIntroduction": 2339,
+    "nodeCount": 365,
+    "introNodeCount": 295,
+    "checkpointNodeCount": 70,
     "maxNewTargetsInIntroNode": 8,
     "minRecycleRatioInNonIntroNode": 1.0,
     "a1A2TargetsWithIntroduction": 706,
@@ -110,17 +111,19 @@
         "A1": 150,
         "A2": 556,
         "B1": 989,
-        "B2": 393
+        "B2": 393,
+        "C1": 251
       },
       "nodesByCefrBand": {
         "A1": 24,
         "A2": 81,
         "B1": 139,
-        "B2": 57
+        "B2": 57,
+        "C1": 64
       },
       "nodesByKind": {
-        "intro": 263,
-        "checkpoint": 38
+        "intro": 295,
+        "checkpoint": 70
       }
     },
     "failureCounts": {

@@ -85,14 +85,14 @@ class LemmaCountSanityIntegrationTest(unittest.TestCase):
 
     def test_current_assertion_uses_real_pipeline_report(self):
         self.sanity.assert_current(self.report)
-        self.assertEqual(2078, self.report["reviewableItemSummary"]["totalReviewableItems"])
-        self.assertEqual(2088, self.report["reviewableItemSummary"]["sourceContentRows"]["rawLexemes"])
-        self.assertEqual(7897, self.report["reviewableItemSummary"]["sourceContentRows"]["totalContentRows"])
+        self.assertEqual(2329, self.report["reviewableItemSummary"]["totalReviewableItems"])
+        self.assertEqual(2339, self.report["reviewableItemSummary"]["sourceContentRows"]["rawLexemes"])
+        self.assertEqual(8650, self.report["reviewableItemSummary"]["sourceContentRows"]["totalContentRows"])
         self.assertEqual(
-            2078,
+            2329,
             self.report["reviewGate"]["reviewableItems"]["countedReviewedRows"],
         )
-        self.assertEqual(7052, self.report["reviewGate"]["contentRows"]["rowsRequiringIndependentReviews"])
+        self.assertEqual(7805, self.report["reviewGate"]["contentRows"]["rowsRequiringIndependentReviews"])
         self.assertEqual(0, self.report["reviewGate"]["contentRows"]["rowsWithInsufficientIndependentReviews"])
 
     def test_target_gate_reports_pilot_stop_phrase_gap_and_recalibrated_b1_count(self):
@@ -122,10 +122,10 @@ class LemmaCountSanityIntegrationTest(unittest.TestCase):
             str(raised.exception),
         )
 
-    def test_c1_plus_lane_is_reported_even_at_zero(self):
+    def test_c1_plus_lane_reports_current_reviewed_items(self):
         lane = self.report["c1PlusLane"]
-        self.assertEqual("explicit_gap", lane["status"])
-        self.assertEqual(0, lane["reviewableItems"])
+        self.assertEqual("active_initial_lane", lane["status"])
+        self.assertEqual(251, lane["reviewableItems"])
         self.assertEqual(4, len(lane["futureCategories"]))
         self.assertIn("B2 reviewables", lane["b2ToC1Boundary"])
 
@@ -601,7 +601,7 @@ class LemmaCountSanityIntegrationTest(unittest.TestCase):
         build.stage_publish_gate(lexemes, sentences, accepted)
 
         coverage = build.build_coverage_report(lexemes, sentences, accepted, sentence_lexeme, exercises)
-        self.assertEqual(2078, coverage["summary"]["learnerReadyLexemes"])
+        self.assertEqual(2329, coverage["summary"]["learnerReadyLexemes"])
         legacy_lexeme_reviews = [
             row for row in lexemes
             if build.required_auto_review_types(row)
@@ -621,6 +621,101 @@ class LemmaCountSanityIntegrationTest(unittest.TestCase):
             self.assertEqual([], build.stage_auto_check(lexemes, sentences, accepted))
             failures = build.stage_auto_review(lexemes, sentences, accepted)
         return failures
+
+    def test_per_item_review_boilerplate_rationales_hard_fail_catalog_validation(self):
+        build = self.sanity.load_build_module()
+        evidence = copy.deepcopy(build.REVIEW_EVIDENCE_ITEMS)
+        changed = 0
+        for key, item in evidence.items():
+            dimensions = item.get("dimensions", {})
+            if build.AUTO_REVIEW_AUTHENTICITY not in dimensions:
+                continue
+            if dimensions[build.AUTO_REVIEW_AUTHENTICITY].get("evidenceBasis") != build.EVIDENCE_BASIS_PER_ITEM:
+                continue
+            dimensions[build.AUTO_REVIEW_AUTHENTICITY]["rationale"] = (
+                f"Fixture reviewer approved item {key}: '{item['crossChecks']['text']}' "
+                "as natural learner-useful Spanish."
+            )
+            changed += 1
+            if changed == 6:
+                break
+
+        self.assertEqual(6, changed)
+        with self.assertRaises(SystemExit) as raised:
+            build.validate_review_evidence_catalog(evidence)
+        self.assertIn("per_item_review rationale boilerplate pattern reused 6 times", str(raised.exception))
+
+    def corrupt_prune_evidence_failure(self, mutate=None):
+        build = self.sanity.load_build_module()
+        pack = build.build_numbered_ai_accelerated_pack(999981, 999981, 999981, [
+            (
+                "frase revisada de prueba",
+                "phrase",
+                None,
+                "reviewed test phrase",
+                1800,
+                "A2",
+                0.5,
+                "test",
+                "fixture",
+                [("La frase revisada de prueba funciona.", "The reviewed test phrase works.")],
+                {"cefrBand": "A2", "rubricReason": "fixture", "rubricSignals": ["domain:test"]},
+            ),
+        ])
+        lexemes = []
+        sentences = []
+        accepted = []
+        sentence_lexeme = []
+        exercises = []
+        build.append_ai_accelerated_pack(
+            pack, "fixture-corrupt-evidence", 999981,
+            lexemes, sentences, accepted, sentence_lexeme, exercises,
+        )
+        evidence = copy.deepcopy(build.REVIEW_EVIDENCE_ITEMS)
+        build.register_per_item_review_evidence(
+            "lexeme",
+            lexemes[0],
+            {build.AUTO_REVIEW_SPANISH, build.AUTO_REVIEW_AUTHENTICITY, build.AUTO_REVIEW_DIALECT},
+            "Fixture-specific rationale for frase revisada de prueba evidence.",
+        )
+        key = build.review_evidence_key("lexeme", lexemes[0])
+        evidence[key] = build.REVIEW_EVIDENCE_ITEMS[key]
+        if mutate is None:
+            del evidence[key]
+        else:
+            mutate(evidence[key])
+        with mock.patch.object(build, "REVIEW_EVIDENCE_ITEMS", evidence):
+            with self.assertRaises(SystemExit) as raised:
+                build.prune_unreviewed_phrase_content(lexemes, sentences, accepted, sentence_lexeme, exercises)
+        return str(raised.exception)
+
+    def test_prune_missing_review_evidence_hard_fails(self):
+        message = self.corrupt_prune_evidence_failure()
+        self.assertIn("CORRUPT REVIEW EVIDENCE", message)
+        self.assertIn("missing explicit review evidence", message)
+
+    def test_prune_mismatched_review_evidence_hash_hard_fails(self):
+        message = self.corrupt_prune_evidence_failure(
+            lambda item: item.update({"contentHash": "sha256:bad"})
+        )
+        self.assertIn("CORRUPT REVIEW EVIDENCE", message)
+        self.assertIn("mismatched content hash", message)
+
+    def test_prune_non_approved_review_evidence_hard_fails(self):
+        def mutate(item):
+            item["dimensions"]["spanish_authenticity"]["verdict"] = "REJECTED"
+
+        message = self.corrupt_prune_evidence_failure(mutate)
+        self.assertIn("CORRUPT REVIEW EVIDENCE", message)
+        self.assertIn("verdict is 'REJECTED', not APPROVED", message)
+
+    def test_prune_missing_dimension_review_evidence_hard_fails(self):
+        def mutate(item):
+            del item["dimensions"]["spanish_dialect_neutral_latam"]
+
+        message = self.corrupt_prune_evidence_failure(mutate)
+        self.assertIn("CORRUPT REVIEW EVIDENCE", message)
+        self.assertIn("missing evidence for spanish_dialect_neutral_latam", message)
 
     def test_missing_required_review_evidence_hard_fails(self):
         build = self.sanity.load_build_module()
@@ -1017,11 +1112,11 @@ class PhraseCefrRubricIntegrationTest(unittest.TestCase):
         )
 
         self.assertEqual(phrase_or_chunk_count, report["itemCount"])
-        self.assertEqual(1346, report["helperAssignedItemCount"])
+        self.assertEqual(1597, report["helperAssignedItemCount"])
         self.assertEqual(0, report["legacyExplicitBandAssessedItemCount"])
-        self.assertEqual(1346, report["itemCount"])
+        self.assertEqual(1597, report["itemCount"])
         self.assertEqual(
-            1346,
+            1597,
             report["itemsByAssignmentSource"]["phrase_pack_rubric"],
         )
         self.assertNotIn("legacy_explicit_band_assessed_not_rebanded", report["itemsByAssignmentSource"])
