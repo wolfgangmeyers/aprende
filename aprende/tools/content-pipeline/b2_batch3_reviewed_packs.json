@@ -1,0 +1,1755 @@
+[
+  {
+    "domain": "b2_nuanced_opinions_argumentation",
+    "startLexemeId": 5400,
+    "startSentenceId": 12700,
+    "startAnswerId": 13700,
+    "items": [
+      [
+        "Entiendo el punto, pero no me parece justo reducir el problema a una sola causa.",
+        "I understand the point, but I don't think it's fair to reduce the problem to a single cause.",
+        "B2"
+      ],
+      [
+        "A mi juicio, la propuesta tiene mérito, aunque todavía deja varias preguntas importantes sin responder.",
+        "In my view, the proposal has merit, although it still leaves several important questions unanswered.",
+        "B2"
+      ],
+      [
+        "No estoy en contra de la idea en sí, sino de la forma en que se quiere implementar.",
+        "I'm not against the idea itself, but rather the way they want to implement it.",
+        "B2"
+      ],
+      [
+        "Me cuesta aceptar ese argumento porque parte de una suposición que no todos compartimos.",
+        "I find it hard to accept that argument because it starts from an assumption we don't all share.",
+        "B2"
+      ],
+      [
+        "Si lo vemos con calma, el debate no es entre progreso y tradición, sino entre prioridades distintas.",
+        "If we look at it calmly, the debate is not between progress and tradition, but between different priorities.",
+        "B2"
+      ],
+      [
+        "Puede que la medida funcione a corto plazo, pero no queda claro qué efectos tendrá después.",
+        "The measure may work in the short term, but it's not clear what effects it will have later.",
+        "B2"
+      ],
+      [
+        "Lo que me preocupa no es el objetivo, sino el costo social que podría tener alcanzarlo.",
+        "What worries me is not the goal, but the social cost that reaching it could have.",
+        "B2"
+      ],
+      [
+        "Hay que reconocer que la crítica es válida, aunque venga de un sector con el que uno no siempre coincide.",
+        "We have to acknowledge that the criticism is valid, even if it comes from a sector one doesn't always agree with.",
+        "B2"
+      ],
+      [
+        "Me parece una solución razonable siempre y cuando no se presente como la única alternativa posible.",
+        "It seems like a reasonable solution to me as long as it isn't presented as the only possible alternative.",
+        "B2"
+      ],
+      [
+        "El problema de ese enfoque es que ignora las condiciones reales en las que vive mucha gente.",
+        "The problem with that approach is that it ignores the real conditions many people live in.",
+        "B2"
+      ],
+      [
+        "No basta con decir que algo es eficiente si no sabemos quién termina pagando el precio.",
+        "It's not enough to say something is efficient if we don't know who ends up paying the price.",
+        "B2"
+      ],
+      [
+        "Aunque comparto la intención general, me parece necesario revisar los detalles antes de apoyar la medida.",
+        "Although I share the general intention, I think it's necessary to review the details before supporting the measure.",
+        "B2"
+      ],
+      [
+        "En teoría suena convincente, pero en la práctica podría generar más desigualdad.",
+        "In theory it sounds convincing, but in practice it could create more inequality.",
+        "B2"
+      ],
+      [
+        "No creo que sea una cuestión de falta de voluntad, sino de falta de coordinación.",
+        "I don't think it's a matter of lack of will, but rather lack of coordination.",
+        "B2"
+      ],
+      [
+        "El argumento sería más sólido si tomara en cuenta a quienes se verán directamente afectados.",
+        "The argument would be stronger if it took into account those who will be directly affected.",
+        "B2"
+      ],
+      [
+        "Me parece importante distinguir entre una crítica constructiva y una oposición automática.",
+        "I think it's important to distinguish between constructive criticism and automatic opposition.",
+        "B2"
+      ],
+      [
+        "La idea no es perfecta, pero abre una conversación que hacía falta desde hace tiempo.",
+        "The idea isn't perfect, but it opens a conversation that has been needed for a long time.",
+        "B2"
+      ],
+      [
+        "No niego que haya beneficios, pero tampoco podemos pasar por alto los riesgos.",
+        "I don't deny that there are benefits, but we also can't overlook the risks.",
+        "B2"
+      ],
+      [
+        "Desde mi punto de vista, el mayor desafío será mantener el equilibrio entre rapidez y calidad.",
+        "From my point of view, the biggest challenge will be maintaining the balance between speed and quality.",
+        "B2"
+      ],
+      [
+        "Lo razonable sería evaluar la medida con datos y no solo con impresiones personales.",
+        "The reasonable thing would be to evaluate the measure with data and not only with personal impressions.",
+        "B2"
+      ],
+      [
+        "Me convence más una postura que admita sus límites que una que prometa resolverlo todo.",
+        "I'm more convinced by a position that admits its limits than by one that promises to solve everything.",
+        "B2"
+      ],
+      [
+        "El punto central, para mí, es si la decisión mejora realmente la vida de las personas involucradas.",
+        "The central point, for me, is whether the decision truly improves the lives of the people involved.",
+        "B2"
+      ],
+      [
+        "Es posible defender esa postura sin descalificar a quienes piensan distinto.",
+        "It's possible to defend that position without discrediting those who think differently.",
+        "B2"
+      ],
+      [
+        "La discusión se vuelve más productiva cuando dejamos de buscar culpables y empezamos a revisar incentivos.",
+        "The discussion becomes more productive when we stop looking for people to blame and start reviewing incentives.",
+        "B2"
+      ],
+      [
+        "No me parece responsable aprobar una medida solo porque suena popular.",
+        "I don't think it's responsible to approve a measure just because it sounds popular.",
+        "B2"
+      ],
+      [
+        "La pregunta no es si el cambio es necesario, sino cómo evitar que deje a algunos atrás.",
+        "The question isn't whether change is necessary, but how to keep it from leaving some people behind.",
+        "B2"
+      ],
+      [
+        "Ese razonamiento tiene sentido hasta cierto punto, pero se debilita cuando miramos casos concretos.",
+        "That reasoning makes sense up to a point, but it weakens when we look at specific cases.",
+        "B2"
+      ],
+      [
+        "Yo sería más cauteloso antes de presentar esa conclusión como definitiva.",
+        "I would be more cautious before presenting that conclusion as definitive.",
+        "B2"
+      ],
+      [
+        "Me parece que el debate está demasiado polarizado para reconocer matices básicos.",
+        "It seems to me that the debate is too polarized to recognize basic nuances.",
+        "B2"
+      ],
+      [
+        "La medida podría ser útil si se acompaña de supervisión y mecanismos de corrección.",
+        "The measure could be useful if it is accompanied by oversight and correction mechanisms.",
+        "B2"
+      ],
+      [
+        "No todo desacuerdo implica rechazo; a veces significa que el plan necesita más precisión.",
+        "Not every disagreement implies rejection; sometimes it means the plan needs more precision.",
+        "B2"
+      ],
+      [
+        "El problema no es plantear metas ambiciosas, sino hacerlo sin explicar cómo se van a financiar.",
+        "The problem isn't setting ambitious goals, but doing so without explaining how they will be funded.",
+        "B2"
+      ],
+      [
+        "Me parece una postura legítima, aunque no comparto la manera en que se justifica.",
+        "It seems like a legitimate position to me, although I don't share the way it is justified.",
+        "B2"
+      ],
+      [
+        "Si queremos una discusión seria, hay que separar los hechos comprobados de las opiniones.",
+        "If we want a serious discussion, we need to separate verified facts from opinions.",
+        "B2"
+      ],
+      [
+        "La comparación es interesante, pero no necesariamente aplica al contexto actual.",
+        "The comparison is interesting, but it doesn't necessarily apply to the current context.",
+        "B2"
+      ],
+      [
+        "Podemos aceptar que hubo avances sin dejar de señalar lo que todavía falta.",
+        "We can accept that there has been progress while still pointing out what is still missing.",
+        "B2"
+      ],
+      [
+        "Me preocupa que se use un caso excepcional para justificar una regla general.",
+        "I'm concerned that an exceptional case is being used to justify a general rule.",
+        "B2"
+      ],
+      [
+        "La propuesta ganaría credibilidad si explicara mejor sus posibles consecuencias negativas.",
+        "The proposal would gain credibility if it explained its possible negative consequences better.",
+        "B2"
+      ],
+      [
+        "No se trata de elegir entre libertad y responsabilidad, porque ambas deberían coexistir.",
+        "It's not about choosing between freedom and responsibility, because both should coexist.",
+        "B2"
+      ],
+      [
+        "El argumento emocional puede ser poderoso, pero no reemplaza la necesidad de evidencia.",
+        "The emotional argument can be powerful, but it doesn't replace the need for evidence.",
+        "B2"
+      ],
+      [
+        "Me parece válido cuestionar el sistema sin asumir que cualquier alternativa será mejor.",
+        "I think it's valid to question the system without assuming that any alternative will be better.",
+        "B2"
+      ],
+      [
+        "La decisión puede ser legal y aun así resultar éticamente discutible.",
+        "The decision may be legal and still be ethically debatable.",
+        "B2"
+      ],
+      [
+        "Para mí, la clave está en diseñar reglas claras y aplicarlas de manera consistente.",
+        "For me, the key lies in designing clear rules and applying them consistently.",
+        "B2"
+      ],
+      [
+        "No veo contradicción entre apoyar el objetivo y exigir más transparencia.",
+        "I don't see a contradiction between supporting the goal and demanding more transparency.",
+        "B2"
+      ],
+      [
+        "Esa postura pierde fuerza cuando ignora experiencias que no encajan con su explicación.",
+        "That position loses strength when it ignores experiences that don't fit its explanation.",
+        "B2"
+      ],
+      [
+        "Me parece que estamos confundiendo urgencia con improvisación.",
+        "It seems to me that we're confusing urgency with improvisation.",
+        "B2"
+      ],
+      [
+        "El debate sería distinto si escucháramos más a quienes trabajan directamente en el tema.",
+        "The debate would be different if we listened more to those who work directly on the issue.",
+        "B2"
+      ],
+      [
+        "No descarto la propuesta, pero sí pediría una evaluación más seria antes de aplicarla.",
+        "I don't rule out the proposal, but I would ask for a more serious evaluation before applying it.",
+        "B2"
+      ],
+      [
+        "La intención puede ser buena, pero una mala ejecución termina afectando la confianza pública.",
+        "The intention may be good, but poor execution ends up affecting public trust.",
+        "B2"
+      ],
+      [
+        "Me parece peligroso convertir una preferencia personal en una política para todos.",
+        "I think it's dangerous to turn a personal preference into a policy for everyone.",
+        "B2"
+      ],
+      [
+        "La discusión debería centrarse menos en ganar el debate y más en entender el problema.",
+        "The discussion should focus less on winning the debate and more on understanding the problem.",
+        "B2"
+      ],
+      [
+        "Esa explicación aclara una parte del asunto, pero deja fuera factores económicos importantes.",
+        "That explanation clarifies part of the matter, but leaves out important economic factors.",
+        "B2"
+      ],
+      [
+        "No todo lo que es técnicamente posible resulta socialmente conveniente.",
+        "Not everything that is technically possible is socially advisable.",
+        "B2"
+      ],
+      [
+        "Me parece una medida defendible si se aplica con criterios claros y revisables.",
+        "It seems like a defensible measure to me if it is applied with clear and reviewable criteria.",
+        "B2"
+      ],
+      [
+        "El riesgo es que una solución pensada para simplificar termine creando nuevas barreras.",
+        "The risk is that a solution designed to simplify things ends up creating new barriers.",
+        "B2"
+      ],
+      [
+        "Estoy de acuerdo con el diagnóstico, pero no con la receta que se propone.",
+        "I agree with the diagnosis, but not with the remedy being proposed.",
+        "B2"
+      ],
+      [
+        "Conviene preguntarnos si estamos resolviendo la causa del problema o solo sus síntomas.",
+        "It's worth asking ourselves whether we're solving the cause of the problem or only its symptoms.",
+        "B2"
+      ],
+      [
+        "La postura más sensata, en mi opinión, evita tanto el optimismo ingenuo como el rechazo absoluto.",
+        "The most sensible position, in my opinion, avoids both naive optimism and absolute rejection.",
+        "B2"
+      ],
+      [
+        "El desacuerdo no debería impedirnos reconocer los puntos en común.",
+        "Disagreement shouldn't prevent us from recognizing the points we have in common.",
+        "B2"
+      ],
+      [
+        "Me parece que una política pública seria debe prever también sus efectos no intencionados.",
+        "I think a serious public policy must also anticipate its unintended effects.",
+        "B2"
+      ]
+    ]
+  },
+  {
+    "domain": "b2_abstract_social_topics",
+    "startLexemeId": 5460,
+    "startSentenceId": 12820,
+    "startAnswerId": 13820,
+    "items": [
+      [
+        "La confianza en las instituciones se construye lentamente, pero puede perderse con una sola decisión mal explicada.",
+        "Trust in institutions is built slowly, but it can be lost with a single poorly explained decision.",
+        "B2"
+      ],
+      [
+        "La desigualdad no solo se mide en ingresos, sino también en acceso a tiempo, seguridad y oportunidades.",
+        "Inequality is measured not only in income, but also in access to time, safety, and opportunities.",
+        "B2"
+      ],
+      [
+        "Una sociedad más informada no necesariamente es una sociedad menos vulnerable a la manipulación.",
+        "A more informed society is not necessarily a society less vulnerable to manipulation.",
+        "B2"
+      ],
+      [
+        "La movilidad social depende tanto del esfuerzo individual como de las condiciones que permiten que ese esfuerzo rinda frutos.",
+        "Social mobility depends both on individual effort and on the conditions that allow that effort to bear fruit.",
+        "B2"
+      ],
+      [
+        "El acceso a la educación sigue siendo una de las formas más concretas de reducir brechas sociales.",
+        "Access to education remains one of the most concrete ways to reduce social gaps.",
+        "B2"
+      ],
+      [
+        "La convivencia democrática exige aprender a escuchar argumentos que nos resultan incómodos.",
+        "Democratic coexistence requires learning to listen to arguments that make us uncomfortable.",
+        "B2"
+      ],
+      [
+        "El miedo colectivo puede llevar a aceptar soluciones rápidas que después resultan difíciles de revertir.",
+        "Collective fear can lead people to accept quick solutions that later become difficult to reverse.",
+        "B2"
+      ],
+      [
+        "La inclusión no consiste solo en abrir la puerta, sino en cambiar las condiciones para que todos puedan participar.",
+        "Inclusion is not only about opening the door, but about changing the conditions so everyone can participate.",
+        "B2"
+      ],
+      [
+        "Cuando el trabajo precario se normaliza, muchas personas dejan de imaginar un futuro estable.",
+        "When precarious work becomes normalized, many people stop imagining a stable future.",
+        "B2"
+      ],
+      [
+        "La privacidad se ha vuelto un derecho difícil de defender en una cultura que premia la exposición constante.",
+        "Privacy has become a difficult right to defend in a culture that rewards constant exposure.",
+        "B2"
+      ],
+      [
+        "La tecnología amplía posibilidades, pero también reproduce desigualdades cuando no todos pueden acceder a ella.",
+        "Technology expands possibilities, but it also reproduces inequalities when not everyone can access it.",
+        "B2"
+      ],
+      [
+        "La seguridad pública pierde legitimidad cuando se aplica de manera desigual según el barrio o la apariencia.",
+        "Public safety loses legitimacy when it is applied unequally depending on the neighborhood or appearance.",
+        "B2"
+      ],
+      [
+        "La memoria histórica no busca quedarse en el pasado, sino entender cómo ese pasado sigue influyendo.",
+        "Historical memory does not seek to remain in the past, but to understand how that past continues to influence things.",
+        "B2"
+      ],
+      [
+        "El consumo responsable tiene límites cuando las opciones sostenibles son más caras o menos accesibles.",
+        "Responsible consumption has limits when sustainable options are more expensive or less accessible.",
+        "B2"
+      ],
+      [
+        "Las redes sociales pueden acercarnos a ciertas causas y alejarnos de conversaciones más profundas.",
+        "Social networks can bring us closer to certain causes and distance us from deeper conversations.",
+        "B2"
+      ],
+      [
+        "La salud mental dejó de ser un tema privado para convertirse en una preocupación social amplia.",
+        "Mental health has stopped being a private issue and has become a broad social concern.",
+        "B2"
+      ],
+      [
+        "La identidad cultural cambia con el tiempo, aunque muchas veces se presente como algo fijo.",
+        "Cultural identity changes over time, although it is often presented as something fixed.",
+        "B2"
+      ],
+      [
+        "La migración no puede entenderse solo como una decisión individual, porque suele responder a presiones económicas y políticas.",
+        "Migration cannot be understood only as an individual decision, because it often responds to economic and political pressures.",
+        "B2"
+      ],
+      [
+        "El acceso desigual a la vivienda afecta no solo el bolsillo, sino también la salud y los vínculos familiares.",
+        "Unequal access to housing affects not only people's finances, but also health and family relationships.",
+        "B2"
+      ],
+      [
+        "Una ciudad más habitable no es necesariamente la que tiene más obras, sino la que facilita la vida diaria.",
+        "A more livable city is not necessarily the one with more construction projects, but the one that makes daily life easier.",
+        "B2"
+      ],
+      [
+        "La meritocracia resulta incompleta si no reconoce que no todos parten del mismo lugar.",
+        "Meritocracy is incomplete if it doesn't recognize that not everyone starts from the same place.",
+        "B2"
+      ],
+      [
+        "El envejecimiento de la población obliga a repensar el cuidado como una responsabilidad compartida.",
+        "The aging of the population forces us to rethink care as a shared responsibility.",
+        "B2"
+      ],
+      [
+        "La discriminación a veces se expresa en gestos pequeños que parecen normales hasta que alguien los señala.",
+        "Discrimination is sometimes expressed in small gestures that seem normal until someone points them out.",
+        "B2"
+      ],
+      [
+        "La libertad de expresión pierde sentido si solo se defiende para las ideas que nos resultan cómodas.",
+        "Freedom of expression loses meaning if it is defended only for ideas we find comfortable.",
+        "B2"
+      ],
+      [
+        "El acceso a información confiable se ha vuelto una condición básica para participar en la vida pública.",
+        "Access to reliable information has become a basic condition for participating in public life.",
+        "B2"
+      ],
+      [
+        "La polarización convierte problemas complejos en lealtades simples.",
+        "Polarization turns complex problems into simple loyalties.",
+        "B2"
+      ],
+      [
+        "La pobreza de tiempo también limita las oportunidades, aunque sea menos visible que la falta de dinero.",
+        "Time poverty also limits opportunities, although it is less visible than lack of money.",
+        "B2"
+      ],
+      [
+        "La justicia social no se alcanza solo con buenas intenciones, sino con decisiones sostenidas y verificables.",
+        "Social justice is not achieved only with good intentions, but with sustained and verifiable decisions.",
+        "B2"
+      ],
+      [
+        "La educación cívica importa porque una democracia también depende de hábitos cotidianos.",
+        "Civic education matters because a democracy also depends on everyday habits.",
+        "B2"
+      ],
+      [
+        "La confianza entre vecinos puede ser tan importante para la seguridad como la presencia de autoridades.",
+        "Trust among neighbors can be as important for safety as the presence of authorities.",
+        "B2"
+      ],
+      [
+        "La digitalización de los servicios públicos facilita trámites, pero puede excluir a quienes no dominan la tecnología.",
+        "The digitization of public services makes procedures easier, but it can exclude those who don't master technology.",
+        "B2"
+      ],
+      [
+        "La igualdad ante la ley debería sentirse en la experiencia diaria, no solo existir en los textos legales.",
+        "Equality before the law should be felt in daily experience, not only exist in legal texts.",
+        "B2"
+      ],
+      [
+        "La responsabilidad ambiental se vuelve más creíble cuando incluye cambios de empresas, gobiernos y consumidores.",
+        "Environmental responsibility becomes more credible when it includes changes by companies, governments, and consumers.",
+        "B2"
+      ],
+      [
+        "La cultura del debate mejora cuando admitir una duda no se interpreta como debilidad.",
+        "The culture of debate improves when admitting doubt is not interpreted as weakness.",
+        "B2"
+      ],
+      [
+        "La violencia simbólica puede ser difícil de nombrar precisamente porque se disfraza de costumbre.",
+        "Symbolic violence can be difficult to name precisely because it disguises itself as custom.",
+        "B2"
+      ],
+      [
+        "La vida comunitaria se debilita cuando todos los espacios se vuelven comerciales o privados.",
+        "Community life weakens when all spaces become commercial or private.",
+        "B2"
+      ],
+      [
+        "La corrupción cotidiana también erosiona la confianza, aunque parezca menor que los grandes escándalos.",
+        "Everyday corruption also erodes trust, even if it seems smaller than major scandals.",
+        "B2"
+      ],
+      [
+        "La igualdad de género implica revisar quién toma decisiones, quién cuida y quién recibe reconocimiento.",
+        "Gender equality involves reviewing who makes decisions, who provides care, and who receives recognition.",
+        "B2"
+      ],
+      [
+        "La ciudadanía digital exige más que saber usar aplicaciones; exige criterio para interpretar información.",
+        "Digital citizenship requires more than knowing how to use apps; it requires judgment to interpret information.",
+        "B2"
+      ],
+      [
+        "La educación pública cumple una función social que va más allá de preparar para el empleo.",
+        "Public education fulfills a social function that goes beyond preparing people for employment.",
+        "B2"
+      ],
+      [
+        "La falta de transporte digno limita la libertad de una persona mucho más de lo que suele reconocerse.",
+        "The lack of decent transportation limits a person's freedom much more than is usually recognized.",
+        "B2"
+      ],
+      [
+        "La seguridad económica influye en la forma en que las personas planean sus relaciones, estudios y proyectos.",
+        "Economic security influences the way people plan their relationships, studies, and projects.",
+        "B2"
+      ],
+      [
+        "La diversidad no debería celebrarse solo en discursos, sino reflejarse en decisiones concretas.",
+        "Diversity should not be celebrated only in speeches, but reflected in concrete decisions.",
+        "B2"
+      ],
+      [
+        "La información falsa prospera cuando confirma emociones que la gente ya tenía.",
+        "False information thrives when it confirms emotions people already had.",
+        "B2"
+      ],
+      [
+        "El cuidado de niños y adultos mayores sostiene la economía, aunque muchas veces no se reconozca como trabajo.",
+        "Care for children and older adults sustains the economy, although it is often not recognized as work.",
+        "B2"
+      ],
+      [
+        "La calidad de vida también depende de sentir que uno pertenece a un lugar.",
+        "Quality of life also depends on feeling that one belongs somewhere.",
+        "B2"
+      ],
+      [
+        "La participación social disminuye cuando la gente siente que ninguna decisión cambia realmente su vida.",
+        "Social participation decreases when people feel that no decision truly changes their life.",
+        "B2"
+      ],
+      [
+        "La dignidad laboral implica algo más que recibir un salario a tiempo.",
+        "Labor dignity involves more than receiving a salary on time.",
+        "B2"
+      ],
+      [
+        "La tolerancia no significa indiferencia, sino capacidad de convivir con diferencias reales.",
+        "Tolerance doesn't mean indifference, but the ability to live with real differences.",
+        "B2"
+      ],
+      [
+        "El acceso a espacios verdes no es un lujo, sino parte de una vida urbana saludable.",
+        "Access to green spaces is not a luxury, but part of healthy urban life.",
+        "B2"
+      ],
+      [
+        "La presión por estar siempre disponible cambia la frontera entre trabajo y vida personal.",
+        "The pressure to always be available changes the boundary between work and personal life.",
+        "B2"
+      ],
+      [
+        "La confianza pública requiere coherencia entre lo que se promete y lo que se hace.",
+        "Public trust requires consistency between what is promised and what is done.",
+        "B2"
+      ],
+      [
+        "La educación emocional puede ayudar a prevenir conflictos que después se tratan solo como problemas de disciplina.",
+        "Emotional education can help prevent conflicts that are later treated only as discipline problems.",
+        "B2"
+      ],
+      [
+        "La exclusión no siempre se anuncia; a veces aparece en requisitos que parecen neutrales.",
+        "Exclusion is not always announced; sometimes it appears in requirements that seem neutral.",
+        "B2"
+      ],
+      [
+        "La solidaridad se vuelve más difícil cuando cada persona siente que apenas puede resolver lo suyo.",
+        "Solidarity becomes more difficult when each person feels they can barely handle their own situation.",
+        "B2"
+      ],
+      [
+        "La vida pública necesita espacios donde la gente pueda cambiar de opinión sin quedar marcada para siempre.",
+        "Public life needs spaces where people can change their minds without being labeled forever.",
+        "B2"
+      ],
+      [
+        "La modernización solo tiene sentido si mejora la experiencia de quienes usan los servicios, no solo los indicadores.",
+        "Modernization only makes sense if it improves the experience of those who use the services, not only the metrics.",
+        "B2"
+      ]
+    ]
+  },
+  {
+    "domain": "b2_hypotheticals_counterfactuals",
+    "startLexemeId": 5520,
+    "startSentenceId": 12940,
+    "startAnswerId": 13940,
+    "items": [
+      [
+        "Si hubiera tenido más información en ese momento, probablemente habría tomado otra decisión.",
+        "If I had had more information at that moment, I probably would have made a different decision.",
+        "B2"
+      ],
+      [
+        "Si el proyecto se hubiera consultado antes con la comunidad, habría generado menos resistencia.",
+        "If the project had been discussed earlier with the community, it would have generated less resistance.",
+        "B2"
+      ],
+      [
+        "De haber sabido que el trámite era tan largo, habría pedido la cita con más anticipación.",
+        "Had I known the process was so long, I would have made the appointment further in advance.",
+        "B2"
+      ],
+      [
+        "Si me ofrecieran el puesto, lo aceptaría solo si hubiera condiciones claras desde el principio.",
+        "If they offered me the position, I would accept it only if there were clear conditions from the beginning.",
+        "B2"
+      ],
+      [
+        "Si la empresa hubiera escuchado las advertencias, no estaría enfrentando esta crisis ahora.",
+        "If the company had listened to the warnings, it wouldn't be facing this crisis now.",
+        "B2"
+      ],
+      [
+        "Aunque me pagaran más, no aceptaría un trabajo que me obligara a renunciar a mi salud.",
+        "Even if they paid me more, I wouldn't accept a job that forced me to give up my health.",
+        "B2"
+      ],
+      [
+        "Si no se hubiera pospuesto la reunión, ya tendríamos una respuesta definitiva.",
+        "If the meeting hadn't been postponed, we would already have a definitive answer.",
+        "B2"
+      ],
+      [
+        "Si él hubiera explicado sus razones con calma, la conversación no habría terminado tan mal.",
+        "If he had explained his reasons calmly, the conversation wouldn't have ended so badly.",
+        "B2"
+      ],
+      [
+        "En caso de que cambiaran las reglas, tendríamos que revisar todo el plan.",
+        "If the rules changed, we would have to review the whole plan.",
+        "B2"
+      ],
+      [
+        "Si no dependiéramos tanto de un solo proveedor, estaríamos en una posición más flexible.",
+        "If we didn't depend so much on a single supplier, we would be in a more flexible position.",
+        "B2"
+      ],
+      [
+        "Si el gobierno invirtiera más en prevención, gastaría menos en atender emergencias.",
+        "If the government invested more in prevention, it would spend less on handling emergencies.",
+        "B2"
+      ],
+      [
+        "Si hubiéramos definido prioridades desde el inicio, el equipo no se habría dispersado tanto.",
+        "If we had defined priorities from the start, the team wouldn't have become so scattered.",
+        "B2"
+      ],
+      [
+        "Si mañana se cancelara el evento, igual tendríamos que entregar el informe.",
+        "If the event were canceled tomorrow, we would still have to submit the report.",
+        "B2"
+      ],
+      [
+        "Si ella estuviera menos saturada, podría participar más en las decisiones del equipo.",
+        "If she were less overloaded, she could participate more in the team's decisions.",
+        "B2"
+      ],
+      [
+        "Si se hubiera respetado el presupuesto original, no habría que justificar tantos recortes.",
+        "If the original budget had been respected, there wouldn't be a need to justify so many cuts.",
+        "B2"
+      ],
+      [
+        "Si me hubieran pedido opinión antes, habría señalado ese problema desde el principio.",
+        "If they had asked for my opinion earlier, I would have pointed out that problem from the beginning.",
+        "B2"
+      ],
+      [
+        "Si el curso fuera más práctico, los estudiantes podrían aplicar lo aprendido con más confianza.",
+        "If the course were more practical, students could apply what they learned with more confidence.",
+        "B2"
+      ],
+      [
+        "Si no hubieras intervenido, la discusión habría seguido subiendo de tono.",
+        "If you hadn't stepped in, the discussion would have kept escalating.",
+        "B2"
+      ],
+      [
+        "Si tuviéramos datos más recientes, podríamos defender la propuesta con mayor seguridad.",
+        "If we had more recent data, we could defend the proposal with greater confidence.",
+        "B2"
+      ],
+      [
+        "Si el servicio funcionara como promete, no habría tantas quejas acumuladas.",
+        "If the service worked as promised, there wouldn't be so many accumulated complaints.",
+        "B2"
+      ],
+      [
+        "Si hubieran explicado el cambio con más transparencia, la reacción habría sido distinta.",
+        "If they had explained the change more transparently, the reaction would have been different.",
+        "B2"
+      ],
+      [
+        "Si no existiera esa presión por responder de inmediato, trabajaríamos con más concentración.",
+        "If that pressure to respond immediately didn't exist, we would work with more focus.",
+        "B2"
+      ],
+      [
+        "Si el problema se hubiera detectado a tiempo, la reparación habría costado mucho menos.",
+        "If the problem had been detected in time, the repair would have cost much less.",
+        "B2"
+      ],
+      [
+        "Si tuviera que empezar de nuevo, elegiría una ruta menos rápida pero más sostenible.",
+        "If I had to start over, I would choose a less rapid but more sustainable path.",
+        "B2"
+      ],
+      [
+        "Si el acuerdo incluyera garantías mínimas, sería más fácil convencer a los demás.",
+        "If the agreement included minimum guarantees, it would be easier to convince the others.",
+        "B2"
+      ],
+      [
+        "Si hubiéramos previsto ese escenario, no estaríamos improvisando bajo presión.",
+        "If we had anticipated that scenario, we wouldn't be improvising under pressure.",
+        "B2"
+      ],
+      [
+        "Si la capacitación hubiera sido obligatoria, todos manejarían el mismo criterio ahora.",
+        "If the training had been mandatory, everyone would now be using the same standard.",
+        "B2"
+      ],
+      [
+        "Si me dieran más autonomía, podría asumir tareas de mayor responsabilidad.",
+        "If they gave me more autonomy, I could take on tasks with greater responsibility.",
+        "B2"
+      ],
+      [
+        "Si la decisión dependiera solo de mí, esperaría a tener una evaluación externa.",
+        "If the decision depended only on me, I would wait to have an external evaluation.",
+        "B2"
+      ],
+      [
+        "Si el contrato hubiera sido más claro, no habría tanta confusión sobre las responsabilidades.",
+        "If the contract had been clearer, there wouldn't be so much confusion about responsibilities.",
+        "B2"
+      ],
+      [
+        "Si no se protegiera la privacidad de los usuarios, la confianza se perdería rápidamente.",
+        "If users' privacy were not protected, trust would be lost quickly.",
+        "B2"
+      ],
+      [
+        "Si hubiera una alternativa más accesible, muchas familias dejarían de depender de ese servicio.",
+        "If there were a more accessible alternative, many families would stop depending on that service.",
+        "B2"
+      ],
+      [
+        "Si la entrevista hubiera sido presencial, tal vez habríamos notado mejor la dinámica del equipo.",
+        "If the interview had been in person, maybe we would have noticed the team dynamic better.",
+        "B2"
+      ],
+      [
+        "Si no hubiera aceptado ayuda, difícilmente habría terminado el proyecto a tiempo.",
+        "If I hadn't accepted help, I would hardly have finished the project on time.",
+        "B2"
+      ],
+      [
+        "Si los precios siguieran subiendo, habría que ajustar el presupuesto familiar otra vez.",
+        "If prices kept rising, the family budget would have to be adjusted again.",
+        "B2"
+      ],
+      [
+        "Si la escuela contara con más apoyo psicológico, muchos conflictos se atenderían antes.",
+        "If the school had more psychological support, many conflicts would be addressed earlier.",
+        "B2"
+      ],
+      [
+        "Si hubiéramos escuchado a los usuarios reales, el diseño habría sido mucho más intuitivo.",
+        "If we had listened to real users, the design would have been much more intuitive.",
+        "B2"
+      ],
+      [
+        "Si no existieran esos incentivos, algunas empresas actuarían de manera más responsable.",
+        "If those incentives didn't exist, some companies would act more responsibly.",
+        "B2"
+      ],
+      [
+        "Si el equipo hubiera documentado el proceso, no dependeríamos tanto de la memoria de una persona.",
+        "If the team had documented the process, we wouldn't depend so much on one person's memory.",
+        "B2"
+      ],
+      [
+        "Si el plan fallara, lo importante sería reconocerlo pronto y corregirlo sin buscar culpables.",
+        "If the plan failed, the important thing would be to recognize it early and correct it without looking for blame.",
+        "B2"
+      ],
+      [
+        "Si se hubieran distribuido mejor las tareas, nadie habría llegado tan agotado al cierre.",
+        "If the tasks had been distributed better, no one would have reached the end so exhausted.",
+        "B2"
+      ],
+      [
+        "Si el barrio tuviera más espacios seguros, los jóvenes pasarían menos tiempo encerrados.",
+        "If the neighborhood had more safe spaces, young people would spend less time shut indoors.",
+        "B2"
+      ],
+      [
+        "Si no hubieran cambiado la fecha, habríamos podido invitar a más participantes.",
+        "If they hadn't changed the date, we would have been able to invite more participants.",
+        "B2"
+      ],
+      [
+        "Si yo estuviera en su lugar, pediría una segunda opinión antes de firmar.",
+        "If I were in his or her place, I would ask for a second opinion before signing.",
+        "B2"
+      ],
+      [
+        "Si la campaña se enfocara menos en promesas y más en resultados, sería más creíble.",
+        "If the campaign focused less on promises and more on results, it would be more credible.",
+        "B2"
+      ],
+      [
+        "Si hubiéramos dejado constancia por escrito, ahora sería más fácil aclarar el malentendido.",
+        "If we had left a written record, it would now be easier to clarify the misunderstanding.",
+        "B2"
+      ],
+      [
+        "Si el sistema fuera más sencillo, menos personas dependerían de intermediarios para hacer trámites básicos.",
+        "If the system were simpler, fewer people would depend on intermediaries to complete basic procedures.",
+        "B2"
+      ],
+      [
+        "Si no hubieras mencionado ese detalle, quizá nadie habría entendido la gravedad del problema.",
+        "If you hadn't mentioned that detail, perhaps no one would have understood the seriousness of the problem.",
+        "B2"
+      ],
+      [
+        "Si hubiera más flexibilidad, podríamos adaptarnos mejor a las necesidades de cada familia.",
+        "If there were more flexibility, we could adapt better to each family's needs.",
+        "B2"
+      ],
+      [
+        "Si el mensaje hubiera sido más cuidadoso, no habría provocado tantas interpretaciones negativas.",
+        "If the message had been more careful, it wouldn't have caused so many negative interpretations.",
+        "B2"
+      ],
+      [
+        "Si se redujera la burocracia sin perder controles, el servicio sería mucho más ágil.",
+        "If bureaucracy were reduced without losing controls, the service would be much more efficient.",
+        "B2"
+      ],
+      [
+        "Si la empresa hubiera asumido su error a tiempo, habría protegido mejor su reputación.",
+        "If the company had acknowledged its mistake in time, it would have protected its reputation better.",
+        "B2"
+      ],
+      [
+        "Si tuviéramos más margen de tiempo, podríamos probar la solución con un grupo pequeño primero.",
+        "If we had more time, we could test the solution with a small group first.",
+        "B2"
+      ],
+      [
+        "Si el problema fuera solo técnico, ya estaría resuelto; lo difícil es el acuerdo político.",
+        "If the problem were only technical, it would already be solved; the difficult part is the political agreement.",
+        "B2"
+      ],
+      [
+        "Si no se hubieran acumulado tantas decisiones pendientes, la transición sería menos tensa.",
+        "If so many pending decisions hadn't accumulated, the transition would be less tense.",
+        "B2"
+      ],
+      [
+        "Si uno pudiera anticipar todas las consecuencias, tomar decisiones sería mucho más fácil.",
+        "If one could anticipate all the consequences, making decisions would be much easier.",
+        "B2"
+      ]
+    ]
+  },
+  {
+    "domain": "b2_concession_nuanced_emotion",
+    "startLexemeId": 5580,
+    "startSentenceId": 13060,
+    "startAnswerId": 14060,
+    "items": [
+      [
+        "Aunque entiendo por qué lo hizo, me dolió que no me lo dijera directamente.",
+        "Although I understand why he or she did it, it hurt me that they didn't tell me directly.",
+        "B2"
+      ],
+      [
+        "Me alegró recibir la noticia, pero también me dio miedo todo lo que implica.",
+        "I was happy to receive the news, but I was also scared by everything it implies.",
+        "B2"
+      ],
+      [
+        "No estoy enojado, solo decepcionado de que se haya manejado así.",
+        "I'm not angry, just disappointed that it was handled that way.",
+        "B2"
+      ],
+      [
+        "A pesar de que la conversación fue incómoda, agradezco que por fin se haya dicho la verdad.",
+        "Even though the conversation was uncomfortable, I'm grateful that the truth was finally said.",
+        "B2"
+      ],
+      [
+        "Me cuesta admitirlo, pero tal vez reaccioné con más dureza de la necesaria.",
+        "It's hard for me to admit it, but maybe I reacted more harshly than necessary.",
+        "B2"
+      ],
+      [
+        "Me dio tranquilidad saber que había un plan, aunque no resolviera todas mis dudas.",
+        "It gave me peace of mind to know there was a plan, even if it didn't answer all my questions.",
+        "B2"
+      ],
+      [
+        "No me molesta que haya cambiado de opinión; me molesta que fingiera que nada había pasado.",
+        "It doesn't bother me that they changed their mind; it bothers me that they pretended nothing had happened.",
+        "B2"
+      ],
+      [
+        "Aunque el resultado fue positivo, quedé con la sensación de que algo importante se perdió en el proceso.",
+        "Although the result was positive, I was left with the feeling that something important was lost in the process.",
+        "B2"
+      ],
+      [
+        "Me sentí aliviado cuando terminó, pero también un poco vacío.",
+        "I felt relieved when it ended, but also a little empty.",
+        "B2"
+      ],
+      [
+        "Por más que intento verlo con distancia, todavía me afecta la forma en que me habló.",
+        "No matter how much I try to see it with distance, the way he or she spoke to me still affects me.",
+        "B2"
+      ],
+      [
+        "Me dio gusto verlo avanzar, aunque una parte de mí hubiera querido estar más presente.",
+        "I was glad to see him move forward, although part of me would have wanted to be more present.",
+        "B2"
+      ],
+      [
+        "Aunque sé que no fue personal, me costó no tomarlo como un rechazo.",
+        "Although I know it wasn't personal, it was hard for me not to take it as rejection.",
+        "B2"
+      ],
+      [
+        "No me arrepiento de haber dicho lo que pensaba, pero sí de haberlo dicho en ese tono.",
+        "I don't regret saying what I thought, but I do regret saying it in that tone.",
+        "B2"
+      ],
+      [
+        "Me tranquiliza que haya una explicación, aunque todavía no me convence del todo.",
+        "It reassures me that there is an explanation, although it still doesn't fully convince me.",
+        "B2"
+      ],
+      [
+        "Aun cuando la decisión era necesaria, fue difícil aceptarla emocionalmente.",
+        "Even though the decision was necessary, it was emotionally difficult to accept.",
+        "B2"
+      ],
+      [
+        "Me dio pena cancelar, sobre todo porque sabía cuánto esfuerzo habían puesto.",
+        "I felt bad canceling, especially because I knew how much effort they had put in.",
+        "B2"
+      ],
+      [
+        "Aunque parecía una buena oportunidad, algo en la situación no me daba confianza.",
+        "Although it seemed like a good opportunity, something about the situation didn't give me confidence.",
+        "B2"
+      ],
+      [
+        "Me sentí orgulloso de lo logrado, pero consciente de que aún falta mucho.",
+        "I felt proud of what had been achieved, but aware that there is still a lot left.",
+        "B2"
+      ],
+      [
+        "No fue una tristeza intensa, sino una especie de cansancio acumulado.",
+        "It wasn't intense sadness, but a kind of accumulated fatigue.",
+        "B2"
+      ],
+      [
+        "Aunque me ofrecieron disculpas, todavía necesito tiempo para recuperar la confianza.",
+        "Although they apologized to me, I still need time to regain trust.",
+        "B2"
+      ],
+      [
+        "Me sorprendió lo mucho que me afectó algo que, en teoría, ya tenía superado.",
+        "I was surprised by how much something affected me that, in theory, I had already gotten over.",
+        "B2"
+      ],
+      [
+        "A pesar de la frustración, reconozco que todos estaban haciendo lo mejor que podían.",
+        "Despite the frustration, I recognize that everyone was doing the best they could.",
+        "B2"
+      ],
+      [
+        "Me dio ternura su esfuerzo, aunque el resultado no fuera perfecto.",
+        "I found his or her effort touching, even though the result wasn't perfect.",
+        "B2"
+      ],
+      [
+        "Aunque quería celebrar, me costaba ignorar el cansancio de los últimos meses.",
+        "Although I wanted to celebrate, it was hard for me to ignore the exhaustion of the last few months.",
+        "B2"
+      ],
+      [
+        "Por mucho que valore su apoyo, necesito tomar esta decisión por mi cuenta.",
+        "As much as I value his or her support, I need to make this decision on my own.",
+        "B2"
+      ],
+      [
+        "Aunque no comparto su decisión, puedo imaginar lo difícil que fue tomarla.",
+        "Although I don't share his or her decision, I can imagine how difficult it was to make it.",
+        "B2"
+      ],
+      [
+        "Me sentí confundido porque una parte de mí quería irse y otra quería intentarlo de nuevo.",
+        "I felt confused because part of me wanted to leave and another part wanted to try again.",
+        "B2"
+      ],
+      [
+        "No fue exactamente alivio, sino la sensación de que por fin podía respirar.",
+        "It wasn't exactly relief, but the feeling that I could finally breathe.",
+        "B2"
+      ],
+      [
+        "Aunque me hubiera gustado otra respuesta, agradezco que haya sido honesto.",
+        "Although I would have liked a different answer, I appreciate that he was honest.",
+        "B2"
+      ],
+      [
+        "Me inquieta la rapidez del cambio, aunque entiendo que quedarse igual tampoco era viable.",
+        "The speed of the change unsettles me, although I understand that staying the same wasn't viable either.",
+        "B2"
+      ],
+      [
+        "A pesar de que ya pasó tiempo, todavía hay detalles que me siguen dando vueltas.",
+        "Even though time has passed, there are still details that keep going around in my mind.",
+        "B2"
+      ],
+      [
+        "Me dio vergüenza haber malinterpretado la situación, pero también aprendí a preguntar antes.",
+        "I felt embarrassed for having misinterpreted the situation, but I also learned to ask first.",
+        "B2"
+      ],
+      [
+        "Aunque el comentario no fue grave, sí me dejó pensando en cómo me ven los demás.",
+        "Although the comment wasn't serious, it did leave me thinking about how others see me.",
+        "B2"
+      ],
+      [
+        "Me sentí dividido entre apoyar al equipo y cuidar mis propios límites.",
+        "I felt torn between supporting the team and protecting my own limits.",
+        "B2"
+      ],
+      [
+        "Por más que intento justificarlo, no logro sentirme cómodo con lo que pasó.",
+        "No matter how much I try to justify it, I can't manage to feel comfortable with what happened.",
+        "B2"
+      ],
+      [
+        "Aunque la crítica fue dura, me sirvió para ver algo que no quería reconocer.",
+        "Although the criticism was harsh, it helped me see something I didn't want to recognize.",
+        "B2"
+      ],
+      [
+        "Me dio miedo equivocarme, pero más miedo me daba quedarme sin decidir.",
+        "I was afraid of making a mistake, but I was more afraid of failing to make a decision.",
+        "B2"
+      ],
+      [
+        "Aunque no era mi responsabilidad directa, sentí que debía intervenir.",
+        "Although it wasn't my direct responsibility, I felt that I had to intervene.",
+        "B2"
+      ],
+      [
+        "Me hizo bien hablarlo, aunque la conversación no resolviera todo.",
+        "It did me good to talk about it, even though the conversation didn't solve everything.",
+        "B2"
+      ],
+      [
+        "A pesar de que el cambio me entusiasma, también me pesa dejar atrás una etapa.",
+        "Even though the change excites me, leaving a stage behind also weighs on me.",
+        "B2"
+      ],
+      [
+        "Me incomodó el silencio, no porque esperara una solución, sino porque necesitaba reconocimiento.",
+        "The silence made me uncomfortable, not because I expected a solution, but because I needed acknowledgment.",
+        "B2"
+      ],
+      [
+        "Aunque quería ser comprensivo, me costó no sentir que se aprovecharon de mí.",
+        "Although I wanted to be understanding, it was hard not to feel that they took advantage of me.",
+        "B2"
+      ],
+      [
+        "Me dio tranquilidad poner un límite, aunque al principio me sintiera culpable.",
+        "Setting a boundary gave me peace of mind, even though at first I felt guilty.",
+        "B2"
+      ],
+      [
+        "Aunque la pérdida era esperada, no por eso dejó de doler.",
+        "Although the loss was expected, that didn't make it stop hurting.",
+        "B2"
+      ],
+      [
+        "Me alegró que pensaran en mí, aun si no podía aceptar la invitación.",
+        "I was glad they thought of me, even if I couldn't accept the invitation.",
+        "B2"
+      ],
+      [
+        "A pesar del enojo, sabía que responder de inmediato solo empeoraría las cosas.",
+        "Despite the anger, I knew that responding immediately would only make things worse.",
+        "B2"
+      ],
+      [
+        "Aunque nadie tuvo mala intención, el impacto fue real y había que hablarlo.",
+        "Although no one had bad intentions, the impact was real and it had to be discussed.",
+        "B2"
+      ],
+      [
+        "Me cuesta celebrar algo que llegó después de tanta presión.",
+        "It's hard for me to celebrate something that came after so much pressure.",
+        "B2"
+      ],
+      [
+        "Aunque me dolió escuchar eso, prefiero una verdad incómoda a una cortesía falsa.",
+        "Although it hurt me to hear that, I prefer an uncomfortable truth to false politeness.",
+        "B2"
+      ],
+      [
+        "Me sentí agradecido, pero también consciente de que no quería depender siempre de otros.",
+        "I felt grateful, but also aware that I didn't want to always depend on others.",
+        "B2"
+      ],
+      [
+        "Por más que quiera cerrar el tema, todavía necesito entender qué aprendí de todo esto.",
+        "As much as I want to close the issue, I still need to understand what I learned from all this.",
+        "B2"
+      ],
+      [
+        "Aunque la decisión me favorecía, no me gustó la manera en que afectó a los demás.",
+        "Although the decision benefited me, I didn't like the way it affected others.",
+        "B2"
+      ],
+      [
+        "Me dio alivio pedir ayuda, aunque admitirlo me costara bastante.",
+        "Asking for help gave me relief, even though admitting it was quite hard for me.",
+        "B2"
+      ],
+      [
+        "A pesar de la distancia, sentí que la relación seguía teniendo un lugar importante en mi vida.",
+        "Despite the distance, I felt that the relationship still had an important place in my life.",
+        "B2"
+      ],
+      [
+        "Aunque intenté verlo como una oportunidad, al principio lo viví como una pérdida.",
+        "Although I tried to see it as an opportunity, at first I experienced it as a loss.",
+        "B2"
+      ],
+      [
+        "Me dolió menos la crítica que la falta de confianza detrás de ella.",
+        "The criticism hurt me less than the lack of trust behind it.",
+        "B2"
+      ]
+    ]
+  },
+  {
+    "domain": "b2_formal_professional_register",
+    "startLexemeId": 5640,
+    "startSentenceId": 13180,
+    "startAnswerId": 14180,
+    "items": [
+      [
+        "Agradecemos sus comentarios y los tomaremos en cuenta para la siguiente versión del documento.",
+        "We appreciate your comments and will take them into account for the next version of the document.",
+        "B2"
+      ],
+      [
+        "El informe presenta avances importantes, aunque todavía requiere una revisión más detallada de los costos.",
+        "The report presents important progress, although it still requires a more detailed review of the costs.",
+        "B2"
+      ],
+      [
+        "Nos gustaría contar con su retroalimentación antes de cerrar la etapa de planificación.",
+        "We would like to have your feedback before closing the planning stage.",
+        "B2"
+      ],
+      [
+        "El equipo identificó varias oportunidades de mejora en el proceso de atención al cliente.",
+        "The team identified several opportunities for improvement in the customer service process.",
+        "B2"
+      ],
+      [
+        "Para evitar malentendidos, sugiero dejar por escrito los acuerdos alcanzados durante la reunión.",
+        "To avoid misunderstandings, I suggest putting in writing the agreements reached during the meeting.",
+        "B2"
+      ],
+      [
+        "La fecha de entrega podrá ajustarse si recibimos la aprobación antes del cierre de la semana.",
+        "The delivery date may be adjusted if we receive approval before the end of the week.",
+        "B2"
+      ],
+      [
+        "Quedamos atentos a cualquier observación adicional que considere pertinente.",
+        "We remain attentive to any additional observations you consider relevant.",
+        "B2"
+      ],
+      [
+        "El objetivo de esta sesión es alinear expectativas y definir los siguientes pasos.",
+        "The objective of this session is to align expectations and define the next steps.",
+        "B2"
+      ],
+      [
+        "Antes de avanzar, conviene revisar si contamos con los recursos necesarios.",
+        "Before moving forward, it is advisable to review whether we have the necessary resources.",
+        "B2"
+      ],
+      [
+        "La propuesta fue bien recibida, pero se solicitó mayor claridad en los indicadores de éxito.",
+        "The proposal was well received, but greater clarity was requested regarding the success indicators.",
+        "B2"
+      ],
+      [
+        "A fin de cumplir con el plazo establecido, necesitaremos priorizar las tareas críticas.",
+        "In order to meet the established deadline, we will need to prioritize the critical tasks.",
+        "B2"
+      ],
+      [
+        "El cambio entrará en vigor una vez que sea comunicado a todas las áreas involucradas.",
+        "The change will take effect once it has been communicated to all involved areas.",
+        "B2"
+      ],
+      [
+        "Sería conveniente definir un responsable para dar seguimiento a cada acuerdo.",
+        "It would be advisable to assign a person responsible for following up on each agreement.",
+        "B2"
+      ],
+      [
+        "La implementación dependerá de la disponibilidad presupuestaria y de la aprobación final.",
+        "Implementation will depend on budget availability and final approval.",
+        "B2"
+      ],
+      [
+        "Durante la revisión, detectamos inconsistencias menores que ya fueron corregidas.",
+        "During the review, we detected minor inconsistencies that have already been corrected.",
+        "B2"
+      ],
+      [
+        "Nos preocupa que el retraso afecte la coordinación con los proveedores externos.",
+        "We are concerned that the delay may affect coordination with external suppliers.",
+        "B2"
+      ],
+      [
+        "La decisión final deberá considerar tanto el impacto operativo como la experiencia del usuario.",
+        "The final decision should consider both the operational impact and the user experience.",
+        "B2"
+      ],
+      [
+        "Solicitamos que cualquier cambio adicional sea enviado antes del mediodía.",
+        "We request that any additional change be sent before noon.",
+        "B2"
+      ],
+      [
+        "El plan de trabajo contempla una fase inicial de prueba con un grupo reducido.",
+        "The work plan includes an initial testing phase with a small group.",
+        "B2"
+      ],
+      [
+        "Con base en los resultados obtenidos, recomendamos ampliar gradualmente la cobertura del programa.",
+        "Based on the results obtained, we recommend gradually expanding the program's coverage.",
+        "B2"
+      ],
+      [
+        "La reunión permitió identificar riesgos que no habían sido considerados en la planificación original.",
+        "The meeting made it possible to identify risks that had not been considered in the original planning.",
+        "B2"
+      ],
+      [
+        "Agradecemos su paciencia mientras completamos la revisión interna.",
+        "We appreciate your patience while we complete the internal review.",
+        "B2"
+      ],
+      [
+        "El área técnica confirmó que la solución es viable, siempre que se respeten ciertas condiciones.",
+        "The technical area confirmed that the solution is viable, provided that certain conditions are respected.",
+        "B2"
+      ],
+      [
+        "Para dar continuidad al proceso, proponemos una reunión de seguimiento la próxima semana.",
+        "To provide continuity to the process, we propose a follow-up meeting next week.",
+        "B2"
+      ],
+      [
+        "La información recibida será tratada con estricta confidencialidad.",
+        "The information received will be treated with strict confidentiality.",
+        "B2"
+      ],
+      [
+        "La actualización busca simplificar el procedimiento sin reducir los controles existentes.",
+        "The update seeks to simplify the procedure without reducing the existing controls.",
+        "B2"
+      ],
+      [
+        "Quisiera señalar un punto que podría afectar el alcance del proyecto.",
+        "I would like to point out an issue that could affect the scope of the project.",
+        "B2"
+      ],
+      [
+        "La versión revisada refleja los comentarios recibidos durante la última ronda de consulta.",
+        "The revised version reflects the comments received during the last consultation round.",
+        "B2"
+      ],
+      [
+        "Es importante comunicar el cambio con suficiente anticipación para evitar interrupciones.",
+        "It is important to communicate the change with enough advance notice to avoid interruptions.",
+        "B2"
+      ],
+      [
+        "El equipo estará disponible para resolver dudas durante la etapa de transición.",
+        "The team will be available to resolve questions during the transition stage.",
+        "B2"
+      ],
+      [
+        "La evaluación preliminar sugiere que el proyecto puede generar ahorros significativos.",
+        "The preliminary evaluation suggests that the project can generate significant savings.",
+        "B2"
+      ],
+      [
+        "Antes de emitir una recomendación final, necesitamos validar los datos con el área financiera.",
+        "Before issuing a final recommendation, we need to validate the data with the finance area.",
+        "B2"
+      ],
+      [
+        "La propuesta contempla medidas de mitigación para los riesgos más relevantes.",
+        "The proposal includes mitigation measures for the most relevant risks.",
+        "B2"
+      ],
+      [
+        "Le compartiremos un resumen con los acuerdos y tareas pendientes.",
+        "We will share a summary with the agreements and pending tasks.",
+        "B2"
+      ],
+      [
+        "Agradeceríamos recibir su respuesta a más tardar el viernes por la tarde.",
+        "We would appreciate receiving your response no later than Friday afternoon.",
+        "B2"
+      ],
+      [
+        "El análisis muestra una mejora sostenida en los tiempos de respuesta.",
+        "The analysis shows a sustained improvement in response times.",
+        "B2"
+      ],
+      [
+        "Se recomienda capacitar al personal antes de implementar el nuevo procedimiento.",
+        "It is recommended to train staff before implementing the new procedure.",
+        "B2"
+      ],
+      [
+        "La prioridad será garantizar la continuidad del servicio durante la migración.",
+        "The priority will be to guarantee service continuity during the migration.",
+        "B2"
+      ],
+      [
+        "Nos parece necesario revisar el alcance antes de comprometer una nueva fecha de entrega.",
+        "We think it is necessary to review the scope before committing to a new delivery date.",
+        "B2"
+      ],
+      [
+        "El proveedor deberá presentar una propuesta ajustada a los requerimientos actualizados.",
+        "The supplier must submit a proposal adjusted to the updated requirements.",
+        "B2"
+      ],
+      [
+        "La respuesta del cliente indica que todavía hay aspectos del servicio que requieren atención.",
+        "The client's response indicates that there are still aspects of the service that require attention.",
+        "B2"
+      ],
+      [
+        "Para facilitar la revisión, he resaltado los cambios principales en el documento.",
+        "To make the review easier, I have highlighted the main changes in the document.",
+        "B2"
+      ],
+      [
+        "La implementación parcial permitirá evaluar el desempeño antes de extender la solución.",
+        "Partial implementation will allow performance to be evaluated before extending the solution.",
+        "B2"
+      ],
+      [
+        "El cronograma deberá ajustarse para reflejar las dependencias identificadas.",
+        "The timeline will need to be adjusted to reflect the identified dependencies.",
+        "B2"
+      ],
+      [
+        "El comité solicitó evidencia adicional antes de aprobar el presupuesto.",
+        "The committee requested additional evidence before approving the budget.",
+        "B2"
+      ],
+      [
+        "La comunicación interna será clave para asegurar una adopción ordenada.",
+        "Internal communication will be key to ensuring an orderly adoption.",
+        "B2"
+      ],
+      [
+        "Le propongo revisar primero los puntos pendientes y luego definir responsabilidades.",
+        "I suggest that we first review the pending points and then define responsibilities.",
+        "B2"
+      ],
+      [
+        "El análisis no detectó fallas críticas, pero sí áreas que requieren seguimiento.",
+        "The analysis did not detect critical failures, but it did identify areas that require follow-up.",
+        "B2"
+      ],
+      [
+        "La solicitud fue registrada correctamente y será evaluada conforme al procedimiento vigente.",
+        "The request was registered correctly and will be evaluated according to the current procedure.",
+        "B2"
+      ],
+      [
+        "Nos gustaría aclarar que el ajuste no modifica los compromisos previamente acordados.",
+        "We would like to clarify that the adjustment does not modify the previously agreed commitments.",
+        "B2"
+      ],
+      [
+        "El equipo propone mantener el alcance actual y revisar nuevas funciones en una etapa posterior.",
+        "The team proposes maintaining the current scope and reviewing new features at a later stage.",
+        "B2"
+      ],
+      [
+        "La presentación deberá enfocarse en resultados, riesgos y decisiones pendientes.",
+        "The presentation should focus on results, risks, and pending decisions.",
+        "B2"
+      ]
+    ]
+  },
+  {
+    "domain": "b2_reported_speech_sophisticated_connectors",
+    "startLexemeId": 5700,
+    "startSentenceId": 13300,
+    "startAnswerId": 14300,
+    "items": [
+      [
+        "El director explicó que el retraso se debía a factores externos; sin embargo, asumió la responsabilidad por la falta de comunicación.",
+        "The director explained that the delay was due to external factors; however, he accepted responsibility for the lack of communication.",
+        "B2"
+      ],
+      [
+        "Mariana comentó que no estaba segura de aceptar la oferta, ya que implicaba mudarse en menos de un mes.",
+        "Mariana said she wasn't sure about accepting the offer, since it involved moving in less than a month.",
+        "B2"
+      ],
+      [
+        "El informe señala que la participación aumentó, aunque advierte que los resultados todavía no son concluyentes.",
+        "The report states that participation increased, although it warns that the results are still not conclusive.",
+        "B2"
+      ],
+      [
+        "Nos dijeron que la decisión no era definitiva; aun así, muchos empezaron a prepararse para el cambio.",
+        "They told us that the decision was not final; even so, many began to prepare for the change.",
+        "B2"
+      ],
+      [
+        "La especialista aclaró que el problema no era la tecnología en sí, sino el uso que se hacía de ella.",
+        "The specialist clarified that the problem was not the technology itself, but the use being made of it.",
+        "B2"
+      ],
+      [
+        "El equipo sostuvo que la medida era necesaria; no obstante, reconoció que debía comunicarse mejor.",
+        "The team maintained that the measure was necessary; nevertheless, it acknowledged that it had to be communicated better.",
+        "B2"
+      ],
+      [
+        "Juan insistió en que había seguido el procedimiento, mientras que su supervisora afirmó que faltaba documentación.",
+        "Juan insisted that he had followed the procedure, while his supervisor stated that documentation was missing.",
+        "B2"
+      ],
+      [
+        "La encuesta indica que hay mayor satisfacción, pero también revela preocupaciones sobre los tiempos de espera.",
+        "The survey indicates that there is greater satisfaction, but it also reveals concerns about wait times.",
+        "B2"
+      ],
+      [
+        "El abogado explicó que el acuerdo era válido siempre que ambas partes lo firmaran voluntariamente.",
+        "The lawyer explained that the agreement was valid as long as both parties signed it voluntarily.",
+        "B2"
+      ],
+      [
+        "La coordinadora pidió que se revisaran los datos antes de presentar conclusiones al público.",
+        "The coordinator asked that the data be reviewed before presenting conclusions to the public.",
+        "B2"
+      ],
+      [
+        "El artículo argumenta que la crisis no surgió de repente, sino que venía acumulándose desde años atrás.",
+        "The article argues that the crisis did not arise suddenly, but had been building up for years.",
+        "B2"
+      ],
+      [
+        "La empresa afirmó que había corregido la falla; pese a ello, varios usuarios siguieron reportando problemas.",
+        "The company stated that it had corrected the failure; despite that, several users continued reporting problems.",
+        "B2"
+      ],
+      [
+        "El profesor señaló que la respuesta era correcta en términos generales, aunque necesitaba mayor precisión.",
+        "The professor pointed out that the answer was generally correct, although it needed greater precision.",
+        "B2"
+      ],
+      [
+        "Ana me contó que había rechazado el ascenso porque no quería sacrificar su vida familiar.",
+        "Ana told me that she had turned down the promotion because she didn't want to sacrifice her family life.",
+        "B2"
+      ],
+      [
+        "El comité concluyó que la propuesta era viable, siempre y cuando se redujeran algunos riesgos operativos.",
+        "The committee concluded that the proposal was viable, as long as some operational risks were reduced.",
+        "B2"
+      ],
+      [
+        "La ministra declaró que habría nuevos apoyos, aunque no especificó cuándo estarían disponibles.",
+        "The minister declared that there would be new support measures, although she did not specify when they would be available.",
+        "B2"
+      ],
+      [
+        "El informe no niega los avances; por el contrario, los reconoce y luego analiza sus límites.",
+        "The report does not deny the progress; on the contrary, it recognizes it and then analyzes its limits.",
+        "B2"
+      ],
+      [
+        "Carlos dijo que no se oponía al cambio, sino a la falta de consulta previa.",
+        "Carlos said that he was not opposed to the change, but to the lack of prior consultation.",
+        "B2"
+      ],
+      [
+        "La organización advirtió que la falta de inversión podría agravar la situación en los próximos años.",
+        "The organization warned that the lack of investment could worsen the situation in the coming years.",
+        "B2"
+      ],
+      [
+        "El gerente prometió que revisaría el caso; mientras tanto, pidió que no se tomaran decisiones apresuradas.",
+        "The manager promised that he would review the case; in the meantime, he asked that no rushed decisions be made.",
+        "B2"
+      ],
+      [
+        "La investigación muestra una tendencia preocupante, aunque sus autores recomiendan interpretarla con cautela.",
+        "The research shows a concerning trend, although its authors recommend interpreting it with caution.",
+        "B2"
+      ],
+      [
+        "Mi hermana me explicó que no había respondido porque necesitaba ordenar sus ideas primero.",
+        "My sister explained to me that she hadn't responded because she needed to organize her thoughts first.",
+        "B2"
+      ],
+      [
+        "El documento establece que todos los cambios deberán aprobarse por escrito antes de implementarse.",
+        "The document establishes that all changes must be approved in writing before being implemented.",
+        "B2"
+      ],
+      [
+        "El vocero reconoció que hubo errores en la comunicación, pero negó que se hubiera ocultado información.",
+        "The spokesperson acknowledged that there were errors in communication, but denied that information had been hidden.",
+        "B2"
+      ],
+      [
+        "La terapeuta le sugirió que pusiera límites más claros, especialmente en situaciones de presión.",
+        "The therapist suggested that he or she set clearer boundaries, especially in situations involving pressure.",
+        "B2"
+      ],
+      [
+        "El análisis plantea que la solución requiere coordinación regional, no solo decisiones locales.",
+        "The analysis argues that the solution requires regional coordination, not only local decisions.",
+        "B2"
+      ],
+      [
+        "Nos avisaron que el sistema estaría fuera de servicio durante la madrugada; por eso adelantamos varios trámites.",
+        "They notified us that the system would be out of service overnight; that's why we moved several procedures ahead.",
+        "B2"
+      ],
+      [
+        "La jueza indicó que revisaría las pruebas antes de emitir una resolución definitiva.",
+        "The judge indicated that she would review the evidence before issuing a final ruling.",
+        "B2"
+      ],
+      [
+        "El especialista sostuvo que la prevención resulta más efectiva que responder cuando el daño ya está hecho.",
+        "The specialist maintained that prevention is more effective than responding when the damage has already been done.",
+        "B2"
+      ],
+      [
+        "La carta explica que la decisión fue difícil; sin embargo, no ofrece detalles sobre los criterios utilizados.",
+        "The letter explains that the decision was difficult; however, it does not offer details about the criteria used.",
+        "B2"
+      ],
+      [
+        "El equipo pidió más tiempo para revisar la propuesta, dado que incluía cambios de último momento.",
+        "The team asked for more time to review the proposal, given that it included last-minute changes.",
+        "B2"
+      ],
+      [
+        "Marta aseguró que había enviado el archivo, aunque después admitió que pudo haberse equivocado de versión.",
+        "Marta assured us that she had sent the file, although later she admitted that she might have used the wrong version.",
+        "B2"
+      ],
+      [
+        "La nota aclara que el aumento no será inmediato, sino gradual a lo largo del año.",
+        "The note clarifies that the increase will not be immediate, but gradual throughout the year.",
+        "B2"
+      ],
+      [
+        "El informe recomienda fortalecer la supervisión; de lo contrario, los errores podrían repetirse.",
+        "The report recommends strengthening oversight; otherwise, the mistakes could be repeated.",
+        "B2"
+      ],
+      [
+        "El alcalde afirmó que escucharía a los vecinos antes de tomar una decisión final.",
+        "The mayor stated that he would listen to the neighbors before making a final decision.",
+        "B2"
+      ],
+      [
+        "La profesora nos recordó que el objetivo no era memorizar frases, sino aprender a usarlas en contexto.",
+        "The teacher reminded us that the goal was not to memorize phrases, but to learn to use them in context.",
+        "B2"
+      ],
+      [
+        "El comunicado sostiene que la medida busca proteger a los usuarios; aun así, algunos la consideran excesiva.",
+        "The statement maintains that the measure seeks to protect users; even so, some consider it excessive.",
+        "B2"
+      ],
+      [
+        "El consultor observó que el problema principal no era la falta de personal, sino la duplicación de tareas.",
+        "The consultant observed that the main problem was not the lack of staff, but the duplication of tasks.",
+        "B2"
+      ],
+      [
+        "La directora pidió que cada área enviara sus comentarios antes de cerrar el documento.",
+        "The director asked each area to send its comments before closing the document.",
+        "B2"
+      ],
+      [
+        "El estudio concluye que el apoyo familiar influye en la permanencia escolar, aunque no es el único factor.",
+        "The study concludes that family support influences school retention, although it is not the only factor.",
+        "B2"
+      ],
+      [
+        "El cliente indicó que aceptaría la propuesta si se aclaraban los tiempos de entrega.",
+        "The client indicated that he would accept the proposal if delivery times were clarified.",
+        "B2"
+      ],
+      [
+        "La revisión detectó inconsistencias menores; por lo tanto, se recomendó corregirlas antes de publicar.",
+        "The review detected minor inconsistencies; therefore, it was recommended that they be corrected before publication.",
+        "B2"
+      ],
+      [
+        "El médico explicó que los síntomas podían tener varias causas y que convenía hacer más estudios.",
+        "The doctor explained that the symptoms could have several causes and that it was advisable to do more tests.",
+        "B2"
+      ],
+      [
+        "La oposición argumentó que la medida era insuficiente, mientras que el gobierno defendió su alcance inicial.",
+        "The opposition argued that the measure was insufficient, while the government defended its initial scope.",
+        "B2"
+      ],
+      [
+        "El mensaje decía que la beca había sido aprobada, aunque faltaba completar un paso administrativo.",
+        "The message said that the scholarship had been approved, although one administrative step still needed to be completed.",
+        "B2"
+      ],
+      [
+        "La especialista subrayó que escuchar a los usuarios no equivale a aceptar todas sus demandas.",
+        "The specialist emphasized that listening to users is not the same as accepting all their demands.",
+        "B2"
+      ],
+      [
+        "El reporte advierte que los datos deben leerse dentro de su contexto, para evitar conclusiones exageradas.",
+        "The report warns that the data must be read within its context, in order to avoid exaggerated conclusions.",
+        "B2"
+      ],
+      [
+        "Mi jefe comentó que valoraba mi iniciativa, pero que debía coordinar mejor con el resto del equipo.",
+        "My boss commented that he valued my initiative, but that I needed to coordinate better with the rest of the team.",
+        "B2"
+      ],
+      [
+        "La convocatoria establece que solo se evaluarán solicitudes completas; por eso conviene revisar cada requisito.",
+        "The call states that only complete applications will be evaluated; that's why it's advisable to review each requirement.",
+        "B2"
+      ],
+      [
+        "El informe reconoce que hubo una mejora, si bien todavía no alcanza el nivel esperado.",
+        "The report acknowledges that there was an improvement, although it still does not reach the expected level.",
+        "B2"
+      ],
+      [
+        "La senadora sostuvo que el debate debía centrarse en soluciones concretas y no en acusaciones personales.",
+        "The senator maintained that the debate should focus on concrete solutions and not on personal accusations.",
+        "B2"
+      ],
+      [
+        "El equipo explicó que había priorizado la estabilidad del sistema antes que agregar nuevas funciones.",
+        "The team explained that it had prioritized system stability over adding new features.",
+        "B2"
+      ],
+      [
+        "La guía recomienda verificar la información antes de compartirla, especialmente cuando provoca una reacción emocional.",
+        "The guide recommends verifying information before sharing it, especially when it provokes an emotional reaction.",
+        "B2"
+      ],
+      [
+        "El testigo declaró que no había visto el accidente directamente, sino sus consecuencias inmediatas.",
+        "The witness stated that he had not seen the accident directly, but rather its immediate consequences.",
+        "B2"
+      ],
+      [
+        "La organización informó que ampliaría el programa siempre que se confirmara el financiamiento.",
+        "The organization reported that it would expand the program as long as funding was confirmed.",
+        "B2"
+      ],
+      [
+        "El texto sugiere que la confianza se recupera con hechos consistentes, no solo con disculpas públicas.",
+        "The text suggests that trust is regained through consistent actions, not only through public apologies.",
+        "B2"
+      ],
+      [
+        "La mesa de trabajo acordó reunirse nuevamente, con el fin de revisar avances y resolver pendientes.",
+        "The working group agreed to meet again in order to review progress and resolve pending issues.",
+        "B2"
+      ],
+      [
+        "El representante aclaró que la propuesta seguía abierta a ajustes, aunque ya tenía una estructura definida.",
+        "The representative clarified that the proposal remained open to adjustments, although it already had a defined structure.",
+        "B2"
+      ],
+      [
+        "La encuesta reveló que muchos usuarios valoran la rapidez, pero no a costa de perder atención personalizada.",
+        "The survey revealed that many users value speed, but not at the cost of losing personalized attention.",
+        "B2"
+      ],
+      [
+        "El comunicado indicó que se abriría una investigación interna para determinar responsabilidades.",
+        "The statement indicated that an internal investigation would be opened to determine responsibilities.",
+        "B2"
+      ]
+    ]
+  }
+]

@@ -42,14 +42,14 @@ class LemmaCountSanityIntegrationTest(unittest.TestCase):
 
     def test_current_assertion_uses_real_pipeline_report(self):
         self.sanity.assert_current(self.report)
-        self.assertEqual(1737, self.report["reviewableItemSummary"]["totalReviewableItems"])
-        self.assertEqual(1747, self.report["reviewableItemSummary"]["sourceContentRows"]["rawLexemes"])
-        self.assertEqual(6874, self.report["reviewableItemSummary"]["sourceContentRows"]["totalContentRows"])
+        self.assertEqual(2078, self.report["reviewableItemSummary"]["totalReviewableItems"])
+        self.assertEqual(2088, self.report["reviewableItemSummary"]["sourceContentRows"]["rawLexemes"])
+        self.assertEqual(7897, self.report["reviewableItemSummary"]["sourceContentRows"]["totalContentRows"])
         self.assertEqual(
-            1737,
+            2078,
             self.report["reviewGate"]["reviewableItems"]["countedReviewedRows"],
         )
-        self.assertEqual(6029, self.report["reviewGate"]["contentRows"]["rowsRequiringIndependentReviews"])
+        self.assertEqual(7052, self.report["reviewGate"]["contentRows"]["rowsRequiringIndependentReviews"])
         self.assertEqual(0, self.report["reviewGate"]["contentRows"]["rowsWithInsufficientIndependentReviews"])
 
     def test_target_gate_reports_pilot_stop_phrase_gap_and_recalibrated_b1_count(self):
@@ -479,6 +479,30 @@ class LemmaCountSanityIntegrationTest(unittest.TestCase):
         for domain, pack in build.REPLACEMENT_DOMAIN_PACKS:
             self.assertGreaterEqual(len(pack), 12, domain)
 
+    def test_b2_batch_3_registry_covers_reviewed_json_pack(self):
+        build = self.sanity.load_build_module()
+        expected_domain_counts = {
+            "b2_nuanced_opinions_argumentation": 60,
+            "b2_abstract_social_topics": 57,
+            "b2_hypotheticals_counterfactuals": 56,
+            "b2_concession_nuanced_emotion": 56,
+            "b2_formal_professional_register": 52,
+            "b2_reported_speech_sophisticated_connectors": 60,
+        }
+        actual_domain_counts = {
+            domain: len(pack)
+            for domain, pack in build.AI_ACCELERATED_PACK_B2_BATCH_3_PACKS
+        }
+
+        self.assertEqual(expected_domain_counts, actual_domain_counts)
+        self.assertEqual(341, sum(actual_domain_counts.values()))
+        for domain, pack in build.AI_ACCELERATED_PACK_B2_BATCH_3_PACKS:
+            for item in pack:
+                self.assertEqual("B2", item["cefrBand"], domain)
+                self.assertIn(item["lemma"], build.SPANISH_CORRECTNESS_PHRASE_LEDGER)
+                self.assertIn(item["lemma"], build.AUTHENTIC_PHRASE_LEDGER)
+                self.assertIn(item["lemma"], build.NEUTRAL_LATAM_PHRASE_LEDGER)
+
     def test_manifest_includes_generated_phrase_lexeme_review_evidence(self):
         build = self.sanity.load_build_module()
         lexemes, sentences, accepted, _sentence_lexeme, _conj, _exercises, _nodes = build.vetted_sample()
@@ -721,11 +745,11 @@ class PhraseCefrRubricIntegrationTest(unittest.TestCase):
         )
 
         self.assertEqual(phrase_or_chunk_count, report["itemCount"])
-        self.assertEqual(1005, report["helperAssignedItemCount"])
+        self.assertEqual(1346, report["helperAssignedItemCount"])
         self.assertEqual(0, report["legacyExplicitBandAssessedItemCount"])
-        self.assertEqual(1005, report["itemCount"])
+        self.assertEqual(1346, report["itemCount"])
         self.assertEqual(
-            1005,
+            1346,
             report["itemsByAssignmentSource"]["phrase_pack_rubric"],
         )
         self.assertNotIn("legacy_explicit_band_assessed_not_rebanded", report["itemsByAssignmentSource"])

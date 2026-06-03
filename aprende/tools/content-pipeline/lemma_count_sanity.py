@@ -13,13 +13,13 @@ from collections import Counter
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 BUILD_SCRIPT = os.path.join(SCRIPT_DIR, "build_content_db.py")
 CURRENT_EXPECTED = {
-    "totalReviewableItems": 1737,
+    "totalReviewableItems": 2078,
     "singleWord": 732,
-    "phraseOrChunk": 1005,
+    "phraseOrChunk": 1346,
     "A1": 150,
     "A2": 556,
     "B1": 981,
-    "B2": 50,
+    "B2": 391,
     "C1": 0,
 }
 CEFR_BANDS = ("A1", "A2", "B1", "B2", "C1")
