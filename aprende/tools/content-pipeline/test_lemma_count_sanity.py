@@ -111,15 +111,15 @@ class LemmaCountSanityIntegrationTest(unittest.TestCase):
         self.sanity.assert_current(self.report)
         self.assertEqual(2329, self.report["reviewableItemSummary"]["totalReviewableItems"])
         self.assertEqual(2339, self.report["reviewableItemSummary"]["sourceContentRows"]["rawLexemes"])
-        self.assertEqual(9356, self.report["reviewableItemSummary"]["sourceContentRows"]["totalContentRows"])
+        self.assertEqual(10340, self.report["reviewableItemSummary"]["sourceContentRows"]["totalContentRows"])
         self.assertEqual(
             2329,
             self.report["reviewGate"]["reviewableItems"]["countedReviewedRows"],
         )
         self.assertEqual(3154, self.report["reviewableItemSummary"]["sourceContentRows"]["reviewedSentences"])
-        self.assertEqual(3863, self.report["reviewableItemSummary"]["sourceContentRows"]["reviewedAcceptedAnswers"])
-        self.assertEqual(4371, self.report["reviewableItemSummary"]["sourceContentRows"]["exerciseCount"])
-        self.assertEqual(8511, self.report["reviewGate"]["contentRows"]["rowsRequiringIndependentReviews"])
+        self.assertEqual(4847, self.report["reviewableItemSummary"]["sourceContentRows"]["reviewedAcceptedAnswers"])
+        self.assertEqual(5355, self.report["reviewableItemSummary"]["sourceContentRows"]["exerciseCount"])
+        self.assertEqual(9495, self.report["reviewGate"]["contentRows"]["rowsRequiringIndependentReviews"])
         self.assertEqual(0, self.report["reviewGate"]["contentRows"]["rowsWithInsufficientIndependentReviews"])
 
     def test_target_gate_reports_pilot_stop_phrase_gap_and_recalibrated_b1_count(self):
@@ -988,46 +988,48 @@ class SequencingValidationTest(unittest.TestCase):
         self.assertEqual(0, report["summary"]["emptyNodeCount"])
         self.assertEqual([], report["failures"]["emptyNodes"])
 
-    def test_a1_a2_english_to_spanish_typed_production_exists_only_for_a1_a2_targets(self):
+    def test_a1_a2_b1_english_to_spanish_typed_production_exists_only_for_allowed_targets(self):
         lexemes, _sentences, _accepted, _sentence_lexeme, _conj, exercises, _nodes = self.build.vetted_sample()
         lexeme_by_id = {row.data["lexemeId"]: row for row in lexemes}
+        allowed_bands = {"A1", "A2", "B1"}
 
         en_to_es = [
             exercise for exercise in exercises
             if exercise["direction"] == "EN_TO_ES" and exercise["type"] == "TYPED_TRANSLATION"
         ]
-        a1_a2_es_to_en_targets = {
+        allowed_es_to_en_targets = {
             exercise["targetItemId"]
             for exercise in exercises
             if exercise["direction"] == "ES_TO_EN"
             and exercise["type"] == "TYPED_TRANSLATION"
-            and lexeme_by_id[exercise["targetItemId"]].data["cefrBand"] in {"A1", "A2"}
+            and lexeme_by_id[exercise["targetItemId"]].data["cefrBand"] in allowed_bands
         }
-        a1_a2_en_to_es_targets = {
+        allowed_en_to_es_targets = {
             exercise["targetItemId"]
             for exercise in en_to_es
-            if lexeme_by_id[exercise["targetItemId"]].data["cefrBand"] in {"A1", "A2"}
+            if lexeme_by_id[exercise["targetItemId"]].data["cefrBand"] in allowed_bands
         }
         en_to_es_bands = {
             lexeme_by_id[exercise["targetItemId"]].data["cefrBand"] for exercise in en_to_es
         }
 
         self.assertGreater(len(en_to_es), 0)
-        self.assertEqual(a1_a2_es_to_en_targets, a1_a2_en_to_es_targets)
-        self.assertEqual({"A1", "A2"}, en_to_es_bands)
+        self.assertEqual(allowed_es_to_en_targets, allowed_en_to_es_targets)
+        self.assertEqual(allowed_bands, en_to_es_bands)
         self.assertEqual(
             set(),
             {
                 lexeme_by_id[exercise["targetItemId"]].data["cefrBand"]
                 for exercise in en_to_es
-                if lexeme_by_id[exercise["targetItemId"]].data["cefrBand"] not in {"A1", "A2"}
+                if lexeme_by_id[exercise["targetItemId"]].data["cefrBand"] not in allowed_bands
             },
         )
 
-    def test_a1_a2_english_to_spanish_answers_are_reviewed_spanish_and_grade_behaviorally(self):
+    def test_a1_a2_b1_english_to_spanish_answers_are_reviewed_spanish_and_grade_behaviorally(self):
         lexemes, sentences, accepted, sentence_lexeme, _conj, exercises, _nodes = staged_vetted_sample(self.build)
         lexeme_by_id = {row.data["lexemeId"]: row for row in lexemes}
         sentence_by_id = {row.data["sentenceId"]: row for row in sentences}
+        allowed_bands = {"A1", "A2", "B1"}
         sentence_ids_by_lexeme = {}
         for sentence_id, lexeme_id in sentence_lexeme:
             sentence_ids_by_lexeme.setdefault(lexeme_id, set()).add(sentence_id)
@@ -1042,13 +1044,13 @@ class SequencingValidationTest(unittest.TestCase):
         ]
         self.assertGreater(len(production), 0)
         self.assertEqual(
-            {"A1", "A2"},
+            allowed_bands,
             {lexeme_by_id[exercise["targetItemId"]].data["cefrBand"] for exercise in production},
         )
 
         for exercise in production:
             target = lexeme_by_id[exercise["targetItemId"]]
-            self.assertIn(target.data["cefrBand"], {"A1", "A2"})
+            self.assertIn(target.data["cefrBand"], allowed_bands)
             sentence = sentence_by_id[exercise["sentenceId"]]
             self.assertEqual(self.build.REVIEWED, sentence.vettingStatus)
             self.assertIn(exercise["sentenceId"], sentence_ids_by_lexeme[exercise["targetItemId"]])
@@ -1101,13 +1103,13 @@ class SequencingValidationTest(unittest.TestCase):
                 self.assertTrue(check_free_text(sentence.data["spanishText"].upper() + "!", [answer.data["answerText"]]))
             self.assertFalse(check_free_text("el perro bebe cafe", [row.data["answerText"] for row in answers]))
 
-    def test_a2_english_to_spanish_growth_only_adds_exercises_and_accepted_answers(self):
+    def test_b1_english_to_spanish_growth_only_adds_exercises_and_accepted_answers(self):
         original_append = self.build.append_english_to_spanish_production_for_bands
 
-        def append_a1_only(lexemes, sentences, accepted, sentence_lexeme, exercises, _allowed_bands):
-            original_append(lexemes, sentences, accepted, sentence_lexeme, exercises, {"A1"})
+        def append_a1_a2_only(lexemes, sentences, accepted, sentence_lexeme, exercises, _allowed_bands):
+            original_append(lexemes, sentences, accepted, sentence_lexeme, exercises, {"A1", "A2"})
 
-        with mock.patch.object(self.build, "append_english_to_spanish_production_for_bands", append_a1_only):
+        with mock.patch.object(self.build, "append_english_to_spanish_production_for_bands", append_a1_a2_only):
             before = self.build.vetted_sample()
         after = self.build.vetted_sample()
 
@@ -1125,26 +1127,27 @@ class SequencingValidationTest(unittest.TestCase):
             for exercise in before_exercises
             if exercise["direction"] == "EN_TO_ES" and exercise["type"] == "TYPED_TRANSLATION"
         }
-        expected_a2_pairs = {
+        expected_b1_pairs = {
             (exercise["sentenceId"], exercise["targetItemId"])
             for exercise in before_exercises
             if exercise["direction"] == "ES_TO_EN"
             and exercise["type"] == "TYPED_TRANSLATION"
             and exercise["targetItemType"] == "LEXEME"
-            and after_lexeme_by_id[exercise["targetItemId"]].data["cefrBand"] == "A2"
+            and after_lexeme_by_id[exercise["targetItemId"]].data["cefrBand"] == "B1"
             and (exercise["sentenceId"], exercise["targetItemId"]) not in before_en_to_es_pairs
         }
-        actual_a2_pairs = {
+        actual_b1_pairs = {
             (exercise["sentenceId"], exercise["targetItemId"])
             for exercise in after_exercises
             if exercise["direction"] == "EN_TO_ES"
             and exercise["type"] == "TYPED_TRANSLATION"
-            and after_lexeme_by_id[exercise["targetItemId"]].data["cefrBand"] == "A2"
+            and after_lexeme_by_id[exercise["targetItemId"]].data["cefrBand"] == "B1"
         }
 
-        self.assertEqual(expected_a2_pairs, actual_a2_pairs)
-        self.assertEqual(len(expected_a2_pairs), len(after_exercises) - len(before_exercises))
-        self.assertEqual(len(expected_a2_pairs), len(after_accepted) - len(before_accepted))
+        self.assertGreater(len(expected_b1_pairs), 0)
+        self.assertEqual(expected_b1_pairs, actual_b1_pairs)
+        self.assertEqual(len(expected_b1_pairs), len(after_exercises) - len(before_exercises))
+        self.assertEqual(len(expected_b1_pairs), len(after_accepted) - len(before_accepted))
 
     def test_english_to_spanish_derivation_uses_only_reviewed_sentence_variants(self):
         lexeme = self.build.Row(

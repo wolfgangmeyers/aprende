@@ -9619,7 +9619,7 @@ def vetted_sample():
     prune_unreviewed_phrase_content(lexemes, sentences, accepted, sentence_lexeme, exercises)
     nodes = apply_sequencing_plan(lexemes, exercises)
     append_english_to_spanish_production_for_bands(
-        lexemes, sentences, accepted, sentence_lexeme, exercises, {"A1", "A2"}
+        lexemes, sentences, accepted, sentence_lexeme, exercises, {"A1", "A2", "B1"}
     )
     return lexemes, sentences, accepted, sentence_lexeme, conj, exercises, nodes
 
