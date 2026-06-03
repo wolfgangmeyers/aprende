@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import importlib.util
 import copy
+import subprocess
 import tempfile
 import os
 import sys
@@ -41,23 +42,32 @@ class LemmaCountSanityIntegrationTest(unittest.TestCase):
 
     def test_current_assertion_uses_real_pipeline_report(self):
         self.sanity.assert_current(self.report)
-        self.assertEqual(950, self.report["reviewableItemSummary"]["totalReviewableItems"])
-        self.assertEqual(960, self.report["reviewableItemSummary"]["sourceContentRows"]["rawLexemes"])
-        self.assertEqual(4513, self.report["reviewableItemSummary"]["sourceContentRows"]["totalContentRows"])
+        self.assertEqual(1401, self.report["reviewableItemSummary"]["totalReviewableItems"])
+        self.assertEqual(1411, self.report["reviewableItemSummary"]["sourceContentRows"]["rawLexemes"])
+        self.assertEqual(5866, self.report["reviewableItemSummary"]["sourceContentRows"]["totalContentRows"])
         self.assertEqual(
-            950,
+            1401,
             self.report["reviewGate"]["reviewableItems"]["countedReviewedRows"],
         )
-        self.assertEqual(3668, self.report["reviewGate"]["contentRows"]["rowsRequiringIndependentReviews"])
+        self.assertEqual(5021, self.report["reviewGate"]["contentRows"]["rowsRequiringIndependentReviews"])
         self.assertEqual(0, self.report["reviewGate"]["contentRows"]["rowsWithInsufficientIndependentReviews"])
 
     def test_target_gate_reports_pilot_stop_phrase_gap_and_recalibrated_b1_count(self):
-        self.assertEqual(126, self.report["postRebandGate"]["a1A2PhraseOrChunkItems"])
+        self.assertEqual(577, self.report["postRebandGate"]["a1A2PhraseOrChunkItems"])
         self.assertEqual(648, self.report["postRebandGate"]["b1ReviewableItems"])
         failures = self.sanity.target_shape_failures(self.report)
-        self.assertIn("A1+A2 phrase/chunk total 126 < 1500", failures)
+        self.assertIn("A1+A2 phrase/chunk total 577 < 1500", failures)
         self.assertNotIn("B1 reviewable total 648 > 6000", failures)
-        self.assertIn("on-ramp total reviewables below floor", failures)
+        self.assertNotIn("on-ramp total reviewables below floor", failures)
+
+    def test_on_ramp_report_counts_reviewed_pack_items(self):
+        on_ramp = self.report["onRamp"]
+        self.assertEqual("bounded_a1_a2_on_ramp_batch", on_ramp["status"])
+        self.assertEqual(451, on_ramp["totalReviewables"])
+        self.assertEqual(451, on_ramp["phraseOrChunkItems"])
+        self.assertEqual(127, on_ramp["reviewablesByCefrBand"]["A1"])
+        self.assertEqual(324, on_ramp["reviewablesByCefrBand"]["A2"])
+        self.assertEqual(8, on_ramp["orderedBeginnerUnits"])
 
     def test_target_shape_still_reports_phrase_gap_when_under_floor(self):
         report = copy.deepcopy(self.report)
@@ -257,6 +267,54 @@ class LemmaCountSanityIntegrationTest(unittest.TestCase):
         ok, notes = build.local_authenticity_review(row, {})
         self.assertFalse(ok)
         self.assertIn("template filler", notes)
+
+    def test_cli_rejects_unvetted_content_fixture(self):
+        with tempfile.NamedTemporaryFile(suffix=".db") as out:
+            result = subprocess.run(
+                [sys.executable, BUILD_SCRIPT, "--out", out.name, "--inject-unvetted"],
+                text=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                check=False,
+            )
+        self.assertEqual(2, result.returncode)
+        self.assertIn("CONTENT VETTING GATE FAILED", result.stderr)
+        self.assertIn("UNVETTED", result.stderr)
+
+    def test_cli_rejects_single_review_ai_draft_fixture(self):
+        with tempfile.NamedTemporaryFile(suffix=".db") as out:
+            result = subprocess.run(
+                [sys.executable, BUILD_SCRIPT, "--out", out.name, "--inject-ai-draft-single-review"],
+                text=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                check=False,
+            )
+        self.assertEqual(2, result.returncode)
+        self.assertIn("CONTENT VETTING GATE FAILED", result.stderr)
+        self.assertIn("lacks required independent automatic approvals", result.stderr)
+
+    def test_cli_malformed_exercise_fixture_fails_coverage_gate(self):
+        with tempfile.NamedTemporaryFile(suffix=".db") as out, tempfile.NamedTemporaryFile(suffix=".json") as snapshot:
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    BUILD_SCRIPT,
+                    "--out",
+                    out.name,
+                    "--inject-malformed-exercise",
+                    "--fail-on-coverage-gaps",
+                    "--baseline-snapshot",
+                    snapshot.name,
+                ],
+                text=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                check=False,
+            )
+        self.assertEqual(4, result.returncode)
+        self.assertIn("COVERAGE BUDGET FAILED", result.stderr)
+        self.assertIn("viajar is not learner-ready", result.stderr)
 
     def test_built_content_has_no_shippable_blocklist_or_filler_hits(self):
         build = self.sanity.load_build_module()
@@ -663,11 +721,11 @@ class PhraseCefrRubricIntegrationTest(unittest.TestCase):
         )
 
         self.assertEqual(phrase_or_chunk_count, report["itemCount"])
-        self.assertEqual(218, report["helperAssignedItemCount"])
+        self.assertEqual(669, report["helperAssignedItemCount"])
         self.assertEqual(0, report["legacyExplicitBandAssessedItemCount"])
-        self.assertEqual(218, report["itemCount"])
+        self.assertEqual(669, report["itemCount"])
         self.assertEqual(
-            218,
+            669,
             report["itemsByAssignmentSource"]["phrase_pack_rubric"],
         )
         self.assertNotIn("legacy_explicit_band_assessed_not_rebanded", report["itemsByAssignmentSource"])

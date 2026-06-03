@@ -13,11 +13,11 @@ from collections import Counter
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 BUILD_SCRIPT = os.path.join(SCRIPT_DIR, "build_content_db.py")
 CURRENT_EXPECTED = {
-    "totalReviewableItems": 950,
+    "totalReviewableItems": 1401,
     "singleWord": 732,
-    "phraseOrChunk": 218,
-    "A1": 23,
-    "A2": 229,
+    "phraseOrChunk": 669,
+    "A1": 150,
+    "A2": 553,
     "B1": 648,
     "B2": 50,
     "C1": 0,
@@ -147,6 +147,14 @@ def zero_cefr_counts():
     return {cefr_band: 0 for cefr_band in CEFR_BANDS}
 
 
+def on_ramp_lexeme_ids(build) -> set[int]:
+    return {
+        item["lexemeId"]
+        for _domain, pack in build.ON_RAMP_DOMAIN_PACKS
+        for item in pack
+    }
+
+
 def build_sanity_report():
     build = load_build_module()
     lexemes, sentences, accepted, sentence_lexeme, _conj, exercises, _nodes = build.vetted_sample()
@@ -170,6 +178,10 @@ def build_sanity_report():
     noun_phrase_by_cefr = with_cefr_bands(count_by(noun_phrases, lambda row: row["cefrBand"]))
     a1_a2_phrase_or_chunk = phrase_by_cefr["A1"] + phrase_by_cefr["A2"]
     learner_ready_lexeme_ids = {entry["lexemeId"] for entry in learner_ready}
+    on_ramp_ids = on_ramp_lexeme_ids(build)
+    on_ramp_ready = [row for row in learner_ready if row["lexemeId"] in on_ramp_ids]
+    on_ramp_phrase_or_chunk = [row for row in on_ramp_ready if has_word_boundary(row["lemma"])]
+    on_ramp_cefr_distribution = with_cefr_bands(count_by(on_ramp_ready, lambda row: row["cefrBand"]))
 
     return {
         "reviewableItemSummary": {
@@ -201,11 +213,11 @@ def build_sanity_report():
             "reviewableItemsByPos": count_by(learner_ready, lambda row: row["pos"]),
         },
         "onRamp": {
-            "status": "placeholder_until_phase_4_and_phase_5",
-            "totalReviewables": 0,
-            "phraseOrChunkItems": 0,
-            "reviewablesByCefrBand": zero_cefr_counts(),
-            "orderedBeginnerUnits": 0,
+            "status": "bounded_a1_a2_on_ramp_batch",
+            "totalReviewables": len(on_ramp_ready),
+            "phraseOrChunkItems": len(on_ramp_phrase_or_chunk),
+            "reviewablesByCefrBand": on_ramp_cefr_distribution,
+            "orderedBeginnerUnits": len(build.ON_RAMP_DOMAIN_PACKS),
             "floors": {
                 "totalReviewables": TARGET_SHAPE["minimumOnRampReviewables"],
                 "phraseOrChunkItems": TARGET_SHAPE["minimumOnRampPhraseOrChunk"],
