@@ -1,0 +1,481 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 2,
+    "identityHash": "72f6d1e949753572e6d711448bd39c5c",
+    "entities": [
+      {
+        "tableName": "lexeme",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`lexemeId` INTEGER NOT NULL, `lemma` TEXT NOT NULL, `pos` TEXT NOT NULL, `gender` TEXT, `englishGloss` TEXT NOT NULL, `frequencyRank` INTEGER NOT NULL, `cefrBand` TEXT NOT NULL, `difficultyPrior` REAL NOT NULL, `source` TEXT NOT NULL, `sourceId` TEXT NOT NULL, `license` TEXT NOT NULL, `vettingStatus` TEXT NOT NULL, `reviewedBy` TEXT, `reviewedAt` INTEGER, PRIMARY KEY(`lexemeId`))",
+        "fields": [
+          {
+            "fieldPath": "lexemeId",
+            "columnName": "lexemeId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lemma",
+            "columnName": "lemma",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "pos",
+            "columnName": "pos",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gender",
+            "columnName": "gender",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "englishGloss",
+            "columnName": "englishGloss",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "frequencyRank",
+            "columnName": "frequencyRank",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "cefrBand",
+            "columnName": "cefrBand",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "difficultyPrior",
+            "columnName": "difficultyPrior",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "source",
+            "columnName": "source",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sourceId",
+            "columnName": "sourceId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "license",
+            "columnName": "license",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "vettingStatus",
+            "columnName": "vettingStatus",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "reviewedBy",
+            "columnName": "reviewedBy",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "reviewedAt",
+            "columnName": "reviewedAt",
+            "affinity": "INTEGER",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "lexemeId"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "sentence",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`sentenceId` INTEGER NOT NULL, `spanishText` TEXT NOT NULL, `englishText` TEXT NOT NULL, `source` TEXT NOT NULL, `sourceId` TEXT NOT NULL, `license` TEXT NOT NULL, `vettingStatus` TEXT NOT NULL, `reviewedBy` TEXT, `reviewedAt` INTEGER, PRIMARY KEY(`sentenceId`))",
+        "fields": [
+          {
+            "fieldPath": "sentenceId",
+            "columnName": "sentenceId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "spanishText",
+            "columnName": "spanishText",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "englishText",
+            "columnName": "englishText",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "source",
+            "columnName": "source",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sourceId",
+            "columnName": "sourceId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "license",
+            "columnName": "license",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "vettingStatus",
+            "columnName": "vettingStatus",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "reviewedBy",
+            "columnName": "reviewedBy",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "reviewedAt",
+            "columnName": "reviewedAt",
+            "affinity": "INTEGER",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "sentenceId"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "ftsVersion": "FTS4",
+        "ftsOptions": {
+          "tokenizer": "simple",
+          "tokenizerArgs": [],
+          "contentTable": "sentence",
+          "languageIdColumnName": "",
+          "matchInfo": "FTS4",
+          "notIndexedColumns": [],
+          "prefixSizes": [],
+          "preferredOrder": "ASC"
+        },
+        "contentSyncTriggers": [
+          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_sentence_fts_BEFORE_UPDATE BEFORE UPDATE ON `sentence` BEGIN DELETE FROM `sentence_fts` WHERE `docid`=OLD.`rowid`; END",
+          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_sentence_fts_BEFORE_DELETE BEFORE DELETE ON `sentence` BEGIN DELETE FROM `sentence_fts` WHERE `docid`=OLD.`rowid`; END",
+          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_sentence_fts_AFTER_UPDATE AFTER UPDATE ON `sentence` BEGIN INSERT INTO `sentence_fts`(`docid`, `spanishText`, `englishText`) VALUES (NEW.`rowid`, NEW.`spanishText`, NEW.`englishText`); END",
+          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_sentence_fts_AFTER_INSERT AFTER INSERT ON `sentence` BEGIN INSERT INTO `sentence_fts`(`docid`, `spanishText`, `englishText`) VALUES (NEW.`rowid`, NEW.`spanishText`, NEW.`englishText`); END"
+        ],
+        "tableName": "sentence_fts",
+        "createSql": "CREATE VIRTUAL TABLE IF NOT EXISTS `${TABLE_NAME}` USING FTS4(`spanishText` TEXT NOT NULL, `englishText` TEXT NOT NULL, content=`sentence`)",
+        "fields": [
+          {
+            "fieldPath": "spanishText",
+            "columnName": "spanishText",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "englishText",
+            "columnName": "englishText",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": []
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "accepted_answer",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`acceptedAnswerId` INTEGER NOT NULL, `sentenceId` INTEGER NOT NULL, `direction` TEXT NOT NULL, `answerText` TEXT NOT NULL, `source` TEXT NOT NULL, `sourceId` TEXT NOT NULL, `license` TEXT NOT NULL, `vettingStatus` TEXT NOT NULL, `reviewedBy` TEXT, `reviewedAt` INTEGER, PRIMARY KEY(`acceptedAnswerId`))",
+        "fields": [
+          {
+            "fieldPath": "acceptedAnswerId",
+            "columnName": "acceptedAnswerId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sentenceId",
+            "columnName": "sentenceId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "direction",
+            "columnName": "direction",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "answerText",
+            "columnName": "answerText",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "source",
+            "columnName": "source",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sourceId",
+            "columnName": "sourceId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "license",
+            "columnName": "license",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "vettingStatus",
+            "columnName": "vettingStatus",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "reviewedBy",
+            "columnName": "reviewedBy",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "reviewedAt",
+            "columnName": "reviewedAt",
+            "affinity": "INTEGER",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "acceptedAnswerId"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "sentence_lexeme",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`sentenceId` INTEGER NOT NULL, `lexemeId` INTEGER NOT NULL, PRIMARY KEY(`sentenceId`, `lexemeId`))",
+        "fields": [
+          {
+            "fieldPath": "sentenceId",
+            "columnName": "sentenceId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lexemeId",
+            "columnName": "lexemeId",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "sentenceId",
+            "lexemeId"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "conjugation_lemma_map",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`surfaceForm` TEXT NOT NULL, `lemmaLexemeId` INTEGER NOT NULL, `source` TEXT NOT NULL, `license` TEXT NOT NULL, PRIMARY KEY(`surfaceForm`))",
+        "fields": [
+          {
+            "fieldPath": "surfaceForm",
+            "columnName": "surfaceForm",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lemmaLexemeId",
+            "columnName": "lemmaLexemeId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "source",
+            "columnName": "source",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "license",
+            "columnName": "license",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "surfaceForm"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "exercise",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`exerciseId` INTEGER NOT NULL, `nodeId` INTEGER NOT NULL, `sentenceId` INTEGER NOT NULL, `type` TEXT NOT NULL, `direction` TEXT NOT NULL, `targetItemId` INTEGER NOT NULL, `targetItemType` TEXT NOT NULL, `promptHint` TEXT, PRIMARY KEY(`exerciseId`))",
+        "fields": [
+          {
+            "fieldPath": "exerciseId",
+            "columnName": "exerciseId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nodeId",
+            "columnName": "nodeId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sentenceId",
+            "columnName": "sentenceId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "type",
+            "columnName": "type",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "direction",
+            "columnName": "direction",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "targetItemId",
+            "columnName": "targetItemId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "targetItemType",
+            "columnName": "targetItemType",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "promptHint",
+            "columnName": "promptHint",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "exerciseId"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "node",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`nodeId` INTEGER NOT NULL, `title` TEXT NOT NULL, `displayOrder` INTEGER NOT NULL, PRIMARY KEY(`nodeId`))",
+        "fields": [
+          {
+            "fieldPath": "nodeId",
+            "columnName": "nodeId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "title",
+            "columnName": "title",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "displayOrder",
+            "columnName": "displayOrder",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "nodeId"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "content_attribution",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`source` TEXT NOT NULL, `license` TEXT NOT NULL, PRIMARY KEY(`source`, `license`))",
+        "fields": [
+          {
+            "fieldPath": "source",
+            "columnName": "source",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "license",
+            "columnName": "license",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "source",
+            "license"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '72f6d1e949753572e6d711448bd39c5c')"
+    ]
+  }
+}

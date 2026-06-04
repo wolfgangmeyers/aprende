@@ -14,8 +14,8 @@ import androidx.room.RoomDatabase
  * validated against it.
  *
  * The FTS entity [SentenceFts] is listed alongside its content entity [SentenceEntity];
- * Room emits the external-content `CREATE VIRTUAL TABLE ... USING fts4(... content="sentence")`
- * that the asset mirrors.
+ * Room emits an external-content FTS schema with a backtick-quoted `sentence` content
+ * option, and the asset mirrors that exact schema.
  */
 @Database(
     entities = [

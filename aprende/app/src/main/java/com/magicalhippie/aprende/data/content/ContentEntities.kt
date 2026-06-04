@@ -69,7 +69,7 @@ data class SentenceEntity(
 // sentence_fts — FTS4 external-content index over `sentence` (SPEC §10.1).
 //
 // `@Fts4(contentEntity = SentenceEntity::class)` makes Room declare the virtual table as
-//   CREATE VIRTUAL TABLE sentence_fts USING fts4(spanishText, englishText, content="sentence")
+//   CREATE VIRTUAL TABLE sentence_fts USING fts4(spanishText, englishText, content=`sentence`)
 // which is exactly the DDL the pipeline writes. Room owns the implicit `rowid` for FTS
 // tables — do NOT add a @PrimaryKey here (a conflicting PK would change the generated
 // schema and break asset validation). The pipeline back-fills the index with

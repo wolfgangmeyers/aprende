@@ -150,7 +150,7 @@ SCHEMA_DDL = [
     # FTS over sentences for word/sentence search (SPEC §10.1). Room declares this as an
     # @Fts4(contentEntity = Sentence) entity; the asset mirrors that external-content layout.
     """CREATE VIRTUAL TABLE sentence_fts USING fts4(
-        spanishText, englishText, content="sentence"
+        spanishText, englishText, content=`sentence`
     )""",
 ]
 

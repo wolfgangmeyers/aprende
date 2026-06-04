@@ -3,9 +3,11 @@ from __future__ import annotations
 
 import importlib.util
 import copy
+import json
 import subprocess
 import tempfile
 import os
+import sqlite3
 import sys
 import unittest
 from unittest import mock
@@ -15,6 +17,15 @@ import unicodedata
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 SANITY_SCRIPT = os.path.join(SCRIPT_DIR, "lemma_count_sanity.py")
 BUILD_SCRIPT = os.path.join(SCRIPT_DIR, "build_content_db.py")
+CONTENT_DATABASE_SCHEMA = os.path.join(
+    SCRIPT_DIR,
+    "..",
+    "..",
+    "app",
+    "schemas",
+    "com.magicalhippie.aprende.data.content.ContentDatabase",
+    "2.json",
+)
 
 
 def load_sanity_module():
@@ -121,6 +132,32 @@ class LemmaCountSanityIntegrationTest(unittest.TestCase):
         self.assertEqual(5748, self.report["reviewableItemSummary"]["sourceContentRows"]["exerciseCount"])
         self.assertEqual(9888, self.report["reviewGate"]["contentRows"]["rowsRequiringIndependentReviews"])
         self.assertEqual(0, self.report["reviewGate"]["contentRows"]["rowsWithInsufficientIndependentReviews"])
+
+    def test_generated_sentence_fts_schema_matches_room_content_option(self):
+        build = self.sanity.load_build_module()
+        with sqlite3.connect(":memory:") as conn:
+            for statement in build.SCHEMA_DDL:
+                conn.execute(statement)
+            create_sql = conn.execute(
+                "SELECT sql FROM sqlite_master WHERE type = 'table' AND name = 'sentence_fts'"
+            ).fetchone()[0]
+
+        self.assertIn("content=`sentence`", create_sql)
+        self.assertNotIn('content="sentence"', create_sql)
+
+        with open(CONTENT_DATABASE_SCHEMA, encoding="utf-8") as schema_file:
+            room_schema = json.load(schema_file)
+        room_fts = next(
+            entity
+            for entity in room_schema["database"]["entities"]
+            if entity["tableName"] == "sentence_fts"
+        )
+        self.assertEqual(
+            ["spanishText", "englishText"],
+            [field["columnName"] for field in room_fts["fields"]],
+        )
+        self.assertIn("content=`sentence`", room_fts["createSql"])
+        self.assertNotIn('content="sentence"', room_fts["createSql"])
 
     def test_target_gate_reports_pilot_stop_phrase_gap_and_recalibrated_b1_count(self):
         self.assertEqual(580, self.report["postRebandGate"]["a1A2PhraseOrChunkItems"])
