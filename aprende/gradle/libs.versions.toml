@@ -8,6 +8,7 @@
 agp = "8.7.3"
 kotlin = "2.1.0"
 ksp = "2.1.0-1.0.29"
+desugarJdkLibs = "2.1.5"
 
 # AndroidX / Jetpack
 coreKtx = "1.15.0"
@@ -38,6 +39,7 @@ espressoCore = "3.6.1"
 [libraries]
 # --- Core ---
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+desugar-jdk-libs = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "desugarJdkLibs" }
 
 # --- Compose (versions come from the BOM) ---
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }

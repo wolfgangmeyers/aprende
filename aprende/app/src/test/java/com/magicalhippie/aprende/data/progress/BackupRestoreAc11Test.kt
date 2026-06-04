@@ -39,6 +39,7 @@ class BackupRestoreAc11Test {
         ).allowMainThreadQueries().build()
 
     private fun repoFor(db: ProgressDatabase) = ProgressRepositoryImpl(
+        db = db,
         srsItemDao = db.srsItemDao(),
         mistakeDao = db.mistakeDao(),
         dailyActivityDao = db.dailyActivityDao(),

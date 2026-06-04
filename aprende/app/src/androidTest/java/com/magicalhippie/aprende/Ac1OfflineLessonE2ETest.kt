@@ -93,6 +93,7 @@ class Ac1OfflineLessonE2ETest {
             attributionDao = contentDb.attributionDao(),
         )
         val progress: ProgressRepository = ProgressRepositoryImpl(
+            db = progressDb,
             srsItemDao = progressDb.srsItemDao(),
             mistakeDao = progressDb.mistakeDao(),
             dailyActivityDao = progressDb.dailyActivityDao(),

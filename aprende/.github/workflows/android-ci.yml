@@ -5,13 +5,6 @@ on:
     branches: ["**"]
   pull_request:
 
-# NOTE: The binary gradle/wrapper/gradle-wrapper.jar (and the gradlew/gradlew.bat
-# scripts) are intentionally NOT committed to this scaffold (no binary blobs).
-# The "Generate Gradle wrapper" step below materializes gradlew + the jar using
-# the `gradle` that setup-gradle puts on PATH, so subsequent `./gradlew` works.
-# (Alternatively, run `gradle wrapper --gradle-version 8.11.1` once locally in a
-# JDK/Gradle env and commit gradlew/gradlew.bat/gradle-wrapper.jar.)
-
 jobs:
   unit-tests:
     name: JVM unit tests (Robolectric + Turbine)
@@ -31,11 +24,6 @@ jobs:
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
-
-      # setup-gradle puts `gradle` on PATH; generate the wrapper script + jar
-      # so the pinned ./gradlew (Gradle 8.11.1, per gradle-wrapper.properties) exists.
-      - name: Generate Gradle wrapper
-        run: gradle wrapper --gradle-version 8.11.1
 
       - name: Run debug unit tests
         run: ./gradlew testDebugUnitTest --stacktrace
@@ -81,8 +69,6 @@ jobs:
           java-version: "17"
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
-      - name: Generate Gradle wrapper
-        run: gradle wrapper --gradle-version 8.11.1
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
