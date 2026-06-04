@@ -10,8 +10,4 @@
     <include domain="database" path="progress.db-wal" />
     <include domain="database" path="progress.db-shm" />
     <include domain="file" path="datastore/" />
-
-    <exclude domain="database" path="content.db" />
-    <exclude domain="database" path="content.db-wal" />
-    <exclude domain="database" path="content.db-shm" />
 </full-backup-content>
