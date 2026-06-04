@@ -50,4 +50,20 @@ class GenerateLessonUseCaseTest {
         val plan = GenerateLessonUseCase(content, FakeProgressRepository()).generate(node, targetLength = 2)
         assertEquals(2, plan.size)
     }
+
+    @Test
+    fun `multiple choice is included when available past the target length cap`() = runTest {
+        val cappedPool = listOf(
+            exercise(id = 10, targetItemId = 1, type = "TYPED_TRANSLATION"),
+            exercise(id = 20, targetItemId = 2, type = "TYPED_TRANSLATION"),
+            exercise(id = 30, targetItemId = 3, type = "MULTIPLE_CHOICE"),
+        )
+        val plan = GenerateLessonUseCase(
+            FakeContentRepository(exercisesByNode = mapOf(node to cappedPool)),
+            FakeProgressRepository(),
+        ).generate(node, targetLength = 2)
+
+        assertEquals(2, plan.size)
+        assertEquals(listOf(10L, 30L), plan.exercises.map { it.exerciseId })
+    }
 }

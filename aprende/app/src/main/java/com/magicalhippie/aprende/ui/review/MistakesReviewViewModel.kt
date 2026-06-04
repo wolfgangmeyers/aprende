@@ -11,6 +11,7 @@ import com.magicalhippie.aprende.domain.review.MistakesReviewSession
 import com.magicalhippie.aprende.domain.review.MistakesReviewSessionFactory
 import com.magicalhippie.aprende.ui.lesson.ExerciseKind
 import com.magicalhippie.aprende.ui.lesson.Feedback
+import com.magicalhippie.aprende.ui.lesson.parseMultipleChoiceSpec
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -34,6 +35,7 @@ data class MistakesReviewUiState(
     val selectedTiles: List<String> = emptyList(),
     val choices: List<String> = emptyList(),
     val selectedChoice: Int = -1,
+    val correctChoiceIndex: Int = -1,
     val feedback: Feedback = Feedback.NONE,
     val correctAnswer: String = "",
     /** How many mistakes have been cleared so far (drives the completion summary, AC7). */
@@ -112,7 +114,7 @@ class MistakesReviewViewModel @Inject constructor(
                 )
                 ExerciseKind.MULTIPLE_CHOICE -> grader.gradeChoice(
                     selectedIndex = state.selectedChoice,
-                    correctIndex = state.choices.indexOf(accepted.firstOrNull() ?: ""),
+                    correctIndex = state.correctChoiceIndex,
                 )
             }
             // Authoritative sink: updates SRS + clears/re-queues the mistake (AC7).
@@ -152,8 +154,22 @@ class MistakesReviewViewModel @Inject constructor(
         val sentence = content.sentenceText(exercise.sentenceId)
         val prompt = promptFor(sentence, exercise.direction, exercise.promptHint)
         val target = accepted.firstOrNull() ?: ""
+        val multipleChoiceSpec = if (kind == ExerciseKind.MULTIPLE_CHOICE) {
+            parseMultipleChoiceSpec(exercise.promptHint)
+        } else {
+            null
+        }
         val tiles = if (kind == ExerciseKind.WORD_BANK) tokenize(target).shuffled() else emptyList()
-        val choices = if (kind == ExerciseKind.MULTIPLE_CHOICE) buildChoices(target, accepted) else emptyList()
+        val choices = if (kind == ExerciseKind.MULTIPLE_CHOICE) {
+            multipleChoiceSpec?.choices ?: buildChoices(target, accepted)
+        } else {
+            emptyList()
+        }
+        val correctChoiceIndex = if (kind == ExerciseKind.MULTIPLE_CHOICE) {
+            multipleChoiceSpec?.correctIndex ?: choices.indexOf(target)
+        } else {
+            -1
+        }
 
         _uiState.value = MistakesReviewUiState(
             loading = false,
@@ -163,6 +179,7 @@ class MistakesReviewViewModel @Inject constructor(
             instruction = instructionFor(kind, exercise.direction),
             kind = kind,
             choices = choices,
+            correctChoiceIndex = correctChoiceIndex,
             wordBankTiles = tiles,
             feedback = Feedback.NONE,
             clearedCount = session.clearedCount,

@@ -41,7 +41,7 @@
     "learnerReadyLexemes": 2329,
     "reviewedSentences": 3154,
     "reviewedAcceptedAnswers": 5491,
-    "exerciseCount": 5999,
+    "exerciseCount": 6075,
     "missingA1A2GapCount": 3333
   },
   "counts": {
@@ -86,9 +86,10 @@
       "REVIEWED": 10984
     },
     "exerciseTargetsByType": {
-      "LEXEME": 5999
+      "LEXEME": 6075
     },
     "exerciseTypes": {
+      "MULTIPLE_CHOICE": 76,
       "TYPED_TRANSLATION": 5239,
       "WORD_BANK": 760
     }

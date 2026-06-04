@@ -97,6 +97,46 @@ class LessonViewModelSavedStateTest {
             assertEquals(Feedback.CORRECT, vm.uiState.value.feedback)
         }
 
+    @Test
+    fun `multiple choice renders metadata options and grades by correct index`() =
+        runTest(testDispatcher) {
+            val handle = SavedStateHandle(mapOf(Routes.ARG_NODE_ID to 1L))
+            val vm = newViewModel(
+                handle,
+                exercises = listOf(
+                    exercise(id = 1, targetItemId = 1, type = "MULTIPLE_CHOICE").copy(
+                        sentenceId = 1,
+                        promptHint = """{"multipleChoice":{"choices":["we're going home","i have a dog","i want water","i have the water"],"correctIndex":1}}""",
+                    ),
+                ),
+                acceptedAnswers = mapOf((1L to "ES_TO_EN") to listOf("i have a dog")),
+                sentences = mapOf(1L to SentenceText(1, "Tengo un perro.", "I have a dog.")),
+            )
+            runCurrent()
+
+            assertEquals("Tengo un perro.", vm.uiState.value.prompt)
+            assertEquals(ExerciseKind.MULTIPLE_CHOICE, vm.uiState.value.kind)
+            assertEquals(
+                listOf("we're going home", "i have a dog", "i want water", "i have the water"),
+                vm.uiState.value.choices,
+            )
+            assertEquals(1, vm.uiState.value.correctChoiceIndex)
+
+            vm.onChoiceSelected(0)
+            vm.submit()
+            runCurrent()
+
+            assertEquals(Feedback.INCORRECT, vm.uiState.value.feedback)
+
+            vm.onContinue()
+            runCurrent()
+            vm.onChoiceSelected(1)
+            vm.submit()
+            runCurrent()
+
+            assertEquals(Feedback.CORRECT, vm.uiState.value.feedback)
+        }
+
     private fun newViewModel(
         handle: SavedStateHandle,
         exercises: List<com.magicalhippie.aprende.domain.model.Exercise> = listOf(

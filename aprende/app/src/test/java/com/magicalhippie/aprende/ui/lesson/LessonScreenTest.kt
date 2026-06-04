@@ -82,6 +82,33 @@ class LessonScreenTest {
     }
 
     @Test
+    fun multipleChoice_rendersOptions_andSelectionCallback() {
+        var selected = -1
+        composeRule.setContent {
+            AprendeTheme {
+                LessonContent(
+                    state = LessonUiState(
+                        loading = false,
+                        hearts = 5,
+                        prompt = "Tengo un perro.",
+                        instruction = "Choose the correct translation",
+                        kind = ExerciseKind.MULTIPLE_CHOICE,
+                        choices = listOf("we're going home", "i have a dog", "i want water", "i have the water"),
+                    ),
+                    onChoiceSelected = { selected = it },
+                )
+            }
+        }
+
+        composeRule.onNodeWithText("Tengo un perro.").assertIsDisplayed()
+        composeRule.onNodeWithText("we're going home").assertIsDisplayed()
+        composeRule.onNodeWithText("i have a dog").assertIsDisplayed()
+
+        composeRule.onNodeWithText("i have a dog").performClick()
+        assertEquals(1, selected)
+    }
+
+    @Test
     fun completionState_showsXpAndStreak() {
         var finished = false
         composeRule.setContent {

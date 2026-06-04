@@ -8013,6 +8013,216 @@ def append_a1_english_to_spanish_production(lexemes, sentences, accepted, senten
     )
 
 
+def multiple_choice_prompt_hint(choices: list[str], correct_index: int) -> str:
+    return json.dumps(
+        {"multipleChoice": {"choices": choices, "correctIndex": correct_index}},
+        ensure_ascii=False,
+        separators=(",", ":"),
+    )
+
+
+def normalize_multiple_choice_text(text: str) -> str:
+    return normalize_answer(text).replace("'", "")
+
+
+def multiple_choice_form_key(text: str) -> tuple[bool, bool]:
+    normalized = normalize_multiple_choice_text(text)
+    is_question = normalized.startswith(("do ", "does ", "did ", "can ", "could ", "is ", "are ", "am ", "what ", "where ", "when ", "why ", "how ", "who ", "which "))
+    is_negative = any(f" {marker} " in f" {normalized} " for marker in ("no", "not", "dont", "doesnt", "didnt", "cant", "cannot", "isnt", "arent"))
+    return is_question, is_negative
+
+
+def multiple_choice_ambiguous(text: str) -> bool:
+    normalized = normalize_multiple_choice_text(text)
+    tokens = normalized.split()
+    if not tokens:
+        return True
+    ambiguous_tokens = {
+        "he", "she", "it", "they", "you", "your", "yours", "his", "her", "hers",
+        "their", "theirs", "formal", "informal",
+    }
+    if ambiguous_tokens.intersection(tokens):
+        return True
+    ambiguous_phrases = (
+        " is ", " are ", " am ", " its ", " theyre ", " im ", " youre ", " were ",
+        " my ", " mine ",
+    )
+    padded = f" {normalized} "
+    return any(phrase in padded for phrase in ambiguous_phrases)
+
+
+def multiple_choice_near_equivalent(left: str, right: str) -> bool:
+    left_norm = normalize_multiple_choice_text(left)
+    right_norm = normalize_multiple_choice_text(right)
+    if left_norm == right_norm:
+        return True
+    replacements = (
+        (" i am ", " im "),
+        (" you are ", " youre "),
+        (" he is ", " hes "),
+        (" she is ", " shes "),
+        (" it is ", " its "),
+        (" they are ", " theyre "),
+        (" we are ", " were "),
+        (" do not ", " dont "),
+        (" does not ", " doesnt "),
+        (" did not ", " didnt "),
+        (" can not ", " cannot "),
+        (" cannot ", " cant "),
+    )
+
+    def canonical(value: str) -> str:
+        padded = f" {value} "
+        for source, replacement in replacements:
+            padded = padded.replace(source, replacement)
+        return re.sub(r"\s+", " ", padded).strip()
+
+    left_canon = canonical(left_norm)
+    right_canon = canonical(right_norm)
+    if left_canon == right_canon:
+        return True
+    left_tokens = set(left_canon.split())
+    right_tokens = set(right_canon.split())
+    if not left_tokens or not right_tokens:
+        return True
+    overlap = len(left_tokens & right_tokens) / min(len(left_tokens), len(right_tokens))
+    return overlap >= 0.80
+
+
+def multiple_choice_distractor_allowed(correct: str, distractor: str) -> bool:
+    correct_norm = normalize_multiple_choice_text(correct)
+    distractor_norm = normalize_multiple_choice_text(distractor)
+    if not correct_norm or not distractor_norm or correct_norm == distractor_norm:
+        return False
+    if multiple_choice_near_equivalent(correct, distractor):
+        return False
+    if multiple_choice_ambiguous(correct) or multiple_choice_ambiguous(distractor):
+        return False
+    correct_is_question, correct_is_negative = multiple_choice_form_key(correct)
+    distractor_is_question, distractor_is_negative = multiple_choice_form_key(distractor)
+    if correct_is_negative != distractor_is_negative:
+        return False
+    correct_len = len(correct_norm.split())
+    distractor_len = len(distractor_norm.split())
+    if correct_is_question != distractor_is_question and min(correct_len, distractor_len) <= 3:
+        return False
+    return abs(correct_len - distractor_len) <= 4
+
+
+def multiple_choice_source_has_publishable_provenance(row: Row) -> bool:
+    return bool(row.source and row.license)
+
+
+def permute_multiple_choice_choices(exercise_id: int, choices: list[str]) -> tuple[list[str], int]:
+    correct = choices[0]
+    keyed = sorted(
+        enumerate(choices),
+        key=lambda item: hashlib.sha256(f"a1-mc:{exercise_id}:{item[0]}:{item[1]}".encode("utf-8")).hexdigest(),
+    )
+    permuted = [choice for _index, choice in keyed]
+    return permuted, permuted.index(correct)
+
+
+def append_a1_multiple_choice_exercises(lexemes, sentences, accepted, sentence_lexeme, exercises) -> None:
+    lexeme_by_id = {row.data["lexemeId"]: row for row in lexemes}
+    sentence_by_id = {row.data["sentenceId"]: row for row in sentences}
+    sentence_ids_by_lexeme: dict[int, set[int]] = {}
+    for sentence_id, lexeme_id in sentence_lexeme:
+        sentence_ids_by_lexeme.setdefault(lexeme_id, set()).add(sentence_id)
+
+    accepted_by_sentence_direction: dict[tuple[int, str], list[Row]] = {}
+    for row in accepted:
+        accepted_by_sentence_direction.setdefault(
+            (row.data["sentenceId"], row.data["direction"]),
+            [],
+        ).append(row)
+
+    existing_mc_pairs = {
+        (exercise["sentenceId"], exercise["targetItemId"])
+        for exercise in exercises
+        if exercise["type"] == "MULTIPLE_CHOICE"
+    }
+    source_exercises = [
+        exercise for exercise in exercises
+        if exercise["type"] == "TYPED_TRANSLATION"
+        and exercise["direction"] == "ES_TO_EN"
+        and exercise["targetItemType"] == "LEXEME"
+        and (exercise["sentenceId"], exercise["targetItemId"]) not in existing_mc_pairs
+    ]
+    source_exercises.sort(key=lambda row: row["exerciseId"])
+    candidate_pool: list[dict] = []
+    for exercise in source_exercises:
+        target = lexeme_by_id.get(exercise["targetItemId"])
+        sentence = sentence_by_id.get(exercise["sentenceId"])
+        answers = accepted_by_sentence_direction.get((exercise["sentenceId"], "ES_TO_EN"), [])
+        if (
+            target is None
+            or sentence is None
+            or target.data["cefrBand"] != "A1"
+            or not multiple_choice_source_has_publishable_provenance(target)
+            or not multiple_choice_source_has_publishable_provenance(sentence)
+            or exercise["sentenceId"] not in sentence_ids_by_lexeme.get(exercise["targetItemId"], set())
+        ):
+            continue
+        reviewed_answers = [answer for answer in answers if multiple_choice_source_has_publishable_provenance(answer)]
+        if not reviewed_answers:
+            continue
+        answer_text = reviewed_answers[0].data["answerText"]
+        if multiple_choice_ambiguous(answer_text):
+            continue
+        candidate_pool.append({
+            "exercise": exercise,
+            "target": target,
+            "sentence": sentence,
+            "answer": answer_text,
+            "answerNorm": normalize_multiple_choice_text(answer_text),
+            "answerVariants": {normalize_multiple_choice_text(answer.data["answerText"]) for answer in reviewed_answers},
+        })
+
+    next_exercise_id = max((exercise["exerciseId"] for exercise in exercises), default=0) + 1
+    for candidate in candidate_pool:
+        correct = candidate["answer"]
+        distractors: list[str] = []
+        used_norms = set(candidate["answerVariants"])
+        for other in candidate_pool:
+            if other is candidate:
+                continue
+            if other["exercise"]["targetItemId"] == candidate["exercise"]["targetItemId"]:
+                continue
+            if other["exercise"]["sentenceId"] == candidate["exercise"]["sentenceId"]:
+                continue
+            if other["sentence"].data["spanishText"] == candidate["sentence"].data["spanishText"]:
+                continue
+            if other["sentence"].data["englishText"] == candidate["sentence"].data["englishText"]:
+                continue
+            if other["answerNorm"] in used_norms:
+                continue
+            if not multiple_choice_distractor_allowed(correct, other["answer"]):
+                continue
+            distractors.append(other["answer"])
+            used_norms.add(other["answerNorm"])
+            if len(distractors) == 3:
+                break
+        if len(distractors) != 3:
+            continue
+
+        choices, correct_index = permute_multiple_choice_choices(
+            candidate["exercise"]["exerciseId"],
+            [correct, *distractors],
+        )
+        exercises.append({
+            "exerciseId": next_exercise_id,
+            "nodeId": candidate["exercise"]["nodeId"],
+            "sentenceId": candidate["exercise"]["sentenceId"],
+            "type": "MULTIPLE_CHOICE",
+            "direction": "ES_TO_EN",
+            "targetItemId": candidate["exercise"]["targetItemId"],
+            "targetItemType": candidate["exercise"]["targetItemType"],
+            "promptHint": multiple_choice_prompt_hint(choices, correct_index),
+        })
+        next_exercise_id += 1
+
+
 def append_ai_accelerated_pack(pack, pack_slug: str, exercise_id: int,
                                lexemes, sentences, accepted, sentence_lexeme, exercises,
                                lexeme_source: str = "wiktionary",
@@ -9622,6 +9832,7 @@ def vetted_sample():
     append_english_to_spanish_production_for_bands(
         lexemes, sentences, accepted, sentence_lexeme, exercises, {"A1", "A2", "B1", "B2", "C1"}
     )
+    append_a1_multiple_choice_exercises(lexemes, sentences, accepted, sentence_lexeme, exercises)
     return lexemes, sentences, accepted, sentence_lexeme, conj, exercises, nodes
 
 

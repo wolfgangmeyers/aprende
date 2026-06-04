@@ -26,7 +26,11 @@ class GenerateLessonUseCase @Inject constructor(
             val seen = progress.getSrsItem(ex.targetItemId, ItemType.valueOf(ex.targetItemType)) != null
             (if (seen) reviewOnes else newOnes).add(ex)
         }
-        val ordered = interleave(newOnes, reviewOnes, targetLength)
+        val ordered = includeMultipleChoiceIfAvailable(
+            ordered = interleave(newOnes, reviewOnes, targetLength),
+            pool = pool,
+            cap = targetLength,
+        )
         val newIds = newOnes.mapTo(HashSet()) { it.exerciseId }
         return LessonPlan(
             exercises = ordered,
@@ -49,6 +53,14 @@ class GenerateLessonUseCase @Inject constructor(
             }
         }
         return result
+    }
+
+    private fun includeMultipleChoiceIfAvailable(ordered: List<Exercise>, pool: List<Exercise>, cap: Int): List<Exercise> {
+        if (ordered.any { it.type == "MULTIPLE_CHOICE" }) return ordered
+        val multipleChoice = pool.firstOrNull { it.type == "MULTIPLE_CHOICE" } ?: return ordered
+        if (ordered.size < cap) return ordered + multipleChoice
+        if (ordered.isEmpty()) return listOf(multipleChoice)
+        return ordered.dropLast(1) + multipleChoice
     }
 
     companion object {

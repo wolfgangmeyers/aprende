@@ -99,6 +99,10 @@ def check_free_text(input_text: str, accepted: list[str]) -> bool:
     return normalize_free_text(input_text) in {normalize_free_text(answer) for answer in accepted}
 
 
+def check_choice(selected_index: int, correct_index: int) -> bool:
+    return selected_index == correct_index
+
+
 def staged_vetted_sample(build):
     lexemes, sentences, accepted, sentence_lexeme, conj, exercises, nodes = build.vetted_sample()
     failures = build.stage_auto_check(lexemes, sentences, accepted)
@@ -129,7 +133,7 @@ class LemmaCountSanityIntegrationTest(unittest.TestCase):
         )
         self.assertEqual(3154, self.report["reviewableItemSummary"]["sourceContentRows"]["reviewedSentences"])
         self.assertEqual(5491, self.report["reviewableItemSummary"]["sourceContentRows"]["reviewedAcceptedAnswers"])
-        self.assertEqual(5999, self.report["reviewableItemSummary"]["sourceContentRows"]["exerciseCount"])
+        self.assertEqual(6075, self.report["reviewableItemSummary"]["sourceContentRows"]["exerciseCount"])
         self.assertEqual(10139, self.report["reviewGate"]["contentRows"]["rowsRequiringIndependentReviews"])
         self.assertEqual(0, self.report["reviewGate"]["contentRows"]["rowsWithInsufficientIndependentReviews"])
 
@@ -1186,6 +1190,124 @@ class SequencingValidationTest(unittest.TestCase):
         self.assertEqual(expected_c1_pairs, actual_c1_pairs)
         self.assertEqual(len(expected_c1_pairs), len(after_exercises) - len(before_exercises))
         self.assertEqual(len(expected_c1_pairs), len(after_accepted) - len(before_accepted))
+
+    def test_a1_multiple_choice_exercises_are_a1_only_with_reviewed_same_band_distractors(self):
+        lexemes, sentences, accepted, sentence_lexeme, _conj, exercises, _nodes = staged_vetted_sample(self.build)
+        lexeme_by_id = {row.data["lexemeId"]: row for row in lexemes}
+        sentence_by_id = {row.data["sentenceId"]: row for row in sentences}
+        sentence_ids_by_lexeme = {}
+        for sentence_id, lexeme_id in sentence_lexeme:
+            sentence_ids_by_lexeme.setdefault(lexeme_id, set()).add(sentence_id)
+        accepted_by_sentence_direction = {}
+        reviewed_a1_answers_by_text = {}
+        for row in accepted:
+            key = (row.data["sentenceId"], row.data["direction"])
+            accepted_by_sentence_direction.setdefault(key, []).append(row)
+        for exercise in exercises:
+            target = lexeme_by_id.get(exercise["targetItemId"])
+            if (
+                target is None
+                or target.data["cefrBand"] != "A1"
+                or exercise["targetItemType"] != "LEXEME"
+                or exercise["direction"] != "ES_TO_EN"
+                or exercise["type"] != "TYPED_TRANSLATION"
+            ):
+                continue
+            for answer in accepted_by_sentence_direction.get((exercise["sentenceId"], "ES_TO_EN"), []):
+                if answer.vettingStatus == self.build.REVIEWED:
+                    reviewed_a1_answers_by_text.setdefault(answer.data["answerText"], set()).add(exercise["targetItemId"])
+
+        multiple_choice = [exercise for exercise in exercises if exercise["type"] == "MULTIPLE_CHOICE"]
+        self.assertGreater(len(multiple_choice), 0)
+        self.assertEqual(
+            {"A1"},
+            {lexeme_by_id[exercise["targetItemId"]].data["cefrBand"] for exercise in multiple_choice},
+        )
+        correct_indices = []
+
+        for exercise in multiple_choice:
+            target = lexeme_by_id[exercise["targetItemId"]]
+            sentence = sentence_by_id[exercise["sentenceId"]]
+            self.assertEqual(self.build.REVIEWED, target.vettingStatus)
+            self.assertEqual(self.build.REVIEWED, sentence.vettingStatus)
+            self.assertIn(exercise["sentenceId"], sentence_ids_by_lexeme[exercise["targetItemId"]])
+            prompt_answers = [
+                row for row in accepted_by_sentence_direction[(exercise["sentenceId"], "ES_TO_EN")]
+                if row.vettingStatus == self.build.REVIEWED
+            ]
+            prompt_answer_texts = {row.data["answerText"] for row in prompt_answers}
+            spec = json.loads(exercise["promptHint"])["multipleChoice"]
+            choices = spec["choices"]
+            correct_index = spec["correctIndex"]
+            correct_indices.append(correct_index)
+            self.assertEqual(4, len(choices))
+            self.assertEqual(4, len(set(choices)))
+            self.assertIn(choices[correct_index], prompt_answer_texts)
+            self.assertTrue(check_choice(correct_index, correct_index))
+            self.assertFalse(self.build.multiple_choice_ambiguous(choices[correct_index]))
+
+            for index, distractor in enumerate(choices):
+                if index == correct_index:
+                    continue
+                self.assertFalse(check_choice(index, correct_index))
+                self.assertNotIn(distractor, prompt_answer_texts)
+                self.assertIn(distractor, reviewed_a1_answers_by_text)
+                self.assertNotIn(exercise["targetItemId"], reviewed_a1_answers_by_text[distractor])
+                self.assertTrue(self.build.multiple_choice_distractor_allowed(choices[correct_index], distractor))
+                self.assertFalse(self.build.multiple_choice_near_equivalent(choices[correct_index], distractor))
+
+        self.assertGreater(len(set(correct_indices)), 1)
+        self.assertIn(0, set(correct_indices))
+        self.assertTrue({1, 2, 3}.intersection(correct_indices))
+
+    def test_a1_multiple_choice_does_not_add_content_bearing_rows_or_change_production_exercises(self):
+        original_append = self.build.append_a1_multiple_choice_exercises
+
+        with mock.patch.object(self.build, "append_a1_multiple_choice_exercises", lambda *args: None):
+            before = self.build.vetted_sample()
+        after = self.build.vetted_sample()
+
+        before_lexemes, before_sentences, before_accepted, before_sentence_lexeme, _before_conj, before_exercises, before_nodes = before
+        after_lexemes, after_sentences, after_accepted, after_sentence_lexeme, _after_conj, after_exercises, after_nodes = after
+
+        self.assertIsNotNone(original_append)
+        self.assertEqual(len(before_lexemes), len(after_lexemes))
+        self.assertEqual(len(before_sentences), len(after_sentences))
+        self.assertEqual(len(before_accepted), len(after_accepted))
+        self.assertEqual(len(before_sentence_lexeme), len(after_sentence_lexeme))
+        self.assertEqual(_before_conj, _after_conj)
+        self.assertEqual(before_nodes, after_nodes)
+
+        before_production = {
+            tuple(sorted(exercise.items()))
+            for exercise in before_exercises
+            if exercise["type"] in {"TYPED_TRANSLATION", "WORD_BANK"}
+        }
+        after_production = {
+            tuple(sorted(exercise.items()))
+            for exercise in after_exercises
+            if exercise["type"] in {"TYPED_TRANSLATION", "WORD_BANK"}
+        }
+        added_mc = [exercise for exercise in after_exercises if exercise["type"] == "MULTIPLE_CHOICE"]
+        self.assertEqual(before_production, after_production)
+        self.assertEqual(len(added_mc), len(after_exercises) - len(before_exercises))
+
+    def test_multiple_choice_ambiguity_gate_rejects_normalized_contractions(self):
+        ambiguous = [
+            "I'm a student",
+            "It's okay",
+            "They're family",
+            "You're welcome",
+            "We're going home",
+        ]
+
+        for text in ambiguous:
+            self.assertTrue(
+                self.build.multiple_choice_ambiguous(text),
+                f"{text!r} should be rejected as ambiguous after normalization",
+            )
+
+        self.assertFalse(self.build.multiple_choice_distractor_allowed("i have a dog", "it's okay"))
 
     def test_c1_derived_english_to_spanish_evidence_is_item_specific(self):
         lexemes, sentences, accepted, _sentence_lexeme, _conj, exercises, _nodes = staged_vetted_sample(self.build)

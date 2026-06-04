@@ -52,6 +52,7 @@ data class LessonUiState(
     val selectedTiles: List<String> = emptyList(),
     val choices: List<String> = emptyList(),
     val selectedChoice: Int = -1,
+    val correctChoiceIndex: Int = -1,
     // --- feedback + completion ---
     val feedback: Feedback = Feedback.NONE,
     val correctAnswer: String = "",
@@ -171,7 +172,7 @@ class LessonViewModel @Inject constructor(
                 )
                 ExerciseKind.MULTIPLE_CHOICE -> grader.gradeChoice(
                     selectedIndex = state.selectedChoice,
-                    correctIndex = state.choices.indexOf(accepted.firstOrNull() ?: ""),
+                    correctIndex = state.correctChoiceIndex,
                 )
             }
 
@@ -247,9 +248,23 @@ class LessonViewModel @Inject constructor(
         val sentence = content.sentenceText(exercise.sentenceId)
         val prompt = promptFor(sentence, exercise.direction, exercise.promptHint)
         val target = accepted.firstOrNull() ?: ""
+        val multipleChoiceSpec = if (kind == ExerciseKind.MULTIPLE_CHOICE) {
+            parseMultipleChoiceSpec(exercise.promptHint)
+        } else {
+            null
+        }
 
         val tiles = if (kind == ExerciseKind.WORD_BANK) tokenize(target).shuffled() else emptyList()
-        val choices = if (kind == ExerciseKind.MULTIPLE_CHOICE) buildChoices(target, accepted) else emptyList()
+        val choices = if (kind == ExerciseKind.MULTIPLE_CHOICE) {
+            multipleChoiceSpec?.choices ?: buildChoices(target, accepted)
+        } else {
+            emptyList()
+        }
+        val correctChoiceIndex = if (kind == ExerciseKind.MULTIPLE_CHOICE) {
+            multipleChoiceSpec?.correctIndex ?: choices.indexOf(target)
+        } else {
+            -1
+        }
 
         _uiState.value = LessonUiState(
             loading = false,
@@ -264,6 +279,7 @@ class LessonViewModel @Inject constructor(
             selectedTiles = restoredTiles(),
             choices = choices,
             selectedChoice = savedState.get<Int>(KEY_CHOICE) ?: -1,
+            correctChoiceIndex = correctChoiceIndex,
             feedback = Feedback.NONE,
             correctAnswer = "",
             mistakesMade = session.mistakesMade,
