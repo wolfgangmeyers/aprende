@@ -7861,7 +7861,8 @@ def register_derived_answer_review_evidence(row: Row, sentence: Row, target: Row
         ),
         AUTO_REVIEW_DIALECT: (
             f"Derived answer {row.data['answerText']!r} for sentence {sentence.data['sentenceId']} "
-            f"keeps the reviewed neutral Latin American wording {spanish!r} for {target_band} target {target_label}."
+            f"keeps the reviewed neutral Latin American wording {spanish!r} for {target_band} target "
+            f"{target_label} with English prompt {english!r}."
         ),
     }
     key = review_evidence_key("accepted_answer", row)
@@ -9619,7 +9620,7 @@ def vetted_sample():
     prune_unreviewed_phrase_content(lexemes, sentences, accepted, sentence_lexeme, exercises)
     nodes = apply_sequencing_plan(lexemes, exercises)
     append_english_to_spanish_production_for_bands(
-        lexemes, sentences, accepted, sentence_lexeme, exercises, {"A1", "A2", "B1", "B2"}
+        lexemes, sentences, accepted, sentence_lexeme, exercises, {"A1", "A2", "B1", "B2", "C1"}
     )
     return lexemes, sentences, accepted, sentence_lexeme, conj, exercises, nodes
 

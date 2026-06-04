@@ -40,8 +40,8 @@
     "rawLexemes": 2339,
     "learnerReadyLexemes": 2329,
     "reviewedSentences": 3154,
-    "reviewedAcceptedAnswers": 5240,
-    "exerciseCount": 5748,
+    "reviewedAcceptedAnswers": 5491,
+    "exerciseCount": 5999,
     "missingA1A2GapCount": 3333
   },
   "counts": {
@@ -73,23 +73,23 @@
     "contentRowsBySource": {
       "ai_draft": 6359,
       "authored": 2,
-      "derived_reviewed_sentence": 2083,
+      "derived_reviewed_sentence": 2334,
       "tatoeba": 201,
       "wiktionary": 2088
     },
     "contentRowsByLicense": {
       "CC-BY-2.0-FR": 233,
       "CC-BY-SA-3.0": 2088,
-      "proprietary": 8412
+      "proprietary": 8663
     },
     "contentRowsByVettingStatus": {
-      "REVIEWED": 10733
+      "REVIEWED": 10984
     },
     "exerciseTargetsByType": {
-      "LEXEME": 5748
+      "LEXEME": 5999
     },
     "exerciseTypes": {
-      "TYPED_TRANSLATION": 4988,
+      "TYPED_TRANSLATION": 5239,
       "WORD_BANK": 760
     }
   },
