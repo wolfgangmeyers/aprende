@@ -40,4 +40,8 @@ abstract class ContentDatabase : RoomDatabase() {
     abstract fun conjugationDao(): ConjugationDao
     abstract fun nodeDao(): NodeDao
     abstract fun attributionDao(): AttributionDao
+
+    companion object {
+        const val DATABASE_NAME = "content.db"
+    }
 }

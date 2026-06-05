@@ -12,12 +12,13 @@ import javax.inject.Singleton
 /**
  * Hilt bindings for the read-only content database (SPEC §10.1, D2).
  *
- * `content.db` is **read-only and replaceable**: on a content update we bump the
- * `@Database` version, ship a new bundled asset, and let `createFromAsset` + a
- * destructive rebuild swap it in. It never holds learner state, so
- * `fallbackToDestructiveMigration()` is the CORRECT policy HERE — and ONLY here. The
- * read-write `progress.db` (P1.1) must NEVER use destructive fallback (it would wipe SRS
- * state / streak / XP — exactly the D2 failure mode the two-DB split exists to prevent).
+ * `content.db` is **read-only and replaceable**: on a content update, the copied DB is
+ * refreshed from the bundled asset before Room opens it. Schema-version bumps still use
+ * `createFromAsset` + destructive rebuild, but same-schema content updates are covered by
+ * [ContentDatabaseRefresher]. It never holds learner state, so `fallbackToDestructiveMigration()`
+ * is the CORRECT policy HERE — and ONLY here. The read-write `progress.db` (P1.1) must NEVER use
+ * destructive fallback (it would wipe SRS state / streak / XP — exactly the D2 failure mode the
+ * two-DB split exists to prevent).
  */
 @Module
 @InstallIn(SingletonComponent::class)
@@ -28,11 +29,16 @@ object ContentDataModule {
     fun provideContentDatabase(
         @ApplicationContext context: Context,
     ): ContentDatabase =
-        Room.databaseBuilder(context, ContentDatabase::class.java, "content.db")
+        Room.databaseBuilder(
+            context,
+            ContentDatabase::class.java,
+            ContentDatabase.DATABASE_NAME,
+        )
+            .also { ContentDatabaseRefresher.refreshIfBundledAssetChanged(context) }
             // Pre-populate from the bundled asset shipped under assets/database/.
             .createFromAsset("database/content.db")
-            // Read-only/replaceable DB: a version bump ships a fresh asset and rebuilds
-            // from it. Safe ONLY because no learner state lives here (D2).
+            // Read-only/replaceable DB: schema-version changes rebuild from the fresh asset.
+            // Same-schema asset changes are handled above by ContentDatabaseRefresher.
             .fallbackToDestructiveMigration()
             .build()
 
