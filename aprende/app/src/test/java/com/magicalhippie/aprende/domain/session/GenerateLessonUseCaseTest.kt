@@ -52,6 +52,16 @@ class GenerateLessonUseCaseTest {
     }
 
     @Test
+    fun `replay from beginning preserves original node order even when first target was seen`() = runTest {
+        val progress = FakeProgressRepository()
+        progress.upsertSrsItem(seenItem(1))
+        val useCase = GenerateLessonUseCase(content, progress)
+
+        assertEquals(listOf(20L, 10L, 30L), useCase.generate(node).exercises.map { it.exerciseId })
+        assertEquals(listOf(10L, 20L, 30L), useCase.generateReplayFromBeginning(node).exercises.map { it.exerciseId })
+    }
+
+    @Test
     fun `cold start preserves generated scaffold-first early progression`() = runTest {
         val scaffolded = (1L..8L).map { index ->
             exercise(

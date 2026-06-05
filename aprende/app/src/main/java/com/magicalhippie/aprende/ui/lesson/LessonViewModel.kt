@@ -95,6 +95,7 @@ class LessonViewModel @Inject constructor(
     private val nodeId: Long = savedState.get<Long>(Routes.ARG_NODE_ID) ?: 1L
 
     private lateinit var plan: LessonPlan
+    private lateinit var replayPlan: LessonPlan
     private lateinit var session: LessonSession
     private val byId: MutableMap<Long, Exercise> = mutableMapOf()
 
@@ -107,8 +108,10 @@ class LessonViewModel @Inject constructor(
 
     private suspend fun start() {
         plan = generateLesson.generate(nodeId)
+        replayPlan = generateLesson.generateReplayFromBeginning(nodeId)
         byId.clear()
         plan.exercises.forEach { byId[it.exerciseId] = it }
+        replayPlan.exercises.forEach { byId[it.exerciseId] = it }
 
         // Restore (process death) or seed the durable progression queue.
         if (savedState.get<ArrayList<Long>>(KEY_QUEUE) == null) {
@@ -167,10 +170,10 @@ class LessonViewModel @Inject constructor(
 
     /** Restart this lesson from the first generated exercise without clearing persisted progress. */
     fun restart() {
-        if (!::plan.isInitialized) return
+        if (!::replayPlan.isInitialized) return
         viewModelScope.launch {
-            session = sessionFactory.create(plan)
-            setQueue(ArrayList(plan.exercises.map { it.exerciseId }))
+            session = sessionFactory.create(replayPlan)
+            setQueue(ArrayList(replayPlan.exercises.map { it.exerciseId }))
             clearInput()
             if (queue().isEmpty()) {
                 finish(awardOnFinish = false)

@@ -39,6 +39,14 @@ class GenerateLessonUseCase @Inject constructor(
         )
     }
 
+    suspend fun generateReplayFromBeginning(nodeId: Long, targetLength: Int = DEFAULT_TARGET_LENGTH): LessonPlan {
+        val ordered = content.exercisesForNode(nodeId).take(targetLength)
+        val newIds = ordered
+            .filter { progress.getSrsItem(it.targetItemId, ItemType.valueOf(it.targetItemType)) == null }
+            .mapTo(HashSet()) { it.exerciseId }
+        return LessonPlan(exercises = ordered, newExerciseIds = newIds)
+    }
+
     /** Interleave new and review (new-first) up to [cap], so new material is introduced early. */
     private fun interleave(new: List<Exercise>, review: List<Exercise>, cap: Int): List<Exercise> {
         val result = ArrayList<Exercise>(minOf(cap, new.size + review.size))

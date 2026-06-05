@@ -13,9 +13,12 @@ import com.magicalhippie.aprende.domain.gamification.StreakUseCase
 import com.magicalhippie.aprende.domain.grading.GradeAnswerUseCase
 import com.magicalhippie.aprende.domain.model.ItemType
 import com.magicalhippie.aprende.domain.model.SentenceText
+import com.magicalhippie.aprende.domain.model.SrsItem
+import com.magicalhippie.aprende.domain.model.SrsState
 import com.magicalhippie.aprende.domain.session.CompleteNodeUseCase
 import com.magicalhippie.aprende.domain.session.GenerateLessonUseCase
 import com.magicalhippie.aprende.domain.session.LessonSessionFactory
+import com.magicalhippie.aprende.domain.srs.SrsItemState
 import com.magicalhippie.aprende.domain.srs.Fsrs
 import com.magicalhippie.aprende.domain.srs.RecordAnswerUseCase
 import com.magicalhippie.aprende.domain.srs.ScheduleReviewUseCase
@@ -95,6 +98,27 @@ class LessonViewModelSavedStateTest {
             assertEquals("restart clears typed draft", "", vm.uiState.value.typedInput)
             assertEquals("restart clears selected multiple-choice answer", -1, vm.uiState.value.selectedChoice)
             assertEquals(false, vm.uiState.value.finished)
+        }
+
+    @Test
+    fun `restart replays from first original exercise when progress opens lesson later`() =
+        runTest(testDispatcher) {
+            val handle = SavedStateHandle(mapOf(Routes.ARG_NODE_ID to 1L))
+            val progress = FakeProgressRepository()
+            progress.upsertSrsItem(seenItem(1))
+            val vm = newViewModel(progress = progress, handle = handle)
+            runCurrent()
+
+            assertEquals("El agua está fría.", vm.uiState.value.prompt)
+
+            vm.restart()
+            runCurrent()
+
+            assertEquals("Tengo un perro.", vm.uiState.value.prompt)
+            vm.onTypedInputChange("i have a dog")
+            vm.submit(); runCurrent()
+            vm.onContinue(); runCurrent()
+            assertEquals("El agua está fría.", vm.uiState.value.prompt)
         }
 
     @Test
@@ -225,4 +249,14 @@ class LessonViewModelSavedStateTest {
             completeNode = CompleteNodeUseCase(progress, clock),
         )
     }
+
+    private fun seenItem(itemId: Long) = SrsItem(
+        itemId = itemId,
+        itemType = ItemType.LEXEME,
+        state = SrsItemState(5.0, 2.0, 0L, 1L),
+        lifecycle = SrsState.REVIEW,
+        timesSeen = 1,
+        timesCorrect = 1,
+        timesWrong = 0,
+    )
 }
