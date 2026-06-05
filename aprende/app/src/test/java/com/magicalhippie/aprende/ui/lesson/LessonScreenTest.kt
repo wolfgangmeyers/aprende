@@ -82,6 +82,29 @@ class LessonScreenTest {
     }
 
     @Test
+    fun lessonContent_restartButton_firesCallback() {
+        var restarted = false
+        composeRule.setContent {
+            AprendeTheme {
+                LessonContent(
+                    state = LessonUiState(
+                        loading = false,
+                        hearts = 5,
+                        prompt = "I have a dog.",
+                        instruction = "Choose the correct translation",
+                        kind = ExerciseKind.MULTIPLE_CHOICE,
+                        choices = listOf("Tengo un perro.", "Quiero agua."),
+                    ),
+                    onRestart = { restarted = true },
+                )
+            }
+        }
+
+        composeRule.onNodeWithText("Restart").performClick()
+        assertTrue(restarted)
+    }
+
+    @Test
     fun multipleChoice_rendersOptions_andSelectionCallback() {
         var selected = -1
         composeRule.setContent {
@@ -111,10 +134,12 @@ class LessonScreenTest {
     @Test
     fun completionState_showsXpAndStreak() {
         var finished = false
+        var restarted = false
         composeRule.setContent {
             AprendeTheme {
                 LessonContent(
                     state = LessonUiState(loading = false, finished = true, xpEarned = 10, streak = 1),
+                    onRestart = { restarted = true },
                     onFinished = { finished = true },
                 )
             }
@@ -122,6 +147,8 @@ class LessonScreenTest {
 
         composeRule.onNodeWithText("+10 XP").assertIsDisplayed()
         composeRule.onNodeWithText("🔥 Streak: 1").assertIsDisplayed()
+        composeRule.onNodeWithText("Practice again").performClick()
+        assertEquals(true, restarted)
         composeRule.onNodeWithText("Continue").performClick()
         assertEquals(true, finished)
     }

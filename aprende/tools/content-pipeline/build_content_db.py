@@ -8555,7 +8555,10 @@ def build_sequencing_plan(lexemes: list[Row]) -> dict:
     }
 
 
-def ensure_a1_intro_nodes_start_with_scaffold(
+A1_COLD_START_SCAFFOLD_COUNT = 8
+
+
+def ensure_a1_intro_nodes_start_with_scaffolds(
     exercises: list[dict],
     nodes: list[tuple[int, str, int]],
 ) -> None:
@@ -8572,22 +8575,22 @@ def ensure_a1_intro_nodes_start_with_scaffold(
         node_exercises = exercises_by_node.get(node_id, [])
         if not node_exercises:
             continue
-        first = min(node_exercises, key=lambda row: row["exerciseId"])
-        if first["direction"] != "ES_TO_EN" or first["type"] == "MULTIPLE_CHOICE":
-            continue
-        scaffold = next(
-            (
-                row for row in sorted(
-                    exercises_by_target.get(first["targetItemId"], []),
-                    key=lambda row: row["exerciseId"],
-                )
-                if row["type"] == "MULTIPLE_CHOICE" and row["direction"] == "EN_TO_ES"
-            ),
-            None,
-        )
-        if scaffold is not None:
-            scaffold["exerciseId"], first["exerciseId"] = first["exerciseId"], scaffold["exerciseId"]
-            scaffold["nodeId"] = node_id
+        for exercise in sorted(node_exercises, key=lambda row: row["exerciseId"])[:A1_COLD_START_SCAFFOLD_COUNT]:
+            if exercise["type"] == "MULTIPLE_CHOICE" and exercise["direction"] == "EN_TO_ES":
+                continue
+            scaffold = next(
+                (
+                    row for row in sorted(
+                        exercises_by_target.get(exercise["targetItemId"], []),
+                        key=lambda row: row["exerciseId"],
+                    )
+                    if row["type"] == "MULTIPLE_CHOICE" and row["direction"] == "EN_TO_ES"
+                ),
+                None,
+            )
+            if scaffold is not None:
+                scaffold["exerciseId"], exercise["exerciseId"] = exercise["exerciseId"], scaffold["exerciseId"]
+                scaffold["nodeId"] = node_id
 
 
 def apply_sequencing_plan(lexemes: list[Row], exercises: list[dict]) -> list[tuple[int, str, int]]:
@@ -9960,7 +9963,7 @@ def vetted_sample():
     )
     append_a1_multiple_choice_exercises(lexemes, sentences, accepted, sentence_lexeme, exercises)
     append_a1_english_prompt_multiple_choice_exercises(lexemes, sentences, accepted, sentence_lexeme, exercises)
-    ensure_a1_intro_nodes_start_with_scaffold(exercises, nodes)
+    ensure_a1_intro_nodes_start_with_scaffolds(exercises, nodes)
     return lexemes, sentences, accepted, sentence_lexeme, conj, exercises, nodes
 
 

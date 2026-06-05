@@ -130,4 +130,93 @@ class LessonNodeProgressTest {
         assertFalse("not finished after only the first exercise", vm.uiState.value.finished)
         assertNull("node_progress must NOT be written mid-lesson", progress.getNodeProgress(1))
     }
+
+    @Test
+    fun `restarting an in-progress lesson does NOT remove or complete node progress`() = runTest(testDispatcher) {
+        val clock = MutableClock()
+        val content = FakeContentRepository(
+            exercisesByNode = mapOf(
+                1L to listOf(
+                    exercise(id = 1, targetItemId = 1, type = "TYPED_TRANSLATION").copy(sentenceId = 1),
+                    exercise(id = 2, targetItemId = 2, type = "TYPED_TRANSLATION").copy(sentenceId = 2),
+                ),
+            ),
+            acceptedAnswers = mapOf(
+                (1L to "ES_TO_EN") to listOf("i have a dog"),
+                (2L to "ES_TO_EN") to listOf("the water is cold"),
+            ),
+            sentences = mapOf(
+                1L to SentenceText(1, "Tengo un perro.", "I have a dog."),
+                2L to SentenceText(2, "El agua está fría.", "The water is cold."),
+            ),
+        )
+        val progress = FakeProgressRepository()
+        val record = RecordAnswerUseCase(progress, ScheduleReviewUseCase(clock, Fsrs()))
+        val vm = LessonViewModel(
+            savedState = SavedStateHandle(mapOf(Routes.ARG_NODE_ID to 1L)),
+            generateLesson = GenerateLessonUseCase(content, progress),
+            sessionFactory = LessonSessionFactory(record, progress, clock),
+            content = content,
+            progress = progress,
+            grader = GradeAnswerUseCase(),
+            hearts = HeartsUseCase(progress, clock),
+            awardRewards = AwardLessonRewardsUseCase(progress, FakeSettingsRepository(), StreakUseCase(progress, clock), clock),
+            evaluateAchievements = EvaluateAchievementsUseCase(progress, clock),
+            completeNode = CompleteNodeUseCase(progress, clock),
+        )
+        runCurrent()
+
+        vm.onTypedInputChange("i have a dog")
+        vm.submit(); runCurrent()
+        vm.onContinue(); runCurrent()
+        assertEquals("El agua está fría.", vm.uiState.value.prompt)
+
+        vm.restart()
+        runCurrent()
+
+        assertEquals("Tengo un perro.", vm.uiState.value.prompt)
+        assertFalse("restart is a replay, not completion", vm.uiState.value.finished)
+        assertNull("restart must not write or clear node_progress", progress.getNodeProgress(1))
+    }
+
+    @Test
+    fun `restarting a completed lesson replays from the beginning and preserves node progress`() = runTest(testDispatcher) {
+        val clock = MutableClock()
+        val content = FakeContentRepository(
+            exercisesByNode = mapOf(
+                1L to listOf(exercise(id = 1, targetItemId = 1, type = "TYPED_TRANSLATION").copy(sentenceId = 1)),
+            ),
+            acceptedAnswers = mapOf((1L to "ES_TO_EN") to listOf("i have a dog")),
+            sentences = mapOf(1L to SentenceText(1, "Tengo un perro.", "I have a dog.")),
+        )
+        val progress = FakeProgressRepository()
+        val record = RecordAnswerUseCase(progress, ScheduleReviewUseCase(clock, Fsrs()))
+        val vm = LessonViewModel(
+            savedState = SavedStateHandle(mapOf(Routes.ARG_NODE_ID to 1L)),
+            generateLesson = GenerateLessonUseCase(content, progress),
+            sessionFactory = LessonSessionFactory(record, progress, clock),
+            content = content,
+            progress = progress,
+            grader = GradeAnswerUseCase(),
+            hearts = HeartsUseCase(progress, clock),
+            awardRewards = AwardLessonRewardsUseCase(progress, FakeSettingsRepository(), StreakUseCase(progress, clock), clock),
+            evaluateAchievements = EvaluateAchievementsUseCase(progress, clock),
+            completeNode = CompleteNodeUseCase(progress, clock),
+        )
+        runCurrent()
+
+        vm.onTypedInputChange("i have a dog")
+        vm.submit(); runCurrent()
+        vm.onContinue(); runCurrent()
+        assertTrue("lesson is complete before replay", vm.uiState.value.finished)
+        val completedProgress = progress.getNodeProgress(1)
+        assertNotNull("node_progress written on completion", completedProgress)
+
+        vm.restart()
+        runCurrent()
+
+        assertEquals("Tengo un perro.", vm.uiState.value.prompt)
+        assertFalse("completed replay returns to active lesson", vm.uiState.value.finished)
+        assertEquals("restart preserves completed node level", completedProgress, progress.getNodeProgress(1))
+    }
 }

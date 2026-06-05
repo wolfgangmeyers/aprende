@@ -1037,17 +1037,21 @@ class SequencingValidationTest(unittest.TestCase):
         _lexemes, sentences, _accepted, _sentence_lexeme, _conj, exercises, nodes = self.build.vetted_sample()
         sentence_by_id = {row.data["sentenceId"]: row for row in sentences}
         unit_1_1 = next(node_id for node_id, title, _order in nodes if title == "A1 Unit 1.1")
-        first = sorted(
+        early = sorted(
             [exercise for exercise in exercises if exercise["nodeId"] == unit_1_1],
             key=lambda exercise: exercise["exerciseId"],
-        )[0]
+        )[:self.build.A1_COLD_START_SCAFFOLD_COUNT]
 
-        self.assertFalse(unsupported_cold_start_exercise(first))
-        self.assertEqual("MULTIPLE_CHOICE", first["type"])
-        self.assertEqual("EN_TO_ES", first["direction"])
-        self.assertEqual("Hi, how are you?", sentence_by_id[first["sentenceId"]].data["englishText"])
+        self.assertEqual(self.build.A1_COLD_START_SCAFFOLD_COUNT, len(early))
+        self.assertEqual(
+            [],
+            [exercise for exercise in early if unsupported_cold_start_exercise(exercise)],
+        )
+        self.assertEqual({"MULTIPLE_CHOICE"}, {exercise["type"] for exercise in early})
+        self.assertEqual({"EN_TO_ES"}, {exercise["direction"] for exercise in early})
+        self.assertEqual("Hi, how are you?", sentence_by_id[early[0]["sentenceId"]].data["englishText"])
 
-    def test_audited_first_a1_intro_nodes_do_not_start_with_unsupported_spanish_to_english(self):
+    def test_audited_early_a1_intro_nodes_do_not_start_with_unsupported_spanish_to_english(self):
         _lexemes, _sentences, _accepted, _sentence_lexeme, _conj, exercises, nodes = self.build.vetted_sample()
         exercises_by_node = {}
         for exercise in exercises:
@@ -1057,19 +1061,19 @@ class SequencingValidationTest(unittest.TestCase):
         for node_id, title, _order in nodes:
             if not title.startswith("A1 ") or title.endswith("Review"):
                 continue
-            node_exercises = exercises_by_node.get(node_id, [])
-            first = sorted(
-                node_exercises,
+            early = sorted(
+                exercises_by_node.get(node_id, []),
                 key=lambda exercise: exercise["exerciseId"],
-            )[0] if node_exercises else None
-            if first is not None and unsupported_cold_start_exercise(first):
-                unsupported.append({
-                    "nodeId": node_id,
-                    "title": title,
-                    "exerciseId": first["exerciseId"],
-                    "type": first["type"],
-                    "direction": first["direction"],
-                })
+            )[:self.build.A1_COLD_START_SCAFFOLD_COUNT]
+            for exercise in early:
+                if unsupported_cold_start_exercise(exercise):
+                    unsupported.append({
+                        "nodeId": node_id,
+                        "title": title,
+                        "exerciseId": exercise["exerciseId"],
+                        "type": exercise["type"],
+                        "direction": exercise["direction"],
+                    })
 
         self.assertEqual([], unsupported)
 

@@ -107,7 +107,6 @@ class LessonViewModel @Inject constructor(
 
     private suspend fun start() {
         plan = generateLesson.generate(nodeId)
-        session = sessionFactory.create(plan)
         byId.clear()
         plan.exercises.forEach { byId[it.exerciseId] = it }
 
@@ -115,6 +114,7 @@ class LessonViewModel @Inject constructor(
         if (savedState.get<ArrayList<Long>>(KEY_QUEUE) == null) {
             savedState[KEY_QUEUE] = ArrayList(plan.exercises.map { it.exerciseId })
         }
+        session = sessionFactory.create(remainingPlan())
         if (queue().isEmpty()) {
             // Either an empty node, or restored after completion → show the done state.
             finish(awardOnFinish = false)
@@ -127,6 +127,14 @@ class LessonViewModel @Inject constructor(
     private fun queue(): ArrayList<Long> = savedState.get<ArrayList<Long>>(KEY_QUEUE) ?: ArrayList()
     private fun setQueue(q: ArrayList<Long>) { savedState[KEY_QUEUE] = q }
     private fun currentExercise(): Exercise? = queue().firstOrNull()?.let { byId[it] }
+    private fun remainingPlan(): LessonPlan {
+        val remaining = queue().mapNotNull { byId[it] }
+        val remainingIds = remaining.mapTo(HashSet()) { it.exerciseId }
+        return LessonPlan(
+            exercises = remaining,
+            newExerciseIds = plan.newExerciseIds.intersect(remainingIds),
+        )
+    }
 
     // ---- intents from the UI ----
     fun onTypedInputChange(value: String) {
@@ -156,6 +164,21 @@ class LessonViewModel @Inject constructor(
 
     /** Append the on-screen accent character to the typed answer (SPEC §5.4). */
     fun onAccentChar(ch: String) = onTypedInputChange(_uiState.value.typedInput + ch)
+
+    /** Restart this lesson from the first generated exercise without clearing persisted progress. */
+    fun restart() {
+        if (!::plan.isInitialized) return
+        viewModelScope.launch {
+            session = sessionFactory.create(plan)
+            setQueue(ArrayList(plan.exercises.map { it.exerciseId }))
+            clearInput()
+            if (queue().isEmpty()) {
+                finish(awardOnFinish = false)
+            } else {
+                renderCurrent()
+            }
+        }
+    }
 
     /** Grade and submit the CURRENT exercise. */
     fun submit() {

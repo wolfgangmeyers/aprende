@@ -2,11 +2,13 @@ package com.magicalhippie.aprende.ui.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
+import androidx.navigation.NavOptions
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import androidx.navigation.navOptions
 import com.magicalhippie.aprende.ui.about.AttributionScreen
 import com.magicalhippie.aprende.ui.home.HomeScreen
 import com.magicalhippie.aprende.ui.lesson.LessonScreen
@@ -52,7 +54,9 @@ fun AprendeNavHost(
     NavHost(navController = navController, startDestination = Routes.HOME) {
         composable(Routes.HOME) {
             HomeScreen(
-                onNodeClick = { nodeId -> navController.navigate(Routes.lesson(nodeId)) },
+                onNodeClick = { nodeId ->
+                    navController.navigate(Routes.lesson(nodeId), freshLessonNavOptions())
+                },
                 onReviewClick = { navController.navigate(Routes.REVIEW_HUB) },
                 onSettingsClick = { navController.navigate(Routes.SETTINGS) },
             )
@@ -92,4 +96,9 @@ fun AprendeNavHost(
         composable(Routes.BACKUP) { BackupScreen() }
         composable(Routes.ATTRIBUTION) { AttributionScreen() }
     }
+}
+
+internal fun freshLessonNavOptions(): NavOptions = navOptions {
+    popUpTo(Routes.HOME) { inclusive = false }
+    launchSingleTop = true
 }

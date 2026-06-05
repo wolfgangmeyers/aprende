@@ -11,6 +11,7 @@ import com.magicalhippie.aprende.domain.gamification.EvaluateAchievementsUseCase
 import com.magicalhippie.aprende.domain.gamification.HeartsUseCase
 import com.magicalhippie.aprende.domain.gamification.StreakUseCase
 import com.magicalhippie.aprende.domain.grading.GradeAnswerUseCase
+import com.magicalhippie.aprende.domain.model.ItemType
 import com.magicalhippie.aprende.domain.model.SentenceText
 import com.magicalhippie.aprende.domain.session.CompleteNodeUseCase
 import com.magicalhippie.aprende.domain.session.GenerateLessonUseCase
@@ -27,6 +28,7 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
 
@@ -70,6 +72,52 @@ class LessonViewModelSavedStateTest {
             assertEquals("restores in-progress input", "partial answ", vm2.uiState.value.typedInput)
             // It did NOT restart at the first exercise.
             assertEquals(false, vm2.uiState.value.prompt == firstPrompt)
+        }
+
+    @Test
+    fun `restart returns to first exercise and clears in-progress answer`() =
+        runTest(testDispatcher) {
+            val handle = SavedStateHandle(mapOf(Routes.ARG_NODE_ID to 1L))
+            val vm = newViewModel(handle)
+            runCurrent()
+            val firstPrompt = vm.uiState.value.prompt
+
+            vm.onTypedInputChange("i have a dog")
+            vm.submit(); runCurrent()
+            vm.onContinue(); runCurrent()
+            assertEquals("El agua está fría.", vm.uiState.value.prompt)
+            vm.onTypedInputChange("partial answ")
+
+            vm.restart()
+            runCurrent()
+
+            assertEquals("replay starts from the first generated item", firstPrompt, vm.uiState.value.prompt)
+            assertEquals("restart clears typed draft", "", vm.uiState.value.typedInput)
+            assertEquals("restart clears selected multiple-choice answer", -1, vm.uiState.value.selectedChoice)
+            assertEquals(false, vm.uiState.value.finished)
+        }
+
+    @Test
+    fun `restored ViewModel submits restored exercise to the domain session`() =
+        runTest(testDispatcher) {
+            val handle = SavedStateHandle(mapOf(Routes.ARG_NODE_ID to 1L))
+            val progress = FakeProgressRepository()
+
+            val vm1 = newViewModel(handle, progress = progress)
+            runCurrent()
+            vm1.onTypedInputChange("i have a dog")
+            vm1.submit(); runCurrent()
+            vm1.onContinue(); runCurrent()
+            assertEquals("El agua está fría.", vm1.uiState.value.prompt)
+
+            val vm2 = newViewModel(handle, progress = progress)
+            runCurrent()
+            vm2.onTypedInputChange("the water is cold")
+            vm2.submit(); runCurrent()
+
+            assertNotNull("first target was recorded before restore", progress.getSrsItem(1, ItemType.LEXEME))
+            assertNotNull("restored submit records the restored current target", progress.getSrsItem(2, ItemType.LEXEME))
+            assertEquals("restored submit records exactly the two answered targets", 2, progress.srsCount())
         }
 
     @Test
@@ -139,6 +187,7 @@ class LessonViewModelSavedStateTest {
 
     private fun newViewModel(
         handle: SavedStateHandle,
+        progress: FakeProgressRepository = FakeProgressRepository(),
         exercises: List<com.magicalhippie.aprende.domain.model.Exercise> = listOf(
             exercise(id = 1, targetItemId = 1, type = "TYPED_TRANSLATION").copy(sentenceId = 1),
             exercise(id = 2, targetItemId = 2, type = "TYPED_TRANSLATION").copy(sentenceId = 2),
@@ -158,7 +207,6 @@ class LessonViewModelSavedStateTest {
             acceptedAnswers = acceptedAnswers,
             sentences = sentences,
         )
-        val progress = FakeProgressRepository()
         val settings = FakeSettingsRepository()
         val schedule = ScheduleReviewUseCase(clock, Fsrs())
         val record = RecordAnswerUseCase(progress, schedule)

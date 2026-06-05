@@ -3,6 +3,7 @@ package com.magicalhippie.aprende.ui.lesson
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -42,6 +44,7 @@ fun LessonScreen(
         onChoiceSelected = viewModel::onChoiceSelected,
         onSubmit = viewModel::submit,
         onContinue = viewModel::onContinue,
+        onRestart = viewModel::restart,
         onFinished = onFinished,
     )
 }
@@ -57,12 +60,18 @@ fun LessonContent(
     onChoiceSelected: (Int) -> Unit = {},
     onSubmit: () -> Unit = {},
     onContinue: () -> Unit = {},
+    onRestart: () -> Unit = {},
     onFinished: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     when {
         state.loading -> Box(Modifier.fillMaxSize(), Alignment.Center) { CircularProgressIndicator() }
-        state.finished -> CompletionContent(state = state, onFinished = onFinished, modifier = modifier)
+        state.finished -> CompletionContent(
+            state = state,
+            onRestart = onRestart,
+            onFinished = onFinished,
+            modifier = modifier,
+        )
         else -> ExerciseContent(
             state = state,
             onTypedInputChange = onTypedInputChange,
@@ -72,6 +81,7 @@ fun LessonContent(
             onChoiceSelected = onChoiceSelected,
             onSubmit = onSubmit,
             onContinue = onContinue,
+            onRestart = onRestart,
             modifier = modifier,
         )
     }
@@ -87,6 +97,7 @@ private fun ExerciseContent(
     onChoiceSelected: (Int) -> Unit,
     onSubmit: () -> Unit,
     onContinue: () -> Unit,
+    onRestart: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -94,7 +105,14 @@ private fun ExerciseContent(
             .fillMaxSize()
             .padding(24.dp),
     ) {
-        Text("❤️ ${state.hearts}", style = MaterialTheme.typography.titleMedium)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text("❤️ ${state.hearts}", style = MaterialTheme.typography.titleMedium)
+            OutlinedButton(onClick = onRestart) { Text("Restart") }
+        }
         Spacer(Modifier.height(8.dp))
         Text(state.instruction, style = MaterialTheme.typography.titleMedium)
         Spacer(Modifier.height(16.dp))
@@ -136,6 +154,7 @@ private fun ExerciseContent(
 @Composable
 private fun CompletionContent(
     state: LessonUiState,
+    onRestart: () -> Unit,
     onFinished: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -151,7 +170,10 @@ private fun CompletionContent(
         Text("+${state.xpEarned} XP", style = MaterialTheme.typography.titleLarge)
         Text("🔥 Streak: ${state.streak}", style = MaterialTheme.typography.titleMedium)
         Spacer(Modifier.height(24.dp))
-        Button(onClick = onFinished) { Text("Continue") }
+        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            OutlinedButton(onClick = onRestart) { Text("Practice again") }
+            Button(onClick = onFinished) { Text("Continue") }
+        }
     }
 }
 

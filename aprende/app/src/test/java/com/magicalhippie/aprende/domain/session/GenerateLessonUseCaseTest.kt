@@ -52,23 +52,31 @@ class GenerateLessonUseCaseTest {
     }
 
     @Test
-    fun `cold start preserves generated scaffold-first content order`() = runTest {
-        val coldStartPool = listOf(
-            exercise(id = 10, targetItemId = 1, type = "MULTIPLE_CHOICE", direction = "EN_TO_ES"),
-            exercise(id = 20, targetItemId = 2, type = "TYPED_TRANSLATION", direction = "EN_TO_ES"),
-            exercise(id = 30, targetItemId = 3, type = "MULTIPLE_CHOICE", direction = "ES_TO_EN"),
-            exercise(id = 40, targetItemId = 4, type = "WORD_BANK", direction = "ES_TO_EN"),
-            exercise(id = 50, targetItemId = 5, type = "TYPED_TRANSLATION", direction = "ES_TO_EN"),
-        )
+    fun `cold start preserves generated scaffold-first early progression`() = runTest {
+        val scaffolded = (1L..8L).map { index ->
+            exercise(
+                id = index * 10,
+                targetItemId = index,
+                type = "MULTIPLE_CHOICE",
+                direction = "EN_TO_ES",
+            )
+        }
+        val typed = (9L..12L).map { index ->
+            exercise(
+                id = index * 10,
+                targetItemId = index,
+                type = "TYPED_TRANSLATION",
+                direction = "ES_TO_EN",
+            )
+        }
+        val coldStartPool = scaffolded + typed
         val plan = GenerateLessonUseCase(
             FakeContentRepository(exercisesByNode = mapOf(node to coldStartPool)),
             FakeProgressRepository(),
         ).generate(node)
 
-        assertEquals(
-            listOf(10L, 20L, 30L, 40L, 50L),
-            plan.exercises.map { it.exerciseId },
-        )
+        assertEquals(scaffolded.map { it.exerciseId }, plan.exercises.take(8).map { it.exerciseId })
+        assertTrue(plan.exercises.take(8).all { it.type == "MULTIPLE_CHOICE" && it.direction == "EN_TO_ES" })
     }
 
     @Test
