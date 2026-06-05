@@ -8160,7 +8160,7 @@ def append_a1_multiple_choice_exercises(lexemes, sentences, accepted, sentence_l
             or sentence is None
             or target.data["cefrBand"] != "A1"
             or not multiple_choice_source_has_publishable_provenance(target)
-            or not multiple_choice_source_has_publishable_provenance(sentence)
+            or not sentence_has_reviewed_pair_evidence(sentence)
             or exercise["sentenceId"] not in sentence_ids_by_lexeme.get(exercise["targetItemId"], set())
         ):
             continue
@@ -8216,6 +8216,97 @@ def append_a1_multiple_choice_exercises(lexemes, sentences, accepted, sentence_l
             "sentenceId": candidate["exercise"]["sentenceId"],
             "type": "MULTIPLE_CHOICE",
             "direction": "ES_TO_EN",
+            "targetItemId": candidate["exercise"]["targetItemId"],
+            "targetItemType": candidate["exercise"]["targetItemType"],
+            "promptHint": multiple_choice_prompt_hint(choices, correct_index),
+        })
+        next_exercise_id += 1
+
+
+def append_a1_english_prompt_multiple_choice_exercises(lexemes, sentences, accepted, sentence_lexeme, exercises) -> None:
+    lexeme_by_id = {row.data["lexemeId"]: row for row in lexemes}
+    sentence_by_id = {row.data["sentenceId"]: row for row in sentences}
+    sentence_ids_by_lexeme: dict[int, set[int]] = {}
+    for sentence_id, lexeme_id in sentence_lexeme:
+        sentence_ids_by_lexeme.setdefault(lexeme_id, set()).add(sentence_id)
+
+    existing_mc_pairs = {
+        (exercise["sentenceId"], exercise["targetItemId"], exercise["direction"])
+        for exercise in exercises
+        if exercise["type"] == "MULTIPLE_CHOICE"
+    }
+    source_exercises = [
+        exercise for exercise in exercises
+        if exercise["type"] == "TYPED_TRANSLATION"
+        and exercise["direction"] == "EN_TO_ES"
+        and exercise["targetItemType"] == "LEXEME"
+        and (exercise["sentenceId"], exercise["targetItemId"], "EN_TO_ES") not in existing_mc_pairs
+    ]
+    source_exercises.sort(key=lambda row: row["exerciseId"])
+    candidate_pool: list[dict] = []
+    for exercise in source_exercises:
+        target = lexeme_by_id.get(exercise["targetItemId"])
+        sentence = sentence_by_id.get(exercise["sentenceId"])
+        if (
+            target is None
+            or sentence is None
+            or target.data["cefrBand"] != "A1"
+            or not multiple_choice_source_has_publishable_provenance(target)
+            or not sentence_has_reviewed_pair_evidence(sentence)
+            or exercise["sentenceId"] not in sentence_ids_by_lexeme.get(exercise["targetItemId"], set())
+        ):
+            continue
+        answer_text = sentence.data["spanishText"]
+        if not answer_text:
+            continue
+        candidate_pool.append({
+            "exercise": exercise,
+            "target": target,
+            "sentence": sentence,
+            "answer": answer_text,
+            "answerNorm": normalize_spanish_answer(answer_text),
+        })
+
+    next_exercise_id = max((exercise["exerciseId"] for exercise in exercises), default=0) + 1
+    for candidate_index, candidate in enumerate(candidate_pool):
+        correct = candidate["answer"]
+        correct_norm = candidate["answerNorm"]
+        distractors: list[str] = []
+        used_norms = {correct_norm}
+        correct_len = len(correct_norm.split())
+        rotated_pool = candidate_pool[candidate_index + 1:] + candidate_pool[:candidate_index]
+        for other in rotated_pool:
+            if other is candidate:
+                continue
+            if other["exercise"]["targetItemId"] == candidate["exercise"]["targetItemId"]:
+                continue
+            if other["exercise"]["sentenceId"] == candidate["exercise"]["sentenceId"]:
+                continue
+            if other["sentence"].data["englishText"] == candidate["sentence"].data["englishText"]:
+                continue
+            if other["exercise"]["sentenceId"] in sentence_ids_by_lexeme.get(candidate["exercise"]["targetItemId"], set()):
+                continue
+            if other["answerNorm"] in used_norms:
+                continue
+            if abs(len(other["answerNorm"].split()) - correct_len) > 4:
+                continue
+            distractors.append(other["answer"])
+            used_norms.add(other["answerNorm"])
+            if len(distractors) == 3:
+                break
+        if len(distractors) != 3:
+            continue
+
+        choices, correct_index = permute_multiple_choice_choices(
+            candidate["exercise"]["exerciseId"],
+            [correct, *distractors],
+        )
+        exercises.append({
+            "exerciseId": next_exercise_id,
+            "nodeId": candidate["exercise"]["nodeId"],
+            "sentenceId": candidate["exercise"]["sentenceId"],
+            "type": "MULTIPLE_CHOICE",
+            "direction": "EN_TO_ES",
             "targetItemId": candidate["exercise"]["targetItemId"],
             "targetItemType": candidate["exercise"]["targetItemType"],
             "promptHint": multiple_choice_prompt_hint(choices, correct_index),
@@ -8462,6 +8553,41 @@ def build_sequencing_plan(lexemes: list[Row]) -> dict:
         "targetReviewNode": target_review_node,
         "unitMetadata": unit_metadata,
     }
+
+
+def ensure_a1_intro_nodes_start_with_scaffold(
+    exercises: list[dict],
+    nodes: list[tuple[int, str, int]],
+) -> None:
+    exercises_by_node: dict[int, list[dict]] = {}
+    exercises_by_target: dict[int, list[dict]] = {}
+    for exercise in exercises:
+        exercises_by_node.setdefault(exercise["nodeId"], []).append(exercise)
+        if exercise["targetItemType"] == "LEXEME":
+            exercises_by_target.setdefault(exercise["targetItemId"], []).append(exercise)
+
+    for node_id, title, _display_order in nodes:
+        if not title.startswith("A1 ") or title.endswith("Review"):
+            continue
+        node_exercises = exercises_by_node.get(node_id, [])
+        if not node_exercises:
+            continue
+        first = min(node_exercises, key=lambda row: row["exerciseId"])
+        if first["direction"] != "ES_TO_EN" or first["type"] == "MULTIPLE_CHOICE":
+            continue
+        scaffold = next(
+            (
+                row for row in sorted(
+                    exercises_by_target.get(first["targetItemId"], []),
+                    key=lambda row: row["exerciseId"],
+                )
+                if row["type"] == "MULTIPLE_CHOICE" and row["direction"] == "EN_TO_ES"
+            ),
+            None,
+        )
+        if scaffold is not None:
+            scaffold["exerciseId"], first["exerciseId"] = first["exerciseId"], scaffold["exerciseId"]
+            scaffold["nodeId"] = node_id
 
 
 def apply_sequencing_plan(lexemes: list[Row], exercises: list[dict]) -> list[tuple[int, str, int]]:
@@ -9833,6 +9959,8 @@ def vetted_sample():
         lexemes, sentences, accepted, sentence_lexeme, exercises, {"A1", "A2", "B1", "B2", "C1"}
     )
     append_a1_multiple_choice_exercises(lexemes, sentences, accepted, sentence_lexeme, exercises)
+    append_a1_english_prompt_multiple_choice_exercises(lexemes, sentences, accepted, sentence_lexeme, exercises)
+    ensure_a1_intro_nodes_start_with_scaffold(exercises, nodes)
     return lexemes, sentences, accepted, sentence_lexeme, conj, exercises, nodes
 
 

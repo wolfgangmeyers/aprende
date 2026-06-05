@@ -52,6 +52,26 @@ class GenerateLessonUseCaseTest {
     }
 
     @Test
+    fun `cold start preserves generated scaffold-first content order`() = runTest {
+        val coldStartPool = listOf(
+            exercise(id = 10, targetItemId = 1, type = "MULTIPLE_CHOICE", direction = "EN_TO_ES"),
+            exercise(id = 20, targetItemId = 2, type = "TYPED_TRANSLATION", direction = "EN_TO_ES"),
+            exercise(id = 30, targetItemId = 3, type = "MULTIPLE_CHOICE", direction = "ES_TO_EN"),
+            exercise(id = 40, targetItemId = 4, type = "WORD_BANK", direction = "ES_TO_EN"),
+            exercise(id = 50, targetItemId = 5, type = "TYPED_TRANSLATION", direction = "ES_TO_EN"),
+        )
+        val plan = GenerateLessonUseCase(
+            FakeContentRepository(exercisesByNode = mapOf(node to coldStartPool)),
+            FakeProgressRepository(),
+        ).generate(node)
+
+        assertEquals(
+            listOf(10L, 20L, 30L, 40L, 50L),
+            plan.exercises.map { it.exerciseId },
+        )
+    }
+
+    @Test
     fun `multiple choice is included when available past the target length cap`() = runTest {
         val cappedPool = listOf(
             exercise(id = 10, targetItemId = 1, type = "TYPED_TRANSLATION"),
@@ -65,5 +85,42 @@ class GenerateLessonUseCaseTest {
 
         assertEquals(2, plan.size)
         assertEquals(listOf(10L, 30L), plan.exercises.map { it.exerciseId })
+    }
+
+    @Test
+    fun `multiple choice cap fallback prefers English prompt scaffold`() = runTest {
+        val cappedPool = listOf(
+            exercise(id = 10, targetItemId = 1, type = "TYPED_TRANSLATION", direction = "ES_TO_EN"),
+            exercise(id = 30, targetItemId = 3, type = "MULTIPLE_CHOICE", direction = "ES_TO_EN"),
+            exercise(id = 40, targetItemId = 4, type = "MULTIPLE_CHOICE", direction = "EN_TO_ES"),
+        )
+        val progress = FakeProgressRepository()
+        progress.upsertSrsItem(seenItem(1))
+        progress.upsertSrsItem(seenItem(3))
+        progress.upsertSrsItem(seenItem(4))
+
+        val plan = GenerateLessonUseCase(
+            FakeContentRepository(exercisesByNode = mapOf(node to cappedPool)),
+            progress,
+        ).generate(node, targetLength = 1)
+
+        assertEquals(listOf(40L), plan.exercises.map { it.exerciseId })
+    }
+
+    @Test
+    fun `multiple choice cap fallback does not replace a new scaffold with review prompt`() = runTest {
+        val cappedPool = listOf(
+            exercise(id = 10, targetItemId = 1, type = "TYPED_TRANSLATION", direction = "EN_TO_ES"),
+            exercise(id = 30, targetItemId = 3, type = "MULTIPLE_CHOICE", direction = "ES_TO_EN"),
+        )
+        val progress = FakeProgressRepository()
+        progress.upsertSrsItem(seenItem(3))
+
+        val plan = GenerateLessonUseCase(
+            FakeContentRepository(exercisesByNode = mapOf(node to cappedPool)),
+            progress,
+        ).generate(node, targetLength = 1)
+
+        assertEquals(listOf(10L), plan.exercises.map { it.exerciseId })
     }
 }

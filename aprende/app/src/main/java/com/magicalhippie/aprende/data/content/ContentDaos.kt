@@ -73,7 +73,7 @@ interface ExerciseDao {
     @Query("SELECT * FROM exercise WHERE sentenceId = :sentenceId")
     suspend fun getForSentence(sentenceId: Long): List<ExerciseEntity>
 
-    @Query("SELECT * FROM exercise WHERE nodeId = :nodeId")
+    @Query("SELECT * FROM exercise WHERE nodeId = :nodeId ORDER BY exerciseId ASC")
     suspend fun forNode(nodeId: Long): List<ExerciseEntity>
 }
 

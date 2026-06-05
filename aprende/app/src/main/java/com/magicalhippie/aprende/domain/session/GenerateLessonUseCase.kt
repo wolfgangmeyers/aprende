@@ -26,12 +26,13 @@ class GenerateLessonUseCase @Inject constructor(
             val seen = progress.getSrsItem(ex.targetItemId, ItemType.valueOf(ex.targetItemType)) != null
             (if (seen) reviewOnes else newOnes).add(ex)
         }
+        val newIds = newOnes.mapTo(HashSet()) { it.exerciseId }
         val ordered = includeMultipleChoiceIfAvailable(
             ordered = interleave(newOnes, reviewOnes, targetLength),
             pool = pool,
             cap = targetLength,
+            newExerciseIds = newIds,
         )
-        val newIds = newOnes.mapTo(HashSet()) { it.exerciseId }
         return LessonPlan(
             exercises = ordered,
             newExerciseIds = ordered.mapNotNull { it.exerciseId.takeIf { id -> id in newIds } }.toSet(),
@@ -55,15 +56,41 @@ class GenerateLessonUseCase @Inject constructor(
         return result
     }
 
-    private fun includeMultipleChoiceIfAvailable(ordered: List<Exercise>, pool: List<Exercise>, cap: Int): List<Exercise> {
+    private fun includeMultipleChoiceIfAvailable(
+        ordered: List<Exercise>,
+        pool: List<Exercise>,
+        cap: Int,
+        newExerciseIds: Set<Long>,
+    ): List<Exercise> {
         if (ordered.any { it.type == "MULTIPLE_CHOICE" }) return ordered
-        val multipleChoice = pool.firstOrNull { it.type == "MULTIPLE_CHOICE" } ?: return ordered
+        val multipleChoice = pool.filter { it.type == "MULTIPLE_CHOICE" }.minWithOrNull(scaffoldedFirst) ?: return ordered
         if (ordered.size < cap) return ordered + multipleChoice
         if (ordered.isEmpty()) return listOf(multipleChoice)
-        return ordered.dropLast(1) + multipleChoice
+        val replacementSlot = ordered.last()
+        val replacementIsNew = replacementSlot.exerciseId in newExerciseIds
+        val replacement = pool
+            .filter { it.type == "MULTIPLE_CHOICE" }
+            .filter { (it.exerciseId in newExerciseIds) == replacementIsNew }
+            .filter { scaffoldPriority(it) <= scaffoldPriority(replacementSlot) }
+            .minWithOrNull(scaffoldedFirst)
+            ?: return ordered
+        return ordered.dropLast(1) + replacement
     }
 
     companion object {
         const val DEFAULT_TARGET_LENGTH = 16
+
+        private val scaffoldedFirst = compareBy<Exercise>(
+            { scaffoldPriority(it) },
+            { it.exerciseId },
+        )
+
+        private fun scaffoldPriority(exercise: Exercise): Int = when {
+            exercise.type == "MULTIPLE_CHOICE" && exercise.direction == "EN_TO_ES" -> 0
+            exercise.direction == "EN_TO_ES" -> 1
+            exercise.type == "MULTIPLE_CHOICE" -> 2
+            exercise.type == "WORD_BANK" -> 3
+            else -> 4
+        }
     }
 }

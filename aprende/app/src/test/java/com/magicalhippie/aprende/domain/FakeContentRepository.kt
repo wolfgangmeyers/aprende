@@ -39,13 +39,19 @@ class FakeContentRepository(
 }
 
 /** Test helper: build an exercise whose target is a lexeme. */
-fun exercise(id: Long, targetItemId: Long, nodeId: Long = 1, type: String = "TYPED_TRANSLATION"): Exercise =
+fun exercise(
+    id: Long,
+    targetItemId: Long,
+    nodeId: Long = 1,
+    type: String = "TYPED_TRANSLATION",
+    direction: String = "ES_TO_EN",
+): Exercise =
     Exercise(
         exerciseId = id,
         nodeId = nodeId,
         sentenceId = id,
         type = type,
-        direction = "ES_TO_EN",
+        direction = direction,
         targetItemId = targetItemId,
         targetItemType = "LEXEME",
         promptHint = null,
