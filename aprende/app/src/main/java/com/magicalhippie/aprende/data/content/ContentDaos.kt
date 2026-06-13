@@ -19,9 +19,15 @@ interface LexemeDao {
     @Query("SELECT * FROM lexeme WHERE lemma = :lemma LIMIT 1")
     suspend fun getByLemma(lemma: String): LexemeEntity?
 
+    @Query("SELECT * FROM lexeme WHERE lemma = :lemma COLLATE NOCASE LIMIT 1")
+    suspend fun getByLemmaIgnoreCase(lemma: String): LexemeEntity?
+
     /** Words list, frequency-ordered (SPEC §6 Words screen). */
     @Query("SELECT * FROM lexeme ORDER BY frequencyRank ASC")
     fun observeAll(): Flow<List<LexemeEntity>>
+
+    @Query("SELECT * FROM lexeme ORDER BY frequencyRank ASC")
+    suspend fun allForLookup(): List<LexemeEntity>
 
     @Query("SELECT COUNT(*) FROM lexeme")
     suspend fun count(): Int
@@ -35,6 +41,9 @@ interface SentenceDao {
     @Query("SELECT * FROM sentence WHERE sentenceId IN (:sentenceIds)")
     suspend fun getByIds(sentenceIds: List<Long>): List<SentenceEntity>
 
+    @Query("SELECT * FROM sentence WHERE spanishText = :spanishText COLLATE NOCASE LIMIT 1")
+    suspend fun getBySpanishTextIgnoreCase(spanishText: String): SentenceEntity?
+
     /**
      * Full-text search over Spanish/English text via the external-content FTS4 index.
      * `sentence_fts.rowid` equals `sentence.sentenceId` (the pipeline back-fills it that
@@ -46,8 +55,17 @@ interface SentenceDao {
     )
     suspend fun search(query: String): List<SentenceEntity>
 
+    @Query(
+        "SELECT * FROM sentence WHERE sentenceId IN " +
+            "(SELECT rowid FROM sentence_fts WHERE spanishText MATCH :query LIMIT :limit)"
+    )
+    suspend fun searchSpanish(query: String, limit: Int): List<SentenceEntity>
+
     @Query("SELECT COUNT(*) FROM sentence")
     suspend fun count(): Int
+
+    @Query("SELECT * FROM sentence ORDER BY sentenceId ASC")
+    suspend fun allForLookup(): List<SentenceEntity>
 }
 
 @Dao
@@ -123,4 +141,10 @@ interface ConjugationDao {
      */
     @Query("SELECT * FROM conjugation_lemma_map WHERE surfaceForm = :surfaceForm")
     suspend fun getBySurfaceForm(surfaceForm: String): ConjugationLemmaMapEntity?
+
+    @Query("SELECT * FROM conjugation_lemma_map WHERE surfaceForm = :surfaceForm COLLATE NOCASE")
+    suspend fun getBySurfaceFormIgnoreCase(surfaceForm: String): ConjugationLemmaMapEntity?
+
+    @Query("SELECT * FROM conjugation_lemma_map")
+    suspend fun allForLookup(): List<ConjugationLemmaMapEntity>
 }

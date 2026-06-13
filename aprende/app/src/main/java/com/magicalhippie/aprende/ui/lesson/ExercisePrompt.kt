@@ -24,14 +24,20 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 
 /**
@@ -75,7 +81,6 @@ fun ExerciseAnswer(
     choices: List<String>,
     selectedChoice: Int,
     onTypedInputChange: (String) -> Unit,
-    onAccentChar: (String) -> Unit,
     onTileSelected: (String) -> Unit,
     onTileRemoved: (Int) -> Unit,
     onChoiceSelected: (Int) -> Unit,
@@ -84,7 +89,6 @@ fun ExerciseAnswer(
         ExerciseKind.TYPED_TRANSLATION -> TypedTranslation(
             input = typedInput,
             onInputChange = onTypedInputChange,
-            onAccentChar = onAccentChar,
         )
         ExerciseKind.WORD_BANK -> WordBank(
             tiles = wordBankTiles,
@@ -104,11 +108,25 @@ fun ExerciseAnswer(
 private fun TypedTranslation(
     input: String,
     onInputChange: (String) -> Unit,
-    onAccentChar: (String) -> Unit,
 ) {
+    var textFieldValue by remember {
+        mutableStateOf(TextFieldValue(text = input, selection = TextRange(input.length)))
+    }
+
+    LaunchedEffect(input) {
+        if (input != textFieldValue.text) {
+            textFieldValue = TextFieldValue(text = input, selection = TextRange(input.length))
+        }
+    }
+
     OutlinedTextField(
-        value = input,
-        onValueChange = onInputChange,
+        value = textFieldValue,
+        onValueChange = { value ->
+            textFieldValue = value
+            if (value.text != input) {
+                onInputChange(value.text)
+            }
+        },
         modifier = Modifier
             .fillMaxWidth()
             .semantics { contentDescription = "Answer input" },
@@ -124,9 +142,24 @@ private fun TypedTranslation(
     // Accent bar (§5.4) — a Spanish OS keyboard is never required.
     LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         items(ACCENT_CHARS) { ch ->
-            OutlinedButton(onClick = { onAccentChar(ch) }) { Text(ch) }
+            OutlinedButton(
+                onClick = {
+                    textFieldValue = textFieldValue.insertAtSelection(ch)
+                    onInputChange(textFieldValue.text)
+                },
+            ) {
+                Text(ch)
+            }
         }
     }
+}
+
+private fun TextFieldValue.insertAtSelection(inserted: String): TextFieldValue {
+    val start = selection.min.coerceIn(0, text.length)
+    val end = selection.max.coerceIn(0, text.length)
+    val newText = text.replaceRange(start, end, inserted)
+    val cursor = start + inserted.length
+    return TextFieldValue(text = newText, selection = TextRange(cursor))
 }
 
 @OptIn(ExperimentalLayoutApi::class)

@@ -1,6 +1,14 @@
 package com.magicalhippie.aprende.ui.navigation
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptions
 import androidx.navigation.NavType
@@ -16,6 +24,7 @@ import com.magicalhippie.aprende.ui.review.MistakesReviewScreen
 import com.magicalhippie.aprende.ui.review.ReviewHubScreen
 import com.magicalhippie.aprende.ui.settings.BackupScreen
 import com.magicalhippie.aprende.ui.settings.SettingsScreen
+import com.magicalhippie.aprende.ui.translate.TranslatePopupHost
 import com.magicalhippie.aprende.ui.vocab.VocabPracticeScreen
 import com.magicalhippie.aprende.ui.words.WordsScreen
 
@@ -51,50 +60,80 @@ object Routes {
 fun AprendeNavHost(
     navController: NavHostController = rememberNavController(),
 ) {
-    NavHost(navController = navController, startDestination = Routes.HOME) {
-        composable(Routes.HOME) {
-            HomeScreen(
-                onNodeClick = { nodeId ->
-                    navController.navigate(Routes.lesson(nodeId), freshLessonNavOptions())
-                },
-                onReviewClick = { navController.navigate(Routes.REVIEW_HUB) },
-                onSettingsClick = { navController.navigate(Routes.SETTINGS) },
-            )
-        }
-        composable(
-            route = Routes.LESSON_PATTERN,
-            arguments = listOf(navArgument(Routes.ARG_NODE_ID) { type = NavType.LongType }),
+    AprendeGlobalChrome { contentModifier ->
+        NavHost(
+            navController = navController,
+            startDestination = Routes.HOME,
+            modifier = contentModifier,
         ) {
-            LessonScreen(
-                onFinished = { navController.popBackStack(Routes.HOME, inclusive = false) },
-            )
+            composable(Routes.HOME) {
+                HomeScreen(
+                    onNodeClick = { nodeId ->
+                        navController.navigate(Routes.lesson(nodeId), freshLessonNavOptions())
+                    },
+                    onReviewClick = { navController.navigate(Routes.REVIEW_HUB) },
+                    onSettingsClick = { navController.navigate(Routes.SETTINGS) },
+                )
+            }
+            composable(
+                route = Routes.LESSON_PATTERN,
+                arguments = listOf(navArgument(Routes.ARG_NODE_ID) { type = NavType.LongType }),
+            ) {
+                LessonScreen(
+                    onFinished = { navController.popBackStack(Routes.HOME, inclusive = false) },
+                )
+            }
+
+            // --- Review hub + leaves (P1.7, §8) ---
+            composable(Routes.REVIEW_HUB) {
+                ReviewHubScreen(
+                    onMistakes = { navController.navigate(Routes.MISTAKES) },
+                    onWords = { navController.navigate(Routes.WORDS) },
+                    onVocab = { navController.navigate(Routes.VOCAB) },
+                )
+            }
+            composable(Routes.MISTAKES) {
+                MistakesReviewScreen(onFinished = { navController.popBackStack(Routes.REVIEW_HUB, inclusive = false) })
+            }
+            composable(Routes.WORDS) { WordsScreen() }
+            composable(Routes.VOCAB) {
+                VocabPracticeScreen(onFinished = { navController.popBackStack(Routes.REVIEW_HUB, inclusive = false) })
+            }
+
+            // --- Settings/About (P1.8, §11/§4.5) ---
+            composable(Routes.SETTINGS) {
+                SettingsScreen(
+                    onBackup = { navController.navigate(Routes.BACKUP) },
+                    onAttribution = { navController.navigate(Routes.ATTRIBUTION) },
+                )
+            }
+            composable(Routes.BACKUP) { BackupScreen() }
+            composable(Routes.ATTRIBUTION) { AttributionScreen() }
         }
 
-        // --- Review hub + leaves (P1.7, §8) ---
-        composable(Routes.REVIEW_HUB) {
-            ReviewHubScreen(
-                onMistakes = { navController.navigate(Routes.MISTAKES) },
-                onWords = { navController.navigate(Routes.WORDS) },
-                onVocab = { navController.navigate(Routes.VOCAB) },
-            )
-        }
-        composable(Routes.MISTAKES) {
-            MistakesReviewScreen(onFinished = { navController.popBackStack(Routes.REVIEW_HUB, inclusive = false) })
-        }
-        composable(Routes.WORDS) { WordsScreen() }
-        composable(Routes.VOCAB) {
-            VocabPracticeScreen(onFinished = { navController.popBackStack(Routes.REVIEW_HUB, inclusive = false) })
-        }
+    }
+}
 
-        // --- Settings/About (P1.8, §11/§4.5) ---
-        composable(Routes.SETTINGS) {
-            SettingsScreen(
-                onBackup = { navController.navigate(Routes.BACKUP) },
-                onAttribution = { navController.navigate(Routes.ATTRIBUTION) },
-            )
+@Composable
+internal fun AprendeGlobalChrome(
+    modifier: Modifier = Modifier,
+    translatePopup: @Composable (Modifier) -> Unit = { TranslatePopupHost(modifier = it) },
+    content: @Composable (Modifier) -> Unit,
+) {
+    Column(modifier.fillMaxSize()) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .statusBarsPadding()
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+        ) {
+            translatePopup(Modifier.align(androidx.compose.ui.Alignment.CenterEnd))
         }
-        composable(Routes.BACKUP) { BackupScreen() }
-        composable(Routes.ATTRIBUTION) { AttributionScreen() }
+        content(
+            Modifier
+                .fillMaxWidth()
+                .weight(1f),
+        )
     }
 }
 

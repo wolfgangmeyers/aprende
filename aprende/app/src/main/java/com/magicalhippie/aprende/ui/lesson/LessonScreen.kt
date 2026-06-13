@@ -38,7 +38,6 @@ fun LessonScreen(
     LessonContent(
         state = state,
         onTypedInputChange = viewModel::onTypedInputChange,
-        onAccentChar = viewModel::onAccentChar,
         onTileSelected = viewModel::onTileSelected,
         onTileRemoved = viewModel::onTileRemoved,
         onChoiceSelected = viewModel::onChoiceSelected,
@@ -54,7 +53,6 @@ fun LessonScreen(
 fun LessonContent(
     state: LessonUiState,
     onTypedInputChange: (String) -> Unit = {},
-    onAccentChar: (String) -> Unit = {},
     onTileSelected: (String) -> Unit = {},
     onTileRemoved: (Int) -> Unit = {},
     onChoiceSelected: (Int) -> Unit = {},
@@ -75,7 +73,6 @@ fun LessonContent(
         else -> ExerciseContent(
             state = state,
             onTypedInputChange = onTypedInputChange,
-            onAccentChar = onAccentChar,
             onTileSelected = onTileSelected,
             onTileRemoved = onTileRemoved,
             onChoiceSelected = onChoiceSelected,
@@ -91,7 +88,6 @@ fun LessonContent(
 private fun ExerciseContent(
     state: LessonUiState,
     onTypedInputChange: (String) -> Unit,
-    onAccentChar: (String) -> Unit,
     onTileSelected: (String) -> Unit,
     onTileRemoved: (Int) -> Unit,
     onChoiceSelected: (Int) -> Unit,
@@ -129,7 +125,6 @@ private fun ExerciseContent(
             choices = state.choices,
             selectedChoice = state.selectedChoice,
             onTypedInputChange = onTypedInputChange,
-            onAccentChar = onAccentChar,
             onTileSelected = onTileSelected,
             onTileRemoved = onTileRemoved,
             onChoiceSelected = onChoiceSelected,

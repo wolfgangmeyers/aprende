@@ -3,9 +3,11 @@ package com.magicalhippie.aprende.data
 import com.magicalhippie.aprende.data.content.ContentRepositoryImpl
 import com.magicalhippie.aprende.data.progress.ProgressRepositoryImpl
 import com.magicalhippie.aprende.data.settings.SettingsRepositoryImpl
+import com.magicalhippie.aprende.data.translation.OfflineTranslationRepositoryImpl
 import com.magicalhippie.aprende.domain.repository.ContentRepository
 import com.magicalhippie.aprende.domain.repository.ProgressRepository
 import com.magicalhippie.aprende.domain.repository.SettingsRepository
+import com.magicalhippie.aprende.domain.repository.TranslationRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -34,4 +36,8 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindSettingsRepository(impl: SettingsRepositoryImpl): SettingsRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindTranslationRepository(impl: OfflineTranslationRepositoryImpl): TranslationRepository
 }

@@ -1,11 +1,14 @@
 package com.magicalhippie.aprende.ui.lesson
 
+import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
+import androidx.compose.ui.test.performTextInputSelection
+import androidx.compose.ui.text.TextRange
 import com.magicalhippie.aprende.ui.theme.AprendeTheme
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -22,6 +25,7 @@ import org.robolectric.annotation.Config
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [34])
+@OptIn(ExperimentalTestApi::class)
 class LessonScreenTest {
 
     @get:Rule
@@ -31,21 +35,10 @@ class LessonScreenTest {
     fun typedTranslation_rendersPromptAndAccentBar_andAcceptsInput() {
         var typed = ""
         var submitted = false
-        composeRule.setContent {
-            AprendeTheme {
-                LessonContent(
-                    state = LessonUiState(
-                        loading = false,
-                        hearts = 5,
-                        prompt = "Tengo un perro.",
-                        instruction = "Type this in English",
-                        kind = ExerciseKind.TYPED_TRANSLATION,
-                    ),
-                    onTypedInputChange = { typed = it },
-                    onSubmit = { submitted = true },
-                )
-            }
-        }
+        setTypedLessonContent(
+            onTypedInputChange = { typed = it },
+            onSubmit = { submitted = true },
+        )
 
         composeRule.onNodeWithText("Tengo un perro.").assertIsDisplayed()
         // Accent bar present (§5.4).
@@ -56,6 +49,51 @@ class LessonScreenTest {
 
         composeRule.onNodeWithText("Check").performClick()
         assertTrue(submitted)
+    }
+
+    @Test
+    fun accentChar_insertsAtMiddleCursorPosition_andKeepsCursorAfterInsertion() {
+        var typed = ""
+        setTypedLessonContent(onTypedInputChange = { typed = it })
+
+        val input = composeRule.onNodeWithContentDescription("Answer input")
+        input.performTextInput("maana")
+        input.performTextInputSelection(TextRange(2))
+        composeRule.onNodeWithText("ñ").performClick()
+        assertEquals("mañana", typed)
+
+        input.performTextInput("s")
+        assertEquals("mañsana", typed)
+    }
+
+    @Test
+    fun accentChar_replacesSelectedRange_andKeepsCursorAfterInsertion() {
+        var typed = ""
+        setTypedLessonContent(onTypedInputChange = { typed = it })
+
+        val input = composeRule.onNodeWithContentDescription("Answer input")
+        input.performTextInput("pinata")
+        input.performTextInputSelection(TextRange(2, 3))
+        composeRule.onNodeWithText("ñ").performClick()
+        assertEquals("piñata", typed)
+
+        input.performTextInput("s")
+        assertEquals("piñsata", typed)
+    }
+
+    @Test
+    fun accentChar_appendsAtEnd_whenCursorIsAtEnd() {
+        var typed = ""
+        setTypedLessonContent(onTypedInputChange = { typed = it })
+
+        val input = composeRule.onNodeWithContentDescription("Answer input")
+        input.performTextInput("a")
+        input.performTextInputSelection(TextRange(1))
+        composeRule.onNodeWithText("ñ").performClick()
+        assertEquals("añ", typed)
+
+        input.performTextInput("o")
+        assertEquals("año", typed)
     }
 
     @Test
@@ -151,5 +189,26 @@ class LessonScreenTest {
         assertEquals(true, restarted)
         composeRule.onNodeWithText("Continue").performClick()
         assertEquals(true, finished)
+    }
+
+    private fun setTypedLessonContent(
+        onTypedInputChange: (String) -> Unit = {},
+        onSubmit: () -> Unit = {},
+    ) {
+        composeRule.setContent {
+            AprendeTheme {
+                LessonContent(
+                    state = LessonUiState(
+                        loading = false,
+                        hearts = 5,
+                        prompt = "Tengo un perro.",
+                        instruction = "Type this in English",
+                        kind = ExerciseKind.TYPED_TRANSLATION,
+                    ),
+                    onTypedInputChange = onTypedInputChange,
+                    onSubmit = onSubmit,
+                )
+            }
+        }
     }
 }

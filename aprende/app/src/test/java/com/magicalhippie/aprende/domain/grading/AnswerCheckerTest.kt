@@ -55,6 +55,14 @@ class AnswerCheckerTest {
     }
 
     @Test
+    fun `see you tomorrow accepts hasta manana and hasta manana with accent`() {
+        val accepted = listOf("nos vemos mañana", "hasta mañana")
+        assertEquals(GradeVerdict.CORRECT, AnswerChecker.checkFreeText("Hasta mañana.", accepted).verdict)
+        assertEquals(GradeVerdict.CORRECT_WITH_TYPO, AnswerChecker.checkFreeText("hasta manana", accepted).verdict)
+        assertEquals(GradeVerdict.WRONG, AnswerChecker.checkFreeText("hasta luego", accepted).verdict)
+    }
+
+    @Test
     fun `empty accepted set is always wrong`() {
         assertEquals(GradeVerdict.WRONG, AnswerChecker.checkFreeText("anything", emptyList()).verdict)
     }

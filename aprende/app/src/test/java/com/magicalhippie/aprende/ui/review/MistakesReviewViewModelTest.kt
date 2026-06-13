@@ -11,6 +11,7 @@ import com.magicalhippie.aprende.domain.review.MistakesReviewSessionFactory
 import com.magicalhippie.aprende.domain.srs.Fsrs
 import com.magicalhippie.aprende.domain.srs.RecordAnswerUseCase
 import com.magicalhippie.aprende.domain.srs.ScheduleReviewUseCase
+import com.magicalhippie.aprende.ui.lesson.ExerciseKind
 import com.magicalhippie.aprende.ui.lesson.Feedback
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -59,6 +60,19 @@ class MistakesReviewViewModelTest {
             ),
         ),
         acceptedAnswers = mapOf((10L to "EN_TO_ES") to listOf("tengo un perro")),
+        sentences = mapOf(10L to SentenceText(10, "Tengo un perro.", "I have a dog.")),
+    )
+
+    private fun malformedMultipleChoiceContent() = FakeContentRepository(
+        exercisesByNode = mapOf(
+            1L to listOf(
+                exercise(id = 10, targetItemId = 1, type = "MULTIPLE_CHOICE")
+                    .copy(
+                        promptHint = """{"multipleChoice":{"choices":["I have a dog","I have a dog"],"correctIndex":0}}""",
+                    ),
+            ),
+        ),
+        acceptedAnswers = mapOf((10L to "ES_TO_EN") to listOf("I have a dog")),
         sentences = mapOf(10L to SentenceText(10, "Tengo un perro.", "I have a dog.")),
     )
 
@@ -124,5 +138,24 @@ class MistakesReviewViewModelTest {
         val state = viewModel.uiState.value
         assertTrue(state.complete)
         assertTrue(state.empty)
+    }
+
+    @Test
+    fun `malformed multiple choice mistake renders as typed translation`() = runTest(dispatcher) {
+        val progress = FakeProgressRepository()
+        progress.enqueueMistake(exerciseId = 10, itemId = 1, itemType = ItemType.LEXEME, missedAtMillis = 0L)
+        val viewModel = vm(progress, malformedMultipleChoiceContent())
+        advanceUntilIdle()
+
+        assertEquals(ExerciseKind.TYPED_TRANSLATION, viewModel.uiState.value.kind)
+        assertEquals("Type this in English", viewModel.uiState.value.instruction)
+        assertEquals(emptyList<String>(), viewModel.uiState.value.choices)
+
+        viewModel.onTypedInputChange("I have a dog")
+        viewModel.submit()
+        advanceUntilIdle()
+
+        assertEquals(Feedback.CORRECT, viewModel.uiState.value.feedback)
+        assertTrue(progress.allMistakes().isEmpty())
     }
 }

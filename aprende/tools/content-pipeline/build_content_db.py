@@ -7927,17 +7927,23 @@ def append_english_to_spanish_production_for_bands(
         sentence_ids_by_lexeme.setdefault(lexeme_id, set()).add(sentence_id)
 
     reviewed_spanish_by_prompt_target: dict[tuple[str, int], list[Row]] = {}
+    reviewed_phrase_spanish_by_prompt: dict[str, list[Row]] = {}
+    lexeme_ids_by_sentence: dict[int, set[int]] = {}
+    for lexeme_id, linked_sentence_ids in sentence_ids_by_lexeme.items():
+        for sentence_id in linked_sentence_ids:
+            lexeme_ids_by_sentence.setdefault(sentence_id, set()).add(lexeme_id)
+
     for sentence in sentences:
         if not sentence_has_reviewed_pair_evidence(sentence):
             continue
         sentence_id = sentence.data["sentenceId"]
-        for lexeme_id, linked_sentence_ids in sentence_ids_by_lexeme.items():
-            if sentence_id not in linked_sentence_ids:
-                continue
+        for lexeme_id in lexeme_ids_by_sentence.get(sentence_id, set()):
             target = lexeme_by_id.get(lexeme_id)
             if target is None or target.data["cefrBand"] not in allowed_bands:
                 continue
             reviewed_spanish_by_prompt_target.setdefault((sentence.data["englishText"], lexeme_id), []).append(sentence)
+            if is_phrase_or_chunk_lexeme(target):
+                reviewed_phrase_spanish_by_prompt.setdefault(sentence.data["englishText"], []).append(sentence)
 
     existing_en_to_es = {
         (exercise["sentenceId"], exercise["targetItemId"])
@@ -7963,7 +7969,14 @@ def append_english_to_spanish_production_for_bands(
         ):
             continue
 
-        variants = reviewed_spanish_by_prompt_target.get((sentence.data["englishText"], exercise["targetItemId"]), [])
+        variants = [
+            *reviewed_spanish_by_prompt_target.get((sentence.data["englishText"], exercise["targetItemId"]), []),
+            *(
+                reviewed_phrase_spanish_by_prompt.get(sentence.data["englishText"], [])
+                if is_phrase_or_chunk_lexeme(target)
+                else []
+            ),
+        ]
         seen_answers: set[str] = set()
         for variant in sorted(variants, key=lambda row: row.data["sentenceId"]):
             answer_text = normalize_spanish_answer(variant.data["spanishText"])
@@ -8026,10 +8039,51 @@ def normalize_multiple_choice_text(text: str) -> str:
 
 
 def multiple_choice_form_key(text: str) -> tuple[bool, bool]:
+    collapsed = re.sub(r"\s+", " ", text.strip())
     normalized = normalize_multiple_choice_text(text)
-    is_question = normalized.startswith(("do ", "does ", "did ", "can ", "could ", "is ", "are ", "am ", "what ", "where ", "when ", "why ", "how ", "who ", "which "))
+    is_question = (
+        collapsed.endswith("?")
+        or normalized.startswith(("do ", "does ", "did ", "can ", "could ", "is ", "are ", "am ", "what ", "where ", "when ", "why ", "how ", "who ", "which "))
+    )
     is_negative = any(f" {marker} " in f" {normalized} " for marker in ("no", "not", "dont", "doesnt", "didnt", "cant", "cannot", "isnt", "arent"))
     return is_question, is_negative
+
+
+def multiple_choice_spanish_form_key(text: str) -> tuple[bool, bool, bool, bool]:
+    collapsed = re.sub(r"\s+", " ", text.strip())
+    normalized = normalize_spanish_answer(text)
+    is_question = (
+        collapsed.startswith("¿")
+        or collapsed.endswith("?")
+        or normalized.startswith((
+            "qué ",
+            "cómo ",
+            "cuándo ",
+            "dónde ",
+            "por qué ",
+            "quién ",
+            "cuál ",
+            "cuánto ",
+        ))
+    )
+    tokens = set(re.findall(r"[a-záéíóúüñ]+", normalized))
+    is_negative = bool(tokens & {"no", "nunca", "nadie", "sin"})
+    is_exclamation = collapsed.startswith("¡") or collapsed.endswith("!")
+    has_mid_question_mark = "¿" in collapsed and not collapsed.startswith("¿")
+    return is_question, is_negative, is_exclamation, has_mid_question_mark
+
+
+def multiple_choice_option_form_key(direction: str, text: str) -> tuple:
+    if direction == "EN_TO_ES":
+        return multiple_choice_spanish_form_key(text)
+    return multiple_choice_form_key(text)
+
+
+def multiple_choice_forms_match(direction: str, correct: str, distractor: str) -> bool:
+    return (
+        multiple_choice_option_form_key(direction, correct)
+        == multiple_choice_option_form_key(direction, distractor)
+    )
 
 
 def multiple_choice_ambiguous(text: str) -> bool:
@@ -8100,12 +8154,12 @@ def multiple_choice_distractor_allowed(correct: str, distractor: str) -> bool:
         return False
     correct_is_question, correct_is_negative = multiple_choice_form_key(correct)
     distractor_is_question, distractor_is_negative = multiple_choice_form_key(distractor)
+    if correct_is_question != distractor_is_question:
+        return False
     if correct_is_negative != distractor_is_negative:
         return False
     correct_len = len(correct_norm.split())
     distractor_len = len(distractor_norm.split())
-    if correct_is_question != distractor_is_question and min(correct_len, distractor_len) <= 3:
-        return False
     return abs(correct_len - distractor_len) <= 4
 
 
@@ -8287,6 +8341,8 @@ def append_a1_english_prompt_multiple_choice_exercises(lexemes, sentences, accep
             if other["exercise"]["sentenceId"] in sentence_ids_by_lexeme.get(candidate["exercise"]["targetItemId"], set()):
                 continue
             if other["answerNorm"] in used_norms:
+                continue
+            if not multiple_choice_forms_match("EN_TO_ES", correct, other["answer"]):
                 continue
             if abs(len(other["answerNorm"].split()) - correct_len) > 4:
                 continue
@@ -8562,35 +8618,26 @@ def ensure_a1_intro_nodes_start_with_scaffolds(
     exercises: list[dict],
     nodes: list[tuple[int, str, int]],
 ) -> None:
-    exercises_by_node: dict[int, list[dict]] = {}
-    exercises_by_target: dict[int, list[dict]] = {}
-    for exercise in exercises:
-        exercises_by_node.setdefault(exercise["nodeId"], []).append(exercise)
-        if exercise["targetItemType"] == "LEXEME":
-            exercises_by_target.setdefault(exercise["targetItemId"], []).append(exercise)
+    def is_supported_scaffold(exercise: dict) -> bool:
+        return exercise["type"] == "MULTIPLE_CHOICE" and exercise["direction"] == "EN_TO_ES"
+
+    def scaffold_priority(exercise: dict) -> int:
+        if is_supported_scaffold(exercise):
+            return 0
+        if exercise["direction"] == "EN_TO_ES":
+            return 1
+        return 2
 
     for node_id, title, _display_order in nodes:
         if not title.startswith("A1 ") or title.endswith("Review"):
             continue
-        node_exercises = exercises_by_node.get(node_id, [])
-        if not node_exercises:
-            continue
-        for exercise in sorted(node_exercises, key=lambda row: row["exerciseId"])[:A1_COLD_START_SCAFFOLD_COUNT]:
-            if exercise["type"] == "MULTIPLE_CHOICE" and exercise["direction"] == "EN_TO_ES":
-                continue
-            scaffold = next(
-                (
-                    row for row in sorted(
-                        exercises_by_target.get(exercise["targetItemId"], []),
-                        key=lambda row: row["exerciseId"],
-                    )
-                    if row["type"] == "MULTIPLE_CHOICE" and row["direction"] == "EN_TO_ES"
-                ),
-                None,
-            )
-            if scaffold is not None:
-                scaffold["exerciseId"], exercise["exerciseId"] = exercise["exerciseId"], scaffold["exerciseId"]
-                scaffold["nodeId"] = node_id
+        node_exercises = sorted(
+            [exercise for exercise in exercises if exercise["nodeId"] == node_id],
+            key=lambda row: row["exerciseId"],
+        )
+        desired_order = sorted(node_exercises, key=lambda row: (scaffold_priority(row), row["exerciseId"]))
+        for exercise, exercise_id in zip(desired_order, [row["exerciseId"] for row in node_exercises]):
+            exercise["exerciseId"] = exercise_id
 
 
 def apply_sequencing_plan(lexemes: list[Row], exercises: list[dict]) -> list[tuple[int, str, int]]:

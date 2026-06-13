@@ -159,20 +159,22 @@ class Ac1OfflineLessonE2ETest {
         val state = vm.uiState.value
         when (state.kind) {
             com.magicalhippie.aprende.ui.lesson.ExerciseKind.TYPED_TRANSLATION -> {
-                val answer = firstAcceptedFor(content, state) ?: ""
+                val answer = checkNotNull(firstAcceptedFor(content, state)) {
+                    "No accepted answer found for ${state.kind} prompt '${state.prompt}' (${state.instruction})"
+                }
                 vm.onTypedInputChange(answer)
             }
             com.magicalhippie.aprende.ui.lesson.ExerciseKind.WORD_BANK -> {
                 // Re-create the correct ordering by tapping tiles in the accepted-answer order.
-                val answer = firstAcceptedFor(content, state) ?: ""
+                val answer = checkNotNull(firstAcceptedFor(content, state)) {
+                    "No accepted answer found for ${state.kind} prompt '${state.prompt}' (${state.instruction})"
+                }
                 answer.trim().split(Regex("\\s+")).forEach { token ->
                     if (token.isNotEmpty()) vm.onTileSelected(token)
                 }
             }
             com.magicalhippie.aprende.ui.lesson.ExerciseKind.MULTIPLE_CHOICE -> {
-                val answer = firstAcceptedFor(content, state)
-                val idx = state.choices.indexOf(answer)
-                vm.onChoiceSelected(if (idx >= 0) idx else 0)
+                vm.onChoiceSelected(state.correctChoiceIndex.coerceAtLeast(0))
             }
         }
         vm.submit()
@@ -180,19 +182,32 @@ class Ac1OfflineLessonE2ETest {
 
     /** The vetted first accepted answer for the on-screen exercise's sentence/direction. */
     private suspend fun firstAcceptedFor(content: ContentRepository, state: com.magicalhippie.aprende.ui.lesson.LessonUiState): String? {
-        // Look it up the same way the VM does: by the prompt's sentence. We re-resolve via the
-        // node's exercises matched on the rendered prompt's Spanish text.
+        // Look it up the same way the VM does: by the prompt's sentence and direction. A sentence
+        // can appear in both directions, so matching only the rendered text can choose the wrong
+        // accepted-answer set.
+        val expectedDirection = when {
+            state.instruction.endsWith("in English") -> "ES_TO_EN"
+            state.instruction.endsWith("in Spanish") -> "EN_TO_ES"
+            else -> null
+        }
         val nodeExercises = content.nodes().flatMap { content.exercisesForNode(it.nodeId) }
         for (ex in nodeExercises) {
+            if (expectedDirection != null && ex.direction != expectedDirection) continue
             val st = content.sentenceText(ex.sentenceId) ?: continue
-            if (st.spanishText == state.prompt) {
+            val matchesPrompt = when (ex.direction) {
+                "EN_TO_ES" -> st.englishText == state.prompt
+                "ES_TO_EN" -> st.spanishText == state.prompt
+                else -> st.spanishText == state.prompt || st.englishText == state.prompt
+            }
+            if (matchesPrompt) {
                 return content.acceptedAnswers(ex.sentenceId, ex.direction).firstOrNull()
             }
         }
         return null
     }
 
-    private fun waitUntilReady(vm: LessonViewModel) = waitFor { !vm.uiState.value.loading }
+    private fun waitUntilReady(vm: LessonViewModel) =
+        waitFor { !vm.uiState.value.loading && (vm.uiState.value.feedback == Feedback.NONE || vm.uiState.value.finished) }
 
     private inline fun waitFor(timeoutMs: Long = 5_000, predicate: () -> Boolean) {
         val deadline = System.currentTimeMillis() + timeoutMs

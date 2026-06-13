@@ -165,9 +165,6 @@ class LessonViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(selectedChoice = index)
     }
 
-    /** Append the on-screen accent character to the typed answer (SPEC §5.4). */
-    fun onAccentChar(ch: String) = onTypedInputChange(_uiState.value.typedInput + ch)
-
     /** Restart this lesson from the first generated exercise without clearing persisted progress. */
     fun restart() {
         if (!::replayPlan.isInitialized) return
@@ -190,7 +187,7 @@ class LessonViewModel @Inject constructor(
         if (state.feedback != Feedback.NONE) return // already graded; waiting for "continue"
         viewModelScope.launch {
             val accepted = content.acceptedAnswers(exercise.sentenceId, exercise.direction)
-            val grade: GradeResult = when (kindOf(exercise.type)) {
+            val grade: GradeResult = when (state.kind) {
                 ExerciseKind.TYPED_TRANSLATION -> grader.gradeFreeText(state.typedInput, accepted)
                 ExerciseKind.WORD_BANK -> grader.gradeTokens(
                     input = state.selectedTiles,
@@ -269,25 +266,30 @@ class LessonViewModel @Inject constructor(
             finish(awardOnFinish = true)
             return
         }
-        val kind = kindOf(exercise.type)
+        val requestedKind = kindOf(exercise.type)
         val accepted = content.acceptedAnswers(exercise.sentenceId, exercise.direction)
         val sentence = content.sentenceText(exercise.sentenceId)
         val prompt = promptFor(sentence, exercise.direction, exercise.promptHint)
         val target = accepted.firstOrNull() ?: ""
-        val multipleChoiceSpec = if (kind == ExerciseKind.MULTIPLE_CHOICE) {
+        val multipleChoiceSpec = if (requestedKind == ExerciseKind.MULTIPLE_CHOICE) {
             parseMultipleChoiceSpec(exercise.promptHint)
         } else {
             null
         }
+        val kind = if (requestedKind == ExerciseKind.MULTIPLE_CHOICE && multipleChoiceSpec == null) {
+            ExerciseKind.TYPED_TRANSLATION
+        } else {
+            requestedKind
+        }
 
         val tiles = if (kind == ExerciseKind.WORD_BANK) tokenize(target).shuffled() else emptyList()
         val choices = if (kind == ExerciseKind.MULTIPLE_CHOICE) {
-            multipleChoiceSpec?.choices ?: buildChoices(target, accepted)
+            multipleChoiceSpec?.choices ?: emptyList()
         } else {
             emptyList()
         }
         val correctChoiceIndex = if (kind == ExerciseKind.MULTIPLE_CHOICE) {
-            multipleChoiceSpec?.correctIndex ?: choices.indexOf(target)
+            multipleChoiceSpec?.correctIndex ?: -1
         } else {
             -1
         }
@@ -340,17 +342,6 @@ class LessonViewModel @Inject constructor(
             ExerciseKind.WORD_BANK -> "Tap the words to translate $dir"
             ExerciseKind.MULTIPLE_CHOICE -> "Choose the correct translation"
         }
-    }
-
-    /** Multiple-choice options: correct answer + simple distractors from other accepted texts. */
-    private fun buildChoices(target: String, accepted: List<String>): List<String> {
-        val options = LinkedHashSet<String>()
-        if (target.isNotBlank()) options.add(target)
-        accepted.forEach { if (it.isNotBlank()) options.add(it) }
-        // Pad with deterministic placeholders so there are always ≥2 choices to discriminate.
-        var i = 1
-        while (options.size < 2) { options.add("Option ${i++}") }
-        return options.toList()
     }
 
     private companion object {

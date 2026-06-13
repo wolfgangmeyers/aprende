@@ -42,7 +42,6 @@ fun MistakesReviewScreen(
     MistakesReviewContent(
         state = state,
         onTypedInputChange = viewModel::onTypedInputChange,
-        onAccentChar = viewModel::onAccentChar,
         onTileSelected = viewModel::onTileSelected,
         onTileRemoved = viewModel::onTileRemoved,
         onChoiceSelected = viewModel::onChoiceSelected,
@@ -57,7 +56,6 @@ fun MistakesReviewScreen(
 fun MistakesReviewContent(
     state: MistakesReviewUiState,
     onTypedInputChange: (String) -> Unit = {},
-    onAccentChar: (String) -> Unit = {},
     onTileSelected: (String) -> Unit = {},
     onTileRemoved: (Int) -> Unit = {},
     onChoiceSelected: (Int) -> Unit = {},
@@ -72,7 +70,6 @@ fun MistakesReviewContent(
         else -> ExerciseContent(
             state = state,
             onTypedInputChange = onTypedInputChange,
-            onAccentChar = onAccentChar,
             onTileSelected = onTileSelected,
             onTileRemoved = onTileRemoved,
             onChoiceSelected = onChoiceSelected,
@@ -87,7 +84,6 @@ fun MistakesReviewContent(
 private fun ExerciseContent(
     state: MistakesReviewUiState,
     onTypedInputChange: (String) -> Unit,
-    onAccentChar: (String) -> Unit,
     onTileSelected: (String) -> Unit,
     onTileRemoved: (Int) -> Unit,
     onChoiceSelected: (Int) -> Unit,
@@ -116,7 +112,6 @@ private fun ExerciseContent(
             choices = state.choices,
             selectedChoice = state.selectedChoice,
             onTypedInputChange = onTypedInputChange,
-            onAccentChar = onAccentChar,
             onTileSelected = onTileSelected,
             onTileRemoved = onTileRemoved,
             onChoiceSelected = onChoiceSelected,

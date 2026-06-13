@@ -209,6 +209,35 @@ class LessonViewModelSavedStateTest {
             assertEquals(Feedback.CORRECT, vm.uiState.value.feedback)
         }
 
+    @Test
+    fun `malformed multiple choice metadata renders as typed translation`() =
+        runTest(testDispatcher) {
+            val handle = SavedStateHandle(mapOf(Routes.ARG_NODE_ID to 1L))
+            val vm = newViewModel(
+                handle,
+                exercises = listOf(
+                    exercise(id = 1, targetItemId = 1, type = "MULTIPLE_CHOICE").copy(
+                        sentenceId = 1,
+                        promptHint = """{"multipleChoice":{"choices":["i have a dog","i have a dog"],"correctIndex":0}}""",
+                    ),
+                ),
+                acceptedAnswers = mapOf((1L to "ES_TO_EN") to listOf("i have a dog")),
+                sentences = mapOf(1L to SentenceText(1, "Tengo un perro.", "I have a dog.")),
+            )
+            runCurrent()
+
+            assertEquals(ExerciseKind.TYPED_TRANSLATION, vm.uiState.value.kind)
+            assertEquals("Type this in English", vm.uiState.value.instruction)
+            assertEquals(emptyList<String>(), vm.uiState.value.choices)
+            assertEquals(-1, vm.uiState.value.correctChoiceIndex)
+
+            vm.onTypedInputChange("I have a dog")
+            vm.submit()
+            runCurrent()
+
+            assertEquals(Feedback.CORRECT, vm.uiState.value.feedback)
+        }
+
     private fun newViewModel(
         handle: SavedStateHandle,
         progress: FakeProgressRepository = FakeProgressRepository(),

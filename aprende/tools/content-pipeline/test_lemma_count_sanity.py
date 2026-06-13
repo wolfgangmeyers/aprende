@@ -82,6 +82,10 @@ def unsupported_cold_start_exercise(exercise):
     return exercise["direction"] == "ES_TO_EN" and exercise["type"] != "MULTIPLE_CHOICE"
 
 
+def supported_cold_start_scaffold(exercise):
+    return exercise["direction"] == "EN_TO_ES" and exercise["type"] == "MULTIPLE_CHOICE"
+
+
 def sequencing_fixture(build, count=9):
     lexemes = [sequencing_lexeme(build, lexeme_id) for lexeme_id in range(1, count + 1)]
     nodes = build.build_sequencing_plan(lexemes)["nodes"]
@@ -130,15 +134,15 @@ class LemmaCountSanityIntegrationTest(unittest.TestCase):
         self.sanity.assert_current(self.report)
         self.assertEqual(2329, self.report["reviewableItemSummary"]["totalReviewableItems"])
         self.assertEqual(2339, self.report["reviewableItemSummary"]["sourceContentRows"]["rawLexemes"])
-        self.assertEqual(10984, self.report["reviewableItemSummary"]["sourceContentRows"]["totalContentRows"])
+        self.assertEqual(10992, self.report["reviewableItemSummary"]["sourceContentRows"]["totalContentRows"])
         self.assertEqual(
             2329,
             self.report["reviewGate"]["reviewableItems"]["countedReviewedRows"],
         )
         self.assertEqual(3154, self.report["reviewableItemSummary"]["sourceContentRows"]["reviewedSentences"])
-        self.assertEqual(5491, self.report["reviewableItemSummary"]["sourceContentRows"]["reviewedAcceptedAnswers"])
-        self.assertEqual(6225, self.report["reviewableItemSummary"]["sourceContentRows"]["exerciseCount"])
-        self.assertEqual(10139, self.report["reviewGate"]["contentRows"]["rowsRequiringIndependentReviews"])
+        self.assertEqual(5499, self.report["reviewableItemSummary"]["sourceContentRows"]["reviewedAcceptedAnswers"])
+        self.assertEqual(6221, self.report["reviewableItemSummary"]["sourceContentRows"]["exerciseCount"])
+        self.assertEqual(10147, self.report["reviewGate"]["contentRows"]["rowsRequiringIndependentReviews"])
         self.assertEqual(0, self.report["reviewGate"]["contentRows"]["rowsWithInsufficientIndependentReviews"])
 
     def test_generated_sentence_fts_schema_matches_room_content_option(self):
@@ -1047,11 +1051,14 @@ class SequencingValidationTest(unittest.TestCase):
             [],
             [exercise for exercise in early if unsupported_cold_start_exercise(exercise)],
         )
-        self.assertEqual({"MULTIPLE_CHOICE"}, {exercise["type"] for exercise in early})
         self.assertEqual({"EN_TO_ES"}, {exercise["direction"] for exercise in early})
-        self.assertEqual("Hi, how are you?", sentence_by_id[early[0]["sentenceId"]].data["englishText"])
+        self.assertEqual(
+            self.build.A1_COLD_START_SCAFFOLD_COUNT - 1,
+            sum(1 for exercise in early if supported_cold_start_scaffold(exercise)),
+        )
+        self.assertIn("Hi, how are you?", [sentence_by_id[exercise["sentenceId"]].data["englishText"] for exercise in early])
 
-    def test_audited_early_a1_intro_nodes_do_not_start_with_unsupported_spanish_to_english(self):
+    def test_audited_early_a1_intro_nodes_prioritize_all_available_supported_scaffolds(self):
         _lexemes, _sentences, _accepted, _sentence_lexeme, _conj, exercises, nodes = self.build.vetted_sample()
         exercises_by_node = {}
         for exercise in exercises:
@@ -1061,18 +1068,22 @@ class SequencingValidationTest(unittest.TestCase):
         for node_id, title, _order in nodes:
             if not title.startswith("A1 ") or title.endswith("Review"):
                 continue
-            early = sorted(
+            node_exercises = sorted(
                 exercises_by_node.get(node_id, []),
                 key=lambda exercise: exercise["exerciseId"],
-            )[:self.build.A1_COLD_START_SCAFFOLD_COUNT]
+            )
+            supported_count = sum(1 for exercise in node_exercises if supported_cold_start_scaffold(exercise))
+            required_supported_count = min(self.build.A1_COLD_START_SCAFFOLD_COUNT, supported_count)
+            early = node_exercises[:required_supported_count]
             for exercise in early:
-                if unsupported_cold_start_exercise(exercise):
+                if not supported_cold_start_scaffold(exercise):
                     unsupported.append({
                         "nodeId": node_id,
                         "title": title,
                         "exerciseId": exercise["exerciseId"],
                         "type": exercise["type"],
                         "direction": exercise["direction"],
+                        "requiredSupportedCount": required_supported_count,
                     })
 
         self.assertEqual([], unsupported)
@@ -1157,8 +1168,31 @@ class SequencingValidationTest(unittest.TestCase):
                 and candidate.data["sentenceId"] in sentence_ids_by_lexeme[exercise["targetItemId"]]
                 and candidate.data["englishText"] == sentence.data["englishText"]
             }
+            if self.build.is_phrase_or_chunk_lexeme(target):
+                reviewed_spanish.update(
+                    normalize_free_text(candidate.data["spanishText"])
+                    for candidate in sentences
+                    if candidate.vettingStatus == self.build.REVIEWED
+                    and candidate.data["englishText"] == sentence.data["englishText"]
+                    and any(
+                        candidate.data["sentenceId"] in linked_sentence_ids
+                        and self.build.is_phrase_or_chunk_lexeme(lexeme_by_id[lexeme_id])
+                        for lexeme_id, linked_sentence_ids in sentence_ids_by_lexeme.items()
+                    )
+                )
             for answer in answers:
                 derived_sentence = sentence_by_id[answer.data["derivedFromSentenceId"]]
+                derived_is_target_linked = (
+                    derived_sentence.data["sentenceId"] in sentence_ids_by_lexeme[exercise["targetItemId"]]
+                )
+                derived_is_reviewed_phrase_prompt_variant = (
+                    self.build.is_phrase_or_chunk_lexeme(target)
+                    and any(
+                        derived_sentence.data["sentenceId"] in linked_sentence_ids
+                        and self.build.is_phrase_or_chunk_lexeme(lexeme_by_id[lexeme_id])
+                        for lexeme_id, linked_sentence_ids in sentence_ids_by_lexeme.items()
+                    )
+                )
                 evidence = self.build.REVIEW_EVIDENCE_ITEMS[
                     self.build.review_evidence_key("accepted_answer", answer)
                 ]
@@ -1166,7 +1200,7 @@ class SequencingValidationTest(unittest.TestCase):
                 self.assertEqual("derived_reviewed_sentence", answer.source)
                 self.assertEqual(self.build.REVIEWED, derived_sentence.vettingStatus)
                 self.assertEqual(sentence.data["englishText"], derived_sentence.data["englishText"])
-                self.assertIn(derived_sentence.data["sentenceId"], sentence_ids_by_lexeme[exercise["targetItemId"]])
+                self.assertTrue(derived_is_target_linked or derived_is_reviewed_phrase_prompt_variant)
                 self.assertEqual(derived_sentence.license, answer.license)
                 self.assertEqual(
                     normalize_free_text(derived_sentence.data["spanishText"]),
@@ -1189,8 +1223,29 @@ class SequencingValidationTest(unittest.TestCase):
                     evidence["dimensions"][self.build.AUTO_REVIEW_SPANISH]["source"],
                 )
                 self.assertIn(normalize_free_text(answer.data["answerText"]), reviewed_spanish)
-                self.assertTrue(check_free_text(sentence.data["spanishText"].upper() + "!", [answer.data["answerText"]]))
+                self.assertTrue(check_free_text(derived_sentence.data["spanishText"].upper() + "!", [answer.data["answerText"]]))
             self.assertFalse(check_free_text("el perro bebe cafe", [row.data["answerText"] for row in answers]))
+
+    def test_see_you_tomorrow_english_to_spanish_accepts_reviewed_farewell_variants(self):
+        _lexemes, sentences, accepted, _sentence_lexeme, _conj, _exercises, _nodes = staged_vetted_sample(self.build)
+        see_you_tomorrow_ids = {
+            row.data["sentenceId"]
+            for row in sentences
+            if row.data["englishText"] == "See you tomorrow."
+        }
+        accepted_by_sentence = {}
+        for row in accepted:
+            if row.data["direction"] == "EN_TO_ES" and row.data["sentenceId"] in see_you_tomorrow_ids:
+                accepted_by_sentence.setdefault(row.data["sentenceId"], set()).add(row.data["answerText"])
+
+        self.assertEqual(2, len(see_you_tomorrow_ids))
+        self.assertEqual(see_you_tomorrow_ids, set(accepted_by_sentence))
+        for answers in accepted_by_sentence.values():
+            self.assertIn("hasta mañana", answers)
+            self.assertIn("nos vemos mañana", answers)
+            self.assertTrue(check_free_text("Hasta mañana.", list(answers)))
+            self.assertTrue(check_free_text("Nos vemos mañana.", list(answers)))
+            self.assertFalse(check_free_text("hasta luego", list(answers)))
 
     def test_c1_english_to_spanish_growth_only_adds_exercises_and_accepted_answers(self):
         original_append = self.build.append_english_to_spanish_production_for_bands
@@ -1304,6 +1359,7 @@ class SequencingValidationTest(unittest.TestCase):
             self.assertIn(choices[correct_index], prompt_answer_texts)
             self.assertTrue(check_choice(correct_index, correct_index))
             self.assertFalse(self.build.multiple_choice_ambiguous(choices[correct_index]))
+            correct_form = self.build.multiple_choice_option_form_key(exercise["direction"], choices[correct_index])
 
             for index, distractor in enumerate(choices):
                 if index == correct_index:
@@ -1314,6 +1370,10 @@ class SequencingValidationTest(unittest.TestCase):
                 self.assertNotIn(exercise["targetItemId"], reviewed_a1_answers_by_text[distractor])
                 self.assertTrue(self.build.multiple_choice_distractor_allowed(choices[correct_index], distractor))
                 self.assertFalse(self.build.multiple_choice_near_equivalent(choices[correct_index], distractor))
+                self.assertEqual(
+                    correct_form,
+                    self.build.multiple_choice_option_form_key(exercise["direction"], distractor),
+                )
 
         self.assertGreater(len(set(correct_indices)), 1)
         self.assertIn(0, set(correct_indices))
@@ -1366,6 +1426,7 @@ class SequencingValidationTest(unittest.TestCase):
             self.assertEqual(4, len(set(choices)))
             self.assertEqual(sentence.data["spanishText"], choices[correct_index])
             self.assertTrue(check_choice(correct_index, correct_index))
+            correct_form = self.build.multiple_choice_option_form_key(exercise["direction"], choices[correct_index])
             for index, distractor in enumerate(choices):
                 if index == correct_index:
                     continue
@@ -1376,10 +1437,49 @@ class SequencingValidationTest(unittest.TestCase):
                     normalize_free_text(sentence.data["englishText"]),
                     reviewed_a1_english_by_spanish_text[distractor],
                 )
+                self.assertEqual(
+                    correct_form,
+                    self.build.multiple_choice_option_form_key(exercise["direction"], distractor),
+                )
                 distractor_counts[distractor] = distractor_counts.get(distractor, 0) + 1
 
         self.assertGreaterEqual(len(distractor_counts), len(multiple_choice) // 2)
         self.assertLessEqual(max(distractor_counts.values()), 8)
+
+    def test_built_multiple_choice_choices_match_correct_form(self):
+        _lexemes, _sentences, _accepted, _sentence_lexeme, _conj, exercises, _nodes = self.build.vetted_sample()
+        leaks = []
+
+        for exercise in exercises:
+            if exercise["type"] != "MULTIPLE_CHOICE":
+                continue
+            spec = json.loads(exercise["promptHint"])["multipleChoice"]
+            choices = spec["choices"]
+            correct_index = spec["correctIndex"]
+            correct_form = self.build.multiple_choice_option_form_key(
+                exercise["direction"],
+                choices[correct_index],
+            )
+            mismatches = [
+                {
+                    "index": index,
+                    "choice": choice,
+                    "form": self.build.multiple_choice_option_form_key(exercise["direction"], choice),
+                }
+                for index, choice in enumerate(choices)
+                if self.build.multiple_choice_option_form_key(exercise["direction"], choice) != correct_form
+            ]
+            if mismatches:
+                leaks.append({
+                    "exerciseId": exercise["exerciseId"],
+                    "direction": exercise["direction"],
+                    "correctIndex": correct_index,
+                    "correct": choices[correct_index],
+                    "correctForm": correct_form,
+                    "mismatches": mismatches,
+                })
+
+        self.assertEqual([], leaks)
 
     def test_a1_multiple_choice_does_not_add_content_bearing_rows_or_production_text(self):
         original_spanish_prompt_append = self.build.append_a1_multiple_choice_exercises
@@ -1432,6 +1532,20 @@ class SequencingValidationTest(unittest.TestCase):
             )
 
         self.assertFalse(self.build.multiple_choice_distractor_allowed("i have a dog", "it's okay"))
+        self.assertFalse(self.build.multiple_choice_distractor_allowed("what does this word mean", "i have a dog"))
+        self.assertFalse(self.build.multiple_choice_distractor_allowed("i have a dog", "what does this word mean"))
+        self.assertFalse(self.build.multiple_choice_distractor_allowed("Everything okay?", "I have a dog"))
+        self.assertFalse(self.build.multiple_choice_distractor_allowed("I have a dog", "Everything okay?"))
+        self.assertEqual((False, False, False, False), self.build.multiple_choice_spanish_form_key("Como arroz."))
+        self.assertEqual((True, False, False, False), self.build.multiple_choice_spanish_form_key("¿Como arroz?"))
+        self.assertEqual((True, False, False, False), self.build.multiple_choice_spanish_form_key("Cómo estás"))
+        self.assertEqual((False, True, False, False), self.build.multiple_choice_spanish_form_key("No, gracias."))
+        self.assertEqual((False, False, False, False), self.build.multiple_choice_spanish_form_key("De nada."))
+        self.assertEqual((False, False, True, False), self.build.multiple_choice_spanish_form_key("¡Buen día!"))
+        self.assertEqual((True, False, False, True), self.build.multiple_choice_spanish_form_key("Hola, ¿cómo estás?"))
+        self.assertFalse(self.build.multiple_choice_forms_match("EN_TO_ES", "No, gracias.", "Sí, por favor."))
+        self.assertFalse(self.build.multiple_choice_forms_match("EN_TO_ES", "¡Buen día!", "Buen día."))
+        self.assertFalse(self.build.multiple_choice_forms_match("EN_TO_ES", "Hola, ¿cómo estás?", "¿Cómo estás?"))
 
     def test_c1_derived_english_to_spanish_evidence_is_item_specific(self):
         lexemes, sentences, accepted, _sentence_lexeme, _conj, exercises, _nodes = staged_vetted_sample(self.build)

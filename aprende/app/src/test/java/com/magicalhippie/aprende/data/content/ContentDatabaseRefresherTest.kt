@@ -64,9 +64,9 @@ class ContentDatabaseRefresherTest {
             .build()
 
         try {
-            assertEquals(6_225L, db.scalarLong("SELECT COUNT(*) FROM exercise"))
+            assertEquals(6_221L, db.scalarLong("SELECT COUNT(*) FROM exercise"))
             assertEquals(
-                "MULTIPLE_CHOICE|EN_TO_ES|Hi, how are you?",
+                "MULTIPLE_CHOICE|EN_TO_ES|Good afternoon.",
                 db.scalarString(
                     """
                     SELECT e.type || '|' || e.direction || '|' || s.englishText
@@ -134,7 +134,7 @@ class ContentDatabaseRefresherTest {
             .build()
 
         try {
-            assertEquals(6_225L, db.scalarLong("SELECT COUNT(*) FROM exercise"))
+            assertEquals(6_221L, db.scalarLong("SELECT COUNT(*) FROM exercise"))
         } finally {
             db.close()
         }
