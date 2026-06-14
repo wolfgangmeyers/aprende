@@ -1,14 +1,22 @@
 package com.magicalhippie.aprende.ui.lesson
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTextInputSelection
 import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.unit.dp
 import com.magicalhippie.aprende.ui.theme.AprendeTheme
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -117,6 +125,34 @@ class LessonScreenTest {
         composeRule.onNodeWithText("✨ ¡Correcto!").assertIsDisplayed()
         composeRule.onNodeWithText("Continue").performClick()
         assertTrue(continued)
+    }
+
+    @Test
+    fun checkButton_sitsAboveBottomEdge() {
+        composeRule.setContent {
+            AprendeTheme {
+                Box(Modifier.height(640.dp).testTag("lesson_container")) {
+                    LessonContent(
+                        state = LessonUiState(
+                            loading = false,
+                            hearts = 5,
+                            prompt = "Tengo un perro.",
+                            instruction = "Type this in English",
+                            kind = ExerciseKind.TYPED_TRANSLATION,
+                        ),
+                        modifier = Modifier.fillMaxSize(),
+                    )
+                }
+            }
+        }
+
+        val rootBottom = composeRule.onNodeWithTag("lesson_container").getUnclippedBoundsInRoot().bottom
+        val checkBottom = composeRule.onNodeWithText("Check").getUnclippedBoundsInRoot().bottom
+
+        assertTrue(
+            "Check button should sit above the bottom edge for easier reach: rootBottom=$rootBottom, checkBottom=$checkBottom",
+            checkBottom <= rootBottom - 40.dp,
+        )
     }
 
     @Test

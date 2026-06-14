@@ -96,52 +96,61 @@ private fun ExerciseContent(
     onRestart: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(
+    Box(
         modifier = modifier
             .fillMaxSize()
             .padding(24.dp),
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
+        Column(
+            modifier = Modifier.fillMaxSize(),
         ) {
-            Text("❤️ ${state.hearts}", style = MaterialTheme.typography.titleMedium)
-            OutlinedButton(onClick = onRestart) { Text("Restart") }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text("❤️ ${state.hearts}", style = MaterialTheme.typography.titleMedium)
+                OutlinedButton(onClick = onRestart) { Text("Restart") }
+            }
+            Spacer(Modifier.height(8.dp))
+            Text(state.instruction, style = MaterialTheme.typography.titleMedium)
+            Spacer(Modifier.height(16.dp))
+
+            // Shared exercise rendering (reused by the Mistakes-review screen — P1.7).
+            ExercisePrompt(prompt = state.prompt)
+            Spacer(Modifier.height(24.dp))
+
+            ExerciseAnswer(
+                kind = state.kind,
+                typedInput = state.typedInput,
+                wordBankTiles = state.wordBankTiles,
+                selectedTiles = state.selectedTiles,
+                choices = state.choices,
+                selectedChoice = state.selectedChoice,
+                onTypedInputChange = onTypedInputChange,
+                onTileSelected = onTileSelected,
+                onTileRemoved = onTileRemoved,
+                onChoiceSelected = onChoiceSelected,
+            )
+
+            Spacer(Modifier.height(24.dp))
+            ExerciseFeedbackBanner(
+                feedback = state.feedback,
+                correctAnswer = state.correctAnswer,
+                heartsGate = state.heartsGate,
+            )
+            Spacer(Modifier.weight(1f))
         }
-        Spacer(Modifier.height(8.dp))
-        Text(state.instruction, style = MaterialTheme.typography.titleMedium)
-        Spacer(Modifier.height(16.dp))
 
-        // Shared exercise rendering (reused by the Mistakes-review screen — P1.7).
-        ExercisePrompt(prompt = state.prompt)
-        Spacer(Modifier.height(24.dp))
-
-        ExerciseAnswer(
-            kind = state.kind,
-            typedInput = state.typedInput,
-            wordBankTiles = state.wordBankTiles,
-            selectedTiles = state.selectedTiles,
-            choices = state.choices,
-            selectedChoice = state.selectedChoice,
-            onTypedInputChange = onTypedInputChange,
-            onTileSelected = onTileSelected,
-            onTileRemoved = onTileRemoved,
-            onChoiceSelected = onChoiceSelected,
-        )
-
-        Spacer(Modifier.height(24.dp))
-        ExerciseFeedbackBanner(
-            feedback = state.feedback,
-            correctAnswer = state.correctAnswer,
-            heartsGate = state.heartsGate,
-        )
-        Spacer(Modifier.weight(1f))
+        val actionModifier = Modifier
+            .align(Alignment.BottomCenter)
+            .padding(bottom = 16.dp)
+            .fillMaxWidth()
 
         if (state.feedback == Feedback.NONE) {
-            Button(onClick = onSubmit, modifier = Modifier.fillMaxWidth()) { Text("Check") }
+            Button(onClick = onSubmit, modifier = actionModifier) { Text("Check") }
         } else if (!state.heartsGate) {
-            Button(onClick = onContinue, modifier = Modifier.fillMaxWidth()) { Text("Continue") }
+            Button(onClick = onContinue, modifier = actionModifier) { Text("Continue") }
         }
     }
 }
