@@ -11,11 +11,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Button
@@ -31,6 +31,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextRange
@@ -53,6 +54,8 @@ import androidx.compose.ui.unit.dp
 
 /** The Spanish accent bar shown on every typed-answer surface (SPEC §5.4). */
 internal val ACCENT_CHARS = listOf("ñ", "á", "é", "í", "ó", "ú", "ü", "¿", "¡")
+internal const val ACCENT_BAR_TEST_TAG = "accent_bar"
+internal fun accentCharTestTag(ch: String) = "accent_char_$ch"
 
 /** The animated prompt card (the sentence to translate). Swaps with a tasteful fade (§12.1). */
 @Composable
@@ -139,14 +142,32 @@ private fun TypedTranslation(
         ),
     )
     Spacer(Modifier.height(8.dp))
+    AccentCharButtons(
+        onAccentSelected = { ch ->
+            textFieldValue = textFieldValue.insertAtSelection(ch)
+            onInputChange(textFieldValue.text)
+        },
+    )
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun AccentCharButtons(onAccentSelected: (String) -> Unit) {
     // Accent bar (§5.4) — a Spanish OS keyboard is never required.
-    LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        items(ACCENT_CHARS) { ch ->
+    FlowRow(
+        modifier = Modifier
+            .fillMaxWidth()
+            .testTag(ACCENT_BAR_TEST_TAG),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        ACCENT_CHARS.forEach { ch ->
             OutlinedButton(
-                onClick = {
-                    textFieldValue = textFieldValue.insertAtSelection(ch)
-                    onInputChange(textFieldValue.text)
-                },
+                onClick = { onAccentSelected(ch) },
+                modifier = Modifier
+                    .sizeIn(minWidth = 48.dp, minHeight = 48.dp)
+                    .testTag(accentCharTestTag(ch)),
+                contentPadding = PaddingValues(horizontal = 0.dp),
             ) {
                 Text(ch)
             }
